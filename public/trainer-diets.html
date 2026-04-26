@@ -1,0 +1,904 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestión de Dietas - Fitness App</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles/theme.css">
+    <link rel="stylesheet" href="styles/components.css">
+</head>
+
+<body>
+    <!-- Pantalla de Login (Google Auth) -->
+    <div id="login-screen" class="wizard-container"
+        style="min-height: 100vh; display: flex; align-items: center; justify-content: center;">
+        <div class="card wizard-card" style="max-width: 400px; text-align: center; padding: 2rem;">
+            <div style="font-size: 3rem; margin-bottom: 1rem;">🔒</div>
+            <h2>Acceso a tu Backend</h2>
+            <p class="text-muted mb-lg">Conéctate con tu cuenta de Google para acceder a tu base de datos de clientes y
+                rutinas.</p>
+            <div id="google-signin-container">
+                <button onclick="if(typeof AUTH !== 'undefined') { AUTH.signIn() } else { alert('El sistema de autenticación no ha cargado correctamente. Por favor, desactiva bloqueadores de anuncios o recarga la página.') }" class="btn btn-primary" style="display:flex; align-items:center; gap:0.5rem; justify-content:center; width:100%;">
+                    <svg width="24" height="24" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
+                        <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
+                        <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/>
+                        <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
+                    </svg>
+                    Conectar con Google
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- App Principal -->
+    <div id="app" style="display: none;">
+        <header class="header">
+            <div class="container">
+                <nav class="nav">
+                    <div class="logo">
+                        <img id="brandLogo" class="logo-img" alt="Logo">
+                        <span id="brandName">Fitness App</span>
+                    </div>
+                    <button class="menu-toggle" onclick="toggleMenu()">☰</button>
+                    <ul class="nav-links" id="navLinks">
+                        <li><a href="trainer-dashboard.html" class="nav-link">Dashboard</a></li>
+                        <li><a href="trainer-clients.html" class="nav-link">Clientes</a></li>
+                        <li><a href="trainer-routines.html" class="nav-link">Rutinas</a></li>
+                        <li><a href="trainer-diets.html" class="nav-link active">Dietas</a></li>
+                        <li><a href="trainer-feedbacks.html" class="nav-link">Revisiones</a></li>
+                        <li><a href="trainer-media.html" class="nav-link">Biblioteca</a></li>
+                        <li><a href="trainer-appointments.html" class="nav-link">Agenda</a></li>
+                        <li><a href="trainer-settings.html" class="nav-link">Configuración</a></li>
+                        <li id="masterLink" style="display: none;"><a href="admin-dashboard.html" class="nav-link" style="color: #8B5CF6; font-weight: 800;">Panel Maestro</a></li>
+                        <li><a href="#" onclick="if(typeof AUTH !== 'undefined') { AUTH.signOut() } else { window.location.reload() }; return false;" class="nav-link" style="color:var(--error-color)">🚪 Salir</a></li>
+                    </ul>
+                </nav>
+            </div>
+        </header>
+
+        <main class="main-content">
+            <div class="container">
+                <div class="flex-between mb-lg">
+                    <div>
+                        <h1>Gestión de Dietas</h1>
+                        <p class="text-muted">Crea planes nutricionales y administra tus alimentos</p>
+                    </div>
+                    <div class="flex gap-sm">
+                        <button class="btn btn-outline btn-sm"
+                            onclick="window.openNutritionCalculator('calories')">Calc. Cal</button>
+                        <button class="btn btn-outline btn-sm" onclick="window.openNutritionCalculator('macros')">Calc.
+                            Mac</button>
+                    </div>
+                </div>
+
+                <div class="tabs mb-lg">
+                    <button class="tab active" onclick="switchDietTab('diets')">Plantillas de Dietas</button>
+                    <button id="foodsTabBtn" class="tab" onclick="switchDietTab('foods')">Mis Alimentos</button>
+                </div>
+
+                <!-- DIETAS TAB -->
+                <div id="dietsTab" class="tab-content" style="display:block;">
+                    <div class="flex-between mb-md align-center">
+                        <button class="btn btn-primary" onclick="window.showAddDietModal()">➕ Nueva Plantilla</button>
+                        <p class="text-xs text-muted">Aviso: Las dietas generadas individualmente para clientes no aparecerán aquí.</p>
+                    </div>
+                    <!-- Filters -->
+                    <div class="card p-md mb-lg bg-secondary" style="background: rgba(255, 255, 255, 0.05);">
+                        <div class="grid grid-3 gap-md" style="align-items: end;">
+                            <div>
+                                <label class="form-label text-xs">Buscar</label>
+                                <input type="text" id="filterSearch" class="form-input"
+                                    placeholder="Nombre de la dieta..." oninput="loadDiets()">
+                            </div>
+                            <div>
+                                <label class="form-label text-xs">Nº Comidas</label>
+                                <select id="filterMeals" class="form-select" onchange="loadDiets()">
+                                    <option value="">Todas</option>
+                                    <option value="3">3 Comidas</option>
+                                    <option value="4">4 Comidas</option>
+                                    <option value="5">5 Comidas</option>
+                                    <option value="6">6 Comidas</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="form-label text-xs">Calorías</label>
+                                <select id="filterKcal" class="form-select" onchange="loadDiets()">
+                                    <option value="">Todas</option>
+                                    <option value="0-1500">&lt; 1500 kcal</option>
+                                    <option value="1500-2000">1500 - 2000 kcal</option>
+                                    <option value="2000-2500">2000 - 2500 kcal</option>
+                                    <option value="2500-3000">2500 - 3000 kcal</option>
+                                    <option value="3000-9999">&gt; 3000 kcal</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-3" id="dietsGrid">
+                        <div id="dietsContainer" style="grid-column: 1 / -1; display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: var(--spacing-md);">
+                            <div class="empty-state">
+                                <div class="empty-state-icon">🥗</div>
+                                <div class="empty-state-title">No hay dietas creadas</div>
+                                <div class="empty-state-text">Crea tu primer plan nutricional</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ALIMENTOS TAB -->
+                <div id="foodsTab" class="tab-content" style="display:none;">
+                    <div class="flex-between mb-md">
+                        <div style="flex: 1; max-width: 400px; position: relative;">
+                            <input type="text" id="filterFoodSearch" class="form-input" 
+                                placeholder="🔍 Buscar alimento en tu base de datos..." oninput="loadFoods()">
+                        </div>
+                        <button class="btn btn-primary" onclick="showFoodModal()">➕ Añadir Alimento</button>
+                    </div>
+
+                    <div class="card p-0 overflow-hidden">
+                        <div style="overflow-x: auto;">
+                            <table class="table" style="width: 100%; text-align: left;">
+                                <thead style="background: rgba(255,255,255,0.02);">
+                                    <tr>
+                                        <th style="padding: 15px 10px;">Nombre</th>
+                                        <th style="text-align: center; padding: 15px 10px;">Kcal</th>
+                                        <th style="text-align: center; padding: 15px 10px;">P (g)</th>
+                                        <th style="text-align: center; padding: 15px 10px;">C (g)</th>
+                                        <th style="text-align: center; padding: 15px 10px;">G (g)</th>
+                                        <th style="text-align: center; padding: 15px 10px;">Medida</th>
+                                        <th style="text-align: right; padding: 15px 20px;">Acciones</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="foodsContainer">
+                                    <!-- Llenado por JS -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+        </main>
+
+    </div>
+
+    <!-- Nuevos Scripts de Google -->
+    <script src="js/config.js?v=92"></script>
+    <script src="js/auth.js?v=92"></script>
+    <script src="js/sheets.js?v=92"></script>
+
+    <script src="js/data-models.js?v=92"></script>
+    <script src="js/custom-recipes.js?v=92"></script>
+    <script src="js/utils.js?v=92"></script>
+    <script src="js/diet-editor-v3.js?v=92"></script>
+    <script src="js/seed-data.js"></script>
+    <script>
+        if (!BrandConfig.isConfigured()) window.location.href = 'index.html';
+
+        BrandConfig.applyTheme();
+        const brand = BrandConfig.get();
+        document.getElementById('brandName').textContent = brand.name;
+        if (brand.logo) {
+            document.getElementById('brandLogo').src = brand.logo;
+            document.getElementById('brandLogo').style.display = 'block';
+        }
+
+
+
+        function switchDietTab(tabId) {
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(c => c.style.display = 'none');
+
+            if (tabId === 'diets') {
+                document.querySelector('.tab[onclick="switchDietTab(\'diets\')"]').classList.add('active');
+                document.getElementById('dietsTab').style.display = 'block';
+                loadDiets();
+            } else {
+                document.getElementById('foodsTabBtn').classList.add('active');
+                document.getElementById('foodsTab').style.display = 'block';
+                loadFoods();
+            }
+        }
+
+        window.renderDiets = loadDiets;
+        window.loadFoods = loadFoods;
+
+        function isDietTemplate(d) {
+            if (d.isTemplate === false) return false;
+            if (d.isTemplate === true) return true;
+            const desc = (d.description || '').toLowerCase();
+            if (desc.includes('creada para') || desc.includes('plan personalizado para')) return false;
+            return true;
+        }
+
+        function loadDiets() {
+            let diets = (Diets.getAll() || []).filter(isDietTemplate);
+            const container = document.getElementById('dietsContainer');
+
+            // Apply Filters
+            const search = document.getElementById('filterSearch')?.value.toLowerCase();
+            const meals = document.getElementById('filterMeals')?.value;
+            const kcalRange = document.getElementById('filterKcal')?.value;
+
+            if (search) {
+                diets = diets.filter(d => d.name.toLowerCase().includes(search));
+            }
+            if (meals) {
+                diets = diets.filter(d => d.mealsCount == meals);
+            }
+            if (kcalRange) {
+                const [min, max] = kcalRange.split('-').map(Number);
+                diets = diets.filter(d => (d.calories || 0) >= min && (d.calories || 0) <= max);
+            }
+
+            if (diets.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-state-icon">🥗</div>
+                        <div class="empty-state-title">No hay dietas creadas</div>
+                        <div class="empty-state-text">Crea tu primer plan de nutrición</div>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = diets.map(diet => {
+                // Calcular totales reales de la dieta para la tarjeta
+                let realCals = 0;
+                let realMacros = { p: 0, c: 0, f: 0 };
+                
+                (diet.meals || []).forEach(meal => {
+                    const opt1 = (meal.foods || []).filter(f => !f.option || f.option === 1);
+                    opt1.forEach(f => {
+                        realCals += parseFloat(f.calories || 0);
+                        realMacros.p += parseFloat(f.protein || 0);
+                        realMacros.c += parseFloat(f.carbs || 0);
+                        realMacros.f += parseFloat(f.fat || 0);
+                    });
+                });
+
+                return `
+                <div class="card" style="padding: var(--spacing-md); display: flex; flex-direction: column; gap: 10px;">
+                    <div class="flex-between" style="align-items: center;">
+                        <h3 class="card-title" style="margin: 0; font-size: 1.1rem;">${diet.name}</h3>
+                        <div class="flex align-center gap-xs">
+                            <span class="badge badge-info" style="font-size: 0.75rem;">${Math.round(realCals)} kcal</span>
+                            ${diet.calories ? `<span class="text-xs text-muted">/ ${diet.calories}</span>` : ''}
+                        </div>
+                    </div>
+
+                    <p class="text-muted text-truncate" style="font-size: 0.85rem; margin: 0;">${diet.description || 'Sin descripción'}</p>
+
+                    <div class="flex gap-lg text-sm bg-secondary p-xs rounded-sm justify-center" style="padding: 8px;">
+                        <div class="text-center">
+                            <span class="font-bold text-white">${realMacros.p.toFixed(1)}g</span>
+                            <span class="text-xs text-muted ml-xs">Prot</span>
+                        </div>
+                        <div class="text-center">
+                            <span class="font-bold text-white">${realMacros.c.toFixed(1)}g</span>
+                            <span class="text-xs text-muted ml-xs">Carb</span>
+                        </div>
+                        <div class="text-center">
+                            <span class="font-bold text-white">${realMacros.f.toFixed(1)}g</span>
+                            <span class="text-xs text-muted ml-xs">Grasa</span>
+                        </div>
+                    </div>
+
+                    <div class="flex-between" style="align-items: center; margin-top: 5px;">
+                        <span class="text-xs text-muted">🍴 ${diet.mealsCount || 3} comidas</span>
+                        <div class="flex gap-xs" style="flex-wrap: wrap; justify-content: flex-end;">
+                            <button class="btn btn-sm btn-outline" style="padding: 4px 8px; font-size: 0.75rem;" onclick="viewDiet('${diet.id}')">✏️ Editar</button>
+                            <button class="btn btn-sm btn-outline" style="padding: 4px 8px; font-size: 0.75rem;" onclick="duplicateDiet('${diet.id}')" title="Copiar en nueva plantilla">📑 Copiar</button>
+                            <button class="btn btn-sm btn-primary" style="padding: 4px 8px; font-size: 0.75rem;" onclick="window.publishDietToClient('${diet.id}')">📤 Publicar</button>
+                            <button class="btn btn-sm btn-danger" style="padding: 4px 8px; font-size: 0.75rem;" onclick="deleteDiet('${diet.id}')">🗑️</button>
+                        </div>
+                    </div>
+                </div>
+                `;
+            }).join('');
+        }
+
+        function loadFoods() {
+            let foods = Foods.getAll();
+            const search = document.getElementById('filterFoodSearch')?.value.toLowerCase();
+            if (search) {
+                foods = foods.filter(f => f.name.toLowerCase().includes(search));
+            }
+
+            const container = document.getElementById('foodsContainer');
+            if (foods.length === 0) {
+                container.innerHTML = `<tr><td colspan="7" class="text-center p-md text-muted italic">No hay alimentos guardados.</td></tr>`;
+                return;
+            }
+
+            container.innerHTML = foods.map(food => `
+                <tr style="border-bottom: 1px solid rgba(255,255,255,0.05);">
+                    <td style="padding: 10px;">${food.name}</td>
+                    <td style="text-align: center;" class="text-primary font-bold">${food.calories}</td>
+                    <td style="text-align: center;" class="text-success">${food.protein}</td>
+                    <td style="text-align: center;" class="text-warning">${food.carbs}</td>
+                    <td style="text-align: center;" class="text-error">${food.fat}</td>
+                    <td style="text-align: center; font-size: 0.8rem; color: var(--text-muted);">${food.type === 'g' ? 'por 100g' : 'Unidad'}</td>
+                    <td style="text-align: right; padding-right: 15px;">
+                        <button class="btn btn-sm btn-link p-0 text-white" onclick="showFoodModal('${food.id}')">Editar</button>
+                        <span class="text-muted mx-xs">|</span>
+                        <button class="btn btn-sm btn-link p-0 text-error" onclick="deleteFood('${food.id}')">Borrar</button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        function showFoodModal(id = null) {
+            let food = { name: '', calories: 0, protein: 0, carbs: 0, fat: 0, type: 'g' };
+            if (id) {
+                food = Foods.getById(id) || food;
+            }
+
+            const content = `
+                <div class="form-group">
+                    <label class="form-label">Nombre del alimento *</label>
+                    <input type="text" id="foodName" class="form-input" value="${food.name}">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Tipo de Medición</label>
+                    <select id="foodType" class="form-select">
+                        <option value="g" ${food.type === 'g' ? 'selected' : ''}>Gramos (Valores x 100g)</option>
+                        <option value="unit" ${food.type === 'unit' ? 'selected' : ''}>Por Unidad / Porción</option>
+                    </select>
+                </div>
+                <div class="form-group grid grid-4 gap-sm">
+                    <div>
+                        <label class="text-xs text-muted">Kcal</label>
+                        <input type="number" id="foodCals" class="form-input" value="${food.calories}">
+                    </div>
+                    <div>
+                        <label class="text-xs text-muted">Prot (g)</label>
+                        <input type="number" id="foodP" class="form-input" value="${food.protein}">
+                    </div>
+                    <div>
+                        <label class="text-xs text-muted">Carbs (g)</label>
+                        <input type="number" id="foodC" class="form-input" value="${food.carbs}">
+                    </div>
+                    <div>
+                        <label class="text-xs text-muted">Grasa (g)</label>
+                        <input type="number" id="foodF" class="form-input" value="${food.fat}">
+                    </div>
+                </div>
+                <button class="btn btn-primary w-full mt-md" onclick="saveFood('${id || ''}')">Guardar Alimento</button>
+            `;
+            showModal(id ? 'Editar Alimento' : 'Nuevo Alimento', content, [
+                { text: 'Cancelar', class: 'btn-secondary', onclick: 'window.closeModal()' }
+            ]);
+        }
+
+        function saveFood(id) {
+            const name = document.getElementById('foodName').value.trim();
+            const type = document.getElementById('foodType').value;
+            const cals = parseInt(document.getElementById('foodCals').value) || 0;
+            const p = parseFloat(document.getElementById('foodP').value) || 0;
+            const c = parseFloat(document.getElementById('foodC').value) || 0;
+            const f = parseFloat(document.getElementById('foodF').value) || 0;
+
+            if (!name) return showToast('El nombre es obligatorio', 'error');
+
+            const foodData = { name, type, calories: cals, protein: p, carbs: c, fat: f };
+
+            if (id) Foods.update(id, foodData);
+            else Foods.create(foodData);
+
+            showToast('Alimento guardado', 'success');
+            window.closeModal();
+            loadFoods();
+        }
+
+        function deleteFood(id) {
+            if (confirm('¿Eliminar este alimento de la base de datos?')) {
+                Foods.delete(id);
+                showToast('Eliminado', 'success');
+                loadFoods();
+            }
+        }
+
+        window.showAddDietModal = function () {
+            showModal('Nueva Plantilla de Dieta', `
+                <form id="dietForm">
+                    <div class="form-group mb-md p-sm bg-secondary rounded-sm" style="border: 1px dashed rgba(255,255,255,0.1);">
+                        <label class="form-label text-xs">✨ Copiar de plantilla existente (Escribe para buscar):</label>
+                        <input type="text" id="dietCopySearch" class="form-input" placeholder="🔍 Escribe nombre de plantilla..." list="templatesList" oninput="window.onDietCopySearchInput(this.value)">
+                        <datalist id="templatesList">
+                            ${(Diets.getAll() || []).filter(isDietTemplate).map(t => `<option value="${t.name}">`).join('')}
+                        </datalist>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Nombre del plan *</label>
+                        <input type="text" class="form-input" id="dietName" placeholder="Ej: Definición 2000kcal" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Descripción</label>
+                        <textarea class="form-textarea" id="dietDescription" placeholder="Detalles del plan, tipo de dieta..." rows="2"></textarea>
+                    </div>
+                    
+                    <div class="grid grid-2 gap-md">
+                        <div class="form-group">
+                            <label class="form-label">Calorías Totales (kcal)</label>
+                            <input type="number" class="form-input" id="dietCalories" placeholder="2000">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Número de Comidas</label>
+                            <select id="dietMealsCount" class="form-select">
+                                <option value="3">3 Comidas</option>
+                                <option value="4" selected>4 Comidas</option>
+                                <option value="5">5 Comidas</option>
+                                <option value="6">6 Comidas</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <div class="flex-between align-center mb-xs">
+                            <label class="form-label mb-0">Macronutrientes (g)</label>
+                            <button type="button" class="btn btn-xs btn-outline" style="border-radius: 4px; padding: 4px 8px; font-size: 0.7rem;" onclick="window.openNutritionCalculator('macros')">📊 Calcular Macros</button>
+                        </div>
+                        <div class="grid grid-3 gap-sm">
+                            <div>
+                                <label class="text-xs text-muted">Proteínas</label>
+                                <input type="number" class="form-input" id="dietProt" placeholder="150" style="padding: 8px;">
+                            </div>
+                            <div>
+                                <label class="text-xs text-muted">Carbohidratos</label>
+                                <input type="number" class="form-input" id="dietCarbs" placeholder="200" style="padding: 8px;">
+                            </div>
+                            <div>
+                                <label class="text-xs text-muted">Grasas</label>
+                                <input type="number" class="form-input" id="dietFat" placeholder="60" style="padding: 8px;">
+                            </div>
+                        </div>
+                    </div>
+                </form>
+                `, [
+                { text: 'Cancelar', class: 'btn-secondary', onclick: 'window.closeModal()' },
+                { text: 'Crear Plantilla', class: 'btn-primary', onclick: 'window.saveDiet()' }
+            ]);
+        }
+
+        window.onDietCopySearchInput = function (name) {
+            if (!name) return;
+            // Find template by exact name match from the datalist selection
+            const templates = (Diets.getAll() || []).filter(isDietTemplate);
+            const found = templates.find(t => t.name === name);
+            if (found) {
+                window.onDietCopyChange(found.id);
+            }
+        };
+
+        window.onDietCopyChange = function (id) {
+            if (!id) return;
+            const diet = Diets.getById(id);
+            if (!diet) return;
+
+            document.getElementById('dietName').value = diet.name + " (Copia)";
+            document.getElementById('dietDescription').value = diet.description || '';
+            document.getElementById('dietCalories').value = diet.calories || 0;
+            document.getElementById('dietMealsCount').value = diet.mealsCount || 4;
+            document.getElementById('dietProt').value = (diet.macros && diet.macros.protein) || 0;
+            document.getElementById('dietCarbs').value = (diet.macros && diet.macros.carbs) || 0;
+            document.getElementById('dietFat').value = (diet.macros && diet.macros.fat) || 0;
+            
+            window.lastCopiedDietId = id;
+            showToast('Datos cargados de: ' + diet.name, 'success');
+        };
+
+        window.saveDiet = function () {
+            const name = document.getElementById('dietName').value;
+            const description = document.getElementById('dietDescription').value;
+            const calories = parseInt(document.getElementById('dietCalories').value) || 0;
+            const mealsCount = parseInt(document.getElementById('dietMealsCount').value) || 4;
+
+            const macros = {
+                protein: parseInt(document.getElementById('dietProt').value) || 0,
+                carbs: parseInt(document.getElementById('dietCarbs').value) || 0,
+                fat: parseInt(document.getElementById('dietFat').value) || 0
+            };
+
+            if (!name) {
+                showToast('Por favor, indica un nombre para la dieta', 'error');
+                return;
+            }
+
+            // Generate initial meals structure
+            let meals = [];
+            const copySearchVal = document.getElementById('dietCopySearch')?.value;
+            let copyFromId = null;
+            
+            if (copySearchVal) {
+                const templates = (Diets.getAll() || []).filter(isDietTemplate);
+                const found = templates.find(t => t.name === copySearchVal);
+                if (found) copyFromId = found.id;
+            }
+            
+            if (copyFromId) {
+                const sourceDiet = Diets.getById(copyFromId);
+                if (sourceDiet && sourceDiet.meals) {
+                    meals = JSON.parse(JSON.stringify(sourceDiet.meals));
+                }
+            } 
+            
+            // If still empty or mealsCount changed, build new ones
+            if (meals.length === 0) {
+                for (let i = 0; i < mealsCount; i++) {
+                    let mealName = `Comida ${i + 1} `;
+                    if (mealsCount === 3) mealName = ['Desayuno', 'Almuerzo', 'Cena'][i];
+                    else if (mealsCount === 4) mealName = ['Desayuno', 'Almuerzo', 'Merienda', 'Cena'][i];
+                    else if (mealsCount === 5) mealName = ['Desayuno', 'Media Mañana', 'Almuerzo', 'Merienda', 'Cena'][i];
+
+                    meals.push({
+                        id: 'meal_' + Date.now() + '_' + i,
+                        name: mealName,
+                        description: '',
+                        foods: []
+                    });
+                }
+            }
+
+            const dietData = {
+                name,
+                description,
+                calories,
+                macros,
+                mealsCount,
+                meals
+            };
+
+            const newDiet = Diets.create(dietData);
+            if (newDiet) {
+                showToast('Dieta creada correctamente', 'success');
+                loadDiets();
+                window.closeModal();
+            } else {
+                showToast('Error al crear la dieta', 'error');
+            }
+        };
+
+        // editingDietId is now managed in diet-editor.js (window.editingDietId)
+
+        window.viewDiet = function (id) {
+            window.editingDietId = id;
+            if (window.renderDietEditor) {
+                window.renderDietEditor();
+            } else {
+                console.error("diet-editor.js not loaded");
+            }
+        };
+
+        // renderDietEditor removido (usa js/diet-editor.js)
+
+        // Diet Editor logic moved to js/diet-editor.js
+
+        window.onDietEditorClosed = function () {
+            loadDiets();
+        };
+
+        function deleteDiet(id) {
+            if (window.confirm('¿Eliminar esta dieta?')) {
+                Diets.delete(id);
+                showToast('Dieta eliminada', 'success');
+                loadDiets();
+            }
+        }
+
+        function duplicateDiet(id) {
+            const diet = Diets.getById(id);
+            if (!diet) return;
+
+            // Deep clone
+            const newDietData = {
+                name: diet.name + " (Copiar)",
+                description: diet.description || '',
+                calories: diet.calories || 0,
+                macros: JSON.parse(JSON.stringify(diet.macros || { protein: 0, carbs: 0, fat: 0 })),
+                mealsCount: diet.mealsCount || 4,
+                meals: JSON.parse(JSON.stringify(diet.meals || [])),
+                isTemplate: true
+            };
+
+            const created = Diets.create(newDietData);
+            if (created) {
+                showToast('Plantilla duplicada correctamente', 'success');
+                loadDiets();
+            } else {
+                showToast('Error al duplicar', 'error');
+            }
+        }
+
+        // checkFoodMacros removido (usa js/diet-editor.js)
+
+        function toggleMenu() {
+            document.getElementById('navLinks').classList.toggle('active');
+        }
+
+        // ============================================
+        // NUTRITION CALCULATORS
+        // ============================================
+
+        window.openNutritionCalculator = function (mode) {
+            // No currentClient in this page typically, but handle if needed
+            const defWeight = '';
+            const defHeight = '';
+            const defAge = '';
+
+            const content = `
+                <div class="tabs mb-md" style="display: flex; gap: 10px; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 10px;">
+                    <button class="btn btn-sm ${mode === 'calories' ? 'btn-primary' : 'btn-outline'}" onclick="window.switchCalculatorTab('calories', this)">🔥 Calorías (H-B)</button>
+                    <button class="btn btn-sm ${mode === 'macros' ? 'btn-primary' : 'btn-outline'}" onclick="window.switchCalculatorTab('macros', this)">🥩 Macros Diarios</button>
+                </div>
+
+                <!-- CALORIES TAB -->
+                <div id="calc-content-calories" style="display: ${mode === 'calories' ? 'block' : 'none'};">
+                    <div class="grid grid-2 gap-md mb-md">
+                        <div>
+                            <label class="form-label text-xs">Sexo</label>
+                            <select id="calc_sex" class="form-select">
+                                <option value="male">Hombre</option>
+                                <option value="female">Mujer</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="form-label text-xs">Edad</label>
+                            <input type="number" id="calc_age" class="form-input" placeholder="Años" value="${defAge}">
+                        </div>
+                    </div>
+                    <div class="grid grid-2 gap-md mb-md">
+                        <div>
+                            <label class="form-label text-xs">Peso (kg)</label>
+                            <input type="number" id="calc_weight" class="form-input" placeholder="kg" value="${defWeight}">
+                        </div>
+                        <div>
+                            <label class="form-label text-xs">Altura (cm)</label>
+                            <input type="number" id="calc_height" class="form-input" placeholder="cm" value="${defHeight}">
+                        </div>
+                    </div>
+                    <div class="mb-md">
+                        <label class="form-label text-xs">Nivel de Actividad Diaria</label>
+                        <select id="calc_activity" class="form-select">
+                            <option value="sedentary">Sedentario (Poco o nada ejercicio)</option>
+                            <option value="light">Ligero (1-3 días/sem)</option>
+                            <option value="moderate">Moderado (3-5 días/sem)</option>
+                            <option value="active">Activo (6-7 días/sem)</option>
+                            <option value="very_active">Muy Activo (Doble sesión/físico)</option>
+                        </select>
+                    </div>
+                     <button class="btn btn-primary w-full" onclick="window.performCalorieCalculation()">Calcular TDEE</button>
+                     
+                     <div id="calc_result_cals" class="mt-lg p-md bg-secondary rounded-md text-center" style="display: none;">
+                         <div class="text-xs text-muted mb-xs uppercase">TUS CALORÍAS DE MANTENIMIENTO</div>
+                         <div class="text-xl font-bold text-primary" id="result_tdee">--- kcal</div>
+                         <div class="text-xs text-muted mt-xs">Metabolismo Basal (TMB): <span id="result_bmr">---</span></div>
+                         <button class="btn btn-sm btn-outline mt-sm" onclick="window.useCaloriesForMacros()">Usar para Macros →</button>
+                     </div>
+                </div>
+
+                <!-- MACROS TAB -->
+                <div id="calc-content-macros" style="display: ${mode === 'macros' ? 'block' : 'none'};">
+                    <div class="mb-md">
+                        <label class="form-label text-xs">Calorías Base (Mantenimiento)</label>
+                        <input type="number" id="macro_cals" class="form-input" placeholder="Ej: 2500">
+                    </div>
+                    <div class="mb-md">
+                        <label class="form-label text-xs">Peso Corporal (kg)</label>
+                        <input type="number" id="macro_weight" class="form-input" placeholder="kg (para ref. proteína)" value="${defWeight}">
+                    </div>
+                    <div class="mb-md">
+                        <label class="form-label text-xs">Objetivo Principal</label>
+                        <select id="macro_goal" class="form-select">
+                            <option value="deficit_moderate">Déficit Moderado (-300kcal)</option>
+                            <option value="deficit_aggressive">Déficit Agresivo (-500kcal)</option>
+                            <option value="maintenance" selected>Mantenimiento</option>
+                            <option value="surplus_lean">Volumen Limpio (+250kcal)</option>
+                            <option value="surplus_aggressive">Volumen (+500kcal)</option>
+                        </select>
+                    </div>
+                    <div class="mb-md">
+                        <label class="form-label text-xs">Grasa Corporal % (Opcional)</label>
+                        <input type="number" id="macro_bodyfat" class="form-input" placeholder="%">
+                    </div>
+                    <button class="btn btn-primary w-full" onclick="window.performMacroCalculation()">Calcular Macros</button>
+
+                    <div id="calc_result_macros" class="mt-lg p-md bg-secondary rounded-md" style="display: none;">
+                         <div class="text-center mb-md">
+                             <div class="text-xs text-muted uppercase mb-sm">MACROS SUGERIDOS (<span id="res_target_cals" class="text-primary">---</span> kcal)</div>
+                             <div class="grid grid-3 gap-md mt-sm">
+                                <div>
+                                    <div class="text-lg font-bold text-success" id="res_prot">---</div>
+                                    <div class="text-xs text-muted">Prot</div>
+                                </div>
+                                <div>
+                                    <div class="text-lg font-bold text-warning" id="res_carbs">---</div>
+                                    <div class="text-xs text-muted">Carbs</div>
+                                </div>
+                                <div>
+                                    <div class="text-lg font-bold text-error" id="res_fat">---</div>
+                                    <div class="text-xs text-muted">Grasa</div>
+                                </div>
+                             </div>
+                         </div>
+                         <button id="btn_apply_macros" class="btn btn-sm btn-primary w-full mt-md" style="display: none;" onclick="window.applyMacrosToDiet()">Aplicar a Dieta en Edición</button>
+                    </div>
+                </div>
+            `;
+
+            showModal('Calculadora Nutricional', content, [
+                { text: 'Cerrar', class: 'btn-secondary', onclick: 'window.closeModal()' }
+            ]);
+        };
+
+        window.switchCalculatorTab = function (tab, btn) {
+            document.getElementById('calc-content-calories').style.display = tab === 'calories' ? 'block' : 'none';
+            document.getElementById('calc-content-macros').style.display = tab === 'macros' ? 'block' : 'none';
+
+            const btns = btn.parentElement.querySelectorAll('button');
+            btns.forEach(b => {
+                b.classList.remove('btn-primary');
+                b.classList.add('btn-outline');
+            });
+            btn.classList.remove('btn-outline');
+            btn.classList.add('btn-primary');
+
+            if (tab === 'macros') {
+                const weightC = document.getElementById('calc_weight').value;
+                if (weightC && !document.getElementById('macro_weight').value) {
+                    document.getElementById('macro_weight').value = weightC;
+                }
+            }
+        };
+
+        window.performCalorieCalculation = function () {
+            const sex = document.getElementById('calc_sex').value;
+            const age = parseInt(document.getElementById('calc_age').value);
+            const weight = parseFloat(document.getElementById('calc_weight').value);
+            const height = parseFloat(document.getElementById('calc_height').value);
+            const activity = document.getElementById('calc_activity').value;
+
+            if (!age || !weight || !height) {
+                showToast('Por favor completa todos los campos', 'error');
+                return;
+            }
+
+            const bmr = calculateBMR(sex, weight, height, age);
+            const tdee = calculateTDEE(bmr, activity);
+
+            document.getElementById('result_bmr').textContent = Math.round(bmr) + ' kcal';
+            document.getElementById('result_tdee').textContent = Math.round(tdee) + ' kcal';
+            document.getElementById('calc_result_cals').style.display = 'block';
+
+            window.lastCalculatedTDEE = Math.round(tdee);
+            window.lastCalculatedWeight = weight;
+        };
+
+        window.useCaloriesForMacros = function () {
+            if (window.lastCalculatedTDEE) {
+                const macrosBtn = document.querySelector('.tabs button:nth-child(2)');
+                if (macrosBtn) macrosBtn.click();
+
+                setTimeout(() => {
+                    document.getElementById('macro_cals').value = window.lastCalculatedTDEE;
+                    if (window.lastCalculatedWeight) document.getElementById('macro_weight').value = window.lastCalculatedWeight;
+                }, 50);
+            }
+        };
+
+        window.performMacroCalculation = function () {
+            let calories = parseFloat(document.getElementById('macro_cals').value);
+            const weight = parseFloat(document.getElementById('macro_weight').value);
+            const goal = document.getElementById('macro_goal').value;
+
+            if (!calories || !weight) {
+                showToast('Ingresa calorías y peso', 'error');
+                return;
+            }
+
+            const targetCals = calculateTargetCalories(calories, goal);
+            const macros = calculateMacros(targetCals, weight, goal);
+
+            document.getElementById('res_target_cals').textContent = Math.round(targetCals);
+            document.getElementById('res_prot').textContent = macros.protein + 'g';
+            document.getElementById('res_carbs').textContent = macros.carbs + 'g';
+            document.getElementById('res_fat').textContent = macros.fat + 'g';
+
+            document.getElementById('calc_result_macros').style.display = 'block';
+
+            const btnApply = document.getElementById('btn_apply_macros');
+            if (window.editingDietId) {
+                btnApply.style.display = 'block';
+                btnApply.textContent = 'Aplicar a Dieta en Edición';
+            } else if (document.getElementById('dietName')) {
+                btnApply.style.display = 'block';
+                btnApply.textContent = 'Aplicar a Nueva Plantilla';
+            } else {
+                btnApply.style.display = 'none';
+            }
+        };
+
+        window.applyMacrosToDiet = function () {
+            let calories = parseInt(document.getElementById('res_target_cals').textContent);
+            let prot = parseInt(document.getElementById('res_prot').textContent);
+            let carbs = parseInt(document.getElementById('res_carbs').textContent);
+            let fat = parseInt(document.getElementById('res_fat').textContent);
+
+            if (window.editingDietId) {
+                const diet = Diets.getById(window.editingDietId);
+                if (diet) {
+                    diet.calories = calories;
+                    diet.macros = { protein: prot, carbs: carbs, fat: fat };
+                    Diets.update(window.editingDietId, { calories: diet.calories, macros: diet.macros });
+
+                    if (typeof window.renderDietEditor === 'function') {
+                        window.renderDietEditor();
+                    }
+                    showToast('Macros aplicados a la dieta', 'success');
+                    window.closeCalculatorModals();
+                }
+            } else if (document.getElementById('dietName')) {
+                // Applying to the "New Template" modal
+                document.getElementById('dietCalories').value = calories;
+                document.getElementById('dietProt').value = prot;
+                document.getElementById('dietCarbs').value = carbs;
+                document.getElementById('dietFat').value = fat;
+                showToast('Macros aplicados al nuevo plan', 'success');
+                window.closeCalculatorModals();
+            } else {
+                showToast('Abre el editor de una dieta o el formulario de nueva plantilla.', 'warning');
+            }
+        };
+
+        window.closeCalculatorModals = function() {
+            const modals = document.querySelectorAll('.modal-overlay');
+            for (let i = modals.length - 1; i >= 0; i--) {
+                if (modals[i].innerHTML.includes('Calculadora Nutricional')) {
+                    modals[i].remove();
+                    break;
+                }
+            }
+        };
+
+        loadDiets();
+
+        // Check for quick actions
+        const pageUrlParams = new URLSearchParams(window.location.search);
+        if (pageUrlParams.get('action') === 'new') {
+            showAddDietModal();
+        }
+    </script>
+
+    <script>
+        // Función que llama el sistema de Google cuando la sesión es exitosa
+        async function onGoogleAuthSuccess() {
+            // Sincronizar con la nube
+            if (window.FirebaseService) {
+                await window.FirebaseService.init();
+                await window.syncFromCloud();
+            }
+
+            // Aplicar tema (Logo y colores)
+            if (typeof BrandConfig !== 'undefined') {
+                BrandConfig.applyTheme();
+            }
+
+            document.getElementById('login-screen').style.display = 'none';
+            document.getElementById('app').style.display = 'block';
+
+            if (typeof window.dibujarTabla === 'function') {
+                window.dibujarTabla();
+            } else if (typeof dibujarTabla === 'function') {
+                dibujarTabla();
+            }
+            if (typeof renderDiets === 'function') renderDiets();
+            if (typeof loadFoods === 'function') loadFoods();
+        }
+    </script>
+</body>
+
+</html>

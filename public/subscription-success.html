@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Suscripción Activa - Fitness App</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles/theme.css">
+    <link rel="stylesheet" href="styles/components.css">
+    <style>
+        body {
+            background-color: #0B0B1A;
+            color: white;
+            font-family: 'Outfit', sans-serif;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            margin: 0;
+        }
+        .success-card {
+            background: #15152E;
+            padding: 3rem;
+            border-radius: 20px;
+            text-align: center;
+            max-width: 450px;
+            border: 1px solid #10B981;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+        }
+    </style>
+</head>
+<body>
+    <div class="success-card">
+        <div style="font-size: 5rem; margin-bottom: 1rem;">✅</div>
+        <h1 style="color: #10B981;">¡Pago Confirmado!</h1>
+        <p style="opacity: 0.7; line-height: 1.6; margin-bottom: 2rem;">
+            Tu suscripción ha sido renovada con éxito. Ya tienes acceso total a todas las herramientas de gestión de clientes.
+        </p>
+        <button class="btn btn-primary btn-lg" style="width: 100%;" onclick="window.location.href='trainer-dashboard.html'">
+            Ir a mi Panel
+        </button>
+    </div>
+
+    <script src="js/data-models.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', async () => {
+            const params = new URLSearchParams(window.location.search);
+            const trainerId = params.get('t') || localStorage.getItem('activeTrainerId');
+            
+            if (trainerId) {
+                const PLATFORM_KEY = 'saasFitnessPlatform';
+                const platform = JSON.parse(localStorage.getItem(PLATFORM_KEY) || '{"trainers":[]}');
+                const idx = platform.trainers.findIndex(t => t.id === trainerId);
+                
+                if (idx !== -1) {
+                    // Actualizar estado y fecha de expiración (+30 días)
+                    const now = new Date();
+                    platform.trainers[idx].status = 'active';
+                    platform.trainers[idx].lastPaymentDate = now.toLocaleDateString('es-ES');
+                    
+                    const expiry = new Date();
+                    expiry.setMonth(expiry.getMonth() + 1);
+                    platform.trainers[idx].expiryDate = expiry.toLocaleDateString('es-ES');
+                    
+                    localStorage.setItem(PLATFORM_KEY, JSON.stringify(platform));
+                    console.log("Subscription updated for:", trainerId);
+
+                    // Sincronizar con Firebase si está listo
+                    if (window.FirebaseService && window.FirebaseService.isReady) {
+                        await window.FirebaseService.saveData('saasPlatform', 'config', platform);
+                    }
+                }
+            }
+        });
+    </script>
+</body>
+</html>

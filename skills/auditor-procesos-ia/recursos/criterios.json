@@ -1,0 +1,13 @@
+{
+    "criterios_evaluacion": {
+        "repetitividad": "Frecuencia de la tarea en el tiempo.",
+        "basado_en_reglas": "Si la tarea sigue una lógica clara (si/entonces).",
+        "volumen_datos": "Cantidad de información procesada.",
+        "coste_error": "Impacto económico de un fallo humano."
+    },
+    "escala_automatizacion": {
+        "1-3": "Bajo: Requiere juicio humano complejo/físico.",
+        "4-6": "Medio: IA como asistente/copiloto.",
+        "7-10": "Alto: Automatizable casi al 100%."
+    }
+}

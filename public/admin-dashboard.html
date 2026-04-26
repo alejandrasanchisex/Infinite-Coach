@@ -1,0 +1,687 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Master ADMIN Panel - Fitness App Platform</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles/theme.css">
+    <link rel="stylesheet" href="styles/components.css">
+    <style>
+        :root {
+            --admin-primary: #8B5CF6; /* Purple for Master Admin */
+            --admin-bg: #0B0B1A;
+            --admin-card: #15152E;
+        }
+
+        body {
+            background-color: var(--admin-bg);
+            font-family: 'Outfit', sans-serif;
+            margin: 0;
+            color: white;
+        }
+
+        .admin-sidebar {
+            width: 250px;
+            background: var(--admin-card);
+            height: 100vh;
+            position: fixed;
+            left: 0;
+            top: 0;
+            border-right: 1px solid rgba(139, 92, 246, 0.2);
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 30px;
+            z-index: 1000;
+        }
+
+        .admin-main {
+            margin-left: 250px;
+            padding: 40px;
+            min-height: 100vh;
+        }
+
+        .admin-nav-item {
+            padding: 12px 15px;
+            border-radius: 8px;
+            color: rgba(255,255,255,0.7);
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-weight: 500;
+        }
+
+        .admin-nav-item:hover, .admin-nav-item.active {
+            background: rgba(139, 92, 246, 0.1);
+            color: var(--admin-primary);
+        }
+
+        .stat-card-admin {
+            background: var(--admin-card);
+            border: 1px solid rgba(139, 92, 246, 0.1);
+            padding: 20px;
+            border-radius: 12px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .stat-card-admin .value {
+            font-size: 2.2rem;
+            font-weight: 700;
+            color: var(--admin-primary);
+        }
+
+        .stat-card-admin .label {
+            color: rgba(255,255,255,0.5);
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .trainer-table-card {
+            background: var(--admin-card);
+            border-radius: 12px;
+            overflow: hidden;
+            border: 1px solid rgba(139, 92, 246, 0.1);
+            margin-top: 30px;
+        }
+
+        .badge-sub {
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.65rem;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+
+        .badge-active { background: rgba(16, 185, 129, 0.1); color: #10B981; }
+        .badge-expired { background: rgba(239, 68, 68, 0.1); color: #EF4444; }
+
+        .search-bar-admin {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 10px 15px;
+            border-radius: 8px;
+            color: white;
+            width: 300px;
+        }
+
+        .admin-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+
+        .modal-overlay-admin {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(5px);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 2000;
+        }
+
+        .modal-content-admin {
+            background: var(--admin-card);
+            width: 100%;
+            max-width: 500px;
+            padding: 2rem;
+            border-radius: 16px;
+            border: 1px solid var(--admin-primary);
+        }
+
+        /* Custom Toast */
+        .admin-toast {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            padding: 12px 24px;
+            border-radius: 8px;
+            color: white;
+            font-weight: bold;
+            z-index: 9999;
+            transform: translateY(100px);
+            transition: all 0.3s cubic-bezier(0.18, 0.89, 0.32, 1.28);
+        }
+        .admin-toast.show { transform: translateY(0); }
+
+        .plan-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px;
+            background: rgba(255,255,255,0.03);
+            border-radius: 10px;
+            border: 1px solid rgba(255,255,255,0.05);
+            transition: all 0.3s;
+        }
+        .plan-item:hover {
+            border-color: var(--admin-primary);
+            background: rgba(139, 92, 246, 0.05);
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Sidebar -->
+    <aside class="admin-sidebar">
+        <div class="logo" style="color: var(--admin-primary); border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 20px; font-weight: 800; font-size: 1.2rem; display: flex; align-items: center; justify-content: flex-start; padding-left: 15px;">
+            ASTeam
+        </div>
+        <nav style="flex: 1; display: flex; flex-direction: column; gap: 8px;">
+            <div id="btn-trainers" class="admin-nav-item active" onclick="showView('trainers')">👥 Entrenadores</div>
+            <div id="btn-billing" class="admin-nav-item" onclick="showView('billing')">💰 Suscripciones</div>
+            <div id="btn-settings" class="admin-nav-item" onclick="showView('settings')">⚙️ Configuración Admin</div>
+            <div class="divider"></div>
+            <div class="admin-nav-item" style="color: var(--primary-color); background: rgba(0, 217, 255, 0.05);" onclick="window.location.href='trainer-dashboard.html'">🏋️ Ir al Panel de Entrenador</div>
+        </nav>
+        <div class="admin-nav-item" style="color: #EF4444; margin-top: auto;" onclick="logout()">🚪 Cerrar Sesión MASTER</div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="admin-main">
+        <!-- View: Trainers -->
+        <div id="trainers-view" class="admin-view">
+            <header class="admin-header">
+                <div>
+                    <h1 style="font-size: 1.8rem; margin: 0;">Gestión de Licencias</h1>
+                    <p style="color: rgba(255,255,255,0.5); font-size: 0.9rem; margin-top: 5px;">Monitoriza tus entrenadores y sus pagos activos.</p>
+                </div>
+                <button class="btn btn-primary" onclick="window.openTrainerModal()">
+                    ➕ Nueva Licencia / Alta
+                </button>
+            </header>
+
+            <div class="grid grid-3 gap-lg mb-xl">
+                <div class="stat-card-admin">
+                    <span class="label">Entrenadores Totales</span>
+                    <span class="value" id="totalTrainers">0</span>
+                </div>
+                <div class="stat-card-admin">
+                    <span class="label">Ingresos Mensuales</span>
+                    <span class="value" id="totalMRR">0 €</span>
+                </div>
+                <div class="stat-card-admin">
+                    <span class="label">Suscripciones Activas</span>
+                    <span class="value" id="activeSubs">0</span>
+                </div>
+            </div>
+
+            <div class="trainer-table-card">
+                <div class="p-md flex-between items-center" style="background: rgba(255,255,255,0.02); border-bottom: 1px solid rgba(255,255,255,0.05); padding: 15px;">
+                    <input type="text" class="search-bar-admin" placeholder="Buscar por nombre o email..." oninput="window.filterTrainers(this.value)">
+                    <div class="text-xs" style="color: rgba(255,255,255,0.5);">Última actualización: hoy, <span id="lastUpdate">00:00</span></div>
+                </div>
+                <div class="table-wrapper">
+                    <table class="table" style="width: 100%; border-collapse: collapse;">
+                        <thead style="background: rgba(255,255,255,0.02);">
+                            <tr>
+                                <th style="text-align: left; padding: 15px;">Entrenador</th>
+                                <th style="text-align: left; padding: 15px;">Plan</th>
+                                <th style="text-align: left; padding: 15px;">Estado</th>
+                                <th style="text-align: left; padding: 15px;">Último Pago</th>
+                                <th style="text-align: left; padding: 15px;">Expira</th>
+                                <th style="text-align: left; padding: 15px;">Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody id="trainerListTable">
+                            <!-- JS -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- View: Billing -->
+        <div id="billing-view" class="admin-view" style="display: none;">
+            <header class="admin-header">
+                <div>
+                    <h1 style="font-size: 1.8rem; margin: 0;">Planes y Cobro Automático</h1>
+                    <p style="color: rgba(255,255,255,0.5); font-size: 0.9rem; margin-top: 5px;">Configura tus productos de Stripe para cobros recurrentes.</p>
+                </div>
+                <button class="btn btn-secondary" onclick="window.openPlanModal()">
+                    ➕ Añadir Nuevo Plan
+                </button>
+            </header>
+            
+            <div class="grid grid-2 gap-lg mb-xl">
+                <div class="card" style="background: var(--admin-card); border: 1px solid rgba(255,255,255,0.05); padding: 20px;">
+                    <div class="flex-between mb-md">
+                        <h3 style="margin-top: 0;">Gestión de Planes SaaS</h3>
+                        <span class="text-xs" style="color: #10B981;">● Activo con Stripe</span>
+                    </div>
+                    <div id="planListContainer" style="display: flex; flex-direction: column; gap: 12px;">
+                        <!-- JS Dynamic Plans -->
+                    </div>
+                </div>
+                
+                <div class="card" style="background: var(--admin-card); border: 1px solid rgba(255,255,255,0.05); padding: 20px;">
+                    <h3 style="margin-top: 0;">Resumen Total</h3>
+                    <div style="font-size: 3rem; font-weight: 800; color: var(--admin-primary);" id="billingTotalRev">0 €</div>
+                    <p style="color: rgba(255,255,255,0.5);">Ingresos totales acumulados este mes.</p>
+                    <div class="mt-lg p-sm" style="background: rgba(139, 92, 246, 0.05); border-radius: 8px; border: 1px dashed var(--admin-primary);">
+                        <p class="text-xs" style="color: var(--admin-primary); margin: 0;">💡 Consejo: Usa "Payment Links" de Stripe para que tus entrenadores se suscriban solos. Pega el link en cada plan.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- View: Settings -->
+        <div id="settings-view" class="admin-view" style="display: none;">
+            <header class="admin-header">
+                <div>
+                    <h1 style="font-size: 1.8rem; margin: 0;">Ajustes de Plataforma</h1>
+                    <p style="color: rgba(255,255,255,0.5); font-size: 0.9rem; margin-top: 5px;">Personaliza la experiencia global de tu SaaS.</p>
+                </div>
+            </header>
+
+            <div class="grid grid-2 gap-lg">
+                <div class="card" style="background: var(--admin-card); border: 1px solid rgba(255,255,255,0.05); padding: 25px; border-radius: 12px;">
+                    <div class="form-group mb-md">
+                        <label style="display: block; margin-bottom: 8px; font-size: 0.9rem;">Nombre de la Plataforma</label>
+                        <input type="text" class="form-input" value="SaaS Fitness Master" style="background: rgba(255,255,255,0.05);">
+                    </div>
+                    <div class="form-group mb-lg">
+                        <label style="display: block; margin-bottom: 8px; font-size: 0.9rem;">Email de soporte (Admin)</label>
+                        <input type="email" class="form-input" value="admin@tuappfitness.com" style="background: rgba(255,255,255,0.05);">
+                    </div>
+                    <button class="btn btn-primary" onclick="window.adminToast('Ajustes guardados correctamente', 'success')">Guardar Cambios</button>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Modal for New Trainer -->
+    <div class="modal-overlay-admin" id="trainerModal">
+        <div class="modal-content-admin">
+            <h2 style="margin-top: 0; color: var(--admin-primary);">🎁 Nueva Licencia</h2>
+            <p style="color: rgba(255,255,255,0.6); font-size: 0.9rem; margin-bottom: 25px;">Al dar de alta a un entrenador, se le generará una clave de acceso única.</p>
+            
+            <form id="trainerForm">
+                <div class="form-group mb-md">
+                    <label style="display: block; margin-bottom: 6px; font-size: 0.85rem;">Nombre Completo</label>
+                    <input type="text" id="tName" class="form-input" placeholder="Nombre completo del entrenador" required>
+                </div>
+                <div class="form-group mb-md">
+                    <label style="display: block; margin-bottom: 6px; font-size: 0.85rem;">Email de Acceso</label>
+                    <input type="email" id="tEmail" class="form-input" placeholder="email@ejemplo.com" required>
+                </div>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                    <div class="form-group mb-lg">
+                        <label style="display: block; margin-bottom: 6px; font-size: 0.85rem;">Plan</label>
+                        <select id="tPlan" class="form-select">
+                            <!-- Dynamic Load -->
+                        </select>
+                    </div>
+                    <div class="form-group mb-lg">
+                        <label style="display: block; margin-bottom: 6px; font-size: 0.85rem;">Día Factur.</label>
+                        <input type="number" id="tBillingDay" class="form-input" value="1" min="1" max="28">
+                    </div>
+                </div>
+                <div style="display: flex; gap: 12px; margin-top: 10px;">
+                    <button type="button" class="btn btn-secondary" style="flex:1" onclick="window.closeTrainerModal()">Cerrar</button>
+                    <button type="submit" class="btn btn-primary" style="flex:1">🚀 Activar Licencia</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal for Plan Editing -->
+    <div class="modal-overlay-admin" id="planModal">
+        <div class="modal-content-admin">
+            <h2 id="planModalTitle" style="margin-top: 0; color: var(--admin-primary);">Configurar Plan</h2>
+            <form id="planForm">
+                <input type="hidden" id="planEditId">
+                <div class="form-group mb-md">
+                    <label style="display: block; margin-bottom: 6px; font-size: 0.85rem;">Nombre del Plan</label>
+                    <input type="text" id="pName" class="form-input" placeholder="Ej: Plan Pro" required>
+                </div>
+                <div class="form-group mb-md">
+                    <label style="display: block; margin-bottom: 6px; font-size: 0.85rem;">Precio Mensual (€)</label>
+                    <input type="number" id="pPrice" class="form-input" placeholder="59" required>
+                </div>
+                <div class="form-group mb-md">
+                    <label style="display: block; margin-bottom: 6px; font-size: 0.85rem;">Características / Descripción</label>
+                    <input type="text" id="pDesc" class="form-input" placeholder="Ej: Clientes Ilimitados" required>
+                </div>
+                <div class="form-group mb-lg">
+                    <label style="display: block; margin-bottom: 6px; font-size: 0.85rem; color: #10B981;">🔗 Enlace de Pago Stripe (Recurrente)</label>
+                    <input type="url" id="pStripeLink" class="form-input" placeholder="https://buy.stripe.com/..." style="border-color: rgba(16, 185, 129, 0.3);">
+                    <span style="font-size: 0.7rem; color: #3b82f6;">(Pega aquí el Payment Link de tu cuenta Stripe para automatizar el cobro)</span>
+                </div>
+                <div style="display: flex; gap: 12px;">
+                    <button type="button" class="btn btn-secondary" style="flex:1" onclick="window.closePlanModal()">Cerrar</button>
+                    <button type="submit" class="btn btn-primary" style="flex:1">💾 Guardar Plan</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Scripts Cloud Ready -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+    <script src="js/firebase-config.js"></script>
+    <script src="js/firebase-service.js"></script>
+
+    <!-- Supabase SDK & Service -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="js/supabase-service.js"></script>
+
+    <script src="js/utils.js?v=92"></script>
+
+    <script>
+        // MASTER STATE CONTROL
+        const PLATFORM_KEY = 'saasFitnessPlatform';
+
+        // STORAGE HANDLER
+        function getPlatformData() {
+            try {
+                const raw = localStorage.getItem(PLATFORM_KEY);
+                const data = raw ? JSON.parse(raw) : { 
+                    trainers: [], 
+                    plans: [
+                        { id: 'Basic', name: 'Plan Basic', price: 29, desc: 'Hasta 20 clientes', stripeLink: '' },
+                        { id: 'Pro', name: 'Plan Pro', price: 59, desc: 'Clientes ilimitados', stripeLink: '' },
+                        { id: 'Elite', name: 'Plan Elite', price: 99, desc: 'Marca blanca', stripeLink: '' }
+                    ],
+                    stats: { totalRevenue: 0 } 
+                };
+                if(!data.trainers) data.trainers = [];
+                if(!data.plans) data.plans = [
+                    { id: 'Basic', name: 'Plan Basic', price: 29, desc: 'Hasta 20 clientes', stripeLink: '' },
+                    { id: 'Pro', name: 'Plan Pro', price: 59, desc: 'Clientes ilimitados', stripeLink: '' },
+                    { id: 'Elite', name: 'Plan Elite', price: 99, desc: 'Marca blanca', stripeLink: '' },
+                    { id: 'Free', name: 'Plan Gratis', price: 0, desc: 'Licencia Cortesía / Admin', stripeLink: '' }
+                ];
+                return data;
+            } catch(e) {
+                console.error("Error storage:", e);
+                return { trainers: [], plans: [] };
+            }
+        }
+
+        async function savePlatformData(data) {
+            localStorage.setItem(PLATFORM_KEY, JSON.stringify(data));
+            window.renderDashboard();
+            window.renderPlans();
+
+            // Sync with Firebase if available
+            if (window.FirebaseService && window.FirebaseService.isReady) {
+                const success = await window.FirebaseService.saveData('saasPlatform', 'config', data);
+                if (success) {
+                    console.log("Cloud Sync Success ✅");
+                }
+            }
+        }
+
+        // TOOL: TOAST
+        window.adminToast = (msg, type = 'info') => {
+            const toast = document.createElement('div');
+            toast.className = 'admin-toast';
+            toast.textContent = msg;
+            toast.style.backgroundColor = type === 'success' ? '#10B981' : (type === 'error' ? '#EF4444' : '#8B5CF6');
+            document.body.appendChild(toast);
+            setTimeout(() => toast.classList.add('show'), 10);
+            setTimeout(() => {
+                toast.classList.remove('show');
+                setTimeout(() => toast.remove(), 400);
+            }, 3000);
+        };
+
+        // TOOL: UUID & KEYS
+        function genUUID() { return 't-' + Math.random().toString(36).substr(2, 9); }
+        function genKey() { return 'FIT-' + Math.random().toString(36).substr(2, 4).toUpperCase() + '-' + new Date().getFullYear().toString().substr(2); }
+
+        // VIEW NAVIGATION
+        window.showView = (viewName) => {
+            document.querySelectorAll('.admin-view').forEach(v => v.style.display = 'none');
+            document.querySelectorAll('.admin-nav-item').forEach(v => v.classList.remove('active'));
+            const target = document.getElementById(viewName + '-view');
+            const btn = document.getElementById('btn-' + viewName);
+            if(target) target.style.display = 'block';
+            if(btn) btn.classList.add('active');
+        };
+
+        // MODALS
+        window.openTrainerModal = () => {
+            const data = getPlatformData();
+            const select = document.getElementById('tPlan');
+            select.innerHTML = data.plans.map(p => `<option value="${p.id}">${p.name} (${p.price}€)</option>`).join('');
+            document.getElementById('tName').value = '';
+            document.getElementById('tEmail').value = '';
+            document.getElementById('trainerModal').style.display = 'flex';
+        };
+        window.closeTrainerModal = () => { document.getElementById('trainerModal').style.display = 'none'; };
+
+        window.openPlanModal = (planId = null) => {
+            const data = getPlatformData();
+            if(planId) {
+                const p = data.plans.find(x => x.id === planId);
+                document.getElementById('planModalTitle').textContent = 'Editar Plan Stripe';
+                document.getElementById('planEditId').value = p.id;
+                document.getElementById('pName').value = p.name;
+                document.getElementById('pPrice').value = p.price;
+                document.getElementById('pDesc').value = p.desc;
+                document.getElementById('pStripeLink').value = p.stripeLink || '';
+            } else {
+                document.getElementById('planModalTitle').textContent = 'Nuevo Plan Stripe';
+                document.getElementById('planEditId').value = '';
+                document.getElementById('pName').value = '';
+                document.getElementById('pPrice').value = '';
+                document.getElementById('pDesc').value = '';
+                document.getElementById('pStripeLink').value = '';
+            }
+            document.getElementById('planModal').style.display = 'flex';
+        };
+        window.closePlanModal = () => { document.getElementById('planModal').style.display = 'none'; };
+
+        // RENDER LOGIC
+        window.renderDashboard = () => {
+            const data = getPlatformData();
+            const table = document.getElementById('trainerListTable');
+            if(!table) return;
+
+            const trainers = data.trainers;
+            document.getElementById('totalTrainers').textContent = trainers.length;
+            const mrr = trainers.filter(t => t.status === 'active').reduce((sum, t) => sum + (t.planPrice || 0), 0);
+            document.getElementById('totalMRR').textContent = mrr + " €";
+            document.getElementById('billingTotalRev').textContent = mrr + " €";
+            document.getElementById('activeSubs').textContent = trainers.filter(t => t.status === 'active').length;
+            document.getElementById('lastUpdate').textContent = new Date().toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' });
+
+            if(trainers.length === 0) {
+                table.innerHTML = '<tr><td colspan="6" style="padding: 40px; text-align: center; opacity: 0.5;">No hay entrenadores.</td></tr>';
+            } else {
+                table.innerHTML = trainers.map(t => `
+                    <tr>
+                        <td style="padding: 15px; border-bottom: 1px solid rgba(255,255,255,0.03);">
+                            <div style="font-weight: 700;">${t.name}</div>
+                            <div style="font-size: 0.8rem; opacity: 0.6;">${t.email}</div>
+                            <div style="margin-top: 5px; font-family: monospace; font-size: 0.75rem; color: var(--admin-primary); background: rgba(139, 92, 246, 0.1); padding: 2px 6px; border-radius: 4px; display: inline-block;">🔑 ${t.licenseKey}</div>
+                        </td>
+                        <td style="padding: 15px; border-bottom: 1px solid rgba(255,255,255,0.03);">
+                            <div class="font-bold" style="color: #8B5CF6;">${t.plan}</div>
+                            <div class="text-xs opacity-50">${t.planPrice}€/mes</div>
+                        </td>
+                        <td style="padding: 15px; border-bottom: 1px solid rgba(255,255,255,0.03);">
+                            <span class="badge-sub ${t.status === 'active' ? 'badge-active' : 'badge-expired'}">${t.status === 'active' ? '● ACTIVA' : '✖ EXPIRADA'}</span>
+                        </td>
+                        <td style="padding: 15px; border-bottom: 1px solid rgba(255,255,255,0.03); font-size: 0.8rem; opacity: 0.8;">${t.lastPaymentDate}</td>
+                        <td style="padding: 15px; border-bottom: 1px solid rgba(255,255,255,0.03); font-size: 0.85rem; font-weight: 700; color: #8B5CF6;">${t.expiryDate}</td>
+                        <td style="padding: 15px; border-bottom: 1px solid rgba(255,255,255,0.03);">
+                             <div style="display: flex; gap: 10px;">
+                                <button onclick="window.sendWApp('${t.id}')" style="cursor: pointer; border: none; background: none; font-size: 1.2rem;" title="WhatsApp">📱</button>
+                                <button onclick="window.delT('${t.id}')" style="cursor: pointer; border: none; background: none; font-size: 1.2rem; color: #EF4444;" title="Eliminar">🗑️</button>
+                             </div>
+                        </td>
+                    </tr>
+                `).join('');
+            }
+        };
+
+        window.renderPlans = () => {
+            const data = getPlatformData();
+            const container = document.getElementById('planListContainer');
+            if(!container) return;
+            container.innerHTML = data.plans.map(p => `
+                <div class="plan-item">
+                    <div style="flex: 1;">
+                        <div style="font-weight: 700;">${p.name}</div>
+                        <div style="font-size: 0.75rem; opacity: 0.6;">${p.desc}</div>
+                        ${p.stripeLink ? `<p class="text-xs" style="color: #10B981; margin-top: 4px;">✔ Enlace Stripe configurado</p>` : `<p class="text-xs" style="color: #EF4444; margin-top: 4px;">⚠ Sin enlace de pago</p>`}
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 15px;">
+                        <span class="font-bold" style="color: var(--admin-primary);">${p.price},00 €</span>
+                        <div style="display: flex; gap: 5px;">
+                            <button onclick="window.openPlanModal('${p.id}')" style="background: none; border: none; cursor: pointer; font-size: 1rem;">✏️</button>
+                            <button onclick="window.delPlan('${p.id}')" style="background: none; border: none; cursor: pointer; font-size: 1rem; color: #EF4444;">🗑️</button>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        };
+
+        window.sendWApp = (id) => {
+            const data = getPlatformData();
+            const t = data.trainers.find(x => x.id === id);
+            if(!t) return;
+            
+            // Buscar el link de stripe de su plan
+            const planObj = data.plans.find(p => p.name === t.plan);
+            const stripeInfo = planObj && planObj.stripeLink ? `\nRenueva o Paga aquí: ${planObj.stripeLink}` : '';
+
+            const baseUrl = window.location.href.split('/').slice(0, -1).join('/') + '/trainer-login.html';
+            const message = `Hola ${t.name}.\nBienvenido a la plataforma. Tu acceso ya está listo:\n\nAcceso: ${baseUrl}\nUsuario: ${t.email}\nContraseña (Clave): *${t.licenseKey}*\n\n${stripeInfo}`;
+            window.open(`https://wa.me/?text=${encodeURIComponent(message)}`, '_blank');
+        };
+
+        window.delT = (id) => {
+            if(!confirm("¿Eliminar entrenador?")) return;
+            const data = getPlatformData();
+            data.trainers = data.trainers.filter(x => x.id !== id);
+            savePlatformData(data);
+            window.adminToast("Entrenador eliminado", "error");
+        };
+
+        window.delPlan = (id) => {
+            if(!confirm("¿Eliminar este plan?")) return;
+            const data = getPlatformData();
+            data.plans = data.plans.filter(x => x.id !== id);
+            savePlatformData(data);
+            window.adminToast("Plan eliminado", "info");
+        };
+
+        window.filterTrainers = (query) => {
+            const rows = document.querySelectorAll('#trainerListTable tr');
+            rows.forEach(r => { r.style.display = r.innerText.toLowerCase().includes(query.toLowerCase()) ? '' : 'none'; });
+        };
+
+        window.logout = () => { window.location.href = 'index.html'; };
+
+        // INITIALIZE EVENTS
+        document.addEventListener('DOMContentLoaded', async () => {
+            // SEGURIDAD: Verificar si es Master Admin
+            if (sessionStorage.getItem('_isMasterAdmin') !== 'true') {
+                window.location.href = 'admin-login.html';
+                return;
+            }
+
+            window.renderDashboard();
+            window.renderPlans();
+
+            // Try to init Cloud
+            if (window.SupabaseService) {
+                window.SupabaseService.init();
+                const cloudData = await window.SupabaseService.getGlobalConfig();
+                
+                // Validar si los datos de la nube tienen contenido real
+                const hasCloudData = cloudData && (cloudData.trainers?.length > 0 || cloudData.plans?.length > 0);
+
+                if (hasCloudData) {
+                    console.log("Admin: Cargando configuración desde Supabase.");
+                    localStorage.setItem(PLATFORM_KEY, JSON.stringify(cloudData));
+                    window.renderDashboard();
+                    window.renderPlans();
+                } else {
+                    // Si la nube está vacía (recién creada), buscamos en Firebase para migrar
+                    console.log("Admin: Supabase vacío. Buscando en Firebase Legacy para migración...");
+                    if (window.FirebaseService) {
+                        await window.FirebaseService.init();
+                        const fbData = await window.FirebaseService.getData('saasPlatform', 'config');
+                        if (fbData) {
+                            console.log("Admin: Migrando datos de Firebase a Supabase...");
+                            localStorage.setItem(PLATFORM_KEY, JSON.stringify(fbData));
+                            savePlatformData(fbData); // Este ya guarda en Supabase
+                            window.renderDashboard();
+                            window.renderPlans();
+                        }
+                    }
+                }
+            }
+
+            // Trainer Form
+            document.getElementById('trainerForm').addEventListener('submit', (e) => {
+                e.preventDefault();
+                const data = getPlatformData();
+                const planId = document.getElementById('tPlan').value;
+                const planObj = data.plans.find(p => p.id === planId);
+                
+                const isFree = planObj.price === 0;
+                const newT = {
+                    id: genUUID(),
+                    name: document.getElementById('tName').value,
+                    email: document.getElementById('tEmail').value,
+                    licenseKey: genKey(),
+                    plan: planObj.name,
+                    planPrice: planObj.price,
+                    status: 'active',
+                    lastPaymentDate: isFree ? 'LIFETIME' : new Date().toLocaleDateString('es-ES'),
+                    expiryDate: isFree ? '31/12/2099' : new Date(new Date().setMonth(new Date().getMonth() + 1)).toLocaleDateString('es-ES')
+                };
+                data.trainers.push(newT);
+                savePlatformData(data);
+                window.closeTrainerModal();
+                window.adminToast("¡Licencia activada!", "success");
+            });
+
+            // Plan Form
+            document.getElementById('planForm').addEventListener('submit', (e) => {
+                e.preventDefault();
+                const data = getPlatformData();
+                const editId = document.getElementById('planEditId').value;
+                if(editId) {
+                    const idx = data.plans.findIndex(p => p.id === editId);
+                    data.plans[idx].name = document.getElementById('pName').value;
+                    data.plans[idx].price = parseInt(document.getElementById('pPrice').value);
+                    data.plans[idx].desc = document.getElementById('pDesc').value;
+                    data.plans[idx].stripeLink = document.getElementById('pStripeLink').value;
+                } else {
+                    data.plans.push({
+                        id: 'p-' + Math.random().toString(36).substr(2, 5),
+                        name: document.getElementById('pName').value,
+                        price: parseInt(document.getElementById('pPrice').value),
+                        desc: document.getElementById('pDesc').value,
+                        stripeLink: document.getElementById('pStripeLink').value
+                    });
+                }
+                savePlatformData(data);
+                window.closePlanModal();
+                window.adminToast("Plan configurado con Stripe", "success");
+            });
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Acceso Cliente - Fitness App</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles/theme.css">
+    <link rel="stylesheet" href="styles/components.css">
+    <style>
+        .login-container {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: var(--spacing-lg);
+            background: linear-gradient(135deg, var(--bg-dark) 0%, var(--secondary-color) 100%);
+        }
+
+        .login-card {
+            max-width: 450px;
+            width: 100%;
+        }
+
+        .login-header {
+            text-align: center;
+            margin-bottom: var(--spacing-xl);
+        }
+
+        .login-logo {
+            width: 100px;
+            height: 100px;
+            margin: 0 auto var(--spacing-md);
+            border-radius: var(--radius-lg);
+        }
+
+        .access-code-input {
+            text-align: center;
+            font-size: 1.5rem;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            font-weight: 700;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="login-container">
+        <div class="card-glass login-card">
+            <div class="login-header">
+                <div class="login-logo" id="brandLogoContainer">
+                    <div style="font-size: 4rem;">💪</div>
+                </div>
+                <h1 id="brandName">Fitness App</h1>
+                <p class="text-muted">Acceso para clientes</p>
+            </div>
+
+            <form id="loginForm">
+                <div class="form-group">
+                    <label class="form-label">Código de Acceso</label>
+                    <input type="text" class="form-input access-code-input" id="accessCode" placeholder="XXXXXXXX"
+                        maxlength="8" required autocomplete="off">
+                    <div class="form-hint">Introduce el código proporcionado por tu entrenador</div>
+                </div>
+
+                <button type="submit" class="btn btn-primary btn-lg" style="width: 100%;">
+                    🔓 Acceder
+                </button>
+            </form>
+
+            <div class="divider"></div>
+
+            <div class="text-center text-muted" style="font-size: 0.875rem;">
+                ¿No tienes código? Contacta con tu entrenador
+            </div>
+        </div>
+    </div>
+
+    <script src="js/config.js"></script>
+    <script src="js/data-models.js"></script>
+    <script src="js/utils.js"></script>
+    <script>
+        // Apply brand theme if configured
+        if (BrandConfig.isConfigured()) {
+            BrandConfig.applyTheme();
+            const brand = BrandConfig.get();
+            document.getElementById('brandName').textContent = brand.name;
+
+            if (brand.logo) {
+                document.getElementById('brandLogoContainer').innerHTML = `
+          <img src="${brand.logo}" alt="Logo" style="width: 100%; height: 100%; object-fit: contain; border-radius: var(--radius-lg);">
+        `;
+            }
+        }
+
+        // Auto-uppercase input
+        document.getElementById('accessCode').addEventListener('input', (e) => {
+            e.target.value = e.target.value.toUpperCase();
+        });
+
+        // Handle login
+        document.getElementById('loginForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const code = document.getElementById('accessCode').value.trim();
+            const clients = Clients.getAll();
+            let client = clients.find(c => (c.accessCode || '').toUpperCase() === code.toUpperCase());
+
+            // Sincronización desactivada temporalmente para validación local
+            console.log('Login flow continues locally...');
+
+            if (client) {
+                // Store client session
+                sessionStorage.setItem('clientId', client.id);
+                window.location.href = 'client-dashboard.html';
+            } else {
+                showToast('Código de acceso incorrecto o no encontrado', 'error');
+            }
+        });
+    </script>
+</body>
+
+</html>

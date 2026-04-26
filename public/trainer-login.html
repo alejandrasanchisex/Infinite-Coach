@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Acceso Entrenadores - Fitness App SaaS</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles/theme.css">
+    <link rel="stylesheet" href="styles/components.css">
+    <style>
+        body {
+            background-color: #0B0B1A;
+            color: white;
+            font-family: 'Outfit', sans-serif;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            margin: 0;
+            overflow: hidden;
+        }
+
+        /* Fondo Animado */
+        .bg-glow {
+            position: fixed;
+            width: 80vw;
+            height: 80vw;
+            background: radial-gradient(circle, rgba(139, 92, 246, 0.15) 0%, transparent 70%);
+            top: -20vw;
+            right: -20vw;
+            z-index: -1;
+            filter: blur(80px);
+        }
+
+        .login-card {
+            background: rgba(21, 21, 46, 0.8);
+            backdrop-filter: blur(15px);
+            padding: 3rem;
+            border-radius: 24px;
+            width: 100%;
+            max-width: 420px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            text-align: center;
+            animation: slideUp 0.6s ease-out;
+        }
+
+        @keyframes slideUp {
+            from { transform: translateY(30px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        .login-header h1 {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            letter-spacing: -0.5px;
+        }
+
+        .login-header p {
+            color: rgba(255, 255, 255, 0.5);
+            font-size: 0.95rem;
+            margin-bottom: 2.5rem;
+        }
+
+        .form-group {
+            text-align: left;
+            margin-bottom: 1.5rem;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 8px;
+            font-size: 0.85rem;
+            font-weight: 500;
+            color: rgba(255, 255, 255, 0.7);
+            padding-left: 4px;
+        }
+
+        .form-input {
+            width: 100%;
+            background: rgba(255, 255, 255, 0.05) !important;
+            border: 1px solid rgba(255, 255, 255, 0.1) !important;
+            padding: 14px 18px !important;
+            border-radius: 12px !important;
+            color: white !important;
+            font-size: 1rem;
+            transition: all 0.3s;
+        }
+
+        .form-input:focus {
+            background: rgba(255, 255, 255, 0.08) !important;
+            border-color: var(--primary-color) !important;
+            box-shadow: 0 0 0 4px rgba(0, 217, 255, 0.1);
+            outline: none;
+        }
+
+        .btn-login {
+            width: 100%;
+            padding: 15px;
+            border-radius: 12px;
+            background: linear-gradient(135deg, var(--primary-color) 0%, #8B5CF6 100%);
+            color: white;
+            font-weight: 700;
+            font-size: 1rem;
+            border: none;
+            cursor: pointer;
+            margin-top: 1rem;
+            transition: all 0.3s;
+            box-shadow: 0 10px 20px rgba(139, 92, 246, 0.2);
+        }
+
+        .btn-login:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 15px 30px rgba(139, 92, 246, 0.3);
+        }
+
+        .btn-login:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .status-msg {
+            margin-top: 1.5rem;
+            font-size: 0.85rem;
+            min-height: 1.2rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="bg-glow"></div>
+
+    <div class="login-card">
+        <div class="login-header">
+            <div style="font-size: 3rem; margin-bottom: 1rem;">💼</div>
+            <h1>Panel de Entrenador</h1>
+            <p>Introduce tus credenciales de licencia para acceder.</p>
+        </div>
+
+        <form id="loginForm">
+            <div class="form-group">
+                <label class="form-label">Email del Entrenador</label>
+                <input type="email" id="email" class="form-input" placeholder="ejemplo@entrenador.com" required>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Clave de Licencia (Contraseña)</label>
+                <input type="password" id="licenseKey" class="form-input" placeholder="FIT-XXXX-26" required>
+            </div>
+
+            <button type="submit" id="submitBtn" class="btn-login">
+                Acceder a mi Panel 🚀
+            </button>
+        </form>
+
+        <div id="statusMsg" class="status-msg"></div>
+
+        <div style="margin-top: 2rem; padding-top: 1.5rem; border-top: 1px solid rgba(255,255,255,0.05);">
+            <p style="font-size: 0.75rem; color: rgba(255,255,255,0.4);">
+                ¿No tienes una licencia? <br> Contacta con el administrador del equipo.
+            </p>
+        </div>
+    </div>
+
+    <!-- Scripts Cloud Ready -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+    <script src="js/firebase-config.js"></script>
+    <script src="js/firebase-service.js"></script>
+
+    <!-- Supabase SDK & Service -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="js/supabase-service.js"></script>
+    <script src="js/utils.js?v=92"></script>
+
+    <script>
+        const PLATFORM_KEY = 'saasFitnessPlatform';
+
+        document.getElementById('loginForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const email = document.getElementById('email').value.trim().toLowerCase();
+            const key = document.getElementById('licenseKey').value.trim().toUpperCase();
+            const submitBtn = document.getElementById('submitBtn');
+            const statusMsg = document.getElementById('statusMsg');
+
+            submitBtn.disabled = true;
+            statusMsg.style.color = '#8B5CF6';
+            statusMsg.textContent = 'Verificando licencia profesional...';
+
+            // Limpiar cualquier sesión previa de Admin para evitar mezclas
+            sessionStorage.removeItem('_isMasterAdmin');
+
+            try {
+                let platformData = null;
+
+                // 1. Prioridad: Supabase
+                if (window.SupabaseService) {
+                    window.SupabaseService.init();
+                    platformData = await window.SupabaseService.getGlobalConfig();
+                    if (platformData) console.log("Auth: Datos cargados desde Supabase ✅");
+                }
+
+                // 2. Fallback: Firebase (Legacy)
+                if (!platformData && window.FirebaseService) {
+                    await window.FirebaseService.init();
+                    platformData = await window.FirebaseService.getData('saasPlatform', 'config');
+                    if (platformData) console.log("Auth: Datos cargados desde Firebase Backup");
+                }
+
+                // 3. Fallback: LocalStorage
+                if (!platformData) {
+                    platformData = JSON.parse(localStorage.getItem(PLATFORM_KEY) || '{"trainers":[]}');
+                }
+
+                // 4. Buscar entrenador
+                const trainer = platformData.trainers.find(t => 
+                    t.email.toLowerCase() === email && 
+                    t.licenseKey.toUpperCase() === key
+                );
+
+                if (trainer) {
+                    statusMsg.style.color = '#10B981';
+                    statusMsg.textContent = '¡Acceso concedido! Redirigiendo...';
+                    
+                    // Guardar localmente para la sesión
+                    localStorage.setItem('activeTrainerId', trainer.id);
+                    localStorage.setItem(PLATFORM_KEY, JSON.stringify(platformData));
+                    
+                    setTimeout(() => {
+                        window.location.href = 'trainer-dashboard.html?t=' + trainer.id;
+                    }, 1000);
+                } else {
+                    throw new Error('Credenciales incorrectas o licencia no válida.');
+                }
+
+            } catch (err) {
+                statusMsg.style.color = '#EF4444';
+                statusMsg.textContent = err.message;
+                submitBtn.disabled = false;
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,786 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Biblioteca Multimedia - Fitness App</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles/theme.css">
+    <link rel="stylesheet" href="styles/components.css">
+</head>
+
+<body>
+    <!-- Pantalla de Login (Google Auth) -->
+    <div id="login-screen" class="wizard-container" style="min-height: 100vh; display: flex; align-items: center; justify-content: center;">
+        <div class="card wizard-card" style="max-width: 400px; text-align: center; padding: 2rem;">
+            <div style="font-size: 3rem; margin-bottom: 1rem;">🔒</div>
+            <h2>Acceso a tu Backend</h2>
+            <p class="text-muted mb-lg">Conéctate con tu cuenta de Google para acceder a tu base de datos de clientes y rutinas.</p>
+            <div id="google-signin-container">
+                <button onclick="if(typeof AUTH !== 'undefined') { AUTH.signIn() } else { alert('El sistema de autenticación no ha cargado correctamente. Por favor, desactiva bloqueadores de anuncios o recarga la página.') }" class="btn btn-primary" style="display:flex; align-items:center; gap:0.5rem; justify-content:center; width:100%;">
+                    <svg width="24" height="24" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
+                        <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
+                        <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/>
+                        <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
+                    </svg>
+                    Conectar con Google
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- App Principal -->
+    <div id="app" style="display: none;">
+    <header class="header">
+        <div class="container">
+            <nav class="nav">
+                <div class="logo">
+                    <img id="brandLogo" class="logo-img" alt="Logo">
+                    <span id="brandName">Fitness App</span>
+                </div>
+                <button class="menu-toggle" onclick="toggleMenu()">☰</button>
+                <ul class="nav-links" id="navLinks">
+                    <li><a href="trainer-dashboard.html" class="nav-link">Dashboard</a></li>
+                    <li><a href="trainer-clients.html" class="nav-link">Clientes</a></li>
+                    <li><a href="trainer-routines.html" class="nav-link">Rutinas</a></li>
+                    <li><a href="trainer-diets.html" class="nav-link">Dietas</a></li>
+                    <li><a href="trainer-feedbacks.html" class="nav-link">Revisiones</a></li>
+                    <li><a href="trainer-media.html" class="nav-link active">Biblioteca</a></li>
+                    <li><a href="trainer-appointments.html" class="nav-link">Agenda</a></li>
+                    <li><a href="trainer-settings.html" class="nav-link">Configuración</a></li>
+                    <li id="masterLink" style="display: none;"><a href="admin-dashboard.html" class="nav-link" style="color: #8B5CF6; font-weight: 800;">Panel Maestro</a></li>
+                    <li><a href="#" onclick="if(typeof AUTH !== 'undefined') { AUTH.signOut() } else { window.location.reload() }; return false;" class="nav-link" style="color:var(--error-color)">🚪 Salir</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <main class="main-content">
+        <div class="container">
+            <div class="flex-between mb-lg">
+                <div>
+                    <h1>Biblioteca Multimedia</h1>
+                    <p class="text-muted">Gestiona vídeos de ejercicios y fotos de recetas</p>
+                </div>
+                <button class="btn btn-primary" onclick="showAddMediaModal()">
+                    + Añadir Contenido
+                </button>
+            </div>
+
+            <!-- Tabs -->
+            <div class="tabs mb-md">
+                <button class="tab active" onclick="showTab('videos')">Vídeos de Ejercicios</button>
+                <button class="tab" onclick="showTab('photos')">Fotos de Recetas</button>
+            </div>
+
+            <div class="mb-lg">
+                <input type="text" class="form-input" placeholder="🔍 Buscar por título..."
+                    oninput="window.loadMedia(this.value)">
+            </div>
+
+            <!-- Videos Tab -->
+            <div id="videosTab" class="grid grid-3">
+                <div class="empty-state">
+                    <div class="empty-state-icon">📹</div>
+                    <div class="empty-state-title">No hay vídeos</div>
+                    <div class="empty-state-text">Añade vídeos de técnicas de ejercicios para tus clientes</div>
+                </div>
+            </div>
+
+            <!-- Photos Tab -->
+            <div id="photosTab" class="grid grid-3" style="display: none;">
+                <div class="empty-state">
+                    <div class="empty-state-icon">📷</div>
+                    <div class="empty-state-title">No hay fotos</div>
+                    <div class="empty-state-text">Añade fotos de recetas para tus planes nutricionales</div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    </div>
+
+    <!-- Nuevos Scripts de Google -->
+    <script src="js/config.js?v=92"></script>
+    <script src="js/auth.js?v=92"></script>
+    <script src="js/sheets.js?v=92"></script>
+
+    <!-- Firebase SDKs -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-storage.js"></script>
+    <script src="js/firebase-config.js"></script>
+    <script src="js/firebase-service.js"></script>
+
+    <!-- Supabase SDK & Service -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="js/supabase-service.js"></script>
+
+    <script src="js/data-models.js?v=92"></script>
+    <script src="js/custom-recipes.js?v=92"></script>
+    <script src="js/custom-exercises.js?v=92"></script>
+    <script src="js/utils.js?v=92"></script>
+    <script src="js/cloud-storage.js"></script>
+    <script>
+        if (!BrandConfig.isConfigured()) window.location.href = 'index.html';
+
+        BrandConfig.applyTheme();
+        const brand = BrandConfig.get();
+        document.getElementById('brandName').textContent = brand.name;
+        if (brand.logo) {
+            document.getElementById('brandLogo').src = brand.logo;
+            document.getElementById('brandLogo').style.display = 'block';
+        }
+
+        function showTab(tab) {
+            const tabs = document.querySelectorAll('.tab');
+            tabs.forEach(t => t.classList.remove('active'));
+
+            if (tab === 'videos') {
+                tabs[0].classList.add('active');
+                document.getElementById('videosTab').style.display = 'grid';
+                document.getElementById('photosTab').style.display = 'none';
+            } else {
+                tabs[1].classList.add('active');
+                document.getElementById('videosTab').style.display = 'none';
+                document.getElementById('photosTab').style.display = 'grid';
+            }
+        }
+
+        window.loadMedia = function (searchQuery = '') {
+            if (typeof searchQuery !== 'string') searchQuery = '';
+            
+            const hiddenIds = JSON.parse(localStorage.getItem('hidden_system_media') || '[]');
+            const allRaw = Media.getAll();
+            
+            // 1. Deduplicación inteligente: Prioridad Usuario > Sistema
+            const uniqueMedia = new Map();
+            
+            // Procesamos TODO, pero las de usuario sobrescriben a las del sistema
+            // y las más nuevas (si hay duplicados por ID distinto) sobrescriben a las viejas.
+            allRaw.forEach(m => {
+                const mid = String(m.id);
+                const titleKey = m.title.toLowerCase().trim();
+                
+                // Clave de deduplicación: Preferimos el ID original si es una copia, 
+                // o el título si queremos evitar duplicados por nombre.
+                // Usamos el título como clave principal de "identidad" de la receta
+                const dedupKey = titleKey; 
+                
+                const existing = uniqueMedia.get(dedupKey);
+                
+                if (!existing) {
+                    uniqueMedia.set(dedupKey, m);
+                } else {
+                    // Si ya existe, el usuario (isSystem: false) tiene prioridad
+                    if (m.isSystem === false && (existing.isSystem === true || !existing.isSystem)) {
+                        uniqueMedia.set(dedupKey, m);
+                    }
+                    // Si ambos son usuario, el que tenga la URL más reciente o no sea placeholder
+                    else if (m.isSystem === false && existing.isSystem === false) {
+                        if (m.url && !m.url.includes('placehold.co')) {
+                            uniqueMedia.set(dedupKey, m);
+                        }
+                    }
+                }
+            });
+
+            // Adicionalmente, asegurar que si el ID original está en el mapa, se use
+            allRaw.forEach(m => {
+                if (m.originalId && uniqueMedia.has(m.originalId)) {
+                    // Si tenemos una copia vinculada a un ID de sistema, esa copia manda
+                    uniqueMedia.set(String(m.originalId), m);
+                }
+            });
+
+            // 2. Convertir mapa a listas finales filtradas
+            let photos = [];
+            let videos = [];
+            
+            // Usamos un Set para no repetir items que insertamos por ID y por Título
+            const finalSet = new Set(uniqueMedia.values());
+            
+            finalSet.forEach(m => {
+                const mid = String(m.id);
+                if (hiddenIds.includes(mid)) return;
+                
+                if (m.category === 'exercise') videos.push(m);
+                else photos.push(m);
+            });
+
+            if (searchQuery) {
+                const q = searchQuery.toLowerCase();
+                videos = videos.filter(v => v.title.toLowerCase().includes(q) || (v.description && v.description.toLowerCase().includes(q)));
+                photos = photos.filter(p => p.title.toLowerCase().includes(q) || (p.ingredients && p.ingredients.toLowerCase().includes(q)));
+            }
+
+            const data = getData();
+            renderMediaList('photosTab', photos, 'No hay fotos');
+            renderGroupedVideos('videosTab', videos, data.muscleGroupsConfig);
+        }
+
+        function renderMediaList(containerId, items, emptyText) {
+            const container = document.getElementById(containerId);
+            if (items.length === 0) {
+                container.innerHTML = `
+                   <div class="empty-state">
+                        <div class="empty-state-icon">${emptyText.split(' ')[0]}</div>
+                        <div class="empty-state-text">${emptyText.split(' ').slice(1).join(' ')}</div>
+                    </div>
+                `;
+                return;
+            }
+
+            container.className = ""; // Limpiar clases previas
+            container.innerHTML = `
+                <div style="display: grid; grid-template-columns: repeat(6, 1fr); gap: 15px; width: 100%;">
+                    ${items.map(item => `
+                        <div class="card" style="display: flex; flex-direction: column; justify-content: space-between;">
+                            <div>
+                                <div style="aspect-ratio: 1/1; background: #000; border-radius: var(--radius-md); overflow: hidden; margin-bottom: var(--spacing-sm); border: 1px solid rgba(255,255,255,0.05);">
+                                    <img src="${item.url}" style="width: 100%; height: 100%; object-fit: cover;">
+                                </div>
+                                <div class="mb-sm text-center">
+                                    <strong style="font-size: 0.9rem;">${item.title}</strong>
+                                </div>
+                            </div>
+                            <div class="flex gap-xs justify-center mt-xs">
+                                <button class="btn btn-sm btn-primary" onclick="window.viewMediaDetails('${item.id}')" style="box-shadow: 0 4px 15px rgba(139, 92, 246, 0.3); flex:1; font-size: 0.75rem; letter-spacing: 1px;">👁️ VER</button>
+                                <button class="btn btn-sm btn-outline" onclick="window.openEditMediaModal('${item.id}')" title="Editar" style="width: 44px; height: 38px; display: flex; align-items: center; justify-content: center; font-size: 1.1rem; border-color: rgba(255,255,255,0.1);">✏️</button>
+                                <button class="btn btn-sm btn-danger" onclick="window.deleteMediaItem('${item.id}')" title="Eliminar" style="width: 44px; height: 38px; display: flex; align-items: center; justify-content: center; font-size: 1rem; background: #ff5252; border: none;">🗑️</button>
+                            </div>
+                        </div>
+                    `).join('')}
+                </div>
+            `;
+        }
+
+        window.showAddMediaModal = function () {
+            const activeTab = document.querySelector('.tab.active').textContent.includes('Vídeos') ? 'exercise' : 'recipe';
+
+            // GetData to access muscle groups
+            const data = getData();
+            // Ensure config exists
+            if (!data.muscleGroupsConfig) {
+                data.muscleGroupsConfig = { groups: [], exercises: {} }; // minimalist init if missing
+            }
+            const groups = data.muscleGroupsConfig.groups || [];
+            const exercisesMap = data.muscleGroupsConfig.exercises || {};
+
+            showModal('Añadir Contenido', `
+                <div>
+                    <div class="form-group">
+                        <label class="form-label">Categoría</label>
+                        <select id="mediaCategory" class="form-select" onchange="window.toggleMediaForm(this.value)">
+                            <option value="exercise" ${activeTab === 'exercise' ? 'selected' : ''}>Vídeo de Ejercicio</option>
+                            <option value="recipe" ${activeTab === 'recipe' ? 'selected' : ''}>Foto de Receta</option>
+                        </select>
+                    </div>
+
+                    <!-- Exercise Specific Fields -->
+                    <div id="exerciseFields" style="${activeTab === 'exercise' ? 'display:block' : 'display:none'}">
+                        <div class="form-group">
+                            <label class="form-label">Grupo Muscular</label>
+                            <select id="mediaMuscleGroup" class="form-select" onchange="window.filterExercises(this.value)">
+                                <option value="">Seleccionar Grupo...</option>
+                                ${groups.map(g => `<option value="${g}">${g}</option>`).join('')}
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Ejercicio Existente (Opcional)</label>
+                            <select id="mediaExerciseSelect" class="form-select" onchange="window.fillTitleWithExercise(this.value)">
+                                <option value="">-- Seleccionar o escribir abajo --</option>
+                                <!-- Populated via JS -->
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Título</label>
+                        <input type="text" id="mediaTitle" class="form-input" placeholder="Nombre descriptivo" required>
+                    </div>
+                    
+                    <div class="form-group" id="urlGroup">
+                        <label class="form-label">URL del Vídeo (Youtube/Vimeo/Drive)</label>
+                        <input type="url" id="mediaUrl" class="form-input" placeholder="https://youtube.com/...">
+                    </div>
+                    <div id="recipeFields" style="${activeTab === 'recipe' ? 'display:block' : 'display:none'}">
+                        <div class="form-group">
+                            <label class="form-label">Alimentos / Ingredientes</label>
+                            <textarea id="mediaIngredients" class="form-textarea" rows="4" placeholder="Ej: 100g Avena, 1 plátano, 2 huevos..."></textarea>
+                        </div>
+                    </div>
+                    <div class="form-group" id="fileGroup" style="display: none;">
+                        <label class="form-label">Subir Foto o Imagen de Receta</label>
+                        <input type="file" id="mediaFile" class="form-input" accept="image/*">
+                        <div id="mediaPreview" style="margin-top: 10px; max-height: 150px; display: none; text-align: center;">
+                            <img id="imgPrev" src="" style="max-height: 150px; border-radius:8px;">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Descripción (opcional)</label>
+                        <textarea id="mediaDesc" class="form-textarea" rows="2"></textarea>
+                    </div>
+                </div>
+            `, [
+                { text: 'Cancelar', class: 'btn-secondary', onclick: 'window.closeModal()' },
+                { text: 'Guardar', class: 'btn-primary', onclick: 'window.saveMediaItem()' }
+            ]);
+
+            // Store exercises for filtering
+            window._tempExercises = exercisesMap;
+
+            // Setup initial state
+            window.toggleMediaForm(activeTab);
+
+            // Image preview
+            setTimeout(() => {
+                const fileInput = document.getElementById('mediaFile');
+                if (fileInput) {
+                    fileInput.onchange = async () => {
+                        const file = fileInput.files[0];
+                        if (file) {
+                            const base64 = await imageToBase64(file);
+                            document.getElementById('imgPrev').src = base64;
+                            document.getElementById('mediaPreview').style.display = 'block';
+                        }
+                    };
+                }
+            }, 100);
+        }
+
+        window.toggleMediaForm = function (category) {
+            const urlG = document.getElementById('urlGroup');
+            const fileG = document.getElementById('fileGroup');
+            const exF = document.getElementById('exerciseFields');
+            const recF = document.getElementById('recipeFields');
+            const btnNano = document.getElementById('btnNanoBanana');
+
+            if (category === 'exercise') {
+                urlG.style.display = 'block';
+                fileG.style.display = 'none';
+                exF.style.display = 'block';
+                recF.style.display = 'none';
+            } else {
+                urlG.style.display = 'none';
+                fileG.style.display = 'block';
+                exF.style.display = 'none';
+                recF.style.display = 'block';
+            }
+        }
+
+        window.filterExercises = function (group) {
+            const select = document.getElementById('mediaExerciseSelect');
+            select.innerHTML = '<option value="">-- Seleccionar o escribir abajo --</option>';
+
+            const allExercises = window._tempExercises || {};
+
+            if (group && allExercises[group]) {
+                const exercises = allExercises[group]; // This is an array of strings or objects
+
+                exercises.forEach(ex => {
+                    const name = typeof ex === 'string' ? ex : (ex.name || 'Sin nombre');
+                    const opt = document.createElement('option');
+                    opt.value = name;
+                    opt.textContent = name;
+                    select.appendChild(opt);
+                });
+            }
+        }
+
+        window.fillTitleWithExercise = function (val) {
+            if (val) {
+                document.getElementById('mediaTitle').value = val;
+            }
+        }
+
+        window.saveMediaItem = async function () {
+            const title = document.getElementById('mediaTitle').value;
+            const category = document.getElementById('mediaCategory').value;
+            const description = document.getElementById('mediaDesc') ? document.getElementById('mediaDesc').value : '';
+            const ingredients = document.getElementById('mediaIngredients') ? document.getElementById('mediaIngredients').value : '';
+            const muscleGroup = document.getElementById('mediaMuscleGroup') ? document.getElementById('mediaMuscleGroup').value : '';
+
+            let url = '';
+            let type = '';
+            if (category === 'exercise') {
+                url = document.getElementById('mediaUrl').value;
+                type = 'video';
+                if (!url) { showToast('Introduce una URL', 'warning'); return; }
+            } else {
+                const fileInput = document.getElementById('mediaFile');
+                if (fileInput.files[0]) {
+                    // Try ImageKit Cloud
+                    const cloudUrl = await ImageKitManager.upload(fileInput.files[0], `media_${Date.now()}`);
+                    url = cloudUrl || await imageToBase64(fileInput.files[0]);
+                } else {
+                    showToast('Selecciona una imagen', 'warning'); return;
+                }
+                type = 'image';
+            }
+
+            if (!title) { showToast('Introduce un título', 'warning'); return; }
+
+            const newItem = Media.create({
+                type,
+                category,
+                url,
+                title,
+                description,
+                ingredients,
+                muscleGroup
+            });
+
+            showToast('Contenido añadido', 'success');
+            window.closeModal();
+            loadMedia();
+        }
+
+        window.viewMediaDetails = function(id) {
+            const allMedia = Media.getAll();
+            const item = allMedia.find(m => m.id == id);
+            if(!item) return;
+
+            // Formatear ingredientes con guiones si existen
+            const ingredientsFormatted = item.ingredients 
+                ? item.ingredients.split(',').map(i => {
+                    const str = i.trim();
+                    const capitalized = str.charAt(0).toUpperCase() + str.slice(1);
+                    return `<div style="padding: 4px 0; display: flex; align-items: flex-start; gap: 8px;">
+                        <span style="color: var(--primary-color); font-weight: bold;">—</span>
+                        <span>${capitalized}</span>
+                      </div>`;
+                }).join('')
+                : 'No se han indicado ingredientes.';
+
+            showModal('', `
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 25px; min-height: 400px; align-items: start;">
+                    <!-- Columna Izquierda: Imagen Visual -->
+                    <div style="height: 100%; border-radius: 16px; overflow: hidden; position: relative; box-shadow: 0 10px 30px rgba(0,0,0,0.5); background: #000;">
+                        <img src="${item.url}" style="width: 100%; height: 100%; object-fit: cover;">
+                        <div style="position: absolute; bottom: 0; left: 0; right: 0; padding: 20px; background: linear-gradient(to top, rgba(0,0,0,0.9), transparent);">
+                            <h2 style="font-size: 1.25rem; font-weight: 700; color: #fff; margin: 0;">${item.title}</h2>
+                            <p style="font-size: 0.8rem; color: rgba(255,255,255,0.7); margin-top: 5px;">${item.category === 'recipe' ? '🥗 Receta Saludable' : '💪 Ejercicio Técnico'}</p>
+                        </div>
+                    </div>
+
+                    <!-- Columna Derecha: Información Compacta -->
+                    <div style="display: flex; flex-direction: column; gap: 20px; height: 100%; justify-content: center;">
+                        <div style="background: rgba(255,255,255,0.03); padding: 18px; border-radius: 16px; border: 1px solid rgba(255,255,255,0.05);">
+                            <h3 style="font-size: 0.7rem; text-transform: uppercase; letter-spacing: 1.5px; color: var(--primary-color); margin-bottom: 12px; display: flex; align-items: center; gap: 8px;">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
+                                DESCRIPCIÓN
+                            </h3>
+                            <p style="font-size: 0.9rem; line-height: 1.5; color: rgba(255,255,255,0.8);">${item.description || 'Sin descripción detallada.'}</p>
+                        </div>
+
+                        ${item.category === 'recipe' ? `
+                        <div style="background: rgba(139, 92, 246, 0.08); padding: 18px; border-radius: 16px; border-left: 4px solid var(--primary-color);">
+                            <h3 style="font-size: 0.7rem; text-transform: uppercase; letter-spacing: 1.5px; color: #fff; margin-bottom: 12px; display: flex; align-items: center; gap: 8px;">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"></path></svg>
+                                ALIMENTOS / INGREDIENTES
+                            </h3>
+                            <div style="font-size: 0.9rem; line-height: 1.4; color: #fff;">
+                                ${ingredientsFormatted}
+                            </div>
+                        </div>
+                        ` : ''}
+
+                        ${item.type === 'video' ? `
+                        <a href="${item.url}" target="_blank" class="btn btn-primary" style="width: 100%; justify-content: center; gap: 10px; padding: 12px; border-radius: 12px;">
+                            <span>▶️ VER VÍDEO COMPLETO</span>
+                        </a>
+                        ` : ''}
+                    </div>
+                </div>
+            `, [
+                { text: 'Cerrar Visor', class: 'btn-secondary', onclick: 'window.closeModal()' }
+            ]);
+        }
+
+        function renderGroupedVideos(containerId, videos, config) {
+            const container = document.getElementById(containerId);
+            const groups = config && config.groups ? config.groups : [];
+
+            // Organize videos by group
+            const grouped = {};
+            groups.forEach(g => grouped[g] = []);
+            grouped['Otros'] = [];
+
+            videos.forEach(v => {
+                if (v.muscleGroup && groups.includes(v.muscleGroup)) {
+                    grouped[v.muscleGroup].push(v);
+                } else {
+                    grouped['Otros'].push(v);
+                }
+            });
+
+            // If no videos at all
+            if (videos.length === 0) {
+                container.innerHTML = `
+                   <div class="empty-state">
+                        <div class="empty-state-icon">
+                            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                                <path d="M15 10l5 5-5 5" />
+                                <path d="M4 4v16c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2H6c-1.1 0-2 .9-2 2z" />
+                            </svg>
+                        </div>
+                        <div class="empty-state-title">No hay vídeos</div>
+                        <div class="empty-state-text">Añade vídeos de técnicas de ejercicios</div>
+                    </div>
+                `;
+                return;
+            }
+
+            // Build HTML
+            let html = '';
+
+            // Loop through defined groups
+            groups.forEach(group => {
+                const groupVideos = grouped[group];
+                if (groupVideos && groupVideos.length > 0) {
+                    html += `
+                        <div class="group-section mb-lg">
+                            <h3 class="mb-md" style="padding-bottom: 10px; border-bottom: 1px solid rgba(255,255,255,0.1); color: var(--primary-color);">
+                                ${group} <span class="text-muted" style="font-size: 0.8rem; margin-left: 10px;">(${groupVideos.length})</span>
+                            </h3>
+                            <div class="grid grid-3">
+                                ${groupVideos.map(v => renderVideoCard(v)).join('')}
+                            </div>
+                        </div>
+                    `;
+                }
+            });
+
+            // Render 'Otros' if any
+            if (grouped['Otros'].length > 0) {
+                html += `
+                    <div class="group-section mb-lg">
+                        <h3 class="mb-md" style="padding-bottom: 10px; border-bottom: 1px solid rgba(255,255,255,0.1);">
+                            Otros / Sin Asignar <span class="text-muted" style="font-size: 0.8rem; margin-left: 10px;">(${grouped['Otros'].length})</span>
+                        </h3>
+                        <div class="grid grid-3">
+                            ${grouped['Otros'].map(v => renderVideoCard(v)).join('')}
+                        </div>
+                    </div>
+                `;
+            }
+
+            container.innerHTML = html;
+        }
+
+        function renderVideoCard(item) {
+            return `
+                <div class="card" style="display: flex; flex-direction: column; justify-content: space-between;">
+                    <div class="mb-sm">
+                        <strong>${item.title}</strong>
+                        <div class="text-muted" style="font-size: 0.8rem; margin-top: 5px;">${item.description || ''}</div>
+                    </div>
+                    
+                    <div class="mt-xs" style="display: grid; grid-template-columns: 1fr auto auto auto; gap: 8px;">
+                        <a href="${item.url}" target="_blank" class="btn btn-sm btn-outline" style="text-align: center;">Ver enlace</a>
+                        <button class="btn btn-sm btn-outline" onclick="window.copyMediaLink('${item.url}')" title="Copiar Link" style="display: flex; align-items: center; justify-content: center;">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                                <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                            </svg>
+                        </button>
+                        <button class="btn btn-sm btn-outline" onclick="window.openEditMediaModal('${item.id}')" title="Editar" style="width: 44px; height: 38px; display: flex; align-items: center; justify-content: center; font-size: 1rem; border-color: rgba(255,255,255,0.1);">✏️</button>
+                        <button class="btn btn-sm btn-danger" onclick="window.deleteMediaItem('${item.id}')" title="Eliminar" style="width: 44px; height: 38px; display: flex; align-items: center; justify-content: center; font-size: 0.9rem; background: #ff5252; border: none;">🗑️</button>
+                    </div>
+                </div>
+            `;
+        }
+
+        window.openEditMediaModal = function (id) {
+            const item = Media.getAll().find(m => m.id === id);
+            if (!item) return;
+
+            const isVideo = item.category === 'exercise';
+            const data = getData();
+            const groups = data.muscleGroupsConfig ? (data.muscleGroupsConfig.groups || []) : [];
+
+            const content = `
+                <div>
+                    <input type="hidden" id="editMediaId" value="${item.id}">
+                    <div class="form-group">
+                        <label class="form-label">Título</label>
+                        <input type="text" id="editMediaTitle" class="form-input" value="${item.title}">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Descripción (Opcional)</label>
+                        <textarea id="editMediaDesc" class="form-textarea" rows="2">${item.description || ''}</textarea>
+                    </div>
+                    
+                    ${isVideo ? `
+                        <div class="form-group">
+                            <label class="form-label">Grupo Muscular</label>
+                            <select id="editMediaGroup" class="form-select">
+                                <option value="">-- Sin asignar --</option>
+                                ${groups.map(g => `<option value="${g}" ${item.muscleGroup === g ? 'selected' : ''}>${g}</option>`).join('')}
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">URL del Vídeo</label>
+                            <input type="text" id="editMediaUrl" class="form-input" value="${item.url}">
+                        </div>
+                    ` : `
+                        <div class="form-group">
+                            <label class="form-label">Imagen Actual</label>
+                            <div style="width: 100px; height: 100px; border-radius: 8px; overflow: hidden; margin-bottom: 10px; border: 1px solid rgba(255,255,255,0.1);">
+                                <img src="${item.url}" style="width: 100%; height: 100%; object-fit: cover;">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Ingredientes (Separados por comas para lista profesional)</label>
+                            <textarea id="editMediaIngredients" class="form-textarea" rows="4">${item.ingredients || ''}</textarea>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Cambiar Imagen (Dejar vacío para mantener)</label>
+                            <input type="file" id="editMediaFile" class="form-input" accept="image/*">
+                        </div>
+                    `}
+                </div>
+            `;
+
+            showModal('Editar Contenido', content, [
+                { text: 'Cancelar', class: 'btn-secondary', onclick: 'window.closeModal()' },
+                { text: 'Guardar Cambios', class: 'btn-primary', onclick: 'window.saveEditedMedia()' }
+            ]);
+        };
+
+        window.saveEditedMedia = async function () {
+            const modal = document.querySelector('.modal-overlay');
+            if (!modal) return;
+
+            try {
+                const id = modal.querySelector('#editMediaId').value;
+                const title = modal.querySelector('#editMediaTitle').value;
+                const desc = modal.querySelector('#editMediaDesc').value;
+
+                if (!title) { 
+                    showToast('El título es obligatorio', 'error'); 
+                    return; 
+                }
+
+                const ingEl = modal.querySelector('#editMediaIngredients');
+                const groupEl = modal.querySelector('#editMediaGroup');
+                const urlEl = modal.querySelector('#editMediaUrl');
+                const fileIn = modal.querySelector('#editMediaFile');
+
+                const updates = {
+                    title: title,
+                    description: desc
+                };
+                
+                if (groupEl) updates.muscleGroup = groupEl.value;
+                if (ingEl) updates.ingredients = ingEl.value;
+
+                let finalUrl = null;
+                // 1. Manejo de URL manual (solo para vídeos/ejercicios)
+                if (urlEl && urlEl.value) {
+                    finalUrl = urlEl.value;
+                } 
+                // 2. Manejo de archivos nuevos
+                else if (fileIn && fileIn.files[0]) {
+                    showToast('Procesando imagen...', 'info');
+                    try {
+                        // Intentar Supabase primero
+                        if (window.SupabaseService) {
+                            finalUrl = await window.SupabaseService.uploadFile(fileIn.files[0], 'Media');
+                        }
+                    } catch (e) {
+                        console.warn("Fallo Supabase:", e);
+                    }
+
+                    // Fallback a Base64 si Supabase falló o no está disponible
+                    if (!finalUrl && typeof imageToBase64 !== 'undefined') {
+                        finalUrl = await imageToBase64(fileIn.files[0]);
+                    }
+                }
+
+                if (finalUrl) updates.url = finalUrl;
+
+                // Actualizar item. Si es sistema, Media.update creará automáticamente el reemplazo en data.media
+                const result = Media.update(id, updates);
+                
+                if (result) {
+                    // Sincronización manual solo si existe la función, pero saveData ya lo hace internamente
+                    if (window.syncToCloud) await window.syncToCloud();
+                    
+                    showToast('Cambios guardados con éxito ✅', 'success');
+                    window.closeModal();
+                    loadMedia();
+                } else {
+                    throw new Error("No se pudo actualizar el elemento. Verifica los datos.");
+                }
+            } catch (err) {
+                console.error("Error crítico al guardar:", err);
+                showToast("Error al guardar: " + err.message, 'error');
+            }
+        };
+
+        window.copyMediaLink = function (url) {
+            navigator.clipboard.writeText(url).then(() => {
+                showToast('Enlace copiado al portapapeles', 'success');
+            }).catch(err => {
+                console.error('Error copying text: ', err);
+                showToast('Error al copiar el enlace', 'error');
+            });
+        };
+
+        window.deleteMediaItem = function (id) {
+            if (window.confirm('¿Seguro que quieres eliminar este contenido?')) {
+                // Soporte para borrar/ocultar recetas del sistema (inyectadas)
+                if (String(id).startsWith('sys-') || String(id).startsWith('prof-')) {
+                    let hidden = JSON.parse(localStorage.getItem('hidden_system_media') || '[]');
+                    if (!hidden.includes(id)) {
+                        hidden.push(id);
+                        localStorage.setItem('hidden_system_media', JSON.stringify(hidden));
+                    }
+                    showToast('Receta del sistema ocultada', 'success');
+                    loadMedia();
+                    return;
+                }
+
+                Media.delete(id);
+                showToast('Contenido eliminado', 'success');
+                loadMedia();
+            }
+        }
+
+        function toggleMenu() {
+            document.getElementById('navLinks').classList.toggle('active');
+        }
+
+        window.onload = loadMedia;
+    </script>
+
+    <script>
+        // Función que llama el sistema de Google cuando la sesión es exitosa
+        async function onGoogleAuthSuccess() {
+            // Sincronizar con la nube
+            if (window.FirebaseService) {
+                await window.FirebaseService.init();
+                await window.syncFromCloud();
+            }
+
+            // Aplicar tema (Logo y colores)
+            if (typeof BrandConfig !== 'undefined') {
+                BrandConfig.applyTheme();
+            }
+
+            document.getElementById('login-screen').style.display = 'none';
+            document.getElementById('app').style.display = 'block';
+            
+            if (typeof loadMedia === 'function') loadMedia();
+        }
+    </script>
+</body>
+
+</html>

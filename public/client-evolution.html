@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Evolución - Fitness App</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles/theme.css?v=118">
+    <link rel="stylesheet" href="styles/components.css?v=118">
+    <link rel="stylesheet" href="styles/mobile.css?v=118">
+    <style>
+        .evo-tab { display: none !important; }
+        .evo-tab.active { display: block !important; }
+        
+        .evo-section { background: rgba(255,255,255,0.05); padding: 20px; border-radius: 12px; margin-bottom: 24px; border: 1px solid rgba(255,255,255,0.1); }
+        .table-data { width: 100%; border-collapse: collapse; font-size: 0.8rem; }
+        .table-data th, .table-data td { padding: 10px; text-align: center; border-bottom: 1px solid rgba(255,255,255,0.05); }
+        .table-data th { background: rgba(255,255,255,0.03); color: var(--primary-color); text-transform: uppercase; font-size: 0.7rem; }
+        
+        /* Fix select options visibility in dark mode */
+        #prMuscleFilter option {
+            background-color: #1A1A2E;
+            color: white;
+        }
+        .chart-box { height: 250px; position: relative; }
+        .badge-s { background: var(--primary-color); color: white; padding: 2px 6px; border-radius: 4px; font-weight: bold; font-size: 0.7rem; }
+        .pr-card { background: rgba(255,255,255,0.02); border-radius: 10px; padding: 15px; display: flex; justify-content: space-between; align-items: center; border: 1px solid rgba(255,255,255,0.05); margin-bottom: 10px; }
+        .grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); }
+        .gap-xs { gap: 6px; }
+        
+        /* PR Celebration Modal */
+        .celebration-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.85); z-index: 9999; display: none; align-items: center; justify-content: center; backdrop-filter: blur(8px); animation: fadeIn 0.4s ease; }
+        .celebration-card { background: linear-gradient(135deg, #1e1e2d 0%, #0a0a0c 100%); border: 2px solid #FFD700; border-radius: 24px; padding: 40px; text-align: center; max-width: 90%; width: 350px; position: relative; box-shadow: 0 0 50px rgba(255,215,0,0.3); }
+        .celebration-trophy { font-size: 5rem; display: block; margin-bottom: 20px; animation: bounce 1s infinite alternate; }
+        .celebration-title { font-size: 1.8rem; font-weight: 800; color: #FFD700; margin-bottom: 10px; }
+        .celebration-text { font-size: 1rem; opacity: 0.9; margin-bottom: 30px; }
+        .celebration-stat { font-size: 2.2rem; font-weight: 900; color: white; display: block; margin-bottom: 5px; }
+        
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes bounce { from { transform: translateY(0) scale(1.1); } to { transform: translateY(-15px) scale(0.9); } }
+        .confetti { position: absolute; width: 10px; height: 10px; background: #FFD700; border-radius: 2px; }
+    </style>
+</head>
+<body style="min-height: 100vh; background: #0a0a0c;">
+    <header class="header">
+        <div class="container">
+            <nav class="nav">
+                <div class="logo">
+                    <img id="brandLogo" class="logo-img" alt="Logo" style="display: none;">
+                    <span id="brandName">Fitness App</span>
+                </div>
+                <ul class="nav-links">
+                    <li><a href="client-dashboard.html" class="nav-link">Inicio</a></li>
+                    <li><a href="client-profile.html" class="nav-link">Ficha</a></li>
+
+                    <li><a href="client-login.html" class="nav-link">Salir</a></li>
+                </ul>
+                <div id="clientProfileAvatar" style="width: 35px; height: 35px; border-radius: 50%; background: var(--primary-color); display: flex; align-items: center; justify-content: center; font-size: 0.9rem; font-weight: 800; color: #000; overflow: hidden; border: 2px solid rgba(255,255,255,0.1); margin-left: 15px; cursor: pointer; flex-shrink: 0;" onclick="window.location.href='client-profile.html'">
+                    U
+                </div>
+                <button class="menu-toggle" onclick="toggleMenu()" style="margin-left: 10px;">☰</button>
+            </nav>
+        </div>
+    </header>
+
+    <main class="main-content" style="padding-top: 30px;">
+        <div class="container">
+            <div class="mb-lg">
+                <h1 id="pageTitle" style="margin:0; font-size: 2rem;">Evolución</h1>
+                <p class="text-muted">Control de peso, medidas y marcas personales</p>
+                <div class="flex gap-sm mt-md" style="margin-bottom: 25px;">
+                    <button id="btnT1" class="btn btn-sm btn-primary" onclick="showTab('t1')">Evolución</button>
+                    <button id="btnT2" class="btn btn-sm btn-outline" onclick="showTab('t2')">Récords 🏆</button>
+                    <button id="btnT3" class="btn btn-sm btn-outline" onclick="showTab('t3')">Fotos 📸</button>
+                </div>
+            </div>
+
+            <div id="t1" class="evo-tab active">
+                <div class="grid grid-2 gap-lg">
+                    <div class="evo-section">
+                        <h3 style="margin-top:0;">Historial de Medidas</h3>
+                        <div style="max-height: 300px; overflow-y: auto;">
+                            <table class="table-data">
+                                <thead id="hTableHead"></thead>
+                                <tbody id="hTableBody"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="evo-section">
+                        <h3 style="margin-top:0;">Gráfico de Peso</h3>
+                        <div class="chart-box"><canvas id="cWeight"></canvas></div>
+                    </div>
+                </div>
+                <div class="evo-section">
+                    <div class="flex-between align-center mb-md flex-wrap gap-sm">
+                        <h3 style="margin:0;">Progresión de Fuerza</h3>
+                        <div class="flex gap-sm">
+                            <select id="selBlock" class="form-select form-select-sm" style="width:140px;" onchange="renderExProg()"></select>
+                            <select id="selEx" class="form-select form-select-sm" style="width:160px;" onchange="renderExProg()"></select>
+                        </div>
+                    </div>
+                    <div class="chart-box">
+                        <canvas id="cEx"></canvas>
+                        <div id="noDataMsg" class="flex-center" style="position:absolute; inset:0; background:rgba(0,0,0,0.5); border-radius:8px; display:none;">
+                            <p class="text-muted">Sin datos suficientes.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="t2" class="evo-tab">
+                <div class="evo-section">
+                    <div class="flex-between mb-md">
+                        <h2 style="color: #FFD700; margin:0;">🏆 Salón de la Fama</h2>
+                    </div>
+                    
+                    <div class="flex gap-sm mb-lg" style="flex-wrap: wrap;">
+                        <input type="text" id="prSearch" class="form-input" style="flex: 2; min-width: 150px; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.1);" placeholder="Buscar ejercicio..." oninput="renderPRs()">
+                        <select id="prMuscleFilter" class="form-select" style="flex: 1; min-width: 120px; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.1);" onchange="renderPRs()">
+                            <option value="">Grupo Muscular</option>
+                            <option value="pecho">Pecho</option>
+                            <option value="espalda">Espalda</option>
+                            <option value="pierna">Pierna</option>
+                            <option value="hombro">Hombro</option>
+                            <option value="brazo">Brazo</option>
+                            <option value="core">Core</option>
+                        </select>
+                    </div>
+
+                    <div id="prList"></div>
+                </div>
+            </div>
+
+            <div id="t3" class="evo-tab">
+                <div id="photoFeed"></div>
+            </div>
+        </div>
+    </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="js/config.js?v=118"></script>
+    <script src="js/data-models.js?v=118"></script>
+    <script src="js/utils.js?v=118"></script>
+    <script>
+        const cId = sessionStorage.getItem('clientId');
+        if (!cId) window.location.href = 'client-login.html';
+
+        try { BrandConfig.applyTheme(); } catch(e){}
+        const brand = BrandConfig.get() || {};
+        document.getElementById('brandName').textContent = brand.name || 'Fitness App';
+        if (brand.logo) { document.getElementById('brandLogo').src=brand.logo; document.getElementById('brandLogo').style.display='block'; }
+
+        const c = Clients.getById(cId) || { weightHistory: [] };
+        if (c.name) document.getElementById('pageTitle').textContent = 'Progreso de ' + c.name;
+
+        const bks = TrainingBlocks.getByClientId(cId) || [];
+        const lgs = TrainingLogs.getByClientId(cId) || [];
+
+        let ch1 = null, ch2 = null;
+
+        function showTab(tabId) {
+            console.log('Mostrando pestaña:', tabId);
+            ['t1','t2','t3'].forEach(id => {
+                const el = document.getElementById(id);
+                if (el) el.classList.toggle('active', id === tabId);
+                
+                const btn = document.getElementById('btn' + id.toUpperCase());
+                if (btn) {
+                    btn.classList.toggle('btn-primary', id === tabId);
+                    btn.classList.toggle('btn-outline', id !== tabId);
+                }
+            });
+            
+            if (tabId === 't1') renderEvo();
+            if (tabId === 't2') renderPRs();
+            if (tabId === 't3') renderPhotos();
+        }
+
+        function getWeek(d) {
+            const date = new Date(d); if (isNaN(date)) return null;
+            for (const b of bks) {
+                if (b.startDate && date >= new Date(b.startDate)) {
+                    const diff = Math.floor((date - new Date(b.startDate)) / 86400000);
+                    const w = Math.floor(diff/7)+1;
+                    if (w <= (b.weeks?.length || 52)) return w;
+                }
+            }
+            return null;
+        }
+
+        function renderEvo() {
+            let hist = (c.weightHistory || []).map(h => ({ ...h }));
+            (Feedbacks.getByClientId(cId) || []).forEach(f => {
+                const ex = hist.some(h => Math.abs(new Date(h.date)-new Date(f.date))<300000);
+                if (!ex && (f.weight || f.perimeters)) hist.push({date:f.date, weight:f.weight, perimeters:f.perimeters});
+            });
+            hist.sort((a,b)=>new Date(a.date)-new Date(b.date));
+
+            const pers = Array.isArray(brand.trainerPerimeters) ? brand.trainerPerimeters : ['Cintura','Cadera','Pecho','Brazo','Muslo'];
+            document.getElementById('hTableHead').innerHTML = `<tr><th>FECHA</th><th>SEM.</th><th>PESO</th>${pers.map(p=>`<th>${p.substring(0,3).toUpperCase()}</th>`).join('')}</tr>`;
+            
+            const body = document.getElementById('hTableBody');
+            if (hist.length === 0) { body.innerHTML = '<tr><td colspan="10">No hay datos.</td></tr>'; }
+            else {
+                body.innerHTML = hist.slice().reverse().map(h => {
+                    const w = getWeek(h.date);
+                    const fm = {'Cintura':h.waist||'-','Cadera':h.glute||'-','Pecho':h.chest||'-','Brazo':h.arm||'-','Muslo':h.leg||'-'};
+                    return `<tr>
+                        <td>${new Date(h.date).toLocaleDateString()}</td>
+                        <td><span class="badge-s">${w ? 'S'+w : '-'}</span></td>
+                        <td><strong>${h.weight || '-'}k</strong></td>
+                        ${pers.map(p => `<td>${(h.perimeters?.[p]) || fm[p] || '-'}</td>`).join('')}
+                    </tr>`;
+                }).join('');
+            }
+
+            const client = Clients.getById(cId); // Corrected clientId to cId
+            if (client) {
+                const avatar = document.getElementById('clientProfileAvatar');
+                if (avatar) {
+                    if (client.profilePhoto) {
+                        avatar.innerHTML = `<img src="${client.profilePhoto}" style="width:100%;height:100%;object-fit:cover;">`;
+                        avatar.style.background = 'transparent';
+                    } else {
+                        avatar.textContent = client.name.charAt(0).toUpperCase();
+                        avatar.style.background = 'var(--primary-color)';
+                    }
+                }
+            }
+            const ctx = document.getElementById('cWeight');
+            if (ctx && hist.length > 0 && typeof Chart !== 'undefined') {
+                if (ch1) ch1.destroy();
+                ch1 = new Chart(ctx, { type:'line', data:{
+                    labels: hist.map(h=>new Date(h.date).toLocaleDateString()),
+                    datasets:[{label:'Peso', data:hist.map(h=>h.weight), borderColor:brand.colors?.primary||'#3b82f6', tension:0.4, fill:true, backgroundColor: (brand.colors?.primary||'#3b82f6')+'22', pointRadius: 5}]
+                }, options:{ responsive:true, maintainAspectRatio:false, plugins:{legend:{display:false}} }});
+            }
+            updateExSels();
+        }
+
+        function updateExSels() {
+            const bSel = document.getElementById('selBlock');
+            if (bSel && bSel.options.length <= 1) {
+                bSel.innerHTML = '<option value="">Todos los Bloques</option>' + bks.map(b=>`<option value="${b.id}">${b.name}</option>`).join('');
+            }
+            const exs = new Set(); lgs.forEach(l=>(l.exercises||[]).forEach(e=>exs.add(e.name)));
+            const eSel = document.getElementById('selEx');
+            if (eSel && exs.size > 0 && !eSel.value) {
+                eSel.innerHTML = '<option value="">Selecciona ejercicio...</option>' + Array.from(exs).sort().map(e=>`<option value="${e}">${e}</option>`).join('');
+                eSel.value = Array.from(exs).sort()[0];
+                renderExProg();
+            }
+        }
+
+        function renderExProg() {
+            const exVal = document.getElementById('selEx').value; if (!exVal) return;
+            const bId = document.getElementById('selBlock').value;
+            const fl = lgs.filter(l => !bId || l.blockId == bId).sort((a,b)=>new Date(a.date)-new Date(b.date));
+            const data = [], labels = [];
+            fl.forEach(l => {
+                const e = (l.exercises||[]).find(x=>x.name===exVal);
+                if (e && e.sets?.length > 0) {
+                    const bw = Math.max(...e.sets.map(s => parseFloat(s.weight)||0));
+                    if (bw > 0) { data.push(bw); labels.push(new Date(l.date).toLocaleDateString()); }
+                }
+            });
+            const ctx = document.getElementById('cEx');
+            if (ctx && typeof Chart !== 'undefined') {
+                if (ch2) ch2.destroy();
+                ch2 = new Chart(ctx, { type:'line', data:{ labels, datasets:[{label:exVal, data, borderColor:brand.colors?.accent||'#10b981', tension:0.3, pointRadius: 5}] }, options:{ responsive:true, maintainAspectRatio:false }});
+            }
+            const msg = document.getElementById('noDataMsg');
+            if (msg) msg.style.display = data.length === 0 ? 'flex' : 'none';
+        }
+
+        function renderPRs() {
+            const container = document.getElementById('prList');
+            const searchTerm = document.getElementById('prSearch')?.value.toLowerCase() || '';
+            const muscleFilter = document.getElementById('prMuscleFilter')?.value || '';
+            if (!container) return;
+
+            // Get exercise metadata to identify muscle groups from routines and blocks
+            const allRoutines = Routines.getAll() || [];
+            const allBlocks = TrainingBlocks.getByClientId(cId) || [];
+            const exMeta = {};
+            
+            const scan = (exs) => {
+                (exs || []).forEach(e => {
+                    const name = (e.name || '').toLowerCase().trim();
+                    if (!name) return;
+                    const mg = (e.muscleGroup || e.category || '').toLowerCase().trim();
+                    if (mg && mg !== 'varios' && mg !== '---') {
+                        exMeta[name] = mg;
+                    }
+                });
+            };
+
+            allRoutines.forEach(r => (r.days || []).forEach(d => scan(d.exercises)));
+            allBlocks.forEach(b => (b.weeks || []).forEach(w => (w.days || []).forEach(d => scan(d.exercises))));
+
+            const exs = new Set(); lgs.forEach(l=>(l.exercises||[]).forEach(e=>exs.add(e.name)));
+            const prs = Array.from(exs).map(exName => {
+                let best = { w: 0, r: 0 };
+                lgs.forEach(l=>(l.exercises||[]).forEach(e=>{
+                    if (e.name===exName) e.sets?.forEach(s=>{
+                        const w = parseFloat(s.weight)||0; const r = parseInt(s.reps)||0;
+                        if (w > best.w) { best = { w, r }; } else if (w>0 && w===best.w && r>best.r) { best.r = r; }
+                    });
+                }));
+                const muscle = exMeta[exName.toLowerCase()] || '';
+                return { name: exName, w: best.w, r: best.r, muscle: muscle };
+            }).filter(p=>p.w > 0);
+
+            // Apply Filters
+            const filtered = prs.filter(p => {
+                const matchesSearch = p.name.toLowerCase().includes(searchTerm);
+                const matchesMuscle = !muscleFilter || p.muscle === muscleFilter;
+                return matchesSearch && matchesMuscle;
+            }).sort((a,b)=>b.w-a.w);
+
+            container.innerHTML = filtered.length === 0 ? '<p class="text-center py-lg opacity-50">No hay récords con estos filtros.</p>' : filtered.map(p => `
+                <div class="pr-card" onclick="showCelebration('${p.name}', '${p.w}', '${p.r}')">
+                    <div>
+                        <span style="font-weight:700; display:block;">${p.name}</span>
+                        ${p.muscle ? `<span class="badge" style="font-size: 0.6rem; opacity: 0.6; text-transform: uppercase; background:rgba(255,255,255,0.05); color:white; border:1px solid rgba(255,255,255,0.1);">${p.muscle}</span>` : ''}
+                    </div>
+                    <span style="color:#FFD700; font-weight:800; font-size:1.1rem;">${p.w}kg <small style="font-size:0.7rem; color:white; opacity:0.6;">x ${p.r} reps</small></span>
+                </div>`).join('');
+        }
+
+        function showCelebration(exName, weight, reps) {
+            const overlay = document.createElement('div');
+            overlay.className = 'celebration-overlay';
+            overlay.style.display = 'flex';
+            overlay.innerHTML = `
+                <div class="celebration-card" onclick="this.parentElement.remove()">
+                    <span class="celebration-trophy">🏆</span>
+                    <div class="celebration-title">¡NUEVO RÉCORD!</div>
+                    <div class="celebration-text">${exName}</div>
+                    <div class="celebration-stat">${weight} kg</div>
+                    <div class="celebration-text">por ${reps} repeticiones</div>
+                    <button class="btn btn-primary" style="background:#FFD700; border:none; color:black; width:100%;">¡A POR MÁS!</button>
+                </div>`;
+            document.body.appendChild(overlay);
+            
+            // Simple confetti effect
+            for(let i=0; i<50; i++) {
+                const c = document.createElement('div');
+                c.className = 'confetti';
+                c.style.left = Math.random() * 100 + 'vw';
+                c.style.top = Math.random() * 100 + 'vh';
+                c.style.background = ['#FFD700', '#FFFFFF', '#FF8C00'][Math.floor(Math.random()*3)];
+                c.style.transform = `rotate(${Math.random()*360}deg)`;
+                overlay.appendChild(c);
+                c.animate([
+                    { transform: `translate(0,0) rotate(0deg)`, opacity: 1 },
+                    { transform: `translate(${(Math.random()-0.5)*200}px, 500px) rotate(360deg)`, opacity: 0 }
+                ], { duration: 1000 + Math.random()*2000, iterations: 1 });
+            }
+        }
+
+        function renderPhotos() {
+            const fs = (Feedbacks.getByClientId(cId)||[]).filter(f => f.photos && (f.photos.front||f.photos.back||f.photos.side||f.photos.extra)).sort((a,b)=>new Date(b.date)-new Date(a.date));
+            const feed = document.getElementById('photoFeed');
+            if (fs.length === 0) { feed.innerHTML = '<p class="text-center py-xl opacity-50">No hay fotos todavía.</p>'; return; }
+            feed.innerHTML = fs.map(f => `
+                <div class="evo-section">
+                    <div class="flex-between mb-sm" style="border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom:8px;">
+                        <span class="badge-s">Semana ${getWeek(f.date)||'-'}</span>
+                        <span style="font-family:monospace; opacity:0.8;">${new Date(f.date).toLocaleDateString()}</span>
+                        <strong style="color:var(--primary-color);">${f.weight||'-'}k</strong>
+                    </div>
+                    <div class="grid grid-4 gap-xs">
+                        ${f.photos.front?`<img src="${f.photos.front}" style="width:100%; border-radius:8px; aspect-ratio:3/4; object-fit:cover;" onclick="window.open('${f.photos.front}')">`:''}
+                        ${f.photos.back?`<img src="${f.photos.back}" style="width:100%; border-radius:8px; aspect-ratio:3/4; object-fit:cover;" onclick="window.open('${f.photos.back}')">`:''}
+                        ${f.photos.side?`<img src="${f.photos.side}" style="width:100%; border-radius:8px; aspect-ratio:3/4; object-fit:cover;" onclick="window.open('${f.photos.side}')">`:''}
+                        ${f.photos.extra?`<img src="${f.photos.extra}" style="width:100%; border-radius:8px; aspect-ratio:3/4; object-fit:cover;" onclick="window.open('${f.photos.extra}')">`:''}
+                    </div>
+                </div>`).join('');
+        }
+
+        // Delay starting to ensure models ready
+        setTimeout(() => showTab('t1'), 300);
+    </script>
+</body>
+</html>

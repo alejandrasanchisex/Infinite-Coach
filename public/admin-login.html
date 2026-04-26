@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Master Login | Fitness Pro Administration</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles/theme.css">
+    <link rel="stylesheet" href="styles/components.css">
+    <style>
+        body {
+            background-color: #050510;
+            color: white;
+            font-family: 'Outfit', sans-serif;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            margin: 0;
+        }
+
+        .admin-glow {
+            position: fixed;
+            width: 60vw;
+            height: 60vw;
+            background: radial-gradient(circle, rgba(139, 92, 246, 0.1) 0%, transparent 70%);
+            top: -10vw;
+            left: -10vw;
+            z-index: -1;
+            filter: blur(100px);
+        }
+
+        /* Card estilo Cristal */
+        .login-card {
+            background: rgba(21, 21, 46, 0.4);
+            backdrop-filter: blur(20px);
+            padding: 3.5rem;
+            border-radius: 32px;
+            width: 100%;
+            max-width: 450px;
+            border: 1px solid rgba(139, 92, 246, 0.3);
+            box-shadow: 0 40px 100px rgba(0, 0, 0, 0.8);
+            text-align: center;
+        }
+
+        .master-badge {
+            display: inline-block;
+            background: linear-gradient(135deg, #8B5CF6, #D946EF);
+            padding: 6px 16px;
+            border-radius: 99px;
+            font-size: 0.7rem;
+            font-weight: 800;
+            letter-spacing: 2px;
+            margin-bottom: 2rem;
+            box-shadow: 0 0 20px rgba(139, 92, 246, 0.4);
+        }
+
+        .login-header h1 {
+            font-size: 2.25rem;
+            margin-bottom: 0.5rem;
+            background: linear-gradient(to right, #fff, rgba(255,255,255,0.5));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .login-header p {
+            color: rgba(255, 255, 255, 0.4);
+            font-size: 1rem;
+            margin-bottom: 3rem;
+        }
+
+        .form-group {
+            text-align: left;
+            margin-bottom: 1.5rem;
+        }
+
+        .form-label {
+            font-size: 0.8rem;
+            color: rgba(255, 255, 255, 0.6);
+            margin-bottom: 8px;
+            display: block;
+            font-weight: 600;
+        }
+
+        .input-master {
+            width: 100%;
+            background: rgba(0, 0, 0, 0.3) !important;
+            border: 1px solid rgba(139, 92, 246, 0.2) !important;
+            padding: 16px !important;
+            border-radius: 14px !important;
+            color: white !important;
+            font-size: 1rem;
+            transition: all 0.3s;
+        }
+
+        .input-master:focus {
+            border-color: #8B5CF6 !important;
+            box-shadow: 0 0 0 4px rgba(139, 92, 246, 0.1);
+            outline: none;
+        }
+
+        .btn-master {
+            width: 100%;
+            padding: 18px;
+            border-radius: 14px;
+            background: #8B5CF6;
+            color: white;
+            font-weight: 700;
+            border: none;
+            cursor: pointer;
+            margin-top: 1.5rem;
+            box-shadow: 0 10px 25px rgba(139, 92, 246, 0.3);
+            transition: all 0.3s;
+        }
+
+        .btn-master:hover {
+            background: #7C3AED;
+            transform: translateY(-2px);
+            box-shadow: 0 15px 35px rgba(139, 92, 246, 0.5);
+        }
+
+        .btn-back {
+            display: block;
+            margin-top: 2rem;
+            color: rgba(255,255,255,0.3);
+            text-decoration: none;
+            font-size: 0.85rem;
+            transition: color 0.3s;
+        }
+
+        .btn-back:hover {
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <div class="admin-glow"></div>
+
+    <div class="login-card">
+        <div class="master-badge">SaaS OWNER PANEL</div>
+        <div class="login-header">
+            <h1>Acceso Maestro</h1>
+            <p>Control Central de la Plataforma</p>
+        </div>
+
+        <form id="adminForm">
+            <div class="form-group">
+                <label class="form-label">Identificador Maestro</label>
+                <input type="text" id="adminUser" class="input-master" placeholder="Admin ID" required>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Código de Acceso de Seguridad</label>
+                <input type="password" id="adminPass" class="input-master" placeholder="••••••••" required>
+            </div>
+
+            <button type="submit" id="submitBtn" class="btn-master">
+                Entrar al Centro de Mando ⚡
+            </button>
+        </form>
+
+        <div id="statusMsg" style="margin-top: 1.5rem; font-size: 0.85rem;"></div>
+
+        <a href="index.html" class="btn-back">← Volver a la App Fitness</a>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="js/supabase-service.js"></script>
+
+    <script>
+        document.getElementById('adminForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const user = document.getElementById('adminUser').value;
+            const pass = document.getElementById('adminPass').value;
+            const status = document.getElementById('statusMsg');
+            const btn = document.getElementById('submitBtn');
+
+            btn.disabled = true;
+            status.style.color = '#8B5CF6';
+            status.textContent = 'Autenticando nivel de seguridad Maestro...';
+
+            try {
+                // Validación Maestra (Configurable en Supabase saas_config más adelante)
+                // Por ahora usamos una clave maestra de seguridad
+                if (user === 'admin' && pass === 'fitness_pro_2026') {
+                    status.style.color = '#10B981';
+                    status.textContent = 'Acceso concedido. Iniciando mando central...';
+                    
+                    // IMPORTANTE: Marcamos sesión como Admin para no confundir con Entrenador
+                    sessionStorage.setItem('_isMasterAdmin', 'true');
+                    
+                    setTimeout(() => {
+                        window.location.href = 'admin-dashboard.html';
+                    }, 1000);
+                } else {
+                    throw new Error('Identificador o Código incorrectos. Acceso denegado.');
+                }
+            } catch (err) {
+                status.style.color = '#EF4444';
+                status.textContent = err.message;
+                btn.disabled = false;
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,736 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - Fitness App</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles/theme.css">
+    <link rel="stylesheet" href="styles/components.css">
+</head>
+
+<body>
+    <!-- Pantalla de Login (Google Auth) -->
+    <div id="login-screen" class="wizard-container"
+        style="min-height: 100vh; display: flex; align-items: center; justify-content: center;">
+        <div class="card wizard-card" style="max-width: 400px; text-align: center; padding: 2rem;">
+            <div style="font-size: 3rem; margin-bottom: 1rem;">🔒</div>
+            <h2>Acceso a tu Backend</h2>
+            <p class="text-muted mb-lg">Conéctate con tu cuenta de Google para acceder a tu base de datos de clientes y
+                rutinas.</p>
+            <div id="google-signin-container">
+                <button onclick="if(typeof AUTH !== 'undefined') { AUTH.signIn() } else { alert('El sistema de autenticación no ha cargado correctamente. Por favor, desactiva bloqueadores de anuncios o recarga la página.') }" class="btn btn-primary" style="display:flex; align-items:center; gap:0.5rem; justify-content:center; width:100%;">
+                    <svg width="24" height="24" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
+                        <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
+                        <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/>
+                        <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
+                    </svg>
+                    Conectar con Google
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- App Principal (Oculta por defecto hasta que inicies sesión) -->
+    <div id="app" style="display: none;">
+        <!-- Header -->
+        <header class="header">
+            <div class="container">
+                <nav class="nav">
+                    <div class="logo">
+                        <img id="brandLogo" class="logo-img" alt="Logo">
+                        <span id="brandName">Fitness App</span>
+                    </div>
+                    <button class="menu-toggle" onclick="toggleMenu()">☰</button>
+                    <ul class="nav-links" id="navLinks">
+                        <li><a href="trainer-dashboard.html" class="nav-link active">Dashboard</a></li>
+                        <li><a href="trainer-clients.html" class="nav-link">Clientes</a></li>
+                        <li><a href="trainer-routines.html" class="nav-link">Rutinas</a></li>
+                        <li><a href="trainer-diets.html" class="nav-link">Dietas</a></li>
+                        <li><a href="trainer-feedbacks.html" class="nav-link">Revisiones</a></li>
+                        <li><a href="trainer-media.html" class="nav-link">Biblioteca</a></li>
+                        <li><a href="trainer-appointments.html" class="nav-link">Agenda</a></li>
+                        <li><a href="trainer-settings.html" class="nav-link">Configuración</a></li>
+                        <li id="masterLink" style="display: none;"><a href="admin-dashboard.html" class="nav-link" style="color: #8B5CF6; font-weight: 800;">Panel Maestro</a></li>
+                        <li><a href="#" onclick="if(typeof AUTH !== 'undefined') { AUTH.signOut() } else { window.location.reload() }; return false;" class="nav-link" style="color:var(--error-color)">🚪 Salir</a></li>
+                    </ul>
+                </nav>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <div class="container">
+                <!-- Page Header -->
+                    <div>
+                        <h1>Dashboard</h1>
+                        <p class="text-muted">Resumen de tu negocio fitness</p>
+                    </div>
+
+                <!-- Stats Grid -->
+                <div class="grid grid-5 mb-lg">
+                    <div class="card stat-card" onclick="showActiveClientsModal()" style="cursor: pointer;"
+                        role="button" tabindex="0">
+                        <div class="stat-value" id="activeClients">0</div>
+                        <div class="stat-label">Clientes Activos</div>
+                    </div>
+                    <div class="card stat-card" onclick="showRevenueModal()" style="cursor: pointer;" role="button"
+                        tabindex="0">
+                        <div class="stat-value" id="totalRevenue">0€</div>
+                        <div class="stat-label">Ingresos Mensuales</div>
+                    </div>
+                    <div class="card stat-card" onclick="showPendingPaymentsModal()" style="cursor: pointer;"
+                        role="button" tabindex="0">
+                        <div class="stat-value" id="pendingPayments">0</div>
+                        <div class="stat-label">Pagos Pendientes</div>
+                    </div>
+                    <div class="card stat-card" onclick="window.location.href='trainer-feedbacks.html'"
+                        style="cursor: pointer;" role="button" tabindex="0">
+                        <div class="stat-value" id="pendingFeedbacks">0</div>
+                        <div class="stat-label">Revisiones Pendientes</div>
+                    </div>
+                    <div class="card stat-card" onclick="window.location.href='trainer-appointments.html'"
+                        style="cursor: pointer;" role="button" tabindex="0">
+                        <div class="stat-value" id="callsToday">0</div>
+                        <div class="stat-label">Llamadas Hoy</div>
+                    </div>
+                </div>
+
+                <!-- Main Grid -->
+                <div class="grid grid-2">
+                    <!-- Upcoming Appointments -->
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title">Próximas Citas</h3>
+                            <button class="btn btn-sm btn-secondary"
+                                onclick="window.location.href='trainer-appointments.html'">
+                                Ver todas
+                            </button>
+                        </div>
+                        <div class="card-body" id="upcomingAppointments">
+                            <div class="empty-state">
+                                <div class="empty-state-icon">📅</div>
+                                <div class="empty-state-title">No hay citas programadas</div>
+                                <div class="empty-state-text">Agenda llamadas con tus clientes</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Recent Feedbacks -->
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title">Últimas Revisiones</h3>
+                            <button class="btn btn-sm btn-secondary"
+                                onclick="window.location.href='trainer-feedbacks.html'">
+                                Ver todas
+                            </button>
+                        </div>
+                        <div class="card-body" id="recentFeedbacks">
+                            <div class="empty-state">
+                                <div class="empty-state-icon">⭐</div>
+                                <div class="empty-state-title">No hay revisiones</div>
+                                <div class="empty-state-text">Aquí aparecerán los feedbacks de tus clientes</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Client Status Overview -->
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title">Estado de Clientes</h3>
+                        </div>
+                        <div class="card-body">
+                            <div class="flex-between mb-md">
+                                <span>Activos</span>
+                                <span id="activeCount" class="badge badge-success" style="cursor: pointer;"
+                                    role="button" tabindex="0" onclick="showClientListModal('active')"
+                                    title="Ver listado">0</span>
+                            </div>
+                            <div class="flex-between mb-md">
+                                <span>Inactivos</span>
+                                <span id="inactiveCount" class="badge badge-error" style="cursor: pointer;"
+                                    role="button" tabindex="0" onclick="showClientListModal('inactive')"
+                                    title="Ver listado">0</span>
+                            </div>
+                            <div class="flex-between">
+                                <span>Pagos al día</span>
+                                <span id="paidCount" class="badge badge-info" style="cursor: pointer;" role="button"
+                                    tabindex="0" onclick="showClientListModal('paid')" title="Ver listado">0</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Business Health KPI -->
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title">Salud del Negocio</h3>
+                        </div>
+                        <div class="card-body">
+                            <div class="flex-col gap-lg items-center text-center p-md">
+                                <div style="position: relative; width: 120px; height: 120px; display: flex; align-items: center; justify-content: center;">
+                                    <svg viewBox="0 0 36 36" style="width: 100%; height: 100%; transform: rotate(-90deg);">
+                                        <path d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="rgba(255,255,255,0.05)" stroke-width="3" />
+                                        <path id="retentionCircle" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="#10B981" stroke-width="3" stroke-dasharray="0, 100" />
+                                    </svg>
+                                    <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);">
+                                        <div style="font-size: 1.8rem; font-weight: 800;" id="retentionPct">0%</div>
+                                    </div>
+                                </div>
+                                <div>
+                                    <div class="text-sm text-secondary mb-xs flex-center gap-xs">
+                                        Tasa de Retención
+                                        <div class="tooltip">
+                                            <span style="cursor: help; opacity: 0.6;">ⓘ</span>
+                                            <span class="tooltip-text">Clientes activos vs total histórico. Muestra tu capacidad para fidelizar alumnos.</span>
+                                        </div>
+                                    </div>
+                                    <div class="text-xs text-muted" id="businessStatusText">Análisis de ciclo de vida</div>
+                                </div>
+                                <div class="grid grid-2 gap-md w-full mt-md">
+                                    <div class="p-sm rounded-sm" style="background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.05);">
+                                        <div class="text-xs text-muted flex-center gap-xs">
+                                            Churn Rate
+                                            <div class="tooltip">
+                                                <span style="cursor: help; opacity: 0.6;">ⓘ</span>
+                                                <span class="tooltip-text">Tasa de abandono. Cuanto menor sea el %, mejor salud tiene el negocio.</span>
+                                            </div>
+                                        </div>
+                                        <div class="font-bold" id="churnRate" style="color: var(--error-color);">0%</div>
+                                    </div>
+                                    <div class="p-sm rounded-sm" style="background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.05);">
+                                        <div class="text-xs text-muted flex-center gap-xs">
+                                            LTV Medio
+                                            <div class="tooltip">
+                                                <span style="cursor: help; opacity: 0.6;">ⓘ</span>
+                                                <span class="tooltip-text">Lifetime Value. Ingreso medio total generado por cada alumno.</span>
+                                            </div>
+                                        </div>
+                                        <div class="font-bold" id="avgLTV">0 €</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </main>
+
+    </div>
+
+    <!-- Firebase SDKs -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-storage.js"></script>
+    <script src="js/firebase-config.js"></script>
+    <script src="js/firebase-service.js"></script>
+
+    <!-- Supabase SDK & Service -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="js/supabase-service.js"></script>
+
+    <!-- UI Scripts -->
+    <script src="js/config.js?v=101"></script>
+    <script src="js/auth.js?v=101"></script>
+    <script src="js/sheets.js?v=101"></script>
+
+    <script src="js/data-models.js?v=92"></script>
+    <script src="js/custom-recipes.js?v=92"></script>
+    <script src="js/custom-exercises.js?v=92"></script>
+    <script src="js/utils.js?v=92"></script>
+    <script>
+        // Branding is handled via onGoogleAuthSuccess() and global listeners
+
+        // Load dashboard data
+        function loadDashboard() {
+            // Stats
+            const clients = Clients.getAll();
+            const activeClients = clients.filter(c => c.status === 'active').length;
+            const totalRevenue = Clients.getTotalRevenue();
+            const pendingPayments = Clients.getPendingPayments().length;
+
+            // Pending Feedbacks (from feedbacks table)
+            // Revisiones Hoy check
+            const todayDay = (new Date().getDay() || 7).toString();
+            const reviewsTodayCount = clients.filter(c => c.status === 'active' && c.reviewDay === todayDay).length;
+
+            // Calls Today check
+            const todayStr = new Date().toISOString().split('T')[0];
+            const appointments = Appointments.getAll() || [];
+            const callsTodayCount = appointments.filter(a => {
+                const isToday = a.date.startsWith(todayStr);
+                return isToday && a.type === 'call';
+            }).length;
+
+            document.getElementById('activeClients').textContent = activeClients;
+            document.getElementById('totalRevenue').textContent = formatCurrency(totalRevenue);
+            document.getElementById('pendingPayments').textContent = pendingPayments;
+            document.getElementById('pendingFeedbacks').textContent = Feedbacks.getPendingReviews().length; // Keep original pending feedbacks count
+            document.getElementById('callsToday').textContent = callsTodayCount;
+
+            // Update the label if needed
+            const feedbackLabel = document.querySelector('[onclick="window.location.href=\'trainer-feedbacks.html\'"] .stat-label');
+            if (reviewsTodayCount > 0) {
+                feedbackLabel.innerHTML = `Revisiones <span style="color:var(--primary-color)">(${reviewsTodayCount} hoy)</span>`;
+            }
+
+            // Highlighting calls if any
+            if (callsTodayCount > 0) {
+                document.getElementById('callsToday').style.color = 'var(--accent-color)';
+            }
+
+            // Client status breakdown
+            const activeCount = clients.filter(c => c.status === 'active').length;
+            const inactiveCount = clients.filter(c => c.status === 'inactive').length;
+            const paidCount = clients.filter(c => c.paymentStatus === 'paid').length;
+
+            document.getElementById('activeCount').textContent = activeCount;
+            document.getElementById('inactiveCount').textContent = inactiveCount;
+            document.getElementById('paidCount').textContent = paidCount;
+
+            // Upcoming appointments
+            loadUpcomingAppointments();
+
+            // Recent feedbacks
+            loadRecentFeedbacks();
+            
+            // KPI calculation
+            calculateKPIs();
+        }
+
+        function calculateKPIs() {
+            const clients = Clients.getAll() || [];
+            if (clients.length === 0) return;
+
+            const active = clients.filter(c => c.status === 'active').length;
+            const inactive = clients.filter(c => c.status === 'inactive').length;
+            const total = clients.length;
+
+            // 1. Tasa de Retención
+            const retentionPct = Math.round((active / total) * 100);
+            
+            // 2. Churn Rate (Fuga de clientes)
+            const churnRate = Math.round((inactive / total) * 100);
+
+            // 3. LTV Medio (Lifetime Value - Dinero total generado por cliente activo)
+            const invoices = Invoices.getAll() || [];
+            const revenue = invoices.reduce((s, inv) => s + (parseFloat(inv.amount) || 0), 0);
+            const ltv = total > 0 ? (revenue / total) : 0;
+
+            document.getElementById('retentionPct').textContent = retentionPct + '%';
+            document.getElementById('retentionCircle').setAttribute('stroke-dasharray', `${retentionPct}, 100`);
+            document.getElementById('churnRate').textContent = churnRate + '%';
+            document.getElementById('avgLTV').textContent = formatCurrency(ltv);
+            document.getElementById('businessStatusText').textContent = `Tracking sobre ${total} clientes totales`;
+        }
+
+        function loadUpcomingAppointments() {
+            const appointments = Appointments.getUpcoming().slice(0, 5);
+            const container = document.getElementById('upcomingAppointments');
+
+            if (appointments.length === 0) return;
+
+            container.innerHTML = appointments.map(apt => {
+                const client = Clients.getById(apt.clientId);
+                return `
+          <div class="flex-between mb-md">
+            <div>
+              <strong>${client?.name || 'Cliente'}</strong>
+              <div class="text-secondary" style="font-size: 0.8rem; margin-top: 2px;">${formatDateTime(apt.date)}</div>
+            </div>
+            <span class="badge badge-info">${apt.type === 'call' ? 'Llamada' : 'Reunión'}</span>
+          </div>
+        `;
+            }).join('');
+        }
+
+        function loadRecentFeedbacks() {
+            const feedbacks = Feedbacks.getAll().slice(-5).reverse();
+            const container = document.getElementById('recentFeedbacks');
+
+            if (feedbacks.length === 0) return;
+
+            container.innerHTML = feedbacks.map(fb => {
+                const client = Clients.getById(fb.clientId);
+                const needsResponse = !fb.trainerResponse || fb.trainerResponse === '';
+                return `
+          <div class="flex-between mb-md">
+            <div>
+              <strong>${client?.name || 'Cliente'}</strong>
+              <div class="text-muted" style="font-size: 0.8rem;">Semana ${fb.week} - ${formatDateTime(fb.date)}</div>
+            </div>
+            ${needsResponse ? '<span class="badge badge-warning">Pendiente</span>' : '<span class="badge badge-success">Respondido</span>'}
+          </div>
+        `;
+            }).join('');
+        }
+
+        function viewClient(clientId) {
+            window.location.href = `trainer-client-detail.html?id=${clientId}`;
+        }
+
+        function showActiveClientsModal() {
+            const clients = (Clients.getAll() || []).filter(c => c.status === 'active');
+            clients.sort((a, b) => (a.name || '').localeCompare(b.name || ''));
+            if (clients.length === 0) {
+                showToast('No hay clientes activos', 'info');
+                return;
+            }
+            const daysMapShort = { '1': 'Lun', '2': 'Mar', '3': 'Mié', '4': 'Jue', '5': 'Vie', '6': 'Sáb', '7': 'Dom' };
+            const freqMap = { 'weekly': 'Semanal', 'biweekly': 'Quincenal', 'monthly': 'Mensual', 'specific': 'Específico' };
+            const content = `
+                <div style="overflow-x: auto;">
+                    <table class="table" style="width: 100%; min-width: 800px;">
+                        <thead>
+                            <tr>
+                                <th>Cliente</th>
+                                <th>Email</th>
+                                <th>Cuota</th>
+                                <th>Revisión</th>
+                                <th>Código</th>
+                                <th>Pago</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${clients.map(c => `
+                                <tr style="cursor: pointer;" onclick="window.location.href='trainer-client-detail.html?id=${c.id}'">
+                                    <td>
+                                        <strong style="color: var(--primary-color); text-decoration: underline;">${c.name}</strong>
+                                    </td>
+                                    <td class="text-muted">${c.email || '-'}</td>
+                                    <td>${formatCurrency(c.monthlyFee)}</td>
+                                    <td><span class="badge badge-outline">${freqMap[c.reviewFrequency] || (c.reviewDay ? 'Semanal' : '-')}</span></td>
+                                    <td><code>${c.accessCode || '-'}</code></td>
+                                    <td>
+                                        <span class="badge ${c.paymentStatus === 'paid' ? 'badge-success' : 'badge-warning'}">
+                                            ${c.paymentStatus === 'paid' ? 'Pagado' : (c.paymentStatus === 'overdue' ? 'Moroso' : 'Pendiente')}
+                                        </span>
+                                    </td>
+                                </tr>
+                            `).join('')}
+                        </tbody>
+                    </table>
+                </div>
+            `;
+            showModal('Clientes Activos (' + clients.length + ')', content, [
+                { text: 'Cerrar', class: 'btn-secondary', onclick: 'window.closeModal()' }
+            ], 'modal-xl');
+        }
+
+        function showRevenueModal() {
+            const clients = (Clients.getAll() || []).filter(c => c.status === 'active' && c.paymentStatus === 'paid');
+            clients.sort((a, b) => (a.name || '').localeCompare(b.name || ''));
+            const totalRevenue = Clients.getTotalRevenue();
+            const content = `
+                <div class="mb-lg text-center">
+                    <div style="font-size: 3rem; font-weight: 700; color: var(--primary-color);">
+                        ${formatCurrency(totalRevenue)}
+                    </div>
+                    <div class="text-muted">Ingresos mensuales totales</div>
+                </div>
+                <div>
+                    <h4>Desglose por cliente:</h4>
+                    ${clients.length === 0 ? '<p class="text-muted">No hay clientes con pagos al día</p>' : `
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Cliente</th>
+                                    <th>Cuota Mensual</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                ${clients.map(c => `
+                                    <tr style="cursor: pointer;" onclick="window.location.href='trainer-client-detail.html?id=${c.id}'">
+                                        <td><strong>${c.name}</strong></td>
+                                        <td>${formatCurrency(c.monthlyFee)}</td>
+                                    </tr>
+                                `).join('')}
+                            </tbody>
+                        </table>
+                    `}
+                </div>
+            `;
+            showModal('Ingresos Mensuales', content, [
+                { text: 'Cerrar', class: 'btn-secondary', onclick: 'window.closeModal()' }
+            ]);
+        }
+
+        function showPendingPaymentsModal() {
+            const pendingClients = (Clients.getPendingPayments() || []);
+            pendingClients.sort((a, b) => (a.name || '').localeCompare(b.name || ''));
+            if (pendingClients.length === 0) {
+                showToast('¡Todos los pagos están al día!', 'success');
+                return;
+            }
+            const daysMapShort = { '1': 'Lun', '2': 'Mar', '3': 'Mié', '4': 'Jue', '5': 'Vie', '6': 'Sáb', '7': 'Dom' };
+            const freqMap = { 'weekly': 'Semanal', 'biweekly': 'Quincenal', 'monthly': 'Mensual', 'specific': 'Específico' };
+            const content = `
+                <div style="overflow-x: auto;">
+                    <table class="table" style="width: 100%; min-width: 800px;">
+                        <thead>
+                            <tr>
+                                <th>Cliente</th>
+                                <th>Email</th>
+                                <th>Cuota</th>
+                                <th>Revisión</th>
+                                <th>Código</th>
+                                <th>Estado</th>
+                                <th style="text-align: right;">Aviso</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${pendingClients.map(c => `
+                                <tr style="cursor: pointer;" onclick="window.location.href='trainer-client-detail.html?id=${c.id}'">
+                                    <td>
+                                        <strong style="color: var(--primary-color); text-decoration: underline;">${c.name}</strong>
+                                    </td>
+                                    <td class="text-muted">${c.email || '-'}</td>
+                                    <td>${formatCurrency(c.monthlyFee)}</td>
+                                    <td><span class="badge badge-outline">${freqMap[c.reviewFrequency] || (c.reviewDay ? 'Semanal' : '-')}</span></td>
+                                    <td><code>${c.accessCode || '-'}</code></td>
+                                    <td>
+                                        <span class="badge ${c.paymentStatus === 'overdue' ? 'badge-error' : 'badge-warning'}">
+                                            ${c.paymentStatus === 'overdue' ? 'Moroso' : 'Pendiente'}
+                                        </span>
+                                    </td>
+                                    <td style="text-align: right;">
+                                        <button class="btn btn-xs btn-primary" onclick="event.stopPropagation(); contactClientForPayment('${c.id}')">📲 WhatsApp</button>
+                                    </td>
+                                </tr>
+                            `).join('')}
+                        </tbody>
+                    </table>
+                </div>
+            `;
+            showModal('Pagos Pendientes (' + pendingClients.length + ')', content, [
+                { text: 'Cerrar', class: 'btn-secondary', onclick: 'window.closeModal()' }
+            ], 'modal-xl');
+        }
+
+        function showPendingFeedbacksModal() {
+            const pendingFeedbacks = Feedbacks.getPendingReviews();
+            if (pendingFeedbacks.length === 0) {
+                showToast('¡No hay revisiones pendientes!', 'success');
+                return;
+            }
+            const content = `
+                <div>
+                    ${pendingFeedbacks.map(fb => {
+                const client = Clients.getById(fb.clientId);
+                return `
+                            <div class="card mb-md">
+                                <div class="card-body">
+                                    <div class="flex-between mb-sm">
+                                        <div style="cursor: pointer;" onclick="window.location.href='trainer-client-detail.html?id=${client.id}'">
+                                            <strong style="color: var(--primary-color); text-decoration: underline;">${client?.name || 'Cliente desconocido'}</strong>
+                                        </div>
+                                        <span class="text-muted">Semana ${fb.week}</span>
+                                    </div>
+                                    <div class="flex gap-sm mb-md">
+                                        <span class="badge badge-info">Energía: ${fb.energy}/5</span>
+                                        <span class="badge badge-info">Adherencia: ${fb.adherence}/5</span>
+                                        <span class="badge badge-info">Satisfacción: ${fb.satisfaction}/5</span>
+                                    </div>
+                                    ${fb.comments ? `
+                                        <div class="mb-md">
+                                            <span class="text-muted">Comentarios:</span>
+                                            <p class="mt-sm">${fb.comments}</p>
+                                        </div>
+                                    ` : ''}
+                                    <div class="form-group">
+                                        <label class="form-label">Tu respuesta:</label>
+                                        <textarea class="form-textarea" id="response_${fb.id}" rows="3" placeholder="Escribe tu respuesta al cliente..."></textarea>
+                                    </div>
+                                    <button class="btn btn-sm btn-primary" onclick="respondToFeedback('${fb.id}')">
+                                        Enviar Respuesta
+                                    </button>
+                                </div>
+                            </div>
+                        `;
+            }).join('')}
+                </div>
+            `;
+            showModal('Revisiones Pendientes (' + pendingFeedbacks.length + ')', content, [
+                { text: 'Cerrar', class: 'btn-secondary', onclick: 'window.closeModal()' }
+            ]);
+        }
+
+        function contactClientForPayment(clientId) {
+            const client = Clients.getById(clientId);
+            const brand = BrandConfig.get();
+            const message = `Hola ${client.name}, te escribo para recordarte el pago de tu cuota mensual de ${formatCurrency(client.monthlyFee)}. ¿Podemos gestionar el pago? Gracias.`;
+            const link = generateWhatsAppLink(brand.whatsapp, message);
+            window.open(link, '_blank');
+        }
+
+        function respondToFeedback(feedbackId) {
+            const response = document.getElementById(`response_${feedbackId}`).value;
+            if (!response || response.trim() === '') {
+                showToast('Por favor escribe una respuesta', 'warning');
+                return;
+            }
+            Feedbacks.update(feedbackId, { trainerResponse: response });
+            showToast('Respuesta enviada correctamente', 'success');
+            document.querySelector('.modal-overlay').remove();
+            loadDashboard();
+        }
+
+        function downloadClientList(type) {
+            const clients = Clients.getAll();
+            let filtered = [];
+            let fileName = '';
+            if (type === 'active') {
+                filtered = clients.filter(c => c.status === 'active');
+                fileName = 'clientes_activos.csv';
+            } else if (type === 'inactive') {
+                filtered = clients.filter(c => c.status === 'inactive');
+                fileName = 'clientes_inactivos.csv';
+            } else if (type === 'paid') {
+                filtered = clients.filter(c => c.paymentStatus === 'paid');
+                fileName = 'clientes_al_dia.csv';
+            } else {
+                return;
+            }
+            if (filtered.length === 0) {
+                showToast('No hay clientes en esta categoría', 'info');
+                return;
+            }
+            let csvContent = "data:text/csv;charset=utf-8,\uFEFF";
+            csvContent += "Nombre,Email,Telefono,Estado,Pago\n";
+            filtered.forEach(c => {
+                const row = [
+                    c.name,
+                    c.email || '',
+                    c.phone || '',
+                    c.status === 'active' ? 'Activo' : 'Inactivo',
+                    c.paymentStatus === 'paid' ? 'Pagado' : 'Pendiente'
+                ].map(field => `"${field}"`).join(",");
+                csvContent += row + "\n";
+            });
+            const encodedUri = encodeURI(csvContent);
+            const link = document.createElement("a");
+            link.setAttribute("href", encodedUri);
+            link.setAttribute("download", fileName);
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+
+        function showClientListModal(type) {
+            const clients = (Clients.getAll() || []);
+            let filtered = [];
+            let title = '';
+            if (type === 'active') {
+                filtered = clients.filter(c => c.status === 'active');
+                title = 'Clientes Activos';
+            } else if (type === 'inactive') {
+                filtered = clients.filter(c => c.status === 'inactive');
+                title = 'Clientes Inactivos';
+            } else if (type === 'paid') {
+                filtered = clients.filter(c => c.paymentStatus === 'paid');
+                title = 'Pagos al día';
+            } else {
+                return;
+            }
+
+            // Ordenar alfabéticamente
+            filtered.sort((a, b) => (a.name || '').localeCompare(b.name || ''));
+            if (filtered.length === 0) {
+                showToast('No hay clientes en esta categoría', 'info');
+                return;
+            }
+            const daysMapShort = { '1': 'Lun', '2': 'Mar', '3': 'Mié', '4': 'Jue', '5': 'Vie', '6': 'Sáb', '7': 'Dom' };
+            const freqMap = { 'weekly': 'Semanal', 'biweekly': 'Quincenal', 'monthly': 'Mensual', 'specific': 'Específico' };
+            const content = `
+                <div style="overflow-x: auto;">
+                    <table class="table" style="width: 100%; min-width: 800px;">
+                        <thead>
+                            <tr>
+                                <th>Cliente</th>
+                                <th>Email</th>
+                                <th>Cuota</th>
+                                <th>Revisión</th>
+                                <th>Código</th>
+                                <th>Pago</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${filtered.map(c => `
+                                <tr style="cursor: pointer;" onclick="window.location.href='trainer-client-detail.html?id=${c.id}'">
+                                    <td>
+                                        <strong style="color: var(--primary-color); text-decoration: underline;">${c.name}</strong>
+                                    </td>
+                                    <td class="text-muted">${c.email || '-'}</td>
+                                    <td>${formatCurrency(c.monthlyFee)}</td>
+                                    <td><span class="badge badge-outline">${freqMap[c.reviewFrequency] || (c.reviewDay ? 'Semanal' : '-')}</span></td>
+                                    <td><code>${c.accessCode || '-'}</code></td>
+                                    <td>
+                                        <span class="badge ${c.paymentStatus === 'paid' ? 'badge-success' : 'badge-warning'}">
+                                            ${c.paymentStatus === 'paid' ? 'Pagado' : (c.paymentStatus === 'overdue' ? 'Moroso' : 'Pendiente')}
+                                        </span>
+                                    </td>
+                                </tr>
+                            `).join('')}
+                        </tbody>
+                    </table>
+                </div>
+            `;
+            showModal(title + ` (${filtered.length})`, content, [
+                { text: 'Cerrar', class: 'btn-secondary', onclick: 'window.closeModal()' }
+            ], 'modal-xl');
+        }
+
+        function toggleMenu() {
+            document.getElementById('navLinks').classList.toggle('active');
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            if (typeof BrandConfig !== 'undefined') {
+                BrandConfig.applyTheme();
+            }
+            loadDashboard();
+        });
+
+        async function onGoogleAuthSuccess() {
+            // Sincronizar con la nube (Supabase es ahora el primario)
+            if (window.SupabaseService) {
+                window.SupabaseService.init();
+                await window.syncFromCloud();
+                
+                // --- Lógica Especial de Administrador ---
+                const activeId = localStorage.getItem('activeTrainerId');
+                const config = await window.SupabaseService.getGlobalConfig();
+                const platformData = JSON.parse(localStorage.getItem('saasFitnessPlatform') || '{}');
+                
+                // Si el ID activo coincide con el email de soporte o está en la lista de admin
+                const currentTrainer = platformData.trainers?.find(t => t.id === activeId);
+                const adminEmail = "alejandrasanchisex@gmail.com"; // Email dueño
+
+                if (currentTrainer && currentTrainer.email === adminEmail) {
+                    document.getElementById('masterLink').style.display = 'block';
+                    sessionStorage.setItem('_isMasterAdmin', 'true'); // Dar permisos para entrar
+                }
+            } else if (window.FirebaseService) {
+                await window.FirebaseService.init();
+                await window.syncFromCloud();
+            }
+
+            // Aplicar branding
+            if (typeof BrandConfig !== 'undefined') {
+                BrandConfig.applyTheme();
+            }
+
+            document.getElementById('login-screen').style.display = 'none';
+            document.getElementById('app').style.display = 'block';
+
+            if (typeof loadDashboard === 'function') loadDashboard();
+        }
+    </script>
+</body>
+
+</html>

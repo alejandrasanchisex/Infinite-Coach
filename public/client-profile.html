@@ -1,0 +1,464 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mi Ficha Técnica - Fitness App</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles/theme.css">
+    <link rel="stylesheet" href="styles/components.css">
+    <link rel="stylesheet" href="styles/mobile.css">
+    <link rel="manifest" href="manifest.json">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+</head>
+
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <nav class="nav">
+                <div class="logo">
+                    <img id="brandLogo" class="logo-img" alt="Logo" style="display: none;">
+                    <span id="brandName">Fitness App</span>
+                </div>
+                <ul class="nav-links" id="navLinks">
+                    <li><a href="client-dashboard.html" class="nav-link">Inicio</a></li>
+                    <li><a href="client-profile.html" class="nav-link active">Ficha Técnica</a></li>
+
+                    <li><a href="client-login.html" class="nav-link">Salir</a></li>
+                </ul>
+                <div id="navClientProfileAvatar" style="width: 35px; height: 35px; border-radius: 50%; background: var(--primary-color); display: flex; align-items: center; justify-content: center; font-size: 0.9rem; font-weight: 800; color: #000; overflow: hidden; border: 2px solid rgba(255,255,255,0.1); margin-left: 15px; cursor: pointer; flex-shrink: 0;" onclick="window.location.href='client-profile.html'">
+                    U
+                </div>
+                <button class="menu-toggle" onclick="toggleMenu()" style="margin-left: 10px;">☰</button>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <div class="container">
+            <div class="mb-lg flex align-center gap-md">
+                <div id="clientProfileAvatar" style="width: 60px; height: 60px; border-radius: 50%; background: var(--primary-color); display: flex; align-items: center; justify-content: center; font-size: 1.5rem; font-weight: bold; color: #000; overflow: hidden; border: 2px solid rgba(255,255,255,0.1);">
+                    --
+                </div>
+                <div>
+                    <h1 style="margin: 0;">Mi Ficha Técnica</h1>
+                    <p class="text-muted" style="margin: 0;">Tus datos personales y de salud actuales</p>
+                </div>
+            </div>
+
+            <div class="card" style="max-width: 800px; margin: 0 auto;">
+                <div class="card-header pb-sm flex-between">
+                    <h3 class="card-title">Datos Biométricos</h3>
+                    <button class="btn btn-sm btn-outline" onclick="openEditProfile()">✏️ Editar Perfil</button>
+                </div>
+                <div class="card-body">
+                    <!-- Métricas Integradas -->
+                    <div class="grid grid-3 mb-md"
+                        style="gap: 10px; text-align: center; background: rgba(0,0,0,0.2); padding: 15px; border-radius: var(--radius-md); border: 1px solid rgba(255,255,255,0.05);">
+                        <div>
+                            <div class="text-muted" style="font-size: 0.75rem; text-transform: uppercase;">Peso</div>
+                            <strong id="clientWeight"
+                                style="font-size: 1.4rem; color: var(--primary-color);">--</strong><span
+                                style="font-size: 0.8rem; color: var(--text-muted); margin-left: 2px;">kg</span>
+                        </div>
+                        <div
+                            style="border-left: 1px solid rgba(255,255,255,0.1); border-right: 1px solid rgba(255,255,255,0.1);">
+                            <div class="text-muted" style="font-size: 0.75rem; text-transform: uppercase;">Altura</div>
+                            <strong id="clientHeight"
+                                style="font-size: 1.4rem; color: var(--primary-color);">--</strong><span
+                                style="font-size: 0.8rem; color: var(--text-muted); margin-left: 2px;">cm</span>
+                        </div>
+                        <div>
+                            <div class="text-muted" style="font-size: 0.75rem; text-transform: uppercase;">Edad</div>
+                            <strong id="clientAge" style="font-size: 1.4rem; color: var(--primary-color);">--</strong>
+                        </div>
+                    </div>
+
+                    <div class="divider"></div>
+                    <div class="mb-md">
+                        <span class="text-muted">Objetivos</span>
+                        <p id="clientGoals" class="mt-sm"
+                            style="background: rgba(255,255,255,0.02); padding: 10px; border-radius: var(--radius-sm);">
+                            --</p>
+                    </div>
+                    <div class="divider"></div>
+                    <div>
+                        <span class="text-muted">Lesiones/Limitaciones</span>
+                        <p id="clientInjuries" class="mt-sm"
+                            style="background: rgba(255,107,107,0.05); padding: 10px; border-radius: var(--radius-sm); color: #ff8a8a;">
+                            --</p>
+                    </div>
+                    <div class="divider"></div>
+                    <div>
+                        <span class="text-muted">Alergias / Intolerancias</span>
+                        <p id="clientAllergies" class="mt-sm"
+                            style="background: rgba(255,152,0,0.05); padding: 10px; border-radius: var(--radius-sm); color: #ff9800;">
+                            --</p>
+                    </div>
+                    <div class="divider"></div>
+                    <div>
+                        <span class="text-muted">Información Relevante</span>
+                        <p id="clientNotes" class="mt-sm"
+                            style="background: rgba(0,188,212,0.05); padding: 10px; border-radius: var(--radius-sm); color: #00bcd4;">
+                            --</p>
+                    </div>
+
+                    <div class="divider"></div>
+                    <div class="grid grid-2 mt-md" style="gap: 15px;">
+                        <div style="background: rgba(var(--primary-color-rgb), 0.05); padding: 15px; border-radius: var(--radius-md); border-left: 3px solid var(--primary-color);">
+                            <div class="text-muted" style="font-size: 0.75rem; text-transform: uppercase; margin-bottom: 5px;">Día de Revisión</div>
+                            <strong id="clientReviewDay" style="font-size: 1.1rem; color: var(--primary-color);">--</strong>
+                        </div>
+                        <div style="background: rgba(76, 175, 80, 0.05); padding: 15px; border-radius: var(--radius-md); border-left: 3px solid #4CAF50;">
+                            <div class="text-muted" style="font-size: 0.75rem; text-transform: uppercase; margin-bottom: 5px;">Vigencia Pago</div>
+                            <strong id="clientPaymentExpiry" style="font-size: 1.1rem; color: #4CAF50;">--</strong>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card mt-lg" id="paymentInfoCard" style="display: none; max-width: 800px; margin: 20px auto 0;">
+                <div class="card-header pb-sm">
+                    <h3 class="card-title">Información de Pago</h3>
+                </div>
+                <div class="card-body">
+                    <div id="paymentDetails" style="background: rgba(255,255,255,0.03); padding: 20px; border-radius: 12px; text-align: center;">
+                        <!-- Payment details will be loaded here -->
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <!-- WhatsApp FAB -->
+    <a href="#" class="fab" id="whatsappFab" title="Contactar por WhatsApp">
+        <span style="font-size: 1.5rem;">Chat</span>
+    </a>
+
+    <!-- Firebase SDKs -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-storage.js"></script>
+    <script src="js/firebase-config.js"></script>
+    <script src="js/firebase-service.js"></script>
+
+    <script src="js/config.js?v=100"></script>
+    <script src="js/data-models.js?v=20"></script>
+    <script src="js/cloud-storage.js?v=20"></script>
+    <script src="js/utils.js?v=20"></script>
+    <script>
+        // Check if client is logged in
+        const clientId = sessionStorage.getItem('clientId');
+        if (!clientId) {
+            window.location.href = 'client-login.html';
+        }
+
+        // Apply brand theme
+        BrandConfig.applyTheme();
+        const brand = BrandConfig.get();
+        document.getElementById('brandName').textContent = brand.name;
+        if (brand.logo) {
+            document.getElementById('brandLogo').src = brand.logo;
+            document.getElementById('brandLogo').style.display = 'block';
+        }
+
+        // Load client data
+        let client = Clients.getById(clientId);
+        console.log('Cliente recuperado:', client);
+        if (client) {
+            const navAvatar = document.getElementById('navClientProfileAvatar');
+            if (navAvatar) {
+                if (client.profilePhoto) {
+                    navAvatar.innerHTML = `<img src="${client.profilePhoto}" style="width:100%;height:100%;object-fit:cover;">`;
+                    navAvatar.style.background = 'transparent';
+                } else {
+                    navAvatar.textContent = client.name.charAt(0).toUpperCase();
+                    navAvatar.style.background = 'var(--primary-color)';
+                }
+            }
+        }
+        
+        if (!client) {
+            alert('Error: No se encontró al cliente con ID ' + clientId + ' en la base de datos local.');
+            window.location.href = 'client-login.html';
+        } else {
+            // alert('Éxito: Cargando ficha de ' + client.name);
+        }
+
+        // Sync cloud removed for local validation
+
+        // Initialize technicalData if missing
+        if (!client.technicalData) {
+            client.technicalData = { weight: 0, height: 0, age: 0, goals: '', injuries: '', allergies: '', notes: '' };
+        }
+
+        function loadClientData() {
+            try {
+                console.log('Cargando ficha de:', client.name);
+                const tech = client.technicalData || {};
+                
+                // Mapeo seguro de campos con fallback a campos antiguos
+                const weight = tech.weight || client.weight || 0;
+                const height = tech.height || client.height || 0;
+                const age    = tech.age || client.age || 0;
+
+                // Actualizar interfaz
+                if (document.getElementById('clientWeight')) {
+                    document.getElementById('clientWeight').textContent = weight > 0 ? weight : '--';
+                }
+                if (document.getElementById('clientHeight')) {
+                    document.getElementById('clientHeight').textContent = height > 0 ? height : '--';
+                }
+                if (document.getElementById('clientAge')) {
+                    document.getElementById('clientAge').textContent = age > 0 ? age : '--';
+                }
+
+                // BMI calculation removed by user request
+
+
+                // Profile Photo / Avatar
+                const avatar = document.getElementById('clientProfileAvatar');
+                if (avatar) {
+                    if (client.profilePhoto) {
+                        avatar.innerHTML = `<img src="${client.profilePhoto}" style="width:100%; height:100%; object-fit:cover;">`;
+                        avatar.style.background = 'transparent';
+                    } else {
+                        avatar.textContent = (client.name || 'U').charAt(0).toUpperCase();
+                        avatar.style.background = 'var(--primary-color)';
+                    }
+                }
+
+                // Goals and injuries
+                if (document.getElementById('clientGoals')) document.getElementById('clientGoals').textContent = tech.goals || client.goals || 'No especificados';
+                if (document.getElementById('clientInjuries')) document.getElementById('clientInjuries').textContent = tech.injuries || client.injuries || 'Ninguna';
+                if (document.getElementById('clientAllergies')) document.getElementById('clientAllergies').textContent = tech.allergies || client.allergies || 'Ninguna';
+                if (document.getElementById('clientNotes')) document.getElementById('clientNotes').textContent = tech.notes || client.notes || 'Ninguna';
+                
+                // Payment and review
+                const daysMap = {'1':'Lunes','2':'Martes','3':'Miércoles','4':'Jueves','5':'Viernes','6':'Sábado','7':'Domingo'};
+                
+                let reviewText = 'No asignado';
+                if (client.reviewFrequency === 'specific' && client.specificReviewDate) {
+                    reviewText = `Fecha: ${new Date(client.specificReviewDate).toLocaleDateString()}`;
+                } else if (['biweekly', 'monthly'].includes(client.reviewFrequency) && client.reviewDaysOfMonth) {
+                    const freqLabel = client.reviewFrequency === 'biweekly' ? 'Quincenal' : 'Mensual';
+                    const daysFormatted = client.reviewDaysOfMonth.replace(/,\s?([^,]+)$/, ' y $1');
+                    reviewText = `${freqLabel} (Día ${daysFormatted} de cada mes)`;
+                } else if (client.reviewDay) {
+                    const dName = daysMap[client.reviewDay] || '---';
+                    reviewText = client.reviewFrequency === 'weekly' ? `Semanal (${dName})` : dName;
+                }
+                
+                if (document.getElementById('clientReviewDay')) document.getElementById('clientReviewDay').textContent = reviewText;
+                
+                const expiryEl = document.getElementById('clientPaymentExpiry');
+                if (expiryEl) {
+                    expiryEl.textContent = client.paymentExpiry || '-- / --';
+                }
+
+                // WhatsApp FAB
+                setupWhatsAppFab();
+
+                // Payment Info
+                loadPaymentInfo();
+            } catch (err) {
+                console.error('Error en loadClientData:', err);
+            }
+        }
+
+        function loadPaymentInfo() {
+            const methods = brand.paymentMethods || [];
+            
+            // Legacy fallback if array is empty
+            if (methods.length === 0 && brand.paymentSettings && brand.paymentSettings.method !== 'none') {
+                methods.push({ type: brand.paymentSettings.method, id: brand.paymentSettings.id });
+            }
+
+            const card = document.getElementById('paymentInfoCard');
+            const details = document.getElementById('paymentDetails');
+            
+            if (methods.length === 0) {
+                card.style.display = 'none';
+                return;
+            }
+
+            card.style.display = 'block';
+            let html = '<div style="display: flex; flex-direction: column; gap: 15px;">';
+            
+            methods.forEach(m => {
+                const type = m.type.toLowerCase();
+                const id = m.id;
+                
+                html += `
+                    <div style="background: rgba(255,255,255,0.02); padding: 15px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.05); text-align: left;">
+                        <div class="flex-between align-center mb-sm">
+                            <span class="font-bold" style="color: var(--primary-color); text-transform: uppercase; font-size: 0.8rem;">${m.type}</span>
+                            <span style="font-size: 1.2rem;">${getPaymentIcon(type)}</span>
+                        </div>
+                        <div style="margin-bottom: 12px;">
+                            ${formatPaymentId(type, id)}
+                        </div>
+                        ${m.note ? `<p class="text-xs italic opacity-60 mb-sm" style="background: rgba(var(--primary-color-rgb), 0.05); padding: 8px; border-radius: 6px;">📝 ${m.note}</p>` : ''}
+                        ${getPaymentButton(type, id)}
+                    </div>
+                `;
+            });
+            
+            html += '</div>';
+            details.innerHTML = html;
+        }
+
+        function getPaymentIcon(type) {
+            if (type.includes('bizum')) return '📲';
+            if (type.includes('paypal')) return '💳';
+            if (type.includes('transfer')) return '🏦';
+            if (type.includes('revolut')) return '💎';
+            return '💰';
+        }
+
+        function formatPaymentId(type, id) {
+            if (type.includes('transfer')) {
+                return `<code style="display: block; background: rgba(0,0,0,0.3); padding: 8px; border-radius: 4px; font-size: 0.85rem; word-break: break-all;">${id}</code>`;
+            }
+            return `<span style="font-size: 1.1rem; font-weight: 700;">${id}</span>`;
+        }
+
+        function getPaymentButton(type, id) {
+            if (type.includes('paypal')) {
+                const url = id.startsWith('http') ? id : `https://paypal.me/${id}/${client.monthlyFee || ''}`;
+                return `<a href="${url}" target="_blank" class="btn btn-sm btn-primary w-100">Pagar con PayPal</a>`;
+            }
+            if (type.includes('transfer')) {
+                return `<button class="btn btn-sm btn-outline w-100" onclick="copyToClipboard('${id}')">Copiar IBAN</button>`;
+            }
+            if (id.startsWith('http')) {
+                return `<a href="${id}" target="_blank" class="btn btn-sm btn-primary w-100">Abrir Enlace de Pago</a>`;
+            }
+            return `<p class="text-xs text-muted">Indica tu nombre en el concepto.</p>`;
+        }
+
+        window.calculateDaysLeft = calculateDaysLeft;
+
+        function setupWhatsAppFab() {
+            const fab = document.getElementById('whatsappFab');
+            const message = `Hola ${brand.name}, soy ${client.name}. Tengo una consulta sobre mis datos.`;
+            fab.href = generateWhatsAppLink(brand.whatsapp, message);
+            fab.target = '_blank';
+        }
+
+        function toggleMenu() {
+            document.getElementById('navLinks').classList.toggle('active');
+        }
+
+        function openEditProfile() {
+            const tech = client.technicalData || {};
+            const content = `
+                <div style="padding-right: 15px;">
+                    <div class="form-group text-center mb-lg">
+                        <label class="form-label" style="display: block; margin-bottom: 12px;">Foto de Perfil</label>
+                        <div style="position: relative; width: 110px; height: 110px; margin: 0 auto 15px;">
+                            <img id="editProfilePreview" src="${client.profilePhoto || 'data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 24 24\' fill=\'%23888\'%3E%3Cpath d=\'M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z\'/%3E%3C/svg%3E'}" style="width:100%; height:100%; border-radius:50%; object-fit:cover; border:2px solid var(--primary-color); background: rgba(255,255,255,0.05);">
+                            <label for="profilePhotoInput" style="position: absolute; bottom: 0; right: 0; background: var(--primary-color); width:36px; height:36px; border-radius:50%; display:flex; align-items:center; justify-content:center; cursor:pointer; color:white; border:3px solid var(--bg-card); box-shadow: 0 4px 10px rgba(0,0,0,0.3);">
+                                📷
+                            </label>
+                            <input type="file" id="profilePhotoInput" accept="image/*" style="display:none;" onchange="handleProfilePhoto(this)">
+                        </div>
+                        <button type="button" class="btn btn-sm btn-outline" style="font-size: 0.75rem;" onclick="document.getElementById('profilePhotoInput').click()">Subir desde la Galería</button>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Nombre Completo</label>
+                        <input type="text" id="editName" class="form-input" value="${client.name}">
+                    </div>
+                    <div class="grid grid-2 gap-sm">
+                        <div class="form-group">
+                            <label class="form-label">Altura (cm)</label>
+                            <input type="number" id="editHeight" class="form-input" value="${tech.height || 0}">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Edad</label>
+                            <input type="number" id="editAge" class="form-input" value="${tech.age || 0}">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Objetivos</label>
+                        <textarea id="editGoals" class="form-textarea" rows="2">${tech.goals || ''}</textarea>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Lesiones</label>
+                        <textarea id="editInjuries" class="form-textarea" rows="2">${tech.injuries || ''}</textarea>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Alergias / Intolerancias</label>
+                        <textarea id="editAllergies" class="form-textarea" rows="2">${tech.allergies || ''}</textarea>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Info Relevante</label>
+                        <textarea id="editNotes" class="form-textarea" rows="2">${tech.notes || ''}</textarea>
+                    </div>
+                    <p class="text-xs text-muted mt-md">(*) El peso y el IMC se actualizan automáticamente tras cada revisión semanal.</p>
+                </div>
+            `;
+            showModal('Editar Mi Perfil', content, [
+                { text: 'Cancelar', class: 'btn-secondary', onclick: 'window.closeModal()' },
+                { text: 'Guardar Cambios', class: 'btn-primary', onclick: 'saveProfileChanges()' }
+            ]);
+        }
+
+        window.handleProfilePhoto = function(input) {
+            if (input.files && input.files[0]) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    // Optimization: check image size? base64 can be heavy.
+                    // For now, just set the preview
+                    document.getElementById('editProfilePreview').src = e.target.result;
+                    window._tempProfilePhoto = e.target.result;
+                };
+                reader.readAsDataURL(input.files[0]);
+            }
+        };
+
+        window.saveProfileChanges = async function() {
+            const updates = {
+                name: document.getElementById('editName').value,
+                technicalData: {
+                    ...client.technicalData,
+                    height: parseInt(document.getElementById('editHeight').value) || 0,
+                    age: parseInt(document.getElementById('editAge').value) || 0,
+                    goals: document.getElementById('editGoals').value,
+                    injuries: document.getElementById('editInjuries').value,
+                    allergies: document.getElementById('editAllergies').value,
+                    notes: document.getElementById('editNotes').value
+                }
+            };
+
+            const photoInput = document.getElementById('profilePhotoInput');
+            if (photoInput && photoInput.files && photoInput.files[0]) {
+                const cloudUrl = await ImageKitManager.upload(photoInput.files[0], `profile_${clientId}_${Date.now()}`);
+                if (cloudUrl) {
+                    updates.profilePhoto = cloudUrl;
+                } else if (window._tempProfilePhoto) {
+                    updates.profilePhoto = window._tempProfilePhoto;
+                }
+            } else if (window._tempProfilePhoto) {
+                updates.profilePhoto = window._tempProfilePhoto;
+            }
+
+            Clients.update(clientId, updates);
+            showToast('Perfil actualizado con éxito', 'success');
+            setTimeout(() => window.location.reload(), 1000);
+        };
+
+        // Load data on start
+        loadClientData();
+    </script>
+</body>
+
+</html>

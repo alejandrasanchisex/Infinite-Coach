@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Gestión de Clientes - ASTeam</title>
+  <link rel="stylesheet" href="styles/theme.css">
+  <link rel="stylesheet" href="styles/components.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+
+<body>
+  <!-- Pantalla de Login (Google Auth) -->
+  <div id="login-screen" class="wizard-container"
+    style="min-height: 100vh; display: flex; align-items: center; justify-content: center;">
+    <div class="card wizard-card" style="max-width: 400px; text-align: center; padding: 2rem;">
+      <div style="font-size: 3rem; margin-bottom: 1rem;">🔒</div>
+      <h2>Acceso a tu Backend</h2>
+      <p class="text-muted mb-lg">Conéctate con tu cuenta de Google para acceder a tu base de datos de clientes y
+        rutinas.</p>
+      <div id="google-signin-container">
+        <button onclick="if(typeof AUTH !== 'undefined') { AUTH.signIn() } else { alert('El sistema de autenticación no ha cargado correctamente. Por favor, desactiva bloqueadores de anuncios o recarga la página.') }" class="btn btn-primary" style="display:flex; align-items:center; gap:0.5rem; justify-content:center; width:100%;">
+            <svg width="24" height="24" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
+                <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
+                <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/>
+                <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
+            </svg>
+            Conectar con Google
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- App Principal -->
+  <div id="app" style="display: none;">
+    <header class="header">
+      <div class="container">
+        <nav class="nav">
+          <div class="logo">
+            <img id="brandLogo" class="logo-img" alt="Logo">
+            <span id="brandName">Fitness App</span>
+          </div>
+          <button class="menu-toggle" onclick="toggleMenu()">☰</button>
+          <ul class="nav-links" id="navLinks">
+            <li><a href="trainer-dashboard.html" class="nav-link">Dashboard</a></li>
+            <li><a href="trainer-clients.html" class="nav-link active">Clientes</a></li>
+            <li><a href="trainer-routines.html" class="nav-link">Rutinas</a></li>
+            <li><a href="trainer-diets.html" class="nav-link">Dietas</a></li>
+            <li><a href="trainer-feedbacks.html" class="nav-link">Revisiones</a></li>
+            <li><a href="trainer-media.html" class="nav-link">Biblioteca</a></li>
+            <li><a href="trainer-appointments.html" class="nav-link">Agenda</a></li>
+            <li><a href="trainer-settings.html" class="nav-link">Configuración</a></li>
+            <li id="masterLink" style="display: none;"><a href="admin-dashboard.html" class="nav-link" style="color: #8B5CF6; font-weight: 800;">Panel Maestro</a></li>
+            <li><a href="#" onclick="if(typeof AUTH !== 'undefined') { AUTH.signOut() } else { window.location.reload() }; return false;" class="nav-link" style="color:var(--error-color)">🚪 Salir</a></li>
+          </ul>
+        </nav>
+      </div>
+    </header>
+
+    <main class="main-content">
+      <div class="container-fluid" style="padding: 0 40px;">
+        <div class="flex-between mb-xl">
+          <div>
+            <h1 class="mb-xs">Gestión de Clientes</h1>
+            <p class="text-muted">Administra tu cartera de clientes y su progreso</p>
+          </div>
+          <button class="btn btn-primary" onclick="console.log('Botón Nuevo Cliente clickeado'); window.abrirModalNuevo()">
+            ➕ Nuevo Cliente
+          </button>
+        </div>
+
+        <div class="card">
+          <!-- Toolbar de Filtros -->
+          <div
+            style="padding: 20px; border-bottom: 1px solid rgba(255,255,255,0.05); background: rgba(255,255,255,0.02);">
+            <div style="display: flex; flex-wrap: wrap; gap: 15px; align-items: flex-end;">
+              <!-- Buscador Principal -->
+              <div style="flex: 2; min-width: 250px;">
+                <label class="form-label"
+                  style="font-size: 0.75rem; color: var(--text-muted); margin-bottom: 5px; display: block;">Buscar
+                  Cliente</label>
+                <div style="position: relative;">
+                  <input type="text" id="searchInput" class="form-input"
+                    style="height: 42px; padding: 0 12px 0 40px; background: rgba(0,0,0,0.2);"
+                    placeholder="Nombre, email o teléfono..." oninput="window.dibujarTabla()">
+                  <span
+                    style="position: absolute; left: 12px; top: 50%; transform: translateY(-50%); opacity: 0.5; pointer-events: none;">🔍</span>
+                </div>
+              </div>
+
+              <!-- Selectores Secundarios -->
+              <div style="flex: 1; min-width: 150px;">
+                <label class="form-label"
+                  style="font-size: 0.75rem; color: var(--text-muted); margin-bottom: 5px; display: block;">Estado</label>
+                <select id="statusFilter" class="form-select"
+                  style="height: 42px; padding: 0 12px; background: rgba(0,0,0,0.2);" onchange="window.dibujarTabla()">
+                  <option value="all">Todos</option>
+                  <option value="active">Activos</option>
+                  <option value="inactive">Inactivos</option>
+                </select>
+              </div>
+
+              <div style="flex: 1; min-width: 150px;">
+                <label class="form-label"
+                  style="font-size: 0.75rem; color: var(--text-muted); margin-bottom: 5px; display: block;">Pago</label>
+                <select id="paymentFilter" class="form-select"
+                  style="height: 42px; padding: 0 12px; background: rgba(0,0,0,0.2);" onchange="window.dibujarTabla()">
+                  <option value="all">Todos</option>
+                  <option value="paid">Pagados</option>
+                  <option value="pending">Pendientes</option>
+                </select>
+              </div>
+            </div>
+          </div>
+
+          <div class="table-wrapper">
+            <table class="table" style="width: 100%;">
+              <thead>
+                <tr style="text-align: left;">
+                  <th style="padding: 15px;">CLIENTE</th>
+                  <th>ESTADO</th>
+                  <th>REVISIÓN</th>
+                  <th>CÓDIGO ACCESO</th>
+                  <th>CONTACTO</th>
+                  <th style="text-align: right; padding-right: 15px;">ACCIONES</th>
+                </tr>
+              </thead>
+              <tbody id="cuerpoTabla"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <!-- Nuevos Scripts de Google & Firebase -->
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+  <script src="js/firebase-config.js"></script>
+  <script src="js/firebase-service.js"></script>
+
+  <script src="js/config.js?v=92"></script>
+  <script src="js/auth.js?v=92"></script>
+  <script src="js/sheets.js?v=92"></script>
+  <script src="js/data-models.js?v=92"></script>
+  <script src="js/custom-exercises.js?v=92"></script>
+  <script src="js/utils.js?v=92"></script>
+  <script>
+    const daysMapShort = { '1': 'Lun', '2': 'Mar', '3': 'Mié', '4': 'Jue', '5': 'Vie', '6': 'Sáb', '7': 'Dom' };
+
+    window.dibujarTabla = function() {
+      console.log('Dibujando tabla de clientes...');
+      const allClients = window.Clients ? window.Clients.getAll() : [];
+      const tbody = document.getElementById('cuerpoTabla');
+      if (!tbody) return;
+
+      const searchEl = document.getElementById('searchInput');
+      const statusEl = document.getElementById('statusFilter');
+      const paymentEl = document.getElementById('paymentFilter');
+
+      const searchTerm = searchEl ? searchEl.value.toLowerCase() : '';
+      const statusFilter = statusEl ? statusEl.value : 'all';
+      const paymentFilter = paymentEl ? paymentEl.value : 'all';
+
+      let filtered = allClients.filter(c => {
+        if (!c) return false;
+        const name = (c.name || '').toLowerCase();
+        const email = (c.email || '').toLowerCase();
+        
+        const matchesSearch = name.includes(searchTerm) || email.includes(searchTerm);
+        const matchesStatus = statusFilter === 'all' || c.status === statusFilter;
+        const matchesPayment = paymentFilter === 'all' || c.paymentStatus === paymentFilter;
+
+        return matchesSearch && matchesStatus && matchesPayment;
+      });
+
+      // Ordenar alfabéticamente
+      filtered.sort((a, b) => (a.name || '').localeCompare(b.name || ''));
+
+      if (!filtered || filtered.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="6" style="text-align:center; padding: 40px; color: #666;">
+          ${allClients.length === 0 ? 'No hay clientes registrados.' : 'No se encontraron clientes con esos filtros.'}
+        </td></tr>`;
+        return;
+      }
+
+      tbody.innerHTML = filtered.map(c => {
+        if (!c || !c.id) return '';
+        const statusBadge = c.status === 'active' ? 'badge-success' : 'badge-error';
+        const statusText = c.status === 'active' ? 'Activo' : 'Inactivo';
+
+        return `
+          <tr style="border-bottom: 1px solid rgba(255,255,255,0.05);">
+            <td style="padding: 15px;">
+              <div style="display:flex; align-items:center; gap:10px;">
+                <div style="width:35px; height:35px; background:${c.profilePhoto ? 'transparent' : 'var(--primary-color)'}; border-radius:50%; display:flex; align-items:center; justify-content:center; color:#000; font-weight:bold; overflow:hidden;">
+                  ${c.profilePhoto ? `<img src="${c.profilePhoto}" style="width:100%; height:100%; object-fit:cover;">` : (c.name || 'C').charAt(0).toUpperCase()}
+                </div>
+                <div>
+                  <a href="trainer-client-detail.html?id=${c.id}" style="text-decoration: none; color: inherit; display: block;">
+                    <strong style="color: var(--primary-color); cursor: pointer; border-bottom: 1px solid transparent;" onmouseover="this.style.borderBottom='1px solid var(--primary-color)'" onmouseout="this.style.borderBottom='1px solid transparent'">${c.name}</strong>
+                  </a>
+                  <div class="text-secondary" style="font-size: 0.75rem;">${c.email || 'Sin email'}</div>
+                </div>
+              </div>
+            </td>
+            <td>
+              <span class="badge ${statusBadge}">${statusText}</span>
+            </td>
+            <td>
+              <span class="badge" style="background: rgba(0,217,255,0.1); color: var(--primary-color); border: 1px solid var(--primary-color); min-width: 90px; text-align: center;">
+                ${(() => {
+                  if (c.reviewFrequency === 'specific' && c.specificReviewDate) {
+                    return `📅 ${new Date(c.specificReviewDate).toLocaleDateString('es-ES', { day: '2-digit', month: '2-digit' })}`;
+                  } else if (c.reviewFrequency === 'biweekly') {
+                    return 'Quincenal';
+                  } else if (c.reviewFrequency === 'monthly') {
+                    return 'Mensual';
+                  } else if (c.reviewFrequency === 'weekly' || (c.reviewDay && !c.reviewFrequency)) {
+                    const dayLabel = daysMapShort[c.reviewDay];
+                    return `Semanal${dayLabel ? ' (' + dayLabel + ')' : ''}`;
+                  }
+                  return '---';
+                })()}
+              </span>
+            </td>
+            <td><code style="color:var(--primary-color)">${c.accessCode}</code></td>
+            <td>${c.phone || '---'}</td>
+            <td style="text-align: right; padding-right: 15px;">
+              <div class="flex gap-sm" style="justify-content: flex-end;">
+                <a href="trainer-client-detail.html?id=${c.id}" class="btn btn-sm btn-secondary" title="Ver Detalle">👁️</a>
+                <button class="btn btn-sm btn-danger" title="Eliminar Cliente" onclick="window.handleDeleteClient('${c.id}')">🗑️</button>
+              </div>
+            </td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    window.abrirModalNuevo = function() {
+      console.log('Abriendo modal de nuevo cliente...');
+      showModal('Añadir Nuevo Cliente', `
+        <div class="form-group"><label class="form-label">Nombre Completo *</label><input type="text" id="c_name" class="form-input" placeholder="Nombre y apellidos"></div>
+        <div class="grid grid-2">
+          <div class="form-group"><label class="form-label">Email</label><input type="email" id="c_email" class="form-input" placeholder="ejemplo@mail.com"></div>
+          <div class="form-group"><label class="form-label">Teléfono</label><input type="tel" id="c_phone" class="form-input" placeholder="600 000 000"></div>
+        </div>
+        <div class="grid grid-2">
+          <div class="form-group"><label class="form-label">Peso (kg)</label><input type="number" id="c_weight" class="form-input" placeholder="70"></div>
+          <div class="form-group"><label class="form-label">Altura (cm)</label><input type="number" id="c_height" class="form-input" placeholder="175"></div>
+        </div>
+        <div class="form-group"><label class="form-label">Edad</label><input type="number" id="c_age" class="form-input" placeholder="25"></div>
+
+      `, [
+        { text: 'Cancelar', class: 'btn-secondary', onclick: 'window.closeModal()' },
+        { text: 'CREAR CLIENTE', class: 'btn-primary', onclick: 'window.procesarNuevo()' }
+      ], 'modal-large');
+    };
+
+
+
+    window.procesarNuevo = function () {
+      const name = document.getElementById('c_name').value;
+      if (!name) return showToast("El nombre es obligatorio", "error");
+
+      const clientData = {
+        name: name,
+        email: document.getElementById('c_email').value || '',
+        phone: document.getElementById('c_phone').value || '',
+        weight: parseFloat(document.getElementById('c_weight').value) || 0,
+        height: parseFloat(document.getElementById('c_height').value) || 0,
+        age: parseInt(document.getElementById('c_age').value) || 0,
+        subscriptionType: 'Mensual',
+        subscriptionAmount: 0,
+        monthlyFee: 0,
+        reviewFrequency: 'weekly',
+        reviewDay: '',
+        status: 'active',
+        paymentStatus: 'pending'
+      };
+
+      if (window.Clients) {
+          window.Clients.create(clientData);
+          showToast('Cliente creado con éxito', 'success');
+      } else {
+          console.error('Error: window.Clients no está definido.');
+          showToast('Error interno al crear cliente', 'error');
+      }
+      window.closeModal();
+      window.dibujarTabla();
+    };
+
+    window.handleDeleteClient = function (id) {
+      if (!id) return;
+
+      const confirmMsg = "¿Estás seguro de que quieres eliminar a este cliente? Se borrarán todos sus datos y progresos de forma permanente.";
+
+      if (window.confirm(confirmMsg)) {
+        console.log('Cliente a eliminar:', id);
+        if (!window.Clients) {
+            console.error('window.Clients no definido.');
+            return;
+        }
+        const success = window.Clients.delete(id);
+
+        if (success) {
+          showToast('Cliente eliminado correctamente', 'info');
+          window.dibujarTabla();
+        } else {
+          showToast('Error al eliminar: Cliente no encontrado', 'error');
+          // Forzar refresco por si acaso
+          window.dibujarTabla();
+        }
+      }
+    };
+
+
+
+    // Initialize
+    document.addEventListener('DOMContentLoaded', () => {
+      if (typeof BrandConfig !== 'undefined') {
+        BrandConfig.applyTheme();
+      }
+      
+      // Si la app ya es visible (bypass), forzar un dibujado inicial
+      if (document.getElementById('app').style.display === 'block') {
+         setTimeout(() => {
+            if (typeof window.dibujarTabla === 'function') window.dibujarTabla();
+         }, 200);
+      }
+    });
+    // Check for quick actions
+    const pageUrlParams = new URLSearchParams(window.location.search);
+    if (pageUrlParams.get('action') === 'new') {
+      setTimeout(() => window.abrirModalNuevo(), 200);
+    }
+  </script>
+
+  <script>
+    async function onGoogleAuthSuccess() {
+      // Sincronizar con la nube
+      if (window.FirebaseService) {
+          await window.FirebaseService.init();
+          await window.syncFromCloud();
+      }
+
+      // Aplicar branding y Panel Maestro
+      if (typeof BrandConfig !== 'undefined') {
+          BrandConfig.applyTheme();
+      }
+
+      document.getElementById('login-screen').style.display = 'none';
+      document.getElementById('app').style.display = 'block';
+
+      if (typeof window.dibujarTabla === 'function') window.dibujarTabla();
+    }
+  </script>
+</body>
+
+</html>

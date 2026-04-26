@@ -1,0 +1,568 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Revisión Semanal - Fitness App</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles/theme.css">
+    <link rel="stylesheet" href="styles/components.css">
+    <link rel="stylesheet" href="styles/mobile.css">
+    <link rel="manifest" href="manifest.json">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <style>
+        .rating-group {
+            display: flex;
+            flex-direction: column;
+            gap: var(--spacing-sm);
+        }
+
+        .rating-label {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .rating-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary-color);
+            min-width: 40px;
+            text-align: right;
+        }
+
+        .feedback-history-item {
+            background: var(--bg-input);
+            padding: var(--spacing-md);
+            border-radius: var(--radius-md);
+            margin-bottom: var(--spacing-md);
+        }
+
+        .feedback-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: var(--spacing-sm);
+        }
+
+        .photo-upload-box {
+            background: rgba(255,255,255,0.02);
+            border: 1px dashed rgba(255,255,255,0.1);
+            border-radius: 8px;
+            padding: 10px;
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .photo-upload-box label {
+            font-weight: 700;
+            color: var(--primary-color);
+            letter-spacing: 0.5px;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <nav class="nav">
+                <div class="logo">
+                    <img id="brandLogo" class="logo-img" alt="Logo">
+                    <span id="brandName">Fitness App</span>
+                </div>
+                <ul class="nav-links" id="navLinks">
+                    <li><a href="client-dashboard.html" class="nav-link">Inicio</a></li>
+                    <li><a href="client-profile.html" class="nav-link">Ficha Técnica</a></li>
+
+                    <li><a href="client-login.html" class="nav-link">Salir</a></li>
+                </ul>
+                <div id="clientProfileAvatar" style="width: 35px; height: 35px; border-radius: 50%; background: var(--primary-color); display: flex; align-items: center; justify-content: center; font-size: 0.9rem; font-weight: 800; color: #000; overflow: hidden; border: 2px solid rgba(255,255,255,0.1); margin-left: 15px; cursor: pointer; flex-shrink: 0;" onclick="window.location.href='client-profile.html'">
+                    U
+                </div>
+                <button class="menu-toggle" onclick="toggleMenu()" style="margin-left: 10px;">☰</button>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <div class="container">
+            <div class="mb-lg">
+                <h1>Revisión</h1>
+                <p class="text-muted" id="nextReviewSubtitle">Comparte tu progreso y sensaciones</p>
+            </div>
+
+            <div style="max-width: 800px; margin: 0 auto;">
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">Nueva Revisión</h3>
+                    </div>
+                    <div class="card-body">
+                        <form id="feedbackForm">
+                            <div class="form-group">
+                                <label class="form-label">Nº de Revisión</label>
+                                <input type="number" class="form-input" id="reviewNumberDisplay" readonly style="background: rgba(255,255,255,0.05); color: var(--primary-color); font-weight: 700;">
+                                <div class="form-hint">Corresponde a tu revisión secuencial</div>
+                            </div>
+
+                            <div class="form-group">
+                                <div class="rating-group">
+                                    <div class="rating-label">
+                                        <label class="form-label" style="margin: 0;">Nivel de Energía</label>
+                                        <span class="rating-value" id="energyValue">3</span>
+                                    </div>
+                                    <input type="range" class="slider" id="energyRating" min="1" max="5" value="3"
+                                        oninput="updateRating('energy', this.value)">
+                                    <div class="flex-between text-muted" style="font-size: 0.75rem;">
+                                        <span>Muy bajo</span>
+                                        <span>Excelente</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label" style="display: flex; align-items: center; gap: 8px;">
+                                    📏 Perímetros (cm)
+                                    <span class="text-muted" style="font-size: 0.7rem; font-weight: 400;">Opcional</span>
+                                </label>
+                                <div class="grid grid-3 gap-sm" id="dynamicPerimeters">
+                                    <!-- Dynamic Perimeters -->
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <div class="rating-group">
+                                    <div class="rating-label">
+                                        <label class="form-label" style="margin: 0;">Adherencia al Plan</label>
+                                        <span class="rating-value" id="adherenceValue">3</span>
+                                    </div>
+                                    <input type="range" class="slider" id="adherenceRating" min="1" max="5" value="3"
+                                        oninput="updateRating('adherence', this.value)">
+                                    <div class="flex-between text-muted" style="font-size: 0.75rem;">
+                                        <span>Muy baja</span>
+                                        <span>Perfecta</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <div class="rating-group">
+                                    <div class="rating-label">
+                                        <label class="form-label" style="margin: 0;">Satisfacción General</label>
+                                        <span class="rating-value" id="satisfactionValue">3</span>
+                                    </div>
+                                    <input type="range" class="slider" id="satisfactionRating" min="1" max="5" value="3"
+                                        oninput="updateRating('satisfaction', this.value)">
+                                    <div class="flex-between text-muted" style="font-size: 0.75rem;">
+                                        <span>Muy baja</span>
+                                        <span>Excelente</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="form-group grid grid-2 gap-sm">
+                                <div>
+                                    <label class="form-label">Peso Actual (kg)</label>
+                                    <input type="number" step="0.1" class="form-input" id="currentWeight" placeholder="0.0">
+                                </div>
+                                <div class="rating-group">
+                                    <div class="rating-label">
+                                        <label class="form-label" style="margin: 0;">Calidad del Sueño</label>
+                                        <span class="rating-value" id="sleepValue">3</span>
+                                    </div>
+                                    <input type="range" class="slider" id="sleepRating" min="1" max="5" value="3"
+                                        oninput="updateRating('sleep', this.value)">
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <div class="rating-group">
+                                    <div class="rating-label">
+                                        <label class="form-label" style="margin: 0;">Nivel de Estrés</label>
+                                        <span class="rating-value" id="stressValue">3</span>
+                                    </div>
+                                    <input type="range" class="slider" id="stressRating" min="1" max="5" value="3"
+                                        oninput="updateRating('stress', this.value)">
+                                    <div class="flex-between text-muted" style="font-size: 0.75rem;">
+                                        <span>Relajado</span>
+                                        <span>Muy estresado</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div id="dynamicQuestions">
+                                <!-- Dynamic questions will be rendered here -->
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label">Comentarios Adicionales</label>
+                                <textarea id="additionalComments" class="form-textarea" rows="3" placeholder="Algo más que quieras contarle a tu entrenador..."></textarea>
+                            </div>
+
+                            <!-- Photo Upload Section -->
+                            <div class="form-group mt-lg" style="border-top: 1px solid rgba(255,255,255,0.1); padding-top: 20px;">
+                                <label class="form-label" style="color: var(--primary-color);">📸 Fotos de Progreso (4 fotos)</label>
+                                <div class="grid grid-2 gap-md mt-sm">
+                                    <div class="photo-upload-box">
+                                        <label class="text-xs text-muted">FRENTE</label>
+                                        <input type="file" id="photoFront" class="form-input photo-input" accept="image/*" style="font-size: 0.7rem;">
+                                    </div>
+                                    <div class="photo-upload-box">
+                                        <label class="text-xs text-muted">ESPALDA</label>
+                                        <input type="file" id="photoBack" class="form-input photo-input" accept="image/*" style="font-size: 0.7rem;">
+                                    </div>
+                                    <div class="photo-upload-box">
+                                        <label class="text-xs text-muted">PERFIL</label>
+                                        <input type="file" id="photoSide" class="form-input photo-input" accept="image/*" style="font-size: 0.7rem;">
+                                    </div>
+                                    <div class="photo-upload-box">
+                                        <label class="text-xs text-muted">EXTRA / DETALLE</label>
+                                        <input type="file" id="photoExtra" class="form-input photo-input" accept="image/*" style="font-size: 0.7rem;">
+                                    </div>
+                                </div>
+                                <div class="form-hint">Las fotos ayudan a tu entrenador a ver tu progreso visual.</div>
+                            </div>
+
+                            <button type="submit" class="btn btn-primary btn-lg mt-lg" style="width: 100%;">
+                                Enviar Revisión
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- WhatsApp FAB -->
+    <a href="#" class="fab" id="whatsappFab" title="Contactar por WhatsApp">
+        Chat
+    </a>
+
+    <!-- Firebase SDKs -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-storage.js"></script>
+    <script src="js/firebase-config.js"></script>
+    <script src="js/firebase-service.js"></script>
+
+    <script src="js/data-models.js?v=2"></script>
+    <script src="js/cloud-storage.js?v=2"></script>
+    <script src="js/utils.js?v=2"></script>
+    <script>
+        // Check if client is logged in
+        const clientId = sessionStorage.getItem('clientId');
+        if (!clientId) {
+            window.location.href = 'client-login.html';
+        }
+
+        // Apply brand theme
+        BrandConfig.applyTheme();
+        const brand = BrandConfig.get();
+        document.getElementById('brandName').textContent = brand.name;
+        if (brand.logo) {
+            document.getElementById('brandLogo').src = brand.logo;
+            document.getElementById('brandLogo').style.display = 'block';
+        }
+
+        // Load client
+        const client = Clients.getById(clientId);
+        if (client) {
+            const avatar = document.getElementById('clientProfileAvatar');
+            if (avatar) {
+                if (client.profilePhoto) {
+                    avatar.innerHTML = `<img src="${client.profilePhoto}" style="width:100%;height:100%;object-fit:cover;">`;
+                    avatar.style.background = 'transparent';
+                } else {
+                    avatar.textContent = client.name.charAt(0).toUpperCase();
+                    avatar.style.background = 'var(--primary-color)';
+                }
+            }
+        }
+
+        function initializeFeedbackForm() {
+            // Calculate Review Number (existing reviews + 1)
+            const count = Feedbacks.getByClientId(clientId).length;
+            document.getElementById('reviewNumberDisplay').value = count + 1;
+
+            // Render dynamic questions
+            renderQuestions();
+
+            // Render dynamic perimeters
+            renderPerimeters();
+        }
+
+        function renderPerimeters() {
+            const container = document.getElementById('dynamicPerimeters');
+            const perimeters = Array.isArray(brand.trainerPerimeters) ? brand.trainerPerimeters : ['Cintura', 'Cadera', 'Pecho', 'Brazo', 'Muslo'];
+            
+            if (perimeters.length === 0) {
+                container.innerHTML = '';
+                return;
+            }
+
+            container.innerHTML = perimeters.map((p, i) => `
+                <div class="form-group mb-none">
+                    <label class="text-xs">${p}</label>
+                    <input type="number" step="0.1" class="form-input p-sm perimeter-input" data-name="${p}" placeholder="---">
+                </div>
+            `).join('');
+        }
+
+        function renderQuestions() {
+            const container = document.getElementById('dynamicQuestions');
+            const questions = brand.feedbackQuestions && brand.feedbackQuestions.length > 0
+                ? brand.feedbackQuestions
+                : []; // Default to empty if no custom questions
+
+            if (questions.length === 0) {
+                container.innerHTML = '';
+                return;
+            }
+
+            container.innerHTML = questions.map((q, i) => `
+                <div class="form-group">
+                    <label class="form-label">${q}</label>
+                    <textarea class="form-textarea feedback-answer" data-question="${q}" rows="3" placeholder="Escribe tu respuesta..." required></textarea>
+                </div>
+            `).join('');
+        }
+
+        function updateRating(type, value) {
+            const el = document.getElementById(`${type}Value`);
+            if (el) el.textContent = value;
+        }
+
+        async function getFileBase64(file) {
+            if (!file) return null;
+            return new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.readAsDataURL(file);
+                reader.onload = (event) => {
+                    const img = new Image();
+                    img.src = event.target.result;
+                    img.onload = () => {
+                        const canvas = document.createElement('canvas');
+                        const MAX_WIDTH = 800;
+                        const scaleSize = Math.min(1, MAX_WIDTH / img.width);
+                        canvas.width = img.width * scaleSize;
+                        canvas.height = img.height * scaleSize;
+                        
+                        const ctx = canvas.getContext('2d');
+                        ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+                        
+                        // Convert to JPEG with 0.7 quality to save space in localStorage
+                        resolve(canvas.toDataURL('image/jpeg', 0.7));
+                    };
+                };
+                reader.onerror = error => reject(error);
+            });
+        }
+
+        // Handle form submission
+        document.getElementById('feedbackForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const submitBtn = e.target.querySelector('button[type="submit"]');
+            const originalText = submitBtn.textContent;
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Enviando...';
+
+            try {
+                // Collect photos (Try Cloud Storage first)
+                const uploadPromises = [
+                    ImageKitManager.upload(document.getElementById('photoFront').files[0], `fb_${clientId}_front_${Date.now()}`),
+                    ImageKitManager.upload(document.getElementById('photoBack').files[0], `fb_${clientId}_back_${Date.now()}`),
+                    ImageKitManager.upload(document.getElementById('photoSide').files[0], `fb_${clientId}_side_${Date.now()}`),
+                    ImageKitManager.upload(document.getElementById('photoExtra').files[0], `fb_${clientId}_extra_${Date.now()}`)
+                ];
+                
+                let [front, back, side, extra] = await Promise.all(uploadPromises);
+
+                // Fallback to Base64 if ImageKit upload failed or returned null (e.g. not configured)
+                if (!front && document.getElementById('photoFront').files[0]) front = await getFileBase64(document.getElementById('photoFront').files[0]);
+                if (!back && document.getElementById('photoBack').files[0]) back = await getFileBase64(document.getElementById('photoBack').files[0]);
+                if (!side && document.getElementById('photoSide').files[0]) side = await getFileBase64(document.getElementById('photoSide').files[0]);
+                if (!extra && document.getElementById('photoExtra').files[0]) extra = await getFileBase64(document.getElementById('photoExtra').files[0]);
+
+                // Collect answers from dynamic questions
+                const answers = [];
+                document.querySelectorAll('.feedback-answer').forEach(el => {
+                    const question = el.dataset.question;
+                    const answer = el.value.trim();
+                    answers.push({ question, answer });
+                });
+
+                // Collect dynamic perimeters
+                const perimeters = {};
+                document.querySelectorAll('.perimeter-input').forEach(el => {
+                    const name = el.dataset.name;
+                    const val = parseFloat(el.value);
+                    if (!isNaN(val)) {
+                        perimeters[name] = val;
+                    }
+                });
+
+                const feedbackData = {
+                    clientId: clientId,
+                    week: parseInt(document.getElementById('reviewNumberDisplay').value),
+                    energy: parseInt(document.getElementById('energyRating').value),
+                    adherence: parseInt(document.getElementById('adherenceRating').value),
+                    satisfaction: parseInt(document.getElementById('satisfactionRating').value),
+                    weight: parseFloat(document.getElementById('currentWeight').value) || null,
+                    sleep: parseInt(document.getElementById('sleepRating').value),
+                    stress: parseInt(document.getElementById('stressRating').value),
+                    answers: answers,
+                    perimeters: perimeters,
+                    photos: { front, back, side, extra },
+                    comments: document.getElementById('additionalComments').value.trim()
+                };
+
+                Feedbacks.create(feedbackData);
+
+                // If weight or perimeters were provided, update client profile too
+                if (feedbackData.weight || Object.keys(feedbackData.perimeters).length > 0) {
+                    const currentClient = Clients.getById(clientId);
+                    if (currentClient) {
+                        const weightHistory = currentClient.weightHistory || [];
+                        weightHistory.push({ 
+                            date: new Date().toISOString(), 
+                            weight: feedbackData.weight,
+                            perimeters: feedbackData.perimeters
+                        });
+                        
+                        const techUpdates = { ...currentClient.technicalData };
+                        if (feedbackData.weight) techUpdates.weight = feedbackData.weight;
+                        
+                        Clients.update(clientId, { 
+                            technicalData: techUpdates,
+                            weightHistory: weightHistory 
+                        });
+                    }
+                }
+
+                showToast('Revisión enviada correctamente', 'success');
+                renderSuccessState();
+
+            } catch (err) {
+                console.error(err);
+                showToast('Error al enviar la revisión', 'error');
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.textContent = originalText;
+            }
+        });
+
+        function toggleMenu() {
+            document.getElementById('navLinks').classList.toggle('active');
+        }
+
+        // Setup WhatsApp FAB
+        const fab = document.getElementById('whatsappFab');
+        const message = `Hola ${brand.name}, soy ${client.name}. Tengo una consulta.`;
+        fab.href = generateWhatsAppLink(brand.whatsapp, message);
+        fab.target = '_blank';
+
+        // Initialize on load
+        initializeFeedbackForm();
+
+        // Check Review Day Logic
+        document.addEventListener('DOMContentLoaded', () => {
+            const feedbacks = Feedbacks.getByClientId(clientId);
+            const today = new Date();
+            
+            // Check if there's a feedback sent today or very recently (last 4 days)
+            let alreadySent = false;
+            if (feedbacks.length > 0) {
+                const lastFb = feedbacks.sort((a,b) => new Date(b.date) - new Date(a.date))[0];
+                const lastDate = new Date(lastFb.date);
+                const diffDays = (today - lastDate) / (1000 * 60 * 60 * 24);
+                if (diffDays < 6) alreadySent = true; // Block for 6 days after successful send
+            }
+
+            // Move subtitle logic BEFORE early returns to ensure it always updates
+            if (client) {
+                let nextReviewStr = 'No programada';
+                if (client.reviewFrequency === 'specific' && client.specificReviewDate) {
+                    nextReviewStr = `Próxima fecha: ${new Date(client.specificReviewDate).toLocaleDateString()}`;
+                } else if (['biweekly', 'monthly'].includes(client.reviewFrequency) && client.reviewDaysOfMonth) {
+                    const freqText = client.reviewFrequency === 'biweekly' ? 'Quincenal' : 'Mensual';
+                    const daysFormatted = client.reviewDaysOfMonth.replace(/,\s?([^,]+)$/, ' y $1');
+                    nextReviewStr = `${freqText} (Día ${daysFormatted} de cada mes)`;
+                } else if (client.reviewDay) {
+                    const daysMapNames = { '1': 'Lunes', '2': 'Martes', '3': 'Miércoles', '4': 'Jueves', '5': 'Viernes', '6': 'Sábado', '7': 'Domingo' };
+                    const dName = daysMapNames[client.reviewDay] || '---';
+                    nextReviewStr = client.reviewFrequency === 'weekly' ? `Semanal (Próximo ${dName})` : `Día: ${dName}`;
+                }
+                const sub = document.getElementById('nextReviewSubtitle');
+                if (sub) sub.innerHTML = `<strong>${nextReviewStr}</strong><br>Comparte tu progreso y sensaciones con tu entrenador`;
+            }
+
+            if (alreadySent) {
+                renderSuccessState();
+                return;
+            }
+
+            const daysMap = { '1': 1, '2': 2, '3': 3, '4': 4, '5': 5, '6': 6, '7': 0 };
+            const dayNames = {
+                '1': 'Lunes', '2': 'Martes', '3': 'Miércoles', '4': 'Jueves', '5': 'Viernes', '6': 'Sábado', '7': 'Domingo'
+            };
+
+            if (client) {
+                if (client.reviewDay) {
+                    const scheduledDay = daysMap[client.reviewDay];
+                    if (scheduledDay !== undefined && scheduledDay !== today.getDay() && !alreadySent) {
+                        const formCard = document.querySelector('#feedbackForm').closest('.card');
+                        formCard.innerHTML = `
+                            <div class="empty-state" style="padding: 40px 20px;">
+                                <div class="empty-state-icon" style="font-size: 3rem; margin-bottom: 20px;">🔒</div>
+                                <div class="empty-state-title" style="font-size: 1.25rem; margin-bottom: 10px;">Revisión No Disponible</div>
+                                <div class="empty-state-text" style="color: var(--text-muted); line-height: 1.6;">
+                                    Tu día de revisión programado es el <strong style="color: var(--primary-color);">${dayNames[client.reviewDay]}</strong>.<br>
+                                    Vuelve ese día para completar tu reporte.
+                                </div>
+                            </div>
+                       `;
+                    }
+                }
+            }
+        });
+
+        function renderSuccessState() {
+            const formCard = document.querySelector('#feedbackForm').closest('.card');
+            formCard.innerHTML = `
+                <div class="empty-state" style="padding: 50px 20px; text-align: center;">
+                    <div class="empty-state-icon" style="font-size: 4rem; margin-bottom: 20px; animation: bounce 2s infinite;">✅</div>
+                    <div class="empty-state-title" style="font-size: 1.5rem; color: var(--primary-color); margin-bottom: 15px; font-weight: 700;">
+                        REVISIÓN ENVIADA CON ÉXITO
+                    </div>
+                    <div class="empty-state-text" style="color: var(--text-muted); max-width: 400px; margin: 0 auto; line-height: 1.6;">
+                        Tu entrenador recibirá tus datos y sensaciones de esta semana. <br><br>
+                        ¡Buen trabajo! Nos vemos en tu próxima revisión programada.
+                    </div>
+                    <button class="btn btn-primary mt-lg" onclick="window.location.href='client-dashboard.html'">
+                        Volver al Inicio
+                    </button>
+                </div>
+            `;
+        }
+
+        // Add bounce animation
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes bounce {
+                0%, 20%, 50%, 80%, 100% {transform: translateY(0);}
+                40% {transform: translateY(-20px);}
+                60% {transform: translateY(-10px);}
+            }
+        `;
+        document.head.appendChild(style);
+    </script>
+</body>
+
+</html>

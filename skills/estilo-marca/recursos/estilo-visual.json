@@ -1,0 +1,44 @@
+{
+  "_nota": "PLANTILLA POR DEFECTO - Preguntar al cliente si tiene colores/tipografías propias",
+  "marca": "[PREGUNTAR AL USUARIO]",
+  "objetivo": "Mantener consistencia visual en UI y landings.",
+  "paleta": {
+    "principal": "#00E5FF",
+    "secundario": "#FFFFFF",
+    "acento": "#00D1ED",
+    "fondo": "#020617",
+    "superficie": "#0F172A",
+    "texto": {
+      "principal": "#F8FAFC",
+      "secundario": "#94A3B8"
+    },
+    "bordes": "#1E293B"
+  },
+  "tipografia": {
+    "titulares": "Inter",
+    "cuerpo": "Inter",
+    "pesos": {
+      "normal": 400,
+      "medio": 500,
+      "negrita": 700
+    }
+  },
+  "formas": {
+    "radio_tarjeta": "16px",
+    "radio_boton": "8px",
+    "radio_input": "8px"
+  },
+  "espaciado": {
+    "xs": "4px",
+    "sm": "8px",
+    "md": "16px",
+    "lg": "24px",
+    "xl": "48px",
+    "xxl": "64px"
+  },
+  "componentes": {
+    "boton_principal": "Fondo cyan eléctrico, texto oscuro/negro para máximo contraste, esquinas suavizadas.",
+    "tarjetas": "Fondo oscuro (superficie), bordes sutiles definidos, padding generoso (aire) para legibilidad de planes.",
+    "layout": "Estructura modular limpia, uso de grids para comparativa de planes y ROI, priorizando la claridad jerárquica."
+  }
+}

@@ -1,0 +1,29 @@
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Inter", "sans-serif";
+  
+  /* Colores de Marca App Fitness */
+  --color-primary: #00D9FF;
+  --color-primary-dark: #00B6D6;
+  --color-secondary: #1A1A2E;
+  --color-secondary-dark: #0F0F1E;
+  --color-accent: #FF6B6B;
+  
+  /* Sistema de UI Premium */
+  --color-background: #0F111A;
+  --color-card: #1A1D2B;
+}
+
+@layer base {
+  body {
+    @apply bg-background text-white antialiased;
+    font-family: var(--font-sans);
+  }
+}
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+}

@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Suscripción de Entrenador - Fitness App Platform</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles/theme.css">
+    <link rel="stylesheet" href="styles/components.css">
+    <style>
+        .sub-container {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #0F0F1E 0%, #1A1A2E 100%);
+            padding: var(--spacing-lg);
+        }
+
+        .sub-card {
+            max-width: 900px;
+            width: 100%;
+            background: var(--bg-card);
+            border-radius: var(--radius-xl);
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            overflow: hidden;
+            box-shadow: var(--shadow-lg);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .sub-info {
+            padding: var(--spacing-xl);
+            background: rgba(255, 255, 255, 0.02);
+            border-right: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .sub-checkout {
+            padding: var(--spacing-xl);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .plan-price {
+            font-size: 3rem;
+            font-weight: 800;
+            color: var(--primary-color);
+            margin: var(--spacing-md) 0;
+        }
+
+        .plan-price span {
+            font-size: 1rem;
+            color: var(--text-muted);
+            font-weight: 400;
+        }
+
+        .feature-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: var(--spacing-sm);
+            font-size: 0.95rem;
+        }
+
+        .feature-item i {
+            color: var(--success);
+        }
+
+        @media (max-width: 768px) {
+            .sub-card {
+                grid-template-columns: 1fr;
+            }
+            .sub-info {
+                border-right: none;
+                border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="sub-container">
+        <div class="sub-card">
+            <!-- Left Side: Benefits -->
+            <div class="sub-info text-center">
+                <div id="status-icon" style="font-size: 4rem; margin-bottom: 1rem;">🚀</div>
+                <h1 id="status-title" style="font-size: 2rem;">Acceso Entrenador</h1>
+                <p id="status-desc" class="text-muted">Desbloquea todas las funcionalidades y empieza a gestionar tus clientes hoy mismo.</p>
+                <div class="mt-lg text-left" style="display: inline-block;">
+                    <div class="feature-item"><span>✅</span> Clientes Ilimitados</div>
+                    <div class="feature-item"><span>✅</span> Biblioteca de Ejercicios Pro</div>
+                    <div class="feature-item"><span>✅</span> Dietas y Macros Automáticos</div>
+                    <div class="feature-item"><span>✅</span> Generación de Imágenes IA</div>
+                    <div class="feature-item"><span>✅</span> Control de Facturación</div>
+                </div>
+            </div>
+
+            <!-- Right Side: Checkout Real -->
+            <div class="sub-checkout">
+                <div id="checkout-view">
+                    <div id="blocked-alert" style="display: none; background: rgba(239, 68, 68, 0.1); border: 1px solid #EF4444; border-radius: 12px; padding: 15px; margin-bottom: 20px; color: #EF4444; text-align: center;">
+                        <strong style="display: block; font-size: 1.1rem; margin-bottom: 5px;">⚠️ ACCESO BLOQUEADO</strong>
+                        Tu suscripción ha expirado o el último pago ha fallado. Por favor, renueva para continuar.
+                    </div>
+
+                    <h2 class="mb-sm">Tu Plan Suscripción</h2>
+                    <p class="text-sm opacity-50" id="plan-name">Suscripción Mensual Profesional</p>
+                    <div class="plan-price" id="plan-price">59€<span>/mes</span></div>
+                    
+                    <div style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; padding: 1.25rem; margin: var(--spacing-lg) 0;">
+                        <div class="flex-between mb-sm">
+                            <span class="text-sm">Estado Actual</span>
+                            <span class="badge-sub badge-expired" id="status-badge" style="font-size: 0.7rem;">PENDIENTE</span>
+                        </div>
+                        <div class="flex-between mb-sm opacity-50">
+                            <span class="text-sm">Último Pago</span>
+                            <span class="text-sm" id="last-pay">-- / -- / --</span>
+                        </div>
+                        <div class="divider" style="background: rgba(255,255,255,0.1); margin: 12px 0;"></div>
+                        <div class="flex-between font-bold">
+                            <span>TOTAL A PAGAR</span>
+                            <span style="color: var(--primary-color);" id="total-price">59,00 €</span>
+                        </div>
+                    </div>
+
+                    <button id="stripe-btn" class="btn btn-primary btn-lg" style="width: 100%; height: 55px; font-weight: 700; letter-spacing: 1px; box-shadow: 0 10px 20px rgba(139, 92, 246, 0.3);" onclick="goToStripe()">
+                        💳 PAGAR Y ACTIVAR AHORA
+                    </button>
+                    <p class="text-center text-xs text-muted mt-md italic">Pago recurrente automático vía Stripe</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="js/data-models.js?v=92"></script>
+    <script src="js/utils.js?v=92"></script>
+    <script>
+        const PLATFORM_KEY = 'saasFitnessPlatform';
+        let currentTrainer = null;
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const currentId = window.activeTrainerId || localStorage.getItem('activeTrainerId');
+            const platform = JSON.parse(localStorage.getItem(PLATFORM_KEY) || '{"trainers":[], "plans":[]}');
+            currentTrainer = platform.trainers.find(t => t.id === currentId);
+
+            if (currentTrainer) {
+                // Personalizar vista con datos reales
+                document.getElementById('plan-name').textContent = currentTrainer.plan || 'Plan Profesional';
+                document.getElementById('plan-price').innerHTML = `${currentTrainer.planPrice}€<span>/mes</span>`;
+                document.getElementById('total-price').textContent = `${currentTrainer.planPrice},00 €`;
+                document.getElementById('last-pay').textContent = currentTrainer.lastPaymentDate || 'Pendiente';
+                
+                // Mostrar alerta de bloqueo si aplica
+                const now = new Date();
+                const parts = currentTrainer.expiryDate?.split('/');
+                const isExpired = parts && new Date(parts[2], parts[1]-1, parts[0]) < now;
+
+                if (currentTrainer.status !== 'active' || isExpired) {
+                    document.getElementById('blocked-alert').style.display = 'block';
+                    document.getElementById('status-icon').textContent = '🔒';
+                    document.getElementById('status-title').textContent = 'Acceso Bloqueado';
+                    document.getElementById('status-desc').textContent = 'Tu suscripción no está activa. Realiza el pago para desbloquear tus clientes.';
+                }
+            }
+        });
+
+        function goToStripe() {
+            const platform = JSON.parse(localStorage.getItem(PLATFORM_KEY) || '{"trainers":[], "plans":[]}');
+            
+            // Buscar el link de Stripe configurado para su plan
+            const planConfig = platform.plans?.find(p => p.name === currentTrainer?.plan);
+            const stripeUrl = planConfig?.stripeLink || 'https://buy.stripe.com/test_placeholder';
+
+            showToast('Redirigiendo a pasarela segura...', 'info');
+            
+            // Añadir el ID del entrenador a la URL de éxito para automatizar la vuelta
+            const successUrl = window.location.href.split('/').slice(0, -1).join('/') + '/subscription-success.html?t=' + currentTrainer?.id;
+            
+            // En una integración real, usaríamos Stripe Checkout API para pasar el success_url.
+            // Con Payment Links, redirigimos directamente.
+            window.location.href = stripeUrl;
+        }
+    </script>
+
+        function redirectToApp() {
+            window.location.href = 'trainer-dashboard.html';
+        }
+    </script>
+</body>
+
+</html>

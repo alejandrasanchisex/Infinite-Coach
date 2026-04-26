@@ -1,0 +1,27 @@
+{
+    "sectores": {
+        "retail": [
+            "Buscadores semánticos (IA)",
+            "Atención al cliente multicanal autónoma",
+            "Predicción de demanda y stock",
+            "Personalización de ofertas por comportamiento"
+        ],
+        "servicios_legales": [
+            "Triaje automático de consultas",
+            "Análisis de precedentes mediante RAG",
+            "Generación de borradores contractuales",
+            "Análisis de riesgo judicial"
+        ],
+        "real_estate": [
+            "Lead scoring basado en IA",
+            "Generación de descripciones de inmuebles",
+            "Chatbots de agendamiento 24/7",
+            "Valoración automática de activos (AVM)"
+        ],
+        "consultoria": [
+            "Análisis masivo de informes del sector",
+            "Generación de propuestas comerciales dinámicas",
+            "Gestión de conocimiento interno con RAG"
+        ]
+    }
+}

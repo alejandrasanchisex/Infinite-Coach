@@ -1,0 +1,640 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mi Rutina - Fitness App</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles/theme.css">
+  <link rel="stylesheet" href="styles/components.css">
+  <link rel="stylesheet" href="styles/mobile.css">
+  <link rel="manifest" href="manifest.json">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <style>
+    .exercise-card {
+      background: var(--bg-input);
+      padding: var(--spacing-md);
+      border-radius: var(--radius-md);
+      margin-bottom: var(--spacing-md);
+    }
+
+    .exercise-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: start;
+      margin-bottom: var(--spacing-sm);
+    }
+
+    .exercise-details {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: var(--spacing-md);
+      margin-top: var(--spacing-md);
+    }
+
+    .exercise-detail-item {
+      text-align: center;
+      padding: var(--spacing-sm);
+      background: var(--bg-card);
+      border-radius: var(--radius-sm);
+    }
+
+    .exercise-detail-value {
+      font-size: 1.125rem;
+      font-weight: 700;
+      color: var(--primary-color);
+    }
+
+    .exercise-detail-label {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      text-transform: uppercase;
+    }
+  </style>
+</head>
+
+<body>
+  <!-- Header -->
+  <header class="header">
+    <div class="container">
+      <nav class="nav">
+        <div class="logo">
+          <img id="brandLogo" class="logo-img" alt="Logo">
+          <span id="brandName">Fitness App</span>
+        </div>
+        <button class="menu-toggle" onclick="toggleMenu()">☰</button>
+        <ul class="nav-links" id="navLinks">
+          <li><a href="client-dashboard.html" class="nav-link">Inicio</a></li>
+          <li><a href="client-profile.html" class="nav-link">Ficha Técnica</a></li>
+
+          <li><a href="client-login.html" class="nav-link">Salir</a></li>
+        </ul>
+        <div id="clientProfileAvatar" style="width: 35px; height: 35px; border-radius: 50%; background: var(--primary-color); display: flex; align-items: center; justify-content: center; font-size: 0.9rem; font-weight: 800; color: #000; overflow: hidden; border: 2px solid rgba(255,255,255,0.1); margin-left: 15px; cursor: pointer; flex-shrink: 0;" onclick="window.location.href='client-profile.html'">
+            U
+        </div>
+        <button class="menu-toggle" onclick="toggleMenu()" style="margin-left: 10px;">☰</button>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main class="main-content">
+    <div class="container">
+      <div class="flex-between mb-lg">
+        <div>
+          <h1>Mi Rutina de Entrenamiento</h1>
+          <p class="text-muted" id="routineName">--</p>
+        </div>
+        <div id="cardioBtnContainer" style="display: none;">
+            <button class="btn btn-sm btn-outline" style="border-color: #ff9d00; color: #ff9d00; background: rgba(255,157,0,0.05);" onclick="openCardioModal()">
+                🏃 Cardio
+            </button>
+        </div>
+      </div>
+
+      <!-- Week Tabs (Only if there are multiple weeks) -->
+      <div class="tabs mb-md" id="weekTabs" style="display: none; gap: 8px; flex-wrap: nowrap; overflow-x: auto; padding-bottom: 10px; border-bottom: 1px solid rgba(255,255,255,0.05);">
+        <!-- populated dynamically -->
+      </div>
+
+      <!-- Day Tabs -->
+      <div class="tabs" id="dayTabs">
+        <!-- Will be populated dynamically -->
+      </div>
+
+      <!-- Day Content -->
+      <div id="dayContent">
+        <div class="empty-state">
+          <div class="empty-state-icon"></div>
+          <div class="empty-state-title">No tienes rutina asignada</div>
+          <div class="empty-state-text">Contacta con tu entrenador para que te asigne un programa de
+            entrenamiento</div>
+          <button class="btn btn-primary mt-lg" onclick="contactTrainer()">
+            Contactar Entrenador
+          </button>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- WhatsApp FAB -->
+  <a href="#" class="fab" id="whatsappFab" title="Contactar por WhatsApp">
+    Chat
+  </a>
+
+  <script src="js/config.js?v=92"></script>
+  <script src="js/data-models.js?v=92"></script>
+  <script src="js/custom-exercises.js?v=92"></script>
+  <script src="js/utils.js?v=92"></script>
+  <script>
+    // --- GESTIÓN DE ERRORES ---
+    window.onerror = function(msg, url, line) {
+        console.error(`Error: ${msg} (Línea ${line})`);
+    };
+
+    function updateStatus(msg) {
+        const el = document.getElementById('routineName');
+        if (el) el.textContent = msg;
+    }
+
+    // --- CARGA DE DATOS ---
+    let brand = BrandConfig.get() || { name: "Fitness App" };
+    let clientId = null;
+    let client = null;
+    let routine = null; // This will hold the "Active Week" if block-based
+    let isBlockBased = false;
+    let publishedBlock = null;
+    let currentWeekIdx = 0;
+
+    function checkWeekCompletion(w, wIdx, userLogs) {
+        if (!w) return false;
+        const days = w.days ? w.days.map((_, i) => i + 1) : [...new Set((w.exercises || []).map(e => e.day))];
+        const logicId = w.id || `block_${publishedBlock?.id}_week_${wIdx}`;
+        
+        const activeDays = days.filter(d => {
+            const ex = w.days ? w.days[d-1]?.exercises : (w.exercises || []).filter(e => e.day === d);
+            return ex && ex.length > 0;
+        });
+        
+        if (activeDays.length === 0) return true; // Empty week acts as completed
+        
+        return activeDays.every(d => {
+            return userLogs.some(l => (l.routineId === w.id || l.routineId === logicId) && l.dayNumber === d && l.completed);
+        });
+    }
+
+    // --- INITIALIZATION ---
+    function initializeApp() {
+      try {
+        brand = BrandConfig.get() || brand;
+        BrandConfig.applyTheme();
+        if (document.getElementById('brandName')) document.getElementById('brandName').textContent = brand.name;
+        if (brand.logo && document.getElementById('brandLogo')) document.getElementById('brandLogo').src = brand.logo;
+
+        clientId = new URLSearchParams(window.location.search).get('id') || sessionStorage.getItem('clientId');
+        if (!clientId) {
+            window.location.href = 'client-login.html';
+            return;
+        }
+        sessionStorage.setItem('clientId', clientId);
+
+        client = Clients.getById(clientId);
+        if (!client) return updateStatus("Error: Cliente no encontrado");
+
+        // Load Avatar
+        const avatar = document.getElementById('clientProfileAvatar');
+        if (avatar) {
+            if (client.profilePhoto) {
+                avatar.innerHTML = `<img src="${client.profilePhoto}" style="width:100%;height:100%;object-fit:cover;">`;
+                avatar.style.background = 'transparent';
+            } else {
+                avatar.textContent = client.name.charAt(0).toUpperCase();
+                avatar.style.background = 'var(--primary-color)';
+            }
+        }
+
+        // Setup WhatsApp FAB (must be after client is defined)
+        const fab = document.getElementById('whatsappFab');
+        if (fab) {
+            const message = `Hola ${brand.name}, soy ${client.name}. Tengo una consulta.`;
+            fab.href = generateWhatsAppLink(brand.whatsapp, message);
+            fab.target = '_blank';
+        }
+
+        // Load Cardio Button Visibility (Move here to avoid early returns)
+        const cardioBtn = document.getElementById('cardioBtnContainer');
+        if (cardioBtn && (client.cardioPublished !== false) && (client.cardio || client.cardioUrl)) {
+            cardioBtn.style.display = 'block';
+        }
+
+        const blocks = TrainingBlocks.getByClientId(clientId) || [];
+        const publishedBlocks = blocks.filter(b => b.published == true || b.published == 'true' || b.published == 1);
+        
+        if (publishedBlocks.length > 0) {
+            publishedBlocks.sort((a, b) => new Date(b.startDate || 0) - new Date(a.startDate || 0));
+            publishedBlock = publishedBlocks[0];
+            
+            if (publishedBlock.weeks && publishedBlock.weeks.length > 0) {
+                isBlockBased = true;
+                const userLogsInit = TrainingLogs.getByClientId(clientId);
+                window.localUserLogs = userLogsInit; // Cache logs globally to avoid heavy refetching
+                
+                // Auto-select week with current date relevance, or first one that is NOT completely finished
+                currentWeekIdx = publishedBlock.weeks.findIndex((w, idx) => {
+                    const isCompleted = checkWeekCompletion(w, idx, userLogsInit);
+                    const hasExercises = w.days && w.days.some(d => d.exercises && d.exercises.length > 0);
+                    return !isCompleted && hasExercises;
+                });
+                if (currentWeekIdx === -1) currentWeekIdx = 0; // If all are finished, go to week 1
+
+                renderWeekTabs();
+                switchWeek(currentWeekIdx);
+                return; // loadRoutine is called by switchWeek
+            }
+        }
+
+        if (!routine && client) {
+            routine = client.individualRoutine || (client.assignedRoutine ? Routines.getById(client.assignedRoutine) : null);
+        }
+
+        loadRoutine();
+      } catch (e) {
+        updateStatus("Fallo al inicializar: " + e.message);
+        console.error("Critical Init Error:", e);
+      }
+    }
+
+    function renderWeekTabs() {
+        const container = document.getElementById('weekTabs');
+        if (!container || !publishedBlock || publishedBlock.weeks.length <= 1) return;
+        
+        container.style.display = 'flex';
+        const userLogsInit = window.localUserLogs || TrainingLogs.getByClientId(client.id);
+
+        let nextWeekToHighlight = -1;
+        for(let j = 0; j < publishedBlock.weeks.length; j++){
+           let w = publishedBlock.weeks[j];
+           let complete = checkWeekCompletion(w, j, userLogsInit);
+           if(!complete && w.days && w.days.some(d => d.exercises && d.exercises.length > 0)){
+               nextWeekToHighlight = j;
+               break;
+           }
+        }
+
+        container.innerHTML = publishedBlock.weeks.map((w, idx) => {
+            const isCompleted = checkWeekCompletion(w, idx, userLogsInit);
+            let highlightStyle = '';
+            // Highlight specific uncompleted week that should be done next
+            if (idx === nextWeekToHighlight) {
+                highlightStyle = 'border-bottom: 2px solid #ff9d00; color: #ff9d00; background: rgba(255,157,0,0.05); text-shadow: 0 0 8px rgba(255,157,0,0.5);';
+            }
+
+            return `
+            <button class="tab ${idx === currentWeekIdx ? 'active' : ''}" 
+                    style="flex: 0 0 auto; min-width: 100px; padding: 10px 15px; position: relative; ${highlightStyle}"
+                    onclick="switchWeek(${idx})">
+                ${w.name || `Semana ${idx + 1}`}
+                ${isCompleted ? '<span style="color:var(--primary-color); margin-left:6px; font-weight:bold;">✓</span>' : ''}
+            </button>
+            `;
+        }).join('');
+    }
+
+    window.switchWeek = function(idx) {
+        currentWeekIdx = idx;
+        routine = publishedBlock.weeks[idx];
+        
+        // Update week tab UI
+        const buttons = document.querySelectorAll('#weekTabs .tab');
+        buttons.forEach((btn, i) => btn.classList.toggle('active', i === idx));
+        
+        loadRoutine();
+    }
+
+    function loadRoutine() {
+      if (!routine) return updateStatus("No hay rutina activa asignada");
+
+      try {
+        let routineTitle = routine.name || "Entrenamiento";
+        if (isBlockBased && publishedBlock) {
+            routineTitle = `${publishedBlock.name} - ${routine.name || `Semana ${currentWeekIdx + 1}`}`;
+        }
+        updateStatus(routineTitle);
+
+        const days = routine.days ? 
+          routine.days.map((_, i) => i + 1) : 
+          [...new Set((routine.exercises || []).map(e => e.day))].sort((a,b) => a - b);
+
+        const tabsContainer = document.getElementById('dayTabs');
+        if (tabsContainer) {
+            let nextDayToHighlight = null;
+            const currentLogicId = routine.id || (isBlockBased ? `block_${publishedBlock.id}_week_${currentWeekIdx}` : 'standalone');
+            const logsToUse = window.localUserLogs || TrainingLogs.getByClientId(client.id);
+
+            tabsContainer.innerHTML = days.map((day, index) => {
+               const isCompleted = logsToUse.some(l => (l.routineId === routine.id || l.routineId === currentLogicId) && l.dayNumber === day && l.completed);
+               const dayEx = routine.days ? (routine.days[day-1]?.exercises || []) : (routine.exercises || []).filter(e=>e.day===day);
+               const hasEx = dayEx.length > 0;
+
+               if (hasEx && !isCompleted && nextDayToHighlight === null) {
+                   nextDayToHighlight = day;
+               }
+
+               let highlightStyle = '';
+               if (day === nextDayToHighlight) {
+                   highlightStyle = 'color: #ff9d00; border-bottom: 2px solid #ff9d00; background: rgba(255,157,0,0.05); text-shadow: 0 0 8px rgba(255,157,0,0.5);';
+               }
+
+               let html = `<button class="tab" id="day-tab-${day}" style="${highlightStyle}" onclick="showDay(${day})">`;
+               html += `Día ${day}`;
+               if (isCompleted) html += ` <span style="color:var(--primary-color); margin-left:4px; font-weight:bold;">✓</span>`;
+               html += `</button>`;
+               return html;
+            }).join('');
+            
+            if (nextDayToHighlight) {
+                showDay(nextDayToHighlight);
+            } else if (days.length > 0) {
+                showDay(days[0]);
+            }
+        }
+      } catch (err) {
+          updateStatus("Error de visualización: " + err.message);
+      }
+    }
+
+    function showDay(dayNumber) {
+      // Fetch all user logs to check for completion
+      const userLogs = TrainingLogs.getByClientId(client.id);
+
+      // Support both structure
+      const dayExercises = routine.days ?
+        (routine.days[dayNumber - 1]?.exercises || []) :
+        (routine.exercises || []).filter(e => e.day === dayNumber);
+
+      const container = document.getElementById('dayContent');
+
+      if (dayExercises.length === 0) {
+        container.innerHTML = `
+          <div class="empty-state">
+            <div class="empty-state-icon"></div>
+            <div class="empty-state-text">No hay ejercicios para este día</div>
+          </div>
+        `;
+        return;
+      }
+
+      // Pre-fetch video data if setting allows
+      const showVideosConfig = brand.clientSettings?.showExerciseVideos !== false; // Default to true
+      let videoMap = new Map();
+
+      if (showVideosConfig) {
+        try {
+          // Fallback 1: Media Library
+          const allMedia = Media.getAll() || [];
+          allMedia.forEach(m => {
+            if (m.category === 'exercise') {
+              videoMap.set(m.title.toLowerCase().trim(), m.url);
+            }
+          });
+
+          // Fallback 2: Global Muscle Groups Library (Configured exercises)
+          // getData is usually defined in data-models.js
+          if (typeof getData === 'function') {
+            const data = getData();
+            const muscles = data.muscleGroupsConfig || { exercises: {} };
+            if (muscles.exercises) {
+              for (const group in muscles.exercises) {
+                muscles.exercises[group].forEach(ex => {
+                  if (typeof ex === 'object' && ex.name && ex.videoUrl) {
+                    videoMap.set(ex.name.toLowerCase().trim(), ex.videoUrl);
+                  }
+                });
+              }
+            }
+          }
+        } catch (e) {
+          console.warn("Could not load media library", e);
+        }
+      }
+
+      // Check if this specific session has been completed
+      let sessionCompleted = false;
+      let completedLog = null;
+      
+      // Determine a unique identifier since weeks might not have an explicit ID
+      const currentRoutineId = routine.id || (isBlockBased ? `block_${publishedBlock.id}_week_${currentWeekIdx}` : 'standalone');
+
+      completedLog = userLogs.find(l => 
+          (l.routineId === routine.id || l.routineId === currentRoutineId) && 
+          l.dayNumber === dayNumber && 
+          l.completed
+      );
+      if (completedLog) sessionCompleted = true;
+      
+      // Update tabs WITHOUT destroying internal HTML
+      const tabs = document.querySelectorAll('#dayTabs .tab');
+      tabs.forEach(tab => {
+        const tId = parseInt((tab.id || '').replace('day-tab-', ''));
+        tab.classList.toggle('active', tId === dayNumber);
+      });
+
+      container.innerHTML = `
+        <div class="card mb-lg" style="${sessionCompleted ? 'border-color: var(--primary-color);' : ''}">
+          <div class="card-header flex-between">
+            <h3 class="card-title">Día ${dayNumber} - ${dayExercises.length} ejercicios</h3>
+            ${sessionCompleted ? `<span class="badge" style="background:var(--primary-color); color:#000;">Completado ✓</span>` : ''}
+          </div>
+          <div class="card-body">
+            <p class="text-muted">${routine.description || ''}</p>
+          </div>
+        </div>
+
+        ${dayExercises.map((exercise, index) => {
+        const numSets = parseInt(exercise.sets) || 1;
+
+        // Determine Video URL
+        let finalVideoUrl = null;
+        if (showVideosConfig) {
+          // First check explicitly assigned URL
+          if (exercise.videoUrl) {
+            finalVideoUrl = exercise.videoUrl;
+          } else {
+            // Look up in library by name
+            const key = (exercise.name || '').toLowerCase().trim();
+            if (videoMap.has(key)) {
+              finalVideoUrl = videoMap.get(key);
+            }
+          }
+        }
+
+        return `
+          <div class="exercise-card">
+            <div class="exercise-header">
+              <div>
+                <div class="flex gap-sm">
+                  <span style="font-size: 1.5rem; font-weight: 700; color: var(--primary-color);">${index + 1}</span>
+                  <div>
+                    <h4 style="margin: 0;">${exercise.name}</h4>
+                    ${exercise.notes ? `<p class="text-muted" style="margin-top: 4px; font-size: 0.875rem;">${exercise.notes}</p>` : ''}
+                  </div>
+                </div>
+              </div>
+              ${finalVideoUrl ? `
+                <button class="btn btn-sm btn-secondary" onclick="window.open('${finalVideoUrl}', '_blank')">
+                  📹 Video
+                </button>
+              ` : ''}
+            </div>
+            
+            <div class="exercise-details mb-md">
+              <div class="exercise-detail-item">
+                <div class="exercise-detail-value">${exercise.sets}</div>
+                <div class="exercise-detail-label">Series</div>
+              </div>
+              <div class="exercise-detail-item">
+                <div class="exercise-detail-value">${exercise.reps}</div>
+                <div class="exercise-detail-label">Reps Obj.</div>
+              </div>
+              <div class="exercise-detail-item">
+                <div class="exercise-detail-value">${exercise.intensity || '-'}</div>
+                <div class="exercise-detail-label">RIR Obj.</div>
+              </div>
+            </div>
+
+            <div class="training-log-section mt-md" style="border-top: 1px solid rgba(255,255,255,0.05); padding-top: 15px;">
+              <h5 style="margin-bottom: 10px; font-size: 0.8rem; text-transform: uppercase; color: var(--primary-color);">
+                ${sessionCompleted ? 'Entrenamiento Registrado' : 'Registrar Entrenamiento Real'}
+              </h5>
+              <div id="log_exercise_${index}">
+                ${Array.from({ length: numSets }).map((_, setIdx) => {
+                  let loggedWeight = '';
+                  let loggedReps = '';
+                  let loggedRir = '';
+                  if (sessionCompleted && completedLog && completedLog.exercises[index] && completedLog.exercises[index].sets[setIdx]) {
+                      const sData = completedLog.exercises[index].sets[setIdx];
+                      loggedWeight = sData.weight;
+                      loggedReps = sData.reps;
+                      loggedRir = sData.rir;
+                  }
+
+                  if (sessionCompleted) {
+                      return `
+                      <div class="grid grid-4 gap-xs mb-xs align-center" style="opacity: 0.8;">
+                        <div style="font-size: 0.7rem; color: var(--text-muted);">Set ${setIdx + 1}:</div>
+                        <div class="form-input form-input-sm text-center" style="background: rgba(255,255,255,0.03); cursor: not-allowed;">${loggedWeight || '-'} Kg</div>
+                        <div class="form-input form-input-sm text-center" style="background: rgba(255,255,255,0.03); cursor: not-allowed;">${loggedReps || '-'} Reps</div>
+                        <div class="form-input form-input-sm text-center" style="background: rgba(255,255,255,0.03); cursor: not-allowed;">RIR ${loggedRir || '-'}</div>
+                      </div>
+                      `;
+                  } else {
+                      return `
+                      <div class="grid grid-4 gap-xs mb-xs align-center">
+                        <div style="font-size: 0.7rem; color: var(--text-muted);">Set ${setIdx + 1}:</div>
+                        <input type="number" class="form-input form-input-sm" placeholder="Kg" id="weight_${index}_${setIdx}">
+                        <input type="number" class="form-input form-input-sm" placeholder="Reps" id="reps_${index}_${setIdx}">
+                        <input type="number" class="form-input form-input-sm" placeholder="RIR" id="rir_${index}_${setIdx}" min="0" max="10">
+                      </div>
+                      `;
+                  }
+                }).join('')}
+              </div>
+            </div>
+          </div>
+        `;
+      }).join('')}
+        
+        ${!sessionCompleted ? `
+        <button class="btn btn-primary btn-full mt-lg" onclick="saveTrainingSession(${dayNumber})">
+            Guardar Sesión de Hoy
+        </button>
+        ` : ''}
+      `;
+    }
+
+    function saveTrainingSession(dayNumber) {
+      const dayExercises = routine.days ?
+        (routine.days[dayNumber - 1]?.exercises || []) :
+        (routine.exercises || []).filter(e => e.day === dayNumber);
+
+      const currentRoutineId = routine.id || (isBlockBased ? `block_${publishedBlock.id}_week_${currentWeekIdx}` : 'standalone');
+
+      const sessionLog = {
+        clientId: client.id,
+        routineId: currentRoutineId,
+        dayNumber: dayNumber,
+        exercises: dayExercises.map((ex, exIdx) => {
+          const numSets = parseInt(ex.sets) || 1;
+          const setsData = [];
+          for (let s = 0; s < numSets; s++) {
+            setsData.push({
+              weight: document.getElementById(`weight_${exIdx}_${s}`).value || 0,
+              reps: document.getElementById(`reps_${exIdx}_${s}`).value || 0,
+              rir: document.getElementById(`rir_${exIdx}_${s}`).value || 0
+            });
+          }
+          return {
+            name: ex.name,
+            sets: setsData
+          };
+        })
+      };
+
+      TrainingLogs.create(sessionLog);
+      
+      // PR Detection
+      sessionLog.exercises.forEach(ex => {
+          const bestSet = (ex.sets || []).reduce((best, s) => {
+              const w = parseFloat(s.weight) || 0;
+              const r = parseInt(s.reps) || 0;
+              if (w > best.weight) return { weight: w, reps: r };
+              if (w > 0 && w === best.weight && r > best.reps) return { weight: w, reps: r };
+              return best;
+          }, { weight: 0, reps: 0 });
+
+          if (bestSet.weight > 0) {
+              window.checkAndNotifyPR(ex.name, bestSet.weight, bestSet.reps);
+          }
+      });
+
+      showToast('¡Entrenamiento completado y guardado!', 'success');
+
+      // Force refresh of logs and UI to show new progression (next highlighted day/week)
+      setTimeout(() => {
+          window.localUserLogs = TrainingLogs.getByClientId(client.id);
+          renderWeekTabs();
+          loadRoutine(); // This automatically computes and selects the "Next" day
+      }, 500);
+    }
+
+    function contactTrainer() {
+      const message = `Hola ${brand.name}, soy ${client.name}. Tengo una consulta sobre mi rutina de entrenamiento.`;
+      const link = generateWhatsAppLink(brand.whatsapp, message);
+      window.open(link, '_blank');
+    }
+
+    function openCardioModal() {
+        if (!client) return;
+        
+        let content = `
+            <div style="padding: 10px;">
+                <div class="card bg-secondary p-md rounded-md mb-md" style="font-size: 0.95rem; line-height: 1.6; border: 1px solid rgba(255,255,255,0.05); background: rgba(0,0,0,0.2);">
+                    ${client.cardio || '<p class="text-secondary text-center">No hay notas específicas de cardio todavía.</p>'}
+                </div>
+        `;
+        
+        if (client.cardioUrlVisible && client.cardioUrl) {
+            content += `
+                <a href="${client.cardioUrl}" target="_blank" class="btn btn-primary btn-full" style="text-decoration: none; margin-top: 10px;">
+                    🔗 RECURSO / LINK ADICIONAL
+                </a>
+            `;
+        }
+        
+        content += `</div>`;
+        
+        // As defined in components.js or utils.js if showModal exists globally
+        if (typeof showModal === 'function') {
+            showModal('🏃 Actividad Cardio', content, [
+                { text: 'Entendido', class: 'btn-primary', onclick: 'window.closeModal()' }
+            ]);
+        } else {
+            // Fallback to simple alert if showModal is not available
+            alert('REVISA TU CARDIO: \n\n' + client.cardio.replace(/<[^>]+>/g, ''));
+        }
+    }
+
+    function toggleMenu() {
+      document.getElementById('navLinks').classList.toggle('active');
+    }
+
+    // Trigger App Initialization
+    initializeApp();
+  </script>
+</body>
+
+</html>

@@ -1,0 +1,24 @@
+{
+    "plantilla_informe": {
+        "secciones": [
+            "I. Diagnóstico de la Situación Actual",
+            "II. Impacto de la Eficiencia (Ahorro Directo)",
+            "III. Potencial de Crecimiento (Aumento de Facturación)",
+            "IV. El Coste de la Inacción",
+            "V. Resumen de Inversión y ROI"
+        ]
+    },
+    "benchmarks_industria": {
+        "ecommerce": {
+            "reduccion_soporte": 0.35,
+            "aumento_conversion": 0.12
+        },
+        "servicios": {
+            "ahorro_administrativo": 0.50,
+            "capacidad_atencion": 0.25
+        },
+        "real_estate": {
+            "reduccion_lead_response": 0.80
+        }
+    }
+}

@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mis Hábitos - Fitness App</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles/theme.css">
+    <link rel="stylesheet" href="styles/components.css">
+    <link rel="stylesheet" href="styles/mobile.css">
+    <link rel="manifest" href="manifest.json">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <style>
+        .habit-card {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: var(--radius-lg);
+            padding: 25px;
+            text-align: center;
+            transition: transform 0.2s, background 0.2s;
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 180px;
+        }
+
+        .habit-card:active {
+            transform: scale(0.98);
+            background: rgba(255, 255, 255, 0.06);
+        }
+
+        .habit-icon {
+            font-size: 3.5rem;
+            margin-bottom: 15px;
+        }
+
+        .habit-name {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--text-muted);
+            margin-bottom: 8px;
+        }
+
+        .habit-value {
+            font-size: 1.8rem;
+            font-weight: 800;
+        }
+
+        .habit-unit {
+            font-size: 0.8rem;
+            opacity: 0.6;
+            margin-left: 4px;
+        }
+
+        .stats-summary {
+            background: linear-gradient(135deg, rgba(var(--primary-color-rgb), 0.1) 0%, rgba(0,0,0,0.2) 100%);
+            border-radius: var(--radius-lg);
+            padding: 20px;
+            margin-bottom: 25px;
+            border: 1px solid rgba(var(--primary-color-rgb), 0.2);
+        }
+
+        .filter-btn, .period-btn { 
+            background: transparent; border: none; padding: 6px 14px; color: var(--text-muted); font-size: 0.85rem; border-radius: 8px; cursor: pointer; transition: all 0.2s;
+        }
+        .filter-btn.active, .period-btn.active { 
+            background: rgba(255,255,255,0.1); color: #fff; font-weight: 700; 
+        }
+
+        .progress-bar-mini {
+            width: 70px; height: 6px; background: rgba(255,255,255,0.05); border-radius: 10px; overflow: hidden;
+        }
+        .progress-bar-mini > div { height: 100%; border-radius: 10px; }
+    </style>
+</head>
+
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <nav class="nav">
+                <div class="logo">
+                    <img id="brandLogo" class="logo-img" alt="Logo" style="display: none;">
+                    <span id="brandName">Fitness App</span>
+                </div>
+                <ul class="nav-links" id="navLinks">
+                    <li><a href="client-dashboard.html" class="nav-link">Inicio</a></li>
+                    <li><a href="client-profile.html" class="nav-link">Ficha Técnica</a></li>
+
+                    <li><a href="client-login.html" class="nav-link">Salir</a></li>
+                </ul>
+                <div id="clientProfileAvatar" style="width: 35px; height: 35px; border-radius: 50%; background: var(--primary-color); display: flex; align-items: center; justify-content: center; font-size: 0.9rem; font-weight: 800; color: #000; overflow: hidden; border: 2px solid rgba(255,255,255,0.1); margin-left: 15px; cursor: pointer; flex-shrink: 0;" onclick="window.location.href='client-profile.html'">
+                    U
+                </div>
+                <button class="menu-toggle" onclick="toggleMenu()" style="margin-left: 10px;">☰</button>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <div class="container">
+            <div class="flex-between align-center mb-lg">
+                <a href="client-dashboard.html" class="btn btn-sm btn-secondary" style="border-radius: 50px; padding: 8px 15px;">
+                    ← Volver
+                </a>
+                <h1 style="margin: 0; font-size: 1.5rem;">Hábitos Diarios</h1>
+                <div style="width: 80px;"></div> <!-- spacer -->
+            </div>
+
+            <!-- Tab Navigation (Hoy vs Seguimiento) -->
+            <div class="flex gap-sm mb-lg" style="background: rgba(255,255,255,0.03); padding: 5px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.05);">
+                <button id="tab-today" class="btn btn-sm" style="flex: 1; border-radius: 10px; background: rgba(var(--primary-color-rgb), 0.2); color: var(--primary-color);" onclick="switchTab('today')">Registro Diario</button>
+                <button id="tab-history" class="btn btn-sm" style="flex: 1; border-radius: 10px; color: var(--text-muted);" onclick="switchTab('history')">Mi Seguimiento</button>
+            </div>
+
+            <!-- TAB: TODAY -->
+            <div id="section-today">
+                <div class="stats-summary text-center">
+                    <p class="text-muted text-xs uppercase letter-spacing-1 mb-xs">Fecha Actual</p>
+                    <h2 id="todayDateLabel" style="font-size: 1.3rem;">-- de --</h2>
+                </div>
+
+                <div class="grid grid-1 gap-md">
+                    <div class="habit-card" onclick="openHabitModal('water')" style="border-left: 4px solid #00d9ff;">
+                        <div class="habit-icon">💧</div>
+                        <div class="habit-name">Agua</div>
+                        <div class="habit-value" id="val-water" style="color: #00d9ff;">0.0 <span class="habit-unit">L</span></div>
+                    </div>
+                    <div class="habit-card" onclick="openHabitModal('steps')" style="border-left: 4px solid #4CAF50;">
+                        <div class="habit-icon">👟</div>
+                        <div class="habit-name">Pasos</div>
+                        <div class="habit-value" id="val-steps" style="color: #4CAF50;">0</div>
+                    </div>
+                    <div class="habit-card" onclick="openHabitModal('sleep')" style="border-left: 4px solid #9C27B0;">
+                        <div class="habit-icon">😴</div>
+                        <div class="habit-name">Sueño</div>
+                        <div class="habit-value" id="val-sleep" style="color: #9C27B0;">0.0 <span class="habit-unit">h</span></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TAB: HISTORY -->
+            <div id="section-history" style="display: none;">
+                <!-- Filtros de Historial -->
+                <div class="flex-between align-center mb-md gap-sm" style="flex-wrap: wrap;">
+                    <div class="flex gap-xs" style="background: rgba(255,255,255,0.05); padding: 4px; border-radius: 10px; border: 1px solid rgba(255,255,255,0.05);">
+                        <button class="filter-btn active" id="f-all" onclick="setHabitFilter('all')">🌍</button>
+                        <button class="filter-btn" id="f-water" onclick="setHabitFilter('water')">💧</button>
+                        <button class="filter-btn" id="f-steps" onclick="setHabitFilter('steps')">👟</button>
+                        <button class="filter-btn" id="f-sleep" onclick="setHabitFilter('sleep')">😴</button>
+                    </div>
+                    <div class="flex gap-xs" style="background: rgba(255,255,255,0.05); padding: 4px; border-radius: 10px; border: 1px solid rgba(255,255,255,0.05);">
+                        <button class="period-btn active" id="p-7" onclick="setPeriodFilter(7)">7 días</button>
+                        <button class="period-btn" id="p-30" onclick="setPeriodFilter(30)">30 días</button>
+                    </div>
+                </div>
+
+                <!-- Resumen Analítico -->
+                <div id="historySummaryCard" class="stats-summary" style="text-align: left; padding: 25px;">
+                    <div class="flex-between align-center mb-sm">
+                        <span id="periodLabel" class="text-xs uppercase letter-spacing-1">Últimos 7 días</span>
+                        <span id="overallStatusBadge" class="badge">Analizando...</span>
+                    </div>
+                    <div style="font-size: 1.1rem; font-weight: 700; color: #fff; margin-bottom: 12px;" id="overallStatusText">
+                        Cargando...
+                    </div>
+                    <div id="miniStatsRow" class="flex gap-md mt-sm" style="font-size: 0.85rem; opacity: 0.9; color: var(--primary-color);">
+                        <!-- Auto-filled -->
+                    </div>
+                </div>
+
+                <!-- Listado Detallado -->
+                <div class="card mb-lg" style="background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.05); border-radius: 16px;">
+                    <div class="card-body" id="historyList" style="padding: 0 20px;">
+                        <!-- List populated via JS -->
+                    </div>
+                </div>
+            </div>
+
+            <div class="mt-xl text-center">
+                <p class="text-muted text-sm italic">"Tus hábitos diarios determinan tu futuro."</p>
+            </div>
+        </div>
+    </main>
+
+    <script src="js/config.js?v=106"></script>
+    <script src="js/data-models.js?v=106"></script>
+    <script src="js/utils.js?v=106"></script>
+    <script>
+        const clientId = sessionStorage.getItem('clientId');
+        if (!clientId) { window.location.href = 'client-login.html'; }
+
+        // State filters
+        let currentHabitFilter = 'all';
+        let currentPeriod = 7;
+
+        // Theme
+        BrandConfig.applyTheme();
+        const brand = BrandConfig.get();
+        document.getElementById('brandName').textContent = brand.name;
+        if (brand.logo) {
+            document.getElementById('brandLogo').src = brand.logo;
+            document.getElementById('brandLogo').style.display = 'block';
+        }
+
+        // Date Display
+        const dateOptions = { weekday: 'long', day: 'numeric', month: 'long' };
+        document.getElementById('todayDateLabel').textContent = new Date().toLocaleDateString('es-ES', dateOptions);
+
+        function loadHabits() {
+            const h = Habits.getToday(clientId) || { water: 0, steps: 0, sleep: 0 };
+            document.getElementById('val-water').innerHTML = `${h.water.toFixed(1)} <span class="habit-unit">L</span>`;
+            document.getElementById('val-steps').textContent = h.steps.toLocaleString();
+            document.getElementById('val-sleep').innerHTML = `${h.sleep.toFixed(1)} <span class="habit-unit">h</span>`;
+        }
+
+        window.setHabitFilter = function(filter) {
+            currentHabitFilter = filter;
+            document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+            document.getElementById('f-' + filter).classList.add('active');
+            loadHistory();
+        }
+
+        window.setPeriodFilter = function(period) {
+            currentPeriod = period;
+            document.querySelectorAll('.period-btn').forEach(b => b.classList.remove('active'));
+            document.getElementById('p-' + period).classList.add('active');
+            document.getElementById('periodLabel').textContent = `Últimos ${period} días`;
+            loadHistory();
+        }
+
+        window.switchTab = function(tab) {
+            if (tab === 'today') {
+                document.getElementById('section-today').style.display = 'block';
+                document.getElementById('section-history').style.display = 'none';
+                document.getElementById('tab-today').className = 'btn btn-sm active-tab';
+                document.getElementById('tab-today').style.background = 'rgba(var(--primary-color-rgb), 0.2)';
+                document.getElementById('tab-today').style.color = 'var(--primary-color)';
+                document.getElementById('tab-history').style.background = 'transparent';
+                document.getElementById('tab-history').style.color = 'var(--text-muted)';
+            } else {
+                document.getElementById('section-today').style.display = 'none';
+                document.getElementById('section-history').style.display = 'block';
+                document.getElementById('tab-history').style.background = 'rgba(var(--primary-color-rgb), 0.2)';
+                document.getElementById('tab-history').style.color = 'var(--primary-color)';
+                document.getElementById('tab-today').style.background = 'transparent';
+                document.getElementById('tab-today').style.color = 'var(--text-muted)';
+                loadHistory();
+            }
+        }
+
+        function loadHistory() {
+            const client = Clients.getById(clientId);
+            if (client) {
+                const avatar = document.getElementById('clientProfileAvatar');
+                if (avatar) {
+                    if (client.profilePhoto) {
+                        avatar.innerHTML = `<img src="${client.profilePhoto}" style="width:100%;height:100%;object-fit:cover;">`;
+                        avatar.style.background = 'transparent';
+                    } else {
+                        avatar.textContent = client.name.charAt(0).toUpperCase();
+                        avatar.style.background = 'var(--primary-color)';
+                    }
+                }
+            }
+            const allHistory = Habits.getByClientId(clientId);
+            const history = allHistory.slice(-currentPeriod).reverse();
+            const container = document.getElementById('historyList');
+            
+            if (history.length === 0) {
+                container.innerHTML = '<div class="text-center py-xl text-muted">No hay registros para este periodo.</div>';
+                document.getElementById('overallStatusText').textContent = 'Se necesitan registros diarios.';
+                return;
+            }
+
+            // Averages
+            let sumWater = 0, sumSteps = 0, sumSleep = 0;
+            history.forEach(day => {
+                sumWater += (day.water || 0);
+                sumSteps += (day.steps || 0);
+                sumSleep += (day.sleep || 0);
+            });
+
+            const avgWater = sumWater / history.length;
+            const avgSteps = sumSteps / history.length;
+            const avgSleep = sumSleep / history.length;
+
+            const badge = document.getElementById('overallStatusBadge');
+            const text = document.getElementById('overallStatusText');
+            const mini = document.getElementById('miniStatsRow');
+
+            let isFavorable = false;
+            
+            if (currentHabitFilter === 'all') {
+                isFavorable = avgWater >= 1.5 && avgSteps >= 6000 && avgSleep >= 6.5;
+                text.innerHTML = isFavorable ? '✨ Tus promedios generales son excelentes.' : '💪 Puedes mejorar la constancia en tus hábitos.';
+                mini.innerHTML = `<span>💧 ${avgWater.toFixed(1)}L</span> <span>👟 ${Math.round(avgSteps)}</span> <span>😴 ${avgSleep.toFixed(1)}h</span>`;
+            } else if (currentHabitFilter === 'water') {
+                isFavorable = avgWater >= 2;
+                text.innerHTML = `Promedio diario: <span style="color:#00d9ff">${avgWater.toFixed(1)}L</span>`;
+                mini.innerHTML = isFavorable ? '🎯 ¡Nivel de hidratación ideal!' : '🥛 Deberías beber un poco más.';
+            } else if (currentHabitFilter === 'steps') {
+                isFavorable = avgSteps >= 8000;
+                text.innerHTML = `Promedio diario: <span style="color:#4CAF50">${Math.round(avgSteps)}</span> pasos`;
+                mini.innerHTML = isFavorable ? '🏃‍♂️ ¡Mantienes un gran ritmo!' : '🚶‍♂️ Intenta caminar un poco más.';
+            } else if (currentHabitFilter === 'sleep') {
+                isFavorable = avgSleep >= 7.5;
+                text.innerHTML = `Promedio diario: <span style="color:#9C27B0">${avgSleep.toFixed(1)}h</span>`;
+                mini.innerHTML = isFavorable ? '🛌 ¡Tu descanso es de calidad!' : '😴 Intenta regularizar tus horas de sueño.';
+            }
+
+            badge.className = `badge ${isFavorable ? 'badge-success' : 'badge-error'}`;
+            badge.textContent = isFavorable ? 'Favorable' : 'A mejorar';
+            badge.style.background = isFavorable ? '#4CAF50' : '#FF9800';
+
+            container.innerHTML = history.map(day => {
+                const dayName = new Date(day.date).toLocaleDateString('es-ES', { weekday: 'short', day: 'numeric' });
+                let detail = '';
+                if (currentHabitFilter === 'all') {
+                    detail = `<div class="flex gap-sm"><span>💧${day.water.toFixed(1)}</span> <span>👟${day.steps}</span> <span>😴${day.sleep.toFixed(1)}h</span></div>`;
+                } else {
+                    let val = 0, target = 1, color = '#fff';
+                    if (currentHabitFilter === 'water') { val = day.water; target = 3; color = '#00d9ff'; }
+                    else if (currentHabitFilter === 'steps') { val = day.steps; target = 12000; color = '#4CAF50'; }
+                    else if (currentHabitFilter === 'sleep') { val = day.sleep; target = 10; color = '#9C27B0'; }
+                    
+                    const pct = Math.min(100, (val / target) * 100);
+                    detail = `
+                        <div class="flex align-center gap-md">
+                            <div class="progress-bar-mini"><div style="width:${pct}%; background:${color};"></div></div>
+                            <span style="font-weight:700; color:${color}; min-width:35px; text-align:right;">${currentHabitFilter === 'steps' ? val : val.toFixed(1)}</span>
+                        </div>
+                    `;
+                }
+
+                return `
+                    <div class="flex-between py-md" style="border-bottom: 1px solid rgba(255,255,255,0.05); align-items: center;">
+                        <div style="flex: 1;">
+                            <div style="font-weight: 600; font-size: 0.95rem; text-transform: capitalize; color:#fff;">${dayName}</div>
+                            <div class="text-xs text-muted" style="opacity: 0.5;">${day.date}</div>
+                        </div>
+                        <div style="flex: 2; display: flex; justify-content: flex-end;">
+                            ${detail}
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        window.openHabitModal = function(type) {
+            const h = Habits.getToday(clientId) || { water: 0, steps: 0, sleep: 0 };
+            let title = '', icon = '', unit = '', current = 0, step = 1;
+
+            if (type === 'water') { title = 'Agua'; icon = '💧'; unit = 'Litros'; current = h.water; step = 0.5; }
+            else if (type === 'steps') { title = 'Pasos'; icon = '👟'; unit = 'Pasos'; current = h.steps; step = 500; }
+            else if (type === 'sleep') { title = 'Sueño'; icon = '😴'; unit = 'Horas'; current = h.sleep; step = 0.5; }
+
+            const content = `
+                <div style="text-align: center; padding: 10px;">
+                    <div style="font-size: 4rem; margin-bottom: 20px;">${icon}</div>
+                    <h3 style="margin-bottom: 20px;">Registrar ${title}</h3>
+                    <div style="background: rgba(var(--primary-color-rgb), 0.05); padding: 25px; border-radius: 15px; border: 1px solid rgba(var(--primary-color-rgb), 0.1); margin-bottom: 20px;">
+                        <label class="text-xs text-muted uppercase block mb-md">Cantidad actual</label>
+                        <div style="display: flex; align-items: center; justify-content: center; gap: 20px;">
+                            <button class="btn btn-outline" style="width: 50px; height: 50px; font-size: 1.5rem; border-radius: 50%; padding:0;" onclick="window.adjustHabitValue(-${step})">-</button>
+                            <input type="number" id="habitInput" class="form-input text-center" style="font-size: 2rem; width: 140px; background: transparent; border: none; font-weight: 800; color: var(--primary-color);" value="${current}" step="${step}">
+                            <button class="btn btn-outline" style="width: 50px; height: 50px; font-size: 1.5rem; border-radius: 50%; padding:0;" onclick="window.adjustHabitValue(${step})">+</button>
+                        </div>
+                        <div class="text-muted mt-sm">${unit}</div>
+                    </div>
+                </div>
+            `;
+
+            window.adjustHabitValue = (val) => {
+                const input = document.getElementById('habitInput');
+                let cur = parseFloat(input.value) || 0;
+                input.value = Math.max(0, cur + val);
+            };
+
+            window.showModal(title, content, [
+                { text: 'Cancelar', class: 'btn-outline', onclick: 'window.closeModal()' },
+                { text: 'Guardar', class: 'btn-primary', onclick: `window.saveHabit('${type}')` }
+            ]);
+        }
+
+        window.saveHabit = function(type) {
+            const val = parseFloat(document.getElementById('habitInput').value) || 0;
+            const h = Habits.getToday(clientId) || { water: 0, steps: 0, sleep: 0 };
+            h[type] = val;
+            Habits.save(clientId, h);
+            loadHabits();
+            window.closeModal();
+            showToast('¡Registro guardado!', 'success');
+        }
+
+        function toggleMenu() { document.getElementById('navLinks').classList.toggle('active'); }
+
+        loadHabits();
+    </script>
+</body>
+</html>

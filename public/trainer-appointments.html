@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Agenda - Fitness App</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles/theme.css">
+    <link rel="stylesheet" href="styles/components.css">
+</head>
+
+<body>
+    <!-- Pantalla de Login (Google Auth) -->
+    <div id="login-screen" class="wizard-container" style="min-height: 100vh; display: flex; align-items: center; justify-content: center;">
+        <div class="card wizard-card" style="max-width: 400px; text-align: center; padding: 2rem;">
+            <div style="font-size: 3rem; margin-bottom: 1rem;">🔒</div>
+            <h2>Acceso a tu Backend</h2>
+            <p class="text-muted mb-lg">Conéctate con tu cuenta de Google para acceder a tu base de datos de clientes y rutinas.</p>
+            <div id="google-signin-container">
+                <button onclick="if(typeof AUTH !== 'undefined') { AUTH.signIn() } else { alert('El sistema de autenticación no ha cargado correctamente. Por favor, desactiva bloqueadores de anuncios o recarga la página.') }" class="btn btn-primary" style="display:flex; align-items:center; gap:0.5rem; justify-content:center; width:100%;">
+                    <svg width="24" height="24" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
+                        <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
+                        <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/>
+                        <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
+                    </svg>
+                    Conectar con Google
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- App Principal -->
+    <div id="app" style="display: none;">
+    <header class="header">
+        <div class="container">
+            <nav class="nav">
+                <div class="logo">
+                    <img id="brandLogo" class="logo-img" alt="Logo">
+                    <span id="brandName">Fitness App</span>
+                </div>
+                <button class="menu-toggle" onclick="toggleMenu()">☰</button>
+                <ul class="nav-links" id="navLinks">
+                    <li><a href="trainer-dashboard.html" class="nav-link">Dashboard</a></li>
+                    <li><a href="trainer-clients.html" class="nav-link">Clientes</a></li>
+                    <li><a href="trainer-routines.html" class="nav-link">Rutinas</a></li>
+                    <li><a href="trainer-diets.html" class="nav-link">Dietas</a></li>
+                    <li><a href="trainer-feedbacks.html" class="nav-link">Revisiones</a></li>
+                    <li><a href="trainer-media.html" class="nav-link">Biblioteca</a></li>
+                    <li><a href="trainer-appointments.html" class="nav-link active">Agenda</a></li>
+                    <li><a href="trainer-settings.html" class="nav-link">Configuración</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <main class="main-content">
+        <div class="container">
+            <div class="flex-between mb-lg">
+                <div>
+                    <h1>📅 Agenda de Citas</h1>
+                    <p class="text-muted">Gestiona tus llamadas y reuniones con clientes</p>
+                </div>
+                <button class="btn btn-primary" onclick="showAddAppointmentModal()">
+                    ➕ Nueva Cita
+                </button>
+            </div>
+
+            <div class="grid grid-2">
+                <!-- Upcoming Appointments -->
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">Próximas Citas</h3>
+                    </div>
+                    <div class="card-body" id="upcomingAppointments">
+                        <div class="empty-state">
+                            <div class="empty-state-icon">📅</div>
+                            <div class="empty-state-text">No hay citas programadas</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Past Appointments -->
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">Historial</h3>
+                    </div>
+                    <div class="card-body" id="pastAppointments">
+                        <div class="empty-state">
+                            <div class="empty-state-icon">📋</div>
+                            <div class="empty-state-text">No hay citas anteriores</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    </div>
+
+    <!-- Nuevos Scripts de Google -->
+    <script src="js/config.js?v=92"></script>
+    <script src="js/auth.js?v=92"></script>
+    <script src="js/sheets.js?v=92"></script>
+    <script src="js/data-models.js?v=92"></script>
+    <script src="js/utils.js?v=92"></script>
+    <script>
+        if (!BrandConfig.isConfigured()) window.location.href = 'index.html';
+
+        BrandConfig.applyTheme();
+        const brand = BrandConfig.get();
+        document.getElementById('brandName').textContent = brand.name;
+        if (brand.logo) {
+            document.getElementById('brandLogo').src = brand.logo;
+            document.getElementById('brandLogo').style.display = 'block';
+        }
+
+        function loadAppointments() {
+            const appointments = Appointments.getAll() || [];
+            const now = new Date();
+
+            const upcoming = appointments.filter(a => new Date(a.date) >= now);
+            const past = appointments.filter(a => new Date(a.date) < now);
+
+            // Upcoming Appointments
+            const upcomingContainer = document.getElementById('upcomingAppointments');
+            if (upcoming.length === 0) {
+                upcomingContainer.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-state-icon">📅</div>
+                        <div class="empty-state-text">No hay citas programadas</div>
+                    </div>
+                `;
+            } else {
+                upcomingContainer.innerHTML = upcoming.map(apt => {
+                    const client = Clients.getById(apt.clientId);
+                    const title = `${apt.type === 'call' ? '📞' : '🤝'} Cita: ${client?.name || 'Cliente'}`;
+                    const gcalUrl = generateGoogleCalendarLink(title, apt.date, apt.notes);
+
+                    return `
+                        <div class="mb-md">
+                            <div class="flex-between">
+                                <strong>${client?.name || 'Cliente desconocido'}</strong>
+                                <span class="badge badge-info">${apt.type === 'call' ? '📞 Llamada' : apt.type === 'meeting' ? '🤝 Reunión' : '📝 Seguimiento'}</span>
+                            </div>
+                            <div class="text-secondary mt-sm" style="font-size: 0.9rem; display: flex; justify-content: flex-between; align-items: flex-end;">
+                                <div>
+                                    <div style="color: var(--primary-color); font-weight: 500;">⏰ ${formatDateTime(apt.date)}</div>
+                                    ${apt.notes ? `<div style="margin-top: 4px; opacity: 0.8;">📝 ${apt.notes}</div>` : ''}
+                                </div>
+                                <button class="btn btn-sm btn-outline" onclick="window.open('${gcalUrl}', '_blank')" style="padding: 4px 8px; font-size: 0.7rem; margin-top: 10px;">
+                                    🗓️ Sincronizar GCal
+                                </button>
+                            </div>
+                        </div>
+                        ${upcoming.indexOf(apt) < upcoming.length - 1 ? '<div class="divider" style="margin: 15px 0;"></div>' : ''}
+                    `;
+                }).join('');
+            }
+
+            // Historical Appointments
+            const pastContainer = document.getElementById('pastAppointments');
+            if (past.length === 0) {
+                pastContainer.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-state-icon">📋</div>
+                        <div class="empty-state-text">No hay historial de citas</div>
+                    </div>
+                `;
+            } else {
+                pastContainer.innerHTML = past.slice(-10).reverse().map(apt => {
+                    const client = Clients.getById(apt.clientId);
+                    return `
+                        <div class="mb-md">
+                            <div class="flex-between">
+                                <strong>${client?.name || 'Cliente desconocido'}</strong>
+                                <span class="badge badge-success">Completada</span>
+                            </div>
+                            <div class="text-muted mt-sm" style="font-size: 0.85rem;">
+                                📅 ${formatDateTime(apt.date)}
+                            </div>
+                        </div>
+                        ${past.indexOf(apt) < past.length - 1 ? '<div class="divider" style="margin: 10px 0;"></div>' : ''}
+                    `;
+                }).join('');
+            }
+        }
+
+        function showAddAppointmentModal() {
+            const clients = Clients.getAll();
+
+            showModal('Nueva Cita', `
+        <form id="appointmentForm">
+          <div class="form-group">
+            <label class="form-label">Cliente</label>
+            <select class="form-select" id="clientSelect" required>
+              <option value="">Seleccionar cliente...</option>
+              ${clients.map(c => `<option value="${c.id}">${c.name}</option>`).join('')}
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Fecha y Hora</label>
+            <input type="datetime-local" class="form-input" id="appointmentDate" required>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Tipo</label>
+            <select class="form-select" id="appointmentType">
+              <option value="call">Llamada</option>
+              <option value="meeting">Reunión</option>
+              <option value="followup">Seguimiento</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Notas</label>
+            <textarea class="form-textarea" id="appointmentNotes" rows="3"></textarea>
+          </div>
+        </form>
+      `, [
+                { text: 'Cancelar', class: 'btn-secondary', onclick: 'window.closeModal()' },
+                { text: 'Crear', class: 'btn-primary', onclick: 'window.saveAppointment()' }
+            ]);
+        }
+
+        window.saveAppointment = function () {
+            const clientId = document.getElementById('clientSelect').value;
+            const date = document.getElementById('appointmentDate').value;
+            const type = document.getElementById('appointmentType').value;
+            const notes = document.getElementById('appointmentNotes').value;
+
+            if (!clientId || !date) {
+                showToast('Por favor, selecciona un cliente y una fecha válida', 'error');
+                return false;
+            }
+
+            const appointmentData = {
+                clientId,
+                date,
+                type,
+                notes,
+                status: 'scheduled'
+            };
+
+            const newApt = Appointments.create(appointmentData);
+
+            if (newApt) {
+                showToast('Cita guardada con éxito', 'success');
+                loadAppointments();
+                window.closeModal();
+                return true;
+            } else {
+                showToast('Error al guardar la cita', 'error');
+                return false;
+            }
+        };
+
+        function toggleMenu() {
+            document.getElementById('navLinks').classList.toggle('active');
+        }
+
+        loadAppointments();
+    </script>
+
+    <script>
+        // Función que llama el sistema de Google cuando la sesión es exitosa
+        function onGoogleAuthSuccess() {
+            document.getElementById('login-screen').style.display = 'none';
+            document.getElementById('app').style.display = 'block';
+            
+            if(typeof window.dibujarTabla === 'function') {
+                window.dibujarTabla();
+            } else if(typeof dibujarTabla === 'function') {
+                dibujarTabla();
+            }
+            if(typeof renderRoutines === 'function') renderRoutines();
+            if(typeof renderDiets === 'function') renderDiets();
+            if(typeof renderFeedbacks === 'function') renderFeedbacks();
+            if(typeof initClientData === 'function') initClientData();
+        }
+    </script>
+</body>
+</html>

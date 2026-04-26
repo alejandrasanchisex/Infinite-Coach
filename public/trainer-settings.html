@@ -1,0 +1,1334 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Configuración - Fitness App</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles/theme.css">
+    <link rel="stylesheet" href="styles/components.css">
+    <style>
+        .settings-section {
+            margin-bottom: var(--spacing-xl);
+        }
+
+        /* Grid System */
+        .grid { display: grid; }
+        .grid-2 { grid-template-columns: repeat(2, 1fr); }
+        .grid-3 { grid-template-columns: repeat(3, 1fr); }
+        .gap-md { gap: 1rem; }
+        .gap-lg { gap: 2rem; }
+        .flex-col { display: flex; flex-direction: column; }
+        .flex-row { display: flex; flex-direction: row; }
+        .items-center { align-items: center; }
+        .justify-between { justify-content: space-between; }
+        
+        .shadow-sm { box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06); }
+        
+        .card {
+            background: var(--bg-card);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            transition: transform 0.2s ease, border-color 0.2s ease;
+        }
+        
+        .card:hover {
+            border-color: rgba(var(--primary-color-rgb), 0.3);
+        }
+
+        .divider {
+            height: 1px;
+            background: rgba(255, 255, 255, 0.05);
+            margin: 1.5rem 0;
+        }
+
+        .color-preview {
+            width: 100%;
+            height: 50px;
+            border-radius: 8px;
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            cursor: pointer;
+        }
+
+        @media (max-width: 992px) {
+            .grid-2 { grid-template-columns: 1fr; }
+        }
+
+        .danger-zone {
+            border: 1px solid rgba(239, 68, 68, 0.2);
+            border-radius: var(--radius-lg);
+            padding: var(--spacing-lg);
+            background: rgba(239, 68, 68, 0.02);
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Pantalla de Login (Google Auth) -->
+    <div id="login-screen" class="wizard-container" style="min-height: 100vh; display: flex; align-items: center; justify-content: center;">
+        <div class="card wizard-card" style="max-width: 400px; text-align: center; padding: 2rem;">
+            <div style="font-size: 3rem; margin-bottom: 1rem;">🔒</div>
+            <h2>Acceso a tu Backend</h2>
+            <p class="text-muted mb-lg">Conéctate con tu cuenta de Google para acceder a tu base de datos de clientes y rutinas.</p>
+            <div id="google-signin-container">
+                <button onclick="if(typeof AUTH !== 'undefined') { AUTH.signIn() } else { alert('El sistema de autenticación no ha cargado correctamente. Por favor, desactiva bloqueadores de anuncios o recarga la página.') }" class="btn btn-primary" style="display:flex; align-items:center; gap:0.5rem; justify-content:center; width:100%;">
+                    <svg width="24" height="24" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
+                        <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
+                        <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/>
+                        <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
+                    </svg>
+                    Conectar con Google
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- App Principal -->
+    <div id="app" style="display: none;">
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <nav class="nav">
+                <div class="logo">
+                    <img id="brandLogo" class="logo-img" alt="Logo">
+                    <span id="brandName">Fitness App</span>
+                </div>
+                <button class="menu-toggle" onclick="toggleMenu()">☰</button>
+                <ul class="nav-links" id="navLinks">
+                    <li><a href="trainer-dashboard.html" class="nav-link">Dashboard</a></li>
+                    <li><a href="trainer-clients.html" class="nav-link">Clientes</a></li>
+                    <li><a href="trainer-routines.html" class="nav-link">Rutinas</a></li>
+                    <li><a href="trainer-diets.html" class="nav-link">Dietas</a></li>
+                    <li><a href="trainer-feedbacks.html" class="nav-link">Revisiones</a></li>
+                    <li><a href="trainer-media.html" class="nav-link">Biblioteca</a></li>
+                    <li><a href="trainer-appointments.html" class="nav-link">Agenda</a></li>
+                    <li><a href="trainer-settings.html" class="nav-link active">Configuración</a></li>
+                    <li id="masterLink" style="display: none;"><a href="admin-dashboard.html" class="nav-link" style="color: #8B5CF6; font-weight: 800;">Panel Maestro</a></li>
+                    <li><a href="#" onclick="if(typeof AUTH !== 'undefined') { AUTH.signOut() } else { window.location.reload() }; return false;" class="nav-link" style="color:var(--error-color)">🚪 Salir</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <div class="container">
+            <div class="mb-lg">
+                <h1>⚙️ Configuración</h1>
+                <p class="text-muted">Personaliza la apariencia y configuración de tu plataforma</p>
+            </div>
+
+            <div class="grid grid-2 gap-lg">
+
+                <!-- Columna Izquierda: Identidad y Preferencias -->
+                <div class="flex-col gap-lg">
+                    <!-- Información de Marca -->
+                    <div class="card shadow-sm">
+                        <div class="card-header">
+                            <h2 class="card-title">🎨 Identidad de Marca</h2>
+                        </div>
+                        <div class="card-body">
+                            <div class="form-group mb-md">
+                                <label class="form-label">Nombre del Negocio</label>
+                                <input type="text" id="brandNameInput" class="form-input" placeholder="Ej: AS Fitness">
+                            </div>
+
+                            <div class="form-group mb-md">
+                                <label class="form-label">Logo</label>
+                                <div class="flex-column items-center p-md rounded-sm border-dashed" style="background: rgba(255,255,255,0.03);">
+                                    <img id="logoPreview" src="https://via.placeholder.com/150" alt="Logo" class="mb-md rounded-sm" style="max-width: 150px; height: 150px; object-fit: contain; background: white; padding: 10px;">
+                                    <div class="flex-row gap-sm">
+                                        <button class="btn btn-sm btn-secondary" onclick="document.getElementById('logoInput').click()">
+                                            📁 Cambiar Logo
+                                        </button>
+                                        <button class="btn btn-sm" style="background: rgba(255,255,255,0.1);" onclick="removeLogo()">
+                                            🗑️ Eliminar Logo
+                                        </button>
+                                    </div>
+                                    <input type="file" id="logoInput" hidden accept="image/*">
+                                    <p class="text-xs text-muted mt-sm">Formatos: JPG, PNG. Recomendado: 500x500px</p>
+                                </div>
+                            </div>
+
+                            <div class="form-group mb-lg">
+                                <label class="form-label">Número de WhatsApp</label>
+                                <input type="text" id="whatsappInput" class="form-input" placeholder="Ej: 34600000000">
+                                <p class="text-xs text-muted mt-xs">Los clientes te contactarán por este número</p>
+                            </div>
+
+                            <div class="divider"></div>
+
+                            <div class="form-group mb-md">
+                                <label class="form-label">Paleta de Colores</label>
+                                <div class="grid grid-3 gap-md mb-md">
+                                    <div class="form-group text-center">
+                                        <label class="text-xs mb-xs display-block">Principal</label>
+                                        <input type="color" id="primaryColorInput" class="form-input" style="height: 50px; cursor: pointer;">
+                                    </div>
+                                    <div class="form-group text-center">
+                                        <label class="text-xs mb-xs display-block">Secundario</label>
+                                        <input type="color" id="secondaryColorInput" class="form-input" style="height: 50px; cursor: pointer;">
+                                    </div>
+                                    <div class="form-group text-center">
+                                        <label class="text-xs mb-xs display-block">Acento</label>
+                                        <input type="color" id="accentColorInput" class="form-input" style="height: 50px; cursor: pointer;">
+                                    </div>
+                                </div>
+                                <div class="flex-column gap-sm">
+                                    <button class="btn btn-primary" onclick="applyColors()">🎨 Aplicar y Guardar cambios</button>
+                                    <button class="btn btn-sm" style="background: rgba(255,255,255,0.05);" onclick="resetColors()">
+                                        🔄 Restaurar por Defecto
+                                    </button>
+                                </div>
+                            </div>
+                            
+                            <div class="divider"></div>
+                            
+                            <button class="btn btn-primary btn-lg" style="width: 100%;" onclick="saveBrandSettings()">
+                                💾 Guardar cambios
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Preferencias y Visualización -->
+                    <div class="card shadow-sm">
+                        <div class="card-header">
+                            <h2 class="card-title">⚙️ Preferencias y Gestión</h2>
+                        </div>
+                        <div class="card-body">
+                            <div class="form-group mb-md">
+                                <label class="form-label">Gestión de Dietas</label>
+                                <div class="checkbox-group">
+                                    <label class="checkbox-label">
+                                        <input type="checkbox" id="autoSaveDietTemplate"> Guardar nuevas dietas como plantillas
+                                    </label>
+                                </div>
+                            </div>
+
+                            <div class="form-group mb-md">
+                                <label class="form-label">Exportación PDF</label>
+                                <div class="flex-row gap-lg">
+                                    <label class="checkbox-label">
+                                        <input type="checkbox" id="pdfShowCalories"> Mostrar Calorías
+                                    </label>
+                                    <label class="checkbox-label">
+                                        <input type="checkbox" id="pdfShowMacros"> Mostrar Macros
+                                    </label>
+                                </div>
+                            </div>
+
+                            <div class="form-group mb-lg">
+                                <label class="form-label">App del Cliente (Visualización)</label>
+                                <div class="checkbox-group flex-col gap-xs">
+                                    <label class="checkbox-label">
+                                        <input type="checkbox" id="clientShowVideos"> Mostrar Videos en Rutina
+                                    </label>
+                                    <label class="checkbox-label">
+                                        <input type="checkbox" id="clientShowCalories"> Mostrar Calorías (App)
+                                    </label>
+                                    <label class="checkbox-label">
+                                        <input type="checkbox" id="clientShowMacros"> Mostrar Macros (App)
+                                    </label>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+
+                    <!-- Zona de Peligro -->
+                    <div class="card shadow-sm danger-zone" style="margin-top: 1rem; border-color: rgba(239, 68, 68, 0.2);">
+                        <div class="card-header">
+                            <h2 class="card-title" style="color: var(--error);">⚠️ Zona de Peligro</h2>
+                        </div>
+                        <div class="card-body">
+                            <p class="text-xs text-muted mb-md">Acciones irreversibles. Eliminará clientes, rutinas, dietas e historial operativo permanentemente.</p>
+                            <button class="btn btn-danger btn-sm" style="width: 100%;" onclick="deleteAllData()">
+                                🗑️ Borrar Todos los Datos
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Columna Derecha: Revisiones y Datos -->
+                <div class="flex-col gap-lg">
+                    <!-- Resumen / Estadísticas -->
+                    <div class="card shadow-sm" style="background: linear-gradient(135deg, rgba(255, 107, 107, 0.05) 0%, rgba(26, 26, 46, 0.5) 100%); border-color: rgba(255, 107, 107, 0.2);">
+                        <div class="card-body p-md">
+                            <div id="batchStatusInfo">
+                                <!-- Injected by JS -->
+                                <div class="text-sm text-muted">Cargando estado...</div>
+                            </div>
+                            <button class="btn btn-warning btn-sm" style="width: 100%; margin-top: 10px; font-weight: 700;" onclick="generateBatchInvoices()">
+                                🚀 Iniciar Facturación Masiva
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Revisiones Semanales -->
+                    <div class="card shadow-sm">
+                        <div class="card-header">
+                            <h2 class="card-title">📝 Revisiones Semanales</h2>
+                        </div>
+                        <div class="card-body">
+                            <div class="mb-lg">
+                                <label class="form-label">Preguntas de Revisión</label>
+                                <div id="questionsList" class="flex-col gap-xs mb-md">
+                                    <!-- Questions -->
+                                </div>
+                                <div class="flex gap-sm">
+                                    <input type="text" id="newQuestionInput" class="form-input" placeholder="Añadir pregunta..." onkeypress="if(event.key==='Enter') addQuestion()">
+                                    <button class="btn btn-primary" onclick="addQuestion()">+</button>
+                                </div>
+                            </div>
+
+                            <div class="divider"></div>
+
+                            <div class="mb-lg">
+                                <label class="form-label">Perímetros a Medir</label>
+                                <div id="perimetersList" class="flex-col gap-xs mb-md">
+                                    <!-- Perimeters -->
+                                </div>
+                                <div class="flex gap-sm">
+                                    <input type="text" id="newPerimeterInput" class="form-input" placeholder="Añadir perímetro..." onkeypress="if(event.key==='Enter') addPerimeter()">
+                                    <button class="btn btn-primary" onclick="addPerimeter()">+</button>
+                                </div>
+                            </div>
+
+                            <button class="btn btn-secondary" style="width: 100%;" onclick="saveQuestions(); savePerimeters();">
+                                💾 Guardar Ajustes de Revisión
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Configuración Stripe -->
+                    <div class="card shadow-sm" style="border-left: 4px solid #635bff;">
+                        <div class="card-header flex-between">
+                            <h2 class="card-title" style="color: #635bff;">💳 Suscripciones Stripe</h2>
+                            <span class="badge badge-info" style="background: rgba(99, 91, 255, 0.1); color: #635bff;">RECUBRIMIENTO</span>
+                        </div>
+                        <div class="card-body">
+                            <p class="text-xs text-muted mb-md">Configura Stripe para automatizar el cobro de tus cuotas mensuales mediante pagos recurrentes.</p>
+                            
+                            <div class="form-group mb-md">
+                                <label class="form-label">Publicable Key (pk_test_...)</label>
+                                <input type="text" id="stripePublicKey" class="form-input" placeholder="pk_test_...">
+                            </div>
+
+                            <div class="form-group mb-lg">
+                                <label class="form-label">Secret Key (sk_test_...)</label>
+                                <input type="password" id="stripeSecretKey" class="form-input" placeholder="sk_test_...">
+                                <p class="text-xs italic mt-sm opacity-60">(*) Requerido para crear enlaces de cobro automáticos.</p>
+                            </div>
+
+                            <div class="divider"></div>
+                            
+                            <h3 class="text-sm font-bold mb-md">Tus Planes de Suscripción</h3>
+                            <div id="stripePlansList" class="flex-col gap-sm mb-md">
+                                <!-- Planes -->
+                            </div>
+                            
+                            <button class="btn btn-sm btn-outline mb-md" style="width: 100%;" onclick="addStripePlan()">
+                                ➕ Añadir Nuevo Plan (Price ID)
+                            </button>
+
+                            <button class="btn btn-primary" style="width: 100%; background: #635bff; border-color: #635bff;" onclick="saveStripeSettings()">
+                                💾 Guardar Configuración Stripe
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Datos Fiscales y Pagos -->
+                    <div class="card shadow-sm">
+                        <div class="card-header">
+                            <h2 class="card-title">💰 Facturación y Pagos</h2>
+                        </div>
+                        <div class="card-body">
+                            <div class="grid grid-2 gap-sm mb-md">
+                                <div class="form-group">
+                                    <label class="form-label">Nombre Fiscal</label>
+                                    <input type="text" id="fiscalNameInput" class="form-input" placeholder="Razón Social">
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">NIF / CIF</label>
+                                    <input type="text" id="fiscalNifInput" class="form-input" placeholder="NIF">
+                                </div>
+                            </div>
+
+                            <div class="form-group mb-md">
+                                <label class="form-label">Dirección Fiscal</label>
+                                <input type="text" id="fiscalAddressInput" class="form-input" placeholder="Calle, número, piso...">
+                            </div>
+
+                            <div class="grid grid-2 gap-sm mb-md">
+                                <div class="form-group">
+                                    <label class="form-label">C.P.</label>
+                                    <input type="text" id="fiscalZipInput" class="form-input" placeholder="00000">
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Población</label>
+                                    <input type="text" id="fiscalCityInput" class="form-input" placeholder="Ciudad">
+                                </div>
+                            </div>
+
+                            <div class="grid grid-2 gap-sm mb-mb">
+                                <div class="form-group">
+                                    <label class="form-label">IVA (%)</label>
+                                    <input type="number" id="fiscalIvaInput" class="form-input" value="21">
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Serie Facturas</label>
+                                    <input type="text" id="fiscalSeriesInput" class="form-input" placeholder="Ej: F2026">
+                                </div>
+                            </div>
+
+                            <div class="form-group mb-lg">
+                                <label class="form-label">Métodos de Pago para Clientes</label>
+                                <div id="paymentMethodsList" class="flex-col gap-sm mb-md">
+                                    <!-- Dynamic Methods -->
+                                </div>
+                                <div class="grid grid-2 gap-sm" style="background: rgba(var(--primary-color-rgb), 0.05); padding: 15px; border-radius: 8px; border: 1px dashed rgba(var(--primary-color-rgb), 0.3);">
+                                    <div class="form-group mb-0">
+                                        <label class="text-xs mb-xs display-block">Vía de pago</label>
+                                        <select id="newPaymentType" class="form-select form-select-sm">
+                                            <option value="Bizum">Bizum</option>
+                                            <option value="PayPal">PayPal</option>
+                                            <option value="Transferencia">Transferencia</option>
+                                            <option value="Revolut">Revolut</option>
+                                            <option value="Stripe">Stripe</option>
+                                            <option value="Efectivo">Efectivo</option>
+                                            <option value="Otro">Otro</option>
+                                        </select>
+                                    </div>
+                                    <div class="form-group mb-0">
+                                        <label class="text-xs mb-xs display-block">Dato o Enlace</label>
+                                        <input type="text" id="newPaymentId" class="form-input form-input-sm" placeholder="Ej: TLF o Link">
+                                    </div>
+                                    <div class="form-group mb-0" style="grid-column: span 2;">
+                                        <label class="text-xs mb-xs display-block">Indicaciones / Comentario (opcional)</label>
+                                        <div class="flex gap-xs">
+                                            <input type="text" id="newPaymentNote" class="form-input form-input-sm" placeholder="Ej: Poner nombre en concepto o enviar captura">
+                                            <button class="btn btn-primary btn-sm" onclick="addPaymentMethod()">+</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <button class="btn btn-primary" style="width: 100%;" onclick="saveFiscalSettings(); savePaymentSettings();">
+                                💾 Guardar Facturación y Pagos
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Herramientas de Datos (Excel) -->
+                    <div class="card shadow-sm">
+                        <div class="card-header">
+                            <h2 class="card-title">💾 Backup y Exportación</h2>
+                        </div>
+                        <div class="card-body">
+                            <p class="text-xs text-muted mb-md">Descarga una copia completa de tu base de datos de clientes, facturas y configuraciones en formato Excel.</p>
+                            <button class="btn btn-outline" style="width: 100%;" onclick="exportMasterExcel()">
+                                📥 Descargar Backup Maestro (.xlsx)
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- SaaS Admin (Solo Master) -->
+                    <div id="saasAdminCard" class="card shadow-sm" style="display: none; background: rgba(139, 92, 246, 0.05); border: 2px solid rgba(139, 92, 246, 0.2);">
+                        <div class="card-header">
+                            <h2 class="card-title" style="color: #8B5CF6;">💎 Gestión Plataforma SaaS</h2>
+                        </div>
+                        <div class="card-body">
+                            <p class="text-xs text-muted mb-md">Acceso exclusivo para el dueño del negocio. Gestiona suscripciones de otros entrenadores y monitoriza tus beneficios.</p>
+                            <button class="btn btn-primary" style="width: 100%; background-color: #8B5CF6; border-color: #8B5CF6;" onclick="window.location.href='admin-dashboard.html'">
+                                📊 Entrar al Panel Maestro
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    </div>
+
+    <!-- Firebase SDKs -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-storage.js"></script>
+    <script src="js/firebase-config.js"></script>
+    <script src="js/firebase-service.js"></script>
+
+    <!-- UI Scripts -->
+    <script src="js/config.js?v=92"></script>
+    <script src="js/auth.js?v=92"></script>
+    <script src="js/sheets.js?v=92"></script>
+    <script src="js/data-models.js?v=92"></script>
+    <script src="js/cloud-storage.js?v=92"></script>
+    <script src="js/utils.js?v=92"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <script src="js/excel-manager.js?v=92"></script>
+    <script>
+        // Global Variables
+        let feedbackQuestions = [];
+        let feedbackPerimeters = [];
+        let currentLogoBase64 = null;
+
+        // Check if brand is configured
+        if (!BrandConfig.isConfigured()) {
+            window.location.href = 'index.html';
+        }
+
+        // Apply brand theme
+        BrandConfig.applyTheme();
+        
+        // Initialization logic wrapped to prevent crashes
+        function initSettingsUI() {
+            try {
+                // SaaS Master Check
+                const mid = window.activeTrainerId || localStorage.getItem('activeTrainerId') || 'default';
+                if (mid === 'default') {
+                    const saasCard = document.getElementById('saasAdminCard');
+                    if(saasCard) saasCard.style.display = 'block';
+                    const masterMenu = document.getElementById('masterLink');
+                    if(masterMenu) masterMenu.style.display = 'block';
+                }
+
+                const b = BrandConfig.get();
+                if (b) {
+                    document.getElementById('brandName').textContent = b.name || 'Fitness App';
+                    if (b.logo) {
+                        document.getElementById('brandLogo').src = b.logo;
+                        document.getElementById('brandLogo').style.display = 'block';
+                    }
+                    currentLogoBase64 = b.logo;
+                    loadSettings();
+                }
+            } catch (err) {
+                console.error("Error initSettingsUI:", err);
+            }
+        }
+
+        // Initialize on DOM load
+        document.addEventListener('DOMContentLoaded', initSettingsUI);
+
+        // Load current settings
+        function loadSettings() {
+            const b = BrandConfig.get();
+            if(!b) return;
+
+            const brandNameInput = document.getElementById('brandNameInput');
+            if (brandNameInput) brandNameInput.value = b.name || '';
+            const whatsappInput = document.getElementById('whatsappInput');
+            if (whatsappInput) whatsappInput.value = b.whatsapp || '';
+
+            // Colors
+            const prim = document.getElementById('primaryColorInput');
+            if (prim) prim.value = (b.colors && b.colors.primary) ? b.colors.primary : '#00D9FF';
+            const sec = document.getElementById('secondaryColorInput');
+            if (sec) sec.value = (b.colors && b.colors.secondary) ? b.colors.secondary : '#1A1A2E';
+            const acc = document.getElementById('accentColorInput');
+            if (acc) acc.value = (b.colors && b.colors.accent) ? b.colors.accent : '#FF6B6B';
+
+            // ... rest of loadSettings logic ...
+            const pdf = b.pdfSettings || { showCalories: true, showMacros: true };
+            if(document.getElementById('pdfShowCalories')) document.getElementById('pdfShowCalories').checked = pdf.showCalories;
+            if(document.getElementById('pdfShowMacros')) document.getElementById('pdfShowMacros').checked = pdf.showMacros;
+
+            const clientSettings = b.clientSettings || { showExerciseVideos: true, showCalories: true, showMacros: true };
+            if (document.getElementById('clientShowVideos')) document.getElementById('clientShowVideos').checked = clientSettings.showExerciseVideos;
+            if (document.getElementById('clientShowCalories')) document.getElementById('clientShowCalories').checked = clientSettings.showCalories !== false;
+            if (document.getElementById('clientShowMacros')) document.getElementById('clientShowMacros').checked = clientSettings.showMacros !== false;
+
+            const trainerSettings = b.trainerSettings || { autoSaveDietTemplate: false };
+            if (document.getElementById('autoSaveDietTemplate')) document.getElementById('autoSaveDietTemplate').checked = trainerSettings.autoSaveDietTemplate;
+
+            const fiscal = b.fiscalData || { companyName: '', nif: '', address: '', zip: '', city: '', defaultIva: 21, invoiceSeries: 'F' + new Date().getFullYear() };
+            if (document.getElementById('fiscalNameInput')) document.getElementById('fiscalNameInput').value = fiscal.companyName || '';
+            if (document.getElementById('fiscalNifInput')) document.getElementById('fiscalNifInput').value = fiscal.nif || '';
+            if (document.getElementById('fiscalAddressInput')) document.getElementById('fiscalAddressInput').value = fiscal.address || '';
+            if (document.getElementById('fiscalZipInput')) document.getElementById('fiscalZipInput').value = fiscal.zip || '';
+            if (document.getElementById('fiscalCityInput')) document.getElementById('fiscalCityInput').value = fiscal.city || '';
+            if (document.getElementById('fiscalIvaInput')) document.getElementById('fiscalIvaInput').value = fiscal.defaultIva || 21;
+            if (document.getElementById('fiscalSeriesInput')) document.getElementById('fiscalSeriesInput').value = fiscal.invoiceSeries || '';
+
+            const paymentMethods = b.paymentMethods || [];
+            if (b.paymentSettings && b.paymentSettings.method !== 'none') {
+                // Legacy migration
+                if (paymentMethods.length === 0) {
+                    paymentMethods.push({ type: b.paymentSettings.method, id: b.paymentSettings.id });
+                }
+            }
+            window.activePaymentMethods = [...paymentMethods];
+            renderPaymentMethods();
+
+            // Stripe Settings
+            const stripe = b.stripeSettings || { publicKey: '', secretKey: '', plans: [] };
+            document.getElementById('stripePublicKey').value = stripe.publicKey || '';
+            document.getElementById('stripeSecretKey').value = stripe.secretKey || '';
+            window.activeStripePlans = Array.isArray(stripe.plans) ? [...stripe.plans] : [];
+            renderStripePlans();
+
+            if (b.logo) {
+                currentLogoBase64 = b.logo;
+                if (document.getElementById('logoPreview')) document.getElementById('logoPreview').src = b.logo;
+            }
+
+            feedbackQuestions = Array.isArray(b.feedbackQuestions) ? [...b.feedbackQuestions] : ['Comentarios y Observaciones'];
+            feedbackPerimeters = Array.isArray(b.trainerPerimeters) ? [...b.trainerPerimeters] : ['Cintura', 'Cadera', 'Pecho', 'Brazo', 'Muslo'];
+
+            if (typeof renderQuestions === 'function') renderQuestions();
+            if (typeof renderPerimeters === 'function') renderPerimeters();
+            renderBatchStatus();
+        }
+
+        window.saveBrandSettings = function() {
+            try {
+                console.log("Iniciando guardado de configuración...");
+                const b = BrandConfig.get();
+                const newName = document.getElementById('brandNameInput').value.trim();
+                const newWhatsapp = document.getElementById('whatsappInput').value.trim();
+                
+                const updated = {
+                    ...b,
+                    name: newName,
+                    whatsapp: newWhatsapp,
+                    logo: currentLogoBase64 || b.logo, // IMPORTANTE: No sobrescribir con null si no se ha subido uno nuevo
+                    trainerSettings: {
+                        ...(b.trainerSettings || {}),
+                        autoSaveDietTemplate: document.getElementById('autoSaveDietTemplate').checked
+                    },
+                    pdfSettings: {
+                        ...(b.pdfSettings || {}),
+                        showCalories: document.getElementById('pdfShowCalories').checked,
+                        showMacros: document.getElementById('pdfShowMacros').checked
+                    },
+                    clientSettings: {
+                        ...(b.clientSettings || {}),
+                        showExerciseVideos: document.getElementById('clientShowVideos').checked,
+                        showCalories: document.getElementById('clientShowCalories').checked,
+                        showMacros: document.getElementById('clientShowMacros').checked
+                    }
+                };
+                
+                BrandConfig.set(updated);
+                showToast('Ajustes de Marca y Preferencias guardados', 'success');
+                
+                // Re-aplicar inmediatamente
+                BrandConfig.applyTheme();
+                console.log("Configuración guardada y aplicada con éxito");
+            } catch (err) {
+                console.error("Error al guardar configuración:", err);
+                showToast("Error al guardar: " + err.message, "error");
+            }
+        }
+
+        window.saveFiscalSettings = function() {
+            const b = BrandConfig.get();
+            b.fiscalData = b.fiscalData || {};
+            b.fiscalData.companyName = document.getElementById('fiscalNameInput').value.trim();
+            b.fiscalData.nif = document.getElementById('fiscalNifInput').value.trim();
+            
+            BrandConfig.set(b);
+            showToast('Datos fiscales actualizados con éxito', 'success');
+        }
+
+        window.savePaymentSettings = function() {
+            const b = BrandConfig.get();
+            b.paymentMethods = window.activePaymentMethods || [];
+            
+            // Cleanup legacy
+            b.paymentSettings = { method: 'none', id: '' };
+
+            BrandConfig.set(b);
+            showToast('Métodos de pago guardados', 'success');
+        }
+
+        window.renderPaymentMethods = function() {
+            const list = document.getElementById('paymentMethodsList');
+            if (!list) return;
+            
+            if (!window.activePaymentMethods || window.activePaymentMethods.length === 0) {
+                list.innerHTML = '<p class="text-xs text-muted italic">No has configurado métodos de pago aún.</p>';
+                return;
+            }
+
+            list.innerHTML = window.activePaymentMethods.map((m, idx) => `
+                <div class="flex-between items-center p-sm rounded-sm" style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.05);">
+                    <div class="flex-col" style="flex: 1;">
+                        <span class="text-xs font-bold" style="color: var(--primary-color);">${m.type.toUpperCase()}</span>
+                        <span class="text-sm truncate" style="max-width: 200px;">${m.id}</span>
+                        ${m.note ? `<span class="text-xs opacity-50 italic">📝 ${m.note}</span>` : ''}
+                    </div>
+                    <button class="btn btn-xs btn-outline" style="color: var(--error-color); border-color: rgba(239, 68, 68, 0.2);" onclick="removePaymentMethod(${idx})">🗑️</button>
+                </div>
+            `).join('');
+        }
+
+        window.addPaymentMethod = function() {
+            const type = document.getElementById('newPaymentType').value;
+            const id = document.getElementById('newPaymentId').value.trim();
+            const note = document.getElementById('newPaymentNote').value.trim();
+            
+            if (!id) {
+                showToast('Introduce el dato o enlace de pago', 'warning');
+                return;
+            }
+
+            if (!window.activePaymentMethods) window.activePaymentMethods = [];
+            window.activePaymentMethods.push({ type, id, note });
+            
+            document.getElementById('newPaymentId').value = '';
+            document.getElementById('newPaymentNote').value = '';
+            renderPaymentMethods();
+        }
+
+        window.removePaymentMethod = function(index) {
+            window.activePaymentMethods.splice(index, 1);
+            renderPaymentMethods();
+        }
+
+        function renderBatchStatus() {
+            try {
+                if (typeof window.Clients === 'undefined' || typeof window.Invoices === 'undefined') {
+                    console.log("Waiting for Clients/Invoices models...");
+                    setTimeout(renderBatchStatus, 500); 
+                    return;
+                }
+
+                const clients = window.Clients.getAll() || [];
+                const invoices = window.Invoices.getAll() || [];
+            const now = new Date();
+            const month = now.getMonth();
+            const year = now.getFullYear();
+
+            const activeClients = clients.filter(c => c.status === 'active' && (parseFloat(c.monthlyFee) > 0));
+            const pendingCount = activeClients.filter(c => {
+                const invs = Invoices.getByClientId(c.id) || [];
+                return !invs.some(inv => {
+                    const date = new Date(inv.date);
+                    return date.getMonth() === month && date.getFullYear() === year;
+                });
+            }).length;
+
+                const el = document.getElementById('batchStatusInfo');
+                if (el) {
+                    el.innerHTML = `
+                        <div class="text-sm font-bold secondary-text mb-xs">📊 Estado de facturación (${new Date().toLocaleString('es-ES', { month: 'long' })})</div>
+                        <div class="flex-row justify-between">
+                            <span class="text-xs">Clientes activos facturables:</span>
+                            <span class="text-xs font-bold">${activeClients.length}</span>
+                        </div>
+                        <div class="flex-row justify-between mb-sm">
+                            <span class="text-xs">Pendientes de este mes:</span>
+                            <span class="text-xs font-bold" style="color: ${pendingCount > 0 ? 'var(--accent-color)' : '#4CAF50'}">${pendingCount}</span>
+                        </div>
+                    `;
+                }
+            } catch (err) {
+                console.error("renderBatchStatus Error:", err);
+            }
+        }
+
+        async function generateBatchInvoices() {
+            const clients = Clients.getAll();
+            const now = new Date();
+            const month = now.getMonth();
+            const year = now.getFullYear();
+            const monthName = now.toLocaleString('es-ES', { month: 'long' });
+
+            const pendingClients = clients.filter(c => {
+                if (c.status !== 'active' || !c.monthlyFee || parseFloat(c.monthlyFee) <= 0) return false;
+                
+                const clientInvoices = Invoices.getByClientId(c.id) || [];
+                const hasThisMonth = clientInvoices.some(inv => {
+                    const date = new Date(inv.date);
+                    return date.getMonth() === month && date.getFullYear() === year;
+                });
+                return !hasThisMonth;
+            });
+
+            if (pendingClients.length === 0) {
+                showToast('No hay facturas pendientes para este mes.', 'info');
+                return;
+            }
+
+            // Show Review Modal
+            let html = `
+                <p class="text-muted mb-md" style="font-size: 0.85rem;">Revisa las facturas para <strong>${monthName}</strong>. Desmarca las que no quieras procesar o modifica importes.</p>
+                <div class="table-wrapper" style="max-height: 350px; overflow-y: auto; margin-bottom: 1rem; border: 1px solid rgba(255,255,255,0.05); border-radius: 8px;">
+                    <table class="table table-sm" style="font-size: 0.8rem;">
+                        <thead>
+                            <tr style="background: rgba(255,255,255,0.02);">
+                                <th><input type="checkbox" checked onclick="window.toggleAllBatch(this)"></th>
+                                <th>Cliente</th>
+                                <th>Importe (€)</th>
+                                <th>Concepto</th>
+                            </tr>
+                        </thead>
+                        <tbody id="batchReviewList">
+            `;
+
+            pendingClients.forEach(c => {
+                html += `
+                    <tr>
+                        <td style="width:30px;"><input type="checkbox" class="batch-check" checked data-client-id="${c.id}"></td>
+                        <td style="font-weight: 500;">${c.name}</td>
+                        <td style="width:90px;"><input type="number" class="form-input form-input-sm batch-amount" value="${c.monthlyFee}" style="width: 80px; text-align: right; padding: 4px;"></td>
+                        <td><input type="text" class="form-input form-input-sm batch-concept" value="Mensualidad ${monthName}" style="padding: 4px;"></td>
+                    </tr>
+                `;
+            });
+
+            html += `
+                        </tbody>
+                    </table>
+                </div>
+            `;
+
+            showModal(`Revisión: ${pendingClients.length} Facturas Pendientes`, html, [
+                { text: 'Cancelar', class: 'btn-secondary', onclick: 'window.closeModal()' },
+                { text: '🚀 Generar Seleccionadas', class: 'btn-primary', onclick: 'window.confirmBatchGeneration()' }
+            ]);
+        }
+
+        window.toggleAllBatch = function(master) {
+            const checks = document.querySelectorAll('.batch-check');
+            checks.forEach(c => c.checked = master.checked);
+        };
+
+        window.confirmBatchGeneration = async function() {
+            const rows = document.querySelectorAll('#batchReviewList tr');
+            const toGenerate = [];
+
+            rows.forEach(row => {
+                const check = row.querySelector('.batch-check');
+                if (check && check.checked) {
+                    toGenerate.push({
+                        clientId: check.dataset.clientId,
+                        clientName: row.cells[1].innerText,
+                        amount: parseFloat(row.querySelector('.batch-amount').value),
+                        concept: row.querySelector('.batch-concept').value
+                    });
+                }
+            });
+
+            if (toGenerate.length === 0) {
+                showToast('No hay facturas seleccionadas', 'warning');
+                return;
+            }
+
+            if (!confirm(`¿Confirmar la generación de ${toGenerate.length} facturas?`)) return;
+
+            window.closeModal();
+            showToast('Procesando remesa...', 'info');
+
+            let successCount = 0;
+            const fiscalData = BrandConfig.get().fiscalData || {};
+
+            for (const data of toGenerate) {
+                try {
+                    await Invoices.create({
+                        clientId: data.clientId,
+                        clientName: data.clientName,
+                        amount: data.amount,
+                        description: data.concept,
+                        date: new Date().toISOString(),
+                        issuerData: fiscalData
+                    });
+                    successCount++;
+                } catch (err) {
+                    console.error("Error batch invoice:", err);
+                }
+            }
+
+            showToast(`¡Completado! ${successCount} facturas generadas.`, 'success');
+            renderBatchStatus();
+        };
+
+        // Note: Additional handlers for individual sections are already defined as window.functions
+        // and called via onclick in the HTML. 
+
+        // Logo handle
+        const logoInp = document.getElementById('logoInput');
+        if (logoInp) {
+            logoInp.addEventListener('change', async (e) => {
+                const file = e.target.files[0];
+                if (file) {
+                    try {
+                        const preview = document.getElementById('logoPreview');
+                        const headerLogo = document.getElementById('brandLogo');
+                        
+                        // 1. Mostrar localmente en TODOS los sitios INMEDIATAMENTE
+                        const localUrl = URL.createObjectURL(file);
+                        const allLogos = document.querySelectorAll('.logo-img, #brandLogo, #logoPreview');
+                        allLogos.forEach(img => {
+                            img.src = localUrl;
+                            img.style.display = 'block';
+                            // Asegurarse de que no se oculten si antes fallaron
+                            img.onerror = null; 
+                        });
+                        
+                        showToast("Subiendo logo a Firebase...", "info");
+                        let cloudUrl = null;
+                        
+                        // 2. Intentar subida a la nube
+                        if (window.FirebaseService) {
+                            cloudUrl = await window.FirebaseService.uploadFile(file, 'brand_logos');
+                        }
+                        
+                        // 3. Persistir (Priorizar Cloud URL para no llenar el almacenamiento local)
+                        if (cloudUrl) {
+                            currentLogoBase64 = cloudUrl; 
+                            showToast("Logo subido y optimizado ✅", "success");
+                        } else {
+                            // Si por algún motivo no hay nube, redimensionar para que no pese más de 100KB antes de guardar
+                            currentLogoBase64 = await resizeImage(file, 200, 200); // Pequeño resize fallback
+                            showToast("Logo guardado localmente (Ligero)", "info");
+                        }
+                        
+                        const b = BrandConfig.get();
+                        b.logo = currentLogoBase64;
+                        BrandConfig.set(b);
+                        BrandConfig.applyTheme();
+                        
+                        // 4. Actualizar con la URL final (la de la nube) para permanencia
+                        allLogos.forEach(img => {
+                            img.src = currentLogoBase64;
+                            img.style.display = 'block';
+                        });
+
+                        // Limpiar blob local tras un tiempo
+                        setTimeout(() => URL.revokeObjectURL(localUrl), 10000);
+                        
+                    } catch (err) {
+                        console.error("Error crítico procesando logo:", err);
+                        showToast("Error al procesar la imagen", "error");
+                    }
+                }
+            });
+        }
+
+        // Save theme settings
+        window.applyColors = function() {
+            try {
+                const primary = document.getElementById('primaryColorInput').value;
+                const secondary = document.getElementById('secondaryColorInput').value;
+                const accent = document.getElementById('accentColorInput').value;
+
+                const b = BrandConfig.get();
+                const updated = {
+                    ...b,
+                    colors: { primary, secondary, accent },
+                    logo: currentLogoBase64 || b.logo // Asegurar que el logo se mantiene
+                };
+
+                BrandConfig.set(updated);
+                BrandConfig.applyTheme();
+                showToast('Paleta de colores aplicada y guardada', 'success');
+            } catch (err) {
+                console.error("Error en applyColors:", err);
+            }
+        };
+
+        // Reset colors to default
+        window.resetColors = function() {
+            const defaults = {
+                primary: '#00D9FF',
+                secondary: '#1A1A2E',
+                accent: '#FF6B6B'
+            };
+
+            document.getElementById('primaryColorInput').value = defaults.primary;
+            document.getElementById('secondaryColorInput').value = defaults.secondary;
+            document.getElementById('accentColorInput').value = defaults.accent;
+
+            const b = BrandConfig.get();
+            b.colors = defaults;
+
+            BrandConfig.set(b);
+            BrandConfig.applyTheme();
+            showToast('Colores restaurados por defecto', 'success');
+        };
+
+        // Export all data
+        function exportAllData() {
+            exportData();
+            showToast('Datos exportados correctamente', 'success');
+        }
+
+        // Import all data
+        function importAllData(input) {
+            const file = input.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                const success = importData(e.target.result);
+                if (success) {
+                    showToast('Datos importados correctamente. Recargando...', 'success');
+                    setTimeout(() => location.reload(), 1500);
+                } else {
+                    showToast('Error al importar datos', 'error');
+                }
+            };
+            reader.readAsText(file);
+        }
+
+        // Delete all data
+        function deleteAllData() {
+            const confirmation = prompt('Esta acción eliminará TODOS los datos. Escribe "BORRAR TODO" para confirmar:');
+
+            if (confirmation === 'BORRAR TODO') {
+                localStorage.clear();
+                showToast('Todos los datos han sido eliminados', 'success');
+                setTimeout(() => {
+                    window.location.href = 'index.html';
+                }, 1500);
+            } else {
+                showToast('Operación cancelada', 'info');
+            }
+        }
+
+        function toggleMenu() {
+            document.getElementById('navLinks').classList.toggle('active');
+        }
+
+        // Feedback Questions Logic
+        function renderQuestions() {
+            const container = document.getElementById('questionsList');
+            if (!container) return; 
+            if (feedbackQuestions.length === 0) {
+                container.innerHTML = '<div class="text-muted text-sm text-center">Sin preguntas definidas</div>';
+                return;
+            }
+            container.innerHTML = feedbackQuestions.map((q, index) => `
+                <div class="flex-between p-sm" style="background: rgba(255,255,255,0.05); border-radius: 4px; align-items: center;">
+                    <span style="font-size: 0.9rem;">${q}</span>
+                    <button class="btn btn-sm btn-danger" onclick="removeQuestion(${index})" title="Eliminar">🗑️</button>
+                </div>
+            `).join('');
+        }
+
+        function addQuestion() {
+            const input = document.getElementById('newQuestionInput');
+            const val = input.value.trim();
+            if (val) {
+                feedbackQuestions.push(val);
+                input.value = '';
+                renderQuestions();
+            }
+        }
+
+        function removeQuestion(index) {
+            feedbackQuestions.splice(index, 1);
+            renderQuestions();
+        }
+
+        function saveQuestions() {
+            BrandConfig.set({ feedbackQuestions: feedbackQuestions });
+            showToast('Preguntas de revisión guardadas', 'success');
+            setTimeout(() => location.reload(), 500);
+        }
+
+        // Perimeters Logic
+        function renderPerimeters() {
+            const container = document.getElementById('perimetersList');
+            if (!container) return;
+            if (feedbackPerimeters.length === 0) {
+                container.innerHTML = '<div class="text-muted text-sm text-center">Sin perímetros definidos</div>';
+                return;
+            }
+            container.innerHTML = feedbackPerimeters.map((p, index) => `
+                <div class="flex-between p-sm" style="background: rgba(255,255,255,0.05); border-radius: 4px; align-items: center;">
+                    <span style="font-size: 0.9rem;">${p}</span>
+                    <button class="btn btn-sm btn-danger" onclick="removePerimeter(${index})" title="Eliminar">🗑️</button>
+                </div>
+            `).join('');
+        }
+
+        function addPerimeter() {
+            const input = document.getElementById('newPerimeterInput');
+            const val = input.value.trim();
+            if (val) {
+                feedbackPerimeters.push(val);
+                input.value = '';
+                renderPerimeters();
+            }
+        }
+
+        function removePerimeter(index) {
+            feedbackPerimeters.splice(index, 1);
+            renderPerimeters();
+        }
+
+        function savePerimeters() {
+            // Save state
+            const clone = Array.from(feedbackPerimeters);
+            BrandConfig.set({ trainerPerimeters: clone });
+            
+            showToast('Configuración de perímetros actualizada', 'success');
+            
+            // Re-enabled auto-reload for mejor UX
+            setTimeout(() => {
+                location.reload();
+            }, 600);
+        }
+
+        window.renderPaymentMethods = function() {
+            const container = document.getElementById('paymentMethodsList');
+            if (!container) return;
+            
+            if (window.activePaymentMethods.length === 0) {
+                container.innerHTML = '<p class="text-xs text-muted italic">No has añadido métodos de pago aún.</p>';
+                return;
+            }
+
+            container.innerHTML = window.activePaymentMethods.map((m, index) => `
+                <div class="flex-between p-sm align-center" style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.05); border-radius: 6px;">
+                    <div>
+                        <span class="badge badge-primary" style="margin-right: 8px;">${m.type}</span>
+                        <span class="text-sm font-bold">${m.id || ''}</span>
+                        ${m.note ? `<p class="text-xs opacity-60 mt-xs">${m.note}</p>` : ''}
+                    </div>
+                    <button class="btn btn-xs btn-outline" style="color: var(--error);" onclick="removePaymentMethod(${index})">🗑️</button>
+                </div>
+            `).join('');
+        };
+
+        window.addPaymentMethod = function() {
+            const type = document.getElementById('newPaymentType').value;
+            const id = document.getElementById('newPaymentId').value.trim();
+            const note = document.getElementById('newPaymentNote').value.trim();
+
+            if (!id && type !== 'Efectivo') {
+                showToast('Introduce un identificador o enlace', 'warning');
+                return;
+            }
+
+            window.activePaymentMethods.push({ type, id, note });
+            
+            // Limpiar inputs
+            document.getElementById('newPaymentId').value = '';
+            document.getElementById('newPaymentNote').value = '';
+            
+            renderPaymentMethods();
+        };
+
+        window.removePaymentMethod = function(index) {
+            window.activePaymentMethods.splice(index, 1);
+            renderPaymentMethods();
+        };
+
+        function savePaymentSettings() {
+            const b = BrandConfig.get();
+            b.paymentMethods = [...window.activePaymentMethods];
+            
+            // Compatibilidad legacy
+            if (b.paymentMethods.length > 0) {
+                b.paymentSettings = {
+                    method: b.paymentMethods[0].type,
+                    id: b.paymentMethods[0].id,
+                    instructions: b.paymentMethods[0].note || ''
+                };
+            }
+
+            BrandConfig.set(b);
+            showToast('Ajustes de pago guardados con éxito', 'success');
+        }
+
+        // ============================================
+        // STRIPE SETTINGS LOGIC
+        // ============================================
+        
+        window.renderStripePlans = function() {
+            const list = document.getElementById('stripePlansList');
+            if (!list) return;
+            
+            if (!window.activeStripePlans || window.activeStripePlans.length === 0) {
+                list.innerHTML = '<p class="text-xs text-muted italic">No has añadido planes de suscripción aún.</p>';
+                return;
+            }
+
+            list.innerHTML = window.activeStripePlans.map((plan, index) => `
+                <div class="card p-sm flex-between align-center" style="background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.05); margin-bottom: 5px;">
+                    <div style="flex: 1;">
+                        <input type="text" class="form-input form-input-sm mb-xs" placeholder="Nombre (Ej: Plan Mensual)" value="${plan.name}" onchange="updateStripePlan(${index}, 'name', this.value)">
+                        <input type="text" class="form-input form-input-sm" placeholder="Stripe Price ID (price_...)" value="${plan.priceId}" onchange="updateStripePlan(${index}, 'priceId', this.value)">
+                    </div>
+                    <button class="btn btn-xs btn-outline" style="color: #ff6b6b; border-color: rgba(255,107,107,0.2); margin-left: 10px;" onclick="removeStripePlan(${index})">🗑️</button>
+                </div>
+            `).join('');
+        };
+
+        window.addStripePlan = function() {
+            if (!window.activeStripePlans) window.activeStripePlans = [];
+            window.activeStripePlans.push({ name: '', priceId: '' });
+            renderStripePlans();
+        };
+
+        window.updateStripePlan = function(index, field, value) {
+            window.activeStripePlans[index][field] = value;
+        };
+
+        window.removeStripePlan = function(index) {
+            window.activeStripePlans.splice(index, 1);
+            renderStripePlans();
+        };
+
+        window.saveStripeSettings = function() {
+            const b = BrandConfig.get();
+            const pk = document.getElementById('stripePublicKey').value.trim();
+            const sk = document.getElementById('stripeSecretKey').value.trim();
+            
+            b.stripeSettings = {
+                publicKey: pk,
+                secretKey: sk,
+                plans: window.activeStripePlans ? window.activeStripePlans.filter(p => p.priceId && p.priceId.startsWith('price_')) : []
+            };
+
+            BrandConfig.set(b);
+            showToast('Configuración de Stripe guardada correctamente', 'success');
+            
+            // Si el entrenador activa Stripe, añadirlo como método de pago automáticamente si no existe
+            if (pk && sk && !window.activePaymentMethods.find(m => m.type === 'Stripe')) {
+                window.activePaymentMethods.push({ type: 'Stripe', id: 'Activo' });
+                savePaymentSettings();
+            }
+        };
+
+        window.saveFiscalSettings = function() {
+            try {
+                const b = BrandConfig.get();
+                const fiscal = {
+                    companyName: document.getElementById('fiscalNameInput').value.trim(),
+                    nif: document.getElementById('fiscalNifInput').value.trim(),
+                    address: document.getElementById('fiscalAddressInput').value.trim(),
+                    zip: document.getElementById('fiscalZipInput').value.trim(),
+                    city: document.getElementById('fiscalCityInput').value.trim(),
+                    defaultIva: parseInt(document.getElementById('fiscalIvaInput').value) || 21,
+                    invoiceSeries: document.getElementById('fiscalSeriesInput').value.trim()
+                };
+                
+                // Merge fiscal data while preserving logo
+                const updated = { ...b, fiscalData: fiscal, logo: currentLogoBase64 || b.logo };
+                BrandConfig.set(updated);
+                showToast('Datos fiscales guardados con éxito', 'success');
+            } catch (err) {
+                console.error("Error en saveFiscalSettings:", err);
+            }
+        }
+
+        // Utility to resize images for LocalStorage
+        async function resizeImage(file, maxWidth, maxHeight) {
+            return new Promise((resolve) => {
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    const img = new Image();
+                    img.onload = () => {
+                        const canvas = document.createElement('canvas');
+                        let width = img.width;
+                        let height = img.height;
+                        if (width > height) {
+                            if (width > maxWidth) {
+                                height *= maxWidth / width;
+                                width = maxWidth;
+                            }
+                        } else {
+                            if (height > maxHeight) {
+                                width *= maxHeight / height;
+                                height = maxHeight;
+                            }
+                        }
+                        canvas.width = width;
+                        canvas.height = height;
+                        const ctx = canvas.getContext('2d');
+                        ctx.drawImage(img, 0, 0, width, height);
+                        resolve(canvas.toDataURL('image/jpeg', 0.8));
+                    };
+                    img.src = e.target.result;
+                };
+                reader.readAsDataURL(file);
+            });
+        }
+        window.showBatchDemo = function() {
+            const demoClients = [
+                { id: 'demo1', name: 'Victor Toledo', monthlyFee: 60 },
+                { id: 'demo2', name: 'Laura García', monthlyFee: 45.50 },
+                { id: 'demo3', name: 'Carlos Sánchez', monthlyFee: 50 }
+            ];
+            const monthName = new Date().toLocaleString('es-ES', { month: 'long' });
+            
+            // Reusar el modal existente
+             let html = `
+                <p class="text-muted mb-md" style="font-size: 0.85rem;"><strong>[MODO DEMO]</strong> Revisa las facturas para <strong>${monthName}</strong>. Desmarca las que no quieras procesar o modifica importes.</p>
+                <div class="table-wrapper" style="max-height: 350px; overflow-y: auto; margin-bottom: 1rem; border: 1px solid var(--accent-color); border-radius: 8px;">
+                    <table class="table table-sm" style="font-size: 0.8rem;">
+                        <thead>
+                            <tr style="background: rgba(255,255,255,0.02);">
+                                <th><input type="checkbox" checked onclick="window.toggleAllBatch(this)"></th>
+                                <th>Cliente</th>
+                                <th>Importe (€)</th>
+                                <th>Concepto</th>
+                            </tr>
+                        </thead>
+                        <tbody id="batchReviewList">
+            `;
+
+            demoClients.forEach(c => {
+                html += `
+                    <tr>
+                        <td style="width:30px;"><input type="checkbox" class="batch-check" checked data-client-id="${c.id}"></td>
+                        <td style="font-weight: 500;">${c.name}</td>
+                        <td style="width:90px;"><input type="number" class="form-input form-input-sm batch-amount" value="${c.monthlyFee}" style="width: 80px; text-align: right; padding: 4px;"></td>
+                        <td><input type="text" class="form-input form-input-sm batch-concept" value="Mensualidad ${monthName}" style="padding: 4px;"></td>
+                    </tr>
+                `;
+            });
+
+            html += `
+                        </tbody>
+                    </table>
+                </div>
+                <div style="background: rgba(255,100,100,0.1); padding: 10px; border-radius: 4px; font-size: 0.75rem; color: var(--accent-color);">
+                    💡 En modo real, al pulsar "Generar" se crearán las facturas certificadas y se actualizará el historial de cada cliente automáticamente.
+                </div>
+            `;
+
+            showModal(`DEMO: Revisión de ${demoClients.length} Facturas`, html, [
+                { text: 'Cerrar Ejemplo', class: 'btn-secondary', onclick: 'window.closeModal()' },
+                { text: '🚀 Simular Generación', class: 'btn-primary', onclick: "showToast('Simulación completada con éxito', 'success'); window.closeModal();" }
+            ]);
+        };
+
+        // Load settings on page load
+        loadSettings();
+    </script>
+
+
+    <script>
+        async function onGoogleAuthSuccess() {
+            // Sincronizar con la nube
+            if (window.FirebaseService) {
+                await window.FirebaseService.init();
+                await window.syncFromCloud();
+            }
+
+            // Aplicar tema (Logo y colores)
+            if (typeof BrandConfig !== 'undefined') {
+                BrandConfig.applyTheme();
+            }
+
+            document.getElementById('login-screen').style.display = 'none';
+            document.getElementById('app').style.display = 'block';
+
+            // Cargar ajustes
+            if (typeof loadSettings === 'function') loadSettings();
+        }
+    </script>
+</body>
+
+</html>

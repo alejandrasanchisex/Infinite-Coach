@@ -1,0 +1,12 @@
+/* Adjustments for Mobile View */
+@media (max-width: 768px) {
+    .main-content {
+        padding-top: var(--spacing-lg);
+        padding-bottom: var(--spacing-lg);
+    }
+
+    .fab {
+        bottom: 20px;
+        right: 20px;
+    }
+}
