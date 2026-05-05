@@ -406,9 +406,27 @@ window.addFood = function (mealIdx, optionNum) {
     } else {
         diet.meals[mealIdx].foods.push(food);
         showToast('Alimento añadido', 'success');
+        
+        // 🔥 MEJORA: Guardar automáticamente en la base de datos de "Mis Alimentos" 
+        // si el usuario ha introducido macros (para que no se pierdan y pueda reusarlo)
+        const existingFood = Foods.getAll().find(f => f.name.toLowerCase() === name.toLowerCase());
+        if (!existingFood) {
+            Foods.create({
+                name: food.name,
+                calories: food.calories,
+                protein: food.protein,
+                carbs: food.carbs,
+                fat: food.fat,
+                type: 'unit' // Por defecto unidad si se añade así
+            });
+            console.log("Nuevo alimento guardado en la base de datos global:", food.name);
+        }
     }
 
-    // Recalcular totales antes de guardar
+    // 🔥 CRÍTICO: Guardar primero los cambios en los platos (meals)
+    Diets.update(window.editingDietId, { meals: diet.meals });
+    
+    // Luego recalcular totales (que leerá los platos ya guardados)
     window.recalculateDietTotals(window.editingDietId);
     
     window.activeMealForm = null;

@@ -7,12 +7,12 @@ for (let file of files) {
     if (content.includes('id="login-screen"')) continue;
 
     content = content.replace('<body>', `<body>
-    <!-- Pantalla de Login (Google Auth) -->
+    <!-- Pantalla de Login -->
     <div id="login-screen" class="wizard-container" style="min-height: 100vh; display: flex; align-items: center; justify-content: center;">
         <div class="card wizard-card" style="max-width: 400px; text-align: center; padding: 2rem;">
             <div style="font-size: 3rem; margin-bottom: 1rem;">🔒</div>
             <h2>Acceso a tu Backend</h2>
-            <p class="text-muted mb-lg">Conéctate con tu cuenta de Google para acceder a tu base de datos de clientes y rutinas.</p>
+            <p class="text-muted mb-lg">Introduce tus credenciales para acceder a tu base de datos de clientes y rutinas.</p>
             <div id="google-signin-container"></div>
         </div>
     </div>

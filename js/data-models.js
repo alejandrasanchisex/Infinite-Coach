@@ -199,7 +199,7 @@ const BrandConfig = {
   get: () => {
     const data = getData();
     return data.brand || {
-        name: 'Fitness App',
+        name: 'Infinite Coach',
         configured: true,
         colors: { primary: '#00D9FF', secondary: '#1A1A2E', accent: '#FF6B6B' },
         fiscalData: { invoiceSeries: 'F' + new Date().getFullYear() }

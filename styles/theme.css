@@ -264,8 +264,16 @@ a:hover {
   display: flex;
   align-items: center;
   gap: var(--spacing-sm);
-  font-size: 1.5rem;
+  font-size: 1.1rem;
   font-weight: 700;
+  color: var(--primary-color);
+  padding: var(--spacing-sm) 0;
+  line-height: 1;
+}
+
+.logo-img:not([src]), 
+.logo-img[src=""] {
+  display: none;
 }
 
 .logo-img {

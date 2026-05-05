@@ -183,9 +183,28 @@
             status.textContent = 'Autenticando nivel de seguridad Maestro...';
 
             try {
-                // Validación Maestra (Configurable en Supabase saas_config más adelante)
-                // Por ahora usamos una clave maestra de seguridad
-                if (user === 'admin' && pass === 'fitness_pro_2026') {
+                // Validación Maestra (Consultando configuración global)
+                let validUser = 'admin';
+                let validPass = 'fitness_pro_2026';
+                
+                // Intenta recuperar de Supabase si está disponible, si no de localStorage
+                if (window.SupabaseService) {
+                    window.SupabaseService.init();
+                    const cloudData = await window.SupabaseService.getGlobalConfig();
+                    if (cloudData && cloudData.settings && cloudData.settings.adminPassword) {
+                        validPass = cloudData.settings.adminPassword;
+                    }
+                } else {
+                    const rawData = localStorage.getItem('saasFitnessPlatform');
+                    if (rawData) {
+                        const localData = JSON.parse(rawData);
+                        if (localData.settings && localData.settings.adminPassword) {
+                            validPass = localData.settings.adminPassword;
+                        }
+                    }
+                }
+
+                if (user === validUser && pass === validPass) {
                     status.style.color = '#10B981';
                     status.textContent = 'Acceso concedido. Iniciando mando central...';
                     

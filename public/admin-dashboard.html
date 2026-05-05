@@ -292,13 +292,18 @@
                 <div class="card" style="background: var(--admin-card); border: 1px solid rgba(255,255,255,0.05); padding: 25px; border-radius: 12px;">
                     <div class="form-group mb-md">
                         <label style="display: block; margin-bottom: 8px; font-size: 0.9rem;">Nombre de la Plataforma</label>
-                        <input type="text" class="form-input" value="SaaS Fitness Master" style="background: rgba(255,255,255,0.05);">
+                        <input type="text" id="settingName" class="form-input" value="SaaS Fitness Master" style="background: rgba(255,255,255,0.05);">
+                    </div>
+                    <div class="form-group mb-md">
+                        <label style="display: block; margin-bottom: 8px; font-size: 0.9rem;">Email de soporte (Admin)</label>
+                        <input type="email" id="settingEmail" class="form-input" value="admin@tuappfitness.com" style="background: rgba(255,255,255,0.05);">
                     </div>
                     <div class="form-group mb-lg">
-                        <label style="display: block; margin-bottom: 8px; font-size: 0.9rem;">Email de soporte (Admin)</label>
-                        <input type="email" class="form-input" value="admin@tuappfitness.com" style="background: rgba(255,255,255,0.05);">
+                        <label style="display: block; margin-bottom: 8px; font-size: 0.9rem;">Contraseña de Acceso Admin</label>
+                        <input type="text" id="settingPassword" class="form-input" placeholder="fitness_pro_2026" style="background: rgba(255,255,255,0.05);">
+                        <span style="font-size: 0.75rem; color: rgba(255,255,255,0.5); display: block; margin-top: 5px;">Déjalo en blanco para mantener la contraseña actual.</span>
                     </div>
-                    <button class="btn btn-primary" onclick="window.adminToast('Ajustes guardados correctamente', 'success')">Guardar Cambios</button>
+                    <button class="btn btn-primary" onclick="window.saveSettings()">Guardar Cambios</button>
                 </div>
             </div>
         </div>
@@ -406,6 +411,7 @@
                     { id: 'Elite', name: 'Plan Elite', price: 99, desc: 'Marca blanca', stripeLink: '' },
                     { id: 'Free', name: 'Plan Gratis', price: 0, desc: 'Licencia Cortesía / Admin', stripeLink: '' }
                 ];
+                if(!data.settings) data.settings = { platformName: 'SaaS Fitness Master', adminEmail: 'admin@tuappfitness.com', adminPassword: 'fitness_pro_2026' };
                 return data;
             } catch(e) {
                 console.error("Error storage:", e);
@@ -418,14 +424,35 @@
             window.renderDashboard();
             window.renderPlans();
 
-            // Sync with Firebase if available
-            if (window.FirebaseService && window.FirebaseService.isReady) {
+            // Sync with Supabase (Principal)
+            if (window.SupabaseService) {
+                const success = await window.SupabaseService.saveGlobalConfig(data);
+                if (success) console.log("Cloud Sync Success (Supabase) ✅");
+            }
+            // Sync fallback Firebase if available
+            else if (window.FirebaseService && window.FirebaseService.isReady) {
                 const success = await window.FirebaseService.saveData('saasPlatform', 'config', data);
                 if (success) {
-                    console.log("Cloud Sync Success ✅");
+                    console.log("Cloud Sync Success (Firebase) ✅");
                 }
             }
         }
+
+        window.saveSettings = () => {
+            const data = getPlatformData();
+            if (!data.settings) data.settings = {};
+            data.settings.platformName = document.getElementById('settingName').value;
+            data.settings.adminEmail = document.getElementById('settingEmail').value;
+            
+            const newPass = document.getElementById('settingPassword').value;
+            if (newPass.trim() !== '') {
+                data.settings.adminPassword = newPass;
+            }
+            
+            savePlatformData(data);
+            window.adminToast('Ajustes guardados correctamente', 'success');
+            document.getElementById('settingPassword').value = '';
+        };
 
         // TOOL: TOAST
         window.adminToast = (msg, type = 'info') => {

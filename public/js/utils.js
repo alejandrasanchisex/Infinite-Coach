@@ -33,8 +33,14 @@ window.BrandConfig = {
         }
         
         // Inyectar nombre en elementos identificados
-        const brandNames = document.querySelectorAll('.brand-name-display');
+        const brandNames = document.querySelectorAll('.brand-name-display, #brandName');
         brandNames.forEach(el => el.textContent = config.name);
+
+        // Inyectar Logo
+        const brandLogos = document.querySelectorAll('.brand-logo-display, #brandLogo');
+        brandLogos.forEach(el => {
+            if (config.logo) el.src = config.logo;
+        });
         
         console.log(`🎨 Theme Applied: ${config.name}`);
     }
