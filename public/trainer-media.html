@@ -10,6 +10,28 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="styles/theme.css">
     <link rel="stylesheet" href="styles/components.css">
+    <script>
+        // Funciones críticas de navegación (Cargadas en el HEAD para disponibilidad inmediata)
+        window.showTab = function(tab) {
+            console.log("🚀 [v95] Cambiando a pestaña:", tab);
+            const tabs = document.querySelectorAll('.tab');
+            const vTab = document.getElementById('videosTab');
+            const pTab = document.getElementById('photosTab');
+            
+            if (tabs.length >= 2 && vTab && pTab) {
+                tabs.forEach(t => t.classList.remove('active'));
+                if (tab === 'videos') {
+                    tabs[0].classList.add('active');
+                    vTab.style.display = 'grid';
+                    pTab.style.display = 'none';
+                } else {
+                    tabs[1].classList.add('active');
+                    vTab.style.display = 'none';
+                    pTab.style.display = 'grid';
+                }
+            }
+        };
+    </script>
 </head>
 
 <body>
@@ -63,15 +85,22 @@
                 </button>
             </div>
 
-            <!-- Tabs -->
             <div class="tabs mb-md">
-                <button class="tab active" onclick="showTab('videos')">Vídeos de Ejercicios</button>
-                <button class="tab" onclick="showTab('photos')">Fotos de Recetas</button>
+                <button id="tab-videos" class="tab active" onclick="window.showTab('videos')">Vídeos de Ejercicios <span id="count-videos" style="opacity:0.6; font-size:0.8em;"></span></button>
+                <button id="tab-photos" class="tab" onclick="window.showTab('photos')">Fotos de Recetas <span id="count-photos" style="opacity:0.6; font-size:0.8em;"></span></button>
             </div>
 
             <div class="mb-lg">
                 <input type="text" class="form-input" placeholder="🔍 Buscar por título..."
                     oninput="window.loadMedia(this.value)">
+            </div>
+
+            <div id="debug-status" style="background: rgba(255,255,255,0.05); padding: 10px; border-radius: 8px; margin-bottom: 20px; font-family: monospace; font-size: 11px; display: flex; gap: 20px; color: #888;">
+                <div>📦 Motor: <span id="status-engine" style="color: #666;">v128</span></div>
+                <div>🎬 Ejercicios: <span id="status-videos" style="color: #666;">Cargando...</span></div>
+                <div>🍳 Recetas: <span id="status-photos" style="color: #666;">Cargando...</span></div>
+                <div style="flex-grow:1"></div>
+                <button onclick="window.hardRepair()" style="background:none; border: 1px solid #444; color: #888; cursor: pointer; padding: 2px 8px; border-radius: 4px; font-size: 10px;">Reparar Base de Datos</button>
             </div>
 
             <!-- Videos Tab -->
@@ -92,14 +121,17 @@
                 </div>
             </div>
         </div>
+        <footer style="text-align: center; padding: 2rem; opacity: 0.3; font-size: 0.8rem;">
+            Sistema de Biblioteca Multimedia - v128
+        </footer>
     </main>
 
     </div>
 
     <!-- Nuevos Scripts de Google -->
-    <script src="js/config.js?v=92"></script>
-    <script src="js/auth.js?v=92"></script>
-    <script src="js/sheets.js?v=92"></script>
+    <script src="js/config.js?v=129"></script>
+    <script src="js/auth.js?v=129"></script>
+    <script src="js/sheets.js?v=129"></script>
 
     <!-- Firebase SDKs -->
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
@@ -111,146 +143,138 @@
 
     <!-- Supabase SDK & Service -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="js/supabase-service.js"></script>
-
-    <script src="js/data-models.js?v=92"></script>
-    <script src="js/custom-recipes.js?v=92"></script>
-    <script src="js/custom-exercises.js?v=92"></script>
-    <script src="js/utils.js?v=92"></script>
-    <script src="js/cloud-storage.js"></script>
+    <script src="js/data-models.js?v=129"></script>
+    <script src="js/brand-config.js?v=129"></script>
+    <script src="js/utils.js?v=129"></script>
+    <script src="js/cloud-storage.js?v=129"></script>
     <script>
-        if (!BrandConfig.isConfigured()) window.location.href = 'index.html';
-
-        BrandConfig.applyTheme();
-        const brand = BrandConfig.get();
-        document.getElementById('brandName').textContent = brand.name;
-        if (brand.logo) {
-            document.getElementById('brandLogo').src = brand.logo;
-            document.getElementById('brandLogo').style.display = 'block';
-        }
-
-        function showTab(tab) {
-            const tabs = document.querySelectorAll('.tab');
-            tabs.forEach(t => t.classList.remove('active'));
-
-            if (tab === 'videos') {
-                tabs[0].classList.add('active');
-                document.getElementById('videosTab').style.display = 'grid';
-                document.getElementById('photosTab').style.display = 'none';
-            } else {
-                tabs[1].classList.add('active');
-                document.getElementById('videosTab').style.display = 'none';
-                document.getElementById('photosTab').style.display = 'grid';
+        // Blindaje de la función de reparación - Carga inmediata
+        window.hardRepair = function () {
+            if (confirm('⚠️ ¿Quieres realizar una REPARACIÓN PROFUNDA?\n\nEsto borrará todos los datos temporales del navegador y recargará la biblioteca profesional desde cero. Se perderán cambios no guardados en recetas personalizadas.')) {
+                try {
+                    localStorage.clear();
+                    localStorage.removeItem('fitness_pro_data');
+                    localStorage.removeItem('trainer_data_admin');
+                    alert('✅ Memoria purgada con éxito. La página se recargará ahora para aplicar la versión v128.');
+                    window.location.href = window.location.pathname + '?v=129&refresh=' + Date.now();
+                } catch (e) {
+                    console.error("Error en hardRepair:", e);
+                    alert('Error al reparar. Por favor, limpia el historial del navegador manualmente.');
+                }
             }
+        };
+    </script>
+    <script>
+        if (typeof BrandConfig !== 'undefined' && !BrandConfig.isConfigured()) window.location.href = 'index.html';
+
+        try {
+            if (typeof BrandConfig !== 'undefined' && BrandConfig.isConfigured()) {
+                BrandConfig.applyTheme();
+                const brand = BrandConfig.get();
+                if (brand && brand.name && document.getElementById('brandName')) {
+                    document.getElementById('brandName').textContent = brand.name;
+                }
+                if (brand && brand.logo && document.getElementById('brandLogo')) {
+                    document.getElementById('brandLogo').src = brand.logo;
+                    document.getElementById('brandLogo').style.display = 'block';
+                }
+            }
+        } catch(e) { console.error(e); }
+
+        // 1. Funciones de Renderizado (Al principio para disponibilidad inmediata)
+        function renderMediaList(containerId, items, emptyText) {
+            try {
+                const container = document.getElementById(containerId);
+                if (!container) return;
+                if (items.length === 0) {
+                    container.innerHTML = `
+                       <div class="empty-state">
+                            <div class="empty-state-icon">${emptyText.split(' ')[0]}</div>
+                            <div class="empty-state-text">${emptyText.split(' ').slice(1).join(' ')}</div>
+                        </div>
+                    `;
+                    return;
+                }
+                const placeholder = 'https://images.unsplash.com/photo-1511910849309-0dffb8785146?auto=format&fit=crop&q=80&w=800';
+                container.className = "";
+                container.innerHTML = `
+                    <div style="display: grid; grid-template-columns: repeat(6, 1fr); gap: 15px; width: 100%;">
+                        ${items.map(item => {
+                            const cleanUrl = (item.url && !item.url.includes('[object')) ? item.url : placeholder;
+                            return `
+                            <div class="card" style="display: flex; flex-direction: column; justify-content: space-between;">
+                                <div>
+                                    <div style="aspect-ratio: 1/1; background: #000; border-radius: var(--radius-md); overflow: hidden; margin-bottom: var(--spacing-sm); border: 1px solid rgba(255,255,255,0.05);">
+                                        <img src="${cleanUrl}" onerror="this.src='${placeholder}'; this.onerror=null;" style="width: 100%; height: 100%; object-fit: cover;">
+                                    </div>
+                                    <div class="mb-sm text-center">
+                                        <strong style="font-size: 0.9rem;">${item.title || 'Sin título'}</strong>
+                                    </div>
+                                </div>
+                                <div class="flex gap-xs justify-center mt-xs">
+                                    <button class="btn btn-sm btn-primary" onclick="window.viewMediaDetails('${item.id}')" style="box-shadow: 0 4px 15px rgba(139, 92, 246, 0.3); flex:1; font-size: 0.75rem;">👁️ VER</button>
+                                    <button class="btn btn-sm btn-outline" onclick="window.openEditMediaModal('${item.id}')" style="width: 44px; height: 38px;">✏️</button>
+                                </div>
+                            </div>`;
+                        }).join('')}
+                    </div>`;
+            } catch (e) { console.error("Render error:", e); }
         }
+
+        // hardRepair ya está definido arriba para mayor seguridad
 
         window.loadMedia = function (searchQuery = '') {
-            if (typeof searchQuery !== 'string') searchQuery = '';
-            
-            const hiddenIds = JSON.parse(localStorage.getItem('hidden_system_media') || '[]');
-            const allRaw = Media.getAll();
-            
-            // 1. Deduplicación inteligente: Prioridad Usuario > Sistema
-            const uniqueMedia = new Map();
-            
-            // Procesamos TODO, pero las de usuario sobrescriben a las del sistema
-            // y las más nuevas (si hay duplicados por ID distinto) sobrescriben a las viejas.
-            allRaw.forEach(m => {
-                const mid = String(m.id);
-                const titleKey = m.title.toLowerCase().trim();
+            console.log("🎬 Intentando cargar biblioteca multimedia...");
+            try {
+                let hiddenIds = [];
+                try {
+                    hiddenIds = JSON.parse(localStorage.getItem('hidden_system_media') || '[]');
+                } catch(e) { console.warn("Hidden media corruption fixed"); hiddenIds = []; }
+
+                const allRaw = Media.getAll() || [];
+                console.log(`📦 Total elementos encontrados: ${allRaw.length}`);
                 
-                // Clave de deduplicación: Preferimos el ID original si es una copia, 
-                // o el título si queremos evitar duplicados por nombre.
-                // Usamos el título como clave principal de "identidad" de la receta
-                const dedupKey = titleKey; 
+                let photos = [];
+                let videos = [];
                 
-                const existing = uniqueMedia.get(dedupKey);
-                
-                if (!existing) {
-                    uniqueMedia.set(dedupKey, m);
-                } else {
-                    // Si ya existe, el usuario (isSystem: false) tiene prioridad
-                    if (m.isSystem === false && (existing.isSystem === true || !existing.isSystem)) {
-                        uniqueMedia.set(dedupKey, m);
-                    }
-                    // Si ambos son usuario, el que tenga la URL más reciente o no sea placeholder
-                    else if (m.isSystem === false && existing.isSystem === false) {
-                        if (m.url && !m.url.includes('placehold.co')) {
-                            uniqueMedia.set(dedupKey, m);
-                        }
-                    }
+                allRaw.forEach(m => {
+                    if (!m) return;
+                    if (hiddenIds.includes(String(m.id))) return;
+                    if (m.category === 'exercise') videos.push(m);
+                    else photos.push(m);
+                });
+
+                if (searchQuery) {
+                    const q = searchQuery.toLowerCase();
+                    videos = videos.filter(v => v.title && v.title.toLowerCase().includes(q));
+                    photos = photos.filter(p => p.title && p.title.toLowerCase().includes(q));
                 }
-            });
 
-            // Adicionalmente, asegurar que si el ID original está en el mapa, se use
-            allRaw.forEach(m => {
-                if (m.originalId && uniqueMedia.has(m.originalId)) {
-                    // Si tenemos una copia vinculada a un ID de sistema, esa copia manda
-                    uniqueMedia.set(String(m.originalId), m);
-                }
-            });
-
-            // 2. Convertir mapa a listas finales filtradas
-            let photos = [];
-            let videos = [];
-            
-            // Usamos un Set para no repetir items que insertamos por ID y por Título
-            const finalSet = new Set(uniqueMedia.values());
-            
-            finalSet.forEach(m => {
-                const mid = String(m.id);
-                if (hiddenIds.includes(mid)) return;
+                // Actualizar contadores y Debug Status
+                const cv = document.getElementById('count-videos');
+                const cp = document.getElementById('count-photos');
+                const sv = document.getElementById('status-videos');
+                const sp = document.getElementById('status-photos');
                 
-                if (m.category === 'exercise') videos.push(m);
-                else photos.push(m);
-            });
+                if (cv) cv.textContent = `(${videos.length})`;
+                if (cp) cp.textContent = `(${photos.length})`;
+                if (sv) { 
+                    sv.textContent = `${videos.length} / ${allRaw.length} total`; 
+                    sv.style.color = videos.length > 0 ? '#4ADE80' : '#F87171'; 
+                }
+                if (sp) { 
+                    sp.textContent = photos.length; 
+                    sp.style.color = photos.length > 0 ? '#4ADE80' : '#F87171'; 
+                }
 
-            if (searchQuery) {
-                const q = searchQuery.toLowerCase();
-                videos = videos.filter(v => v.title.toLowerCase().includes(q) || (v.description && v.description.toLowerCase().includes(q)));
-                photos = photos.filter(p => p.title.toLowerCase().includes(q) || (p.ingredients && p.ingredients.toLowerCase().includes(q)));
+                const data = getData() || {};
+                renderMediaList('photosTab', photos, 'No hay fotos');
+                if (typeof renderGroupedVideos === 'function') renderGroupedVideos('videosTab', videos, data.muscleGroupsConfig);
+            } catch (err) { 
+                console.error("❌ Error CRÍTICO en loadMedia:", err); 
+                document.getElementById('status-videos').textContent = "ERROR";
             }
-
-            const data = getData();
-            renderMediaList('photosTab', photos, 'No hay fotos');
-            renderGroupedVideos('videosTab', videos, data.muscleGroupsConfig);
-        }
-
-        function renderMediaList(containerId, items, emptyText) {
-            const container = document.getElementById(containerId);
-            if (items.length === 0) {
-                container.innerHTML = `
-                   <div class="empty-state">
-                        <div class="empty-state-icon">${emptyText.split(' ')[0]}</div>
-                        <div class="empty-state-text">${emptyText.split(' ').slice(1).join(' ')}</div>
-                    </div>
-                `;
-                return;
-            }
-
-            container.className = ""; // Limpiar clases previas
-            container.innerHTML = `
-                <div style="display: grid; grid-template-columns: repeat(6, 1fr); gap: 15px; width: 100%;">
-                    ${items.map(item => `
-                        <div class="card" style="display: flex; flex-direction: column; justify-content: space-between;">
-                            <div>
-                                <div style="aspect-ratio: 1/1; background: #000; border-radius: var(--radius-md); overflow: hidden; margin-bottom: var(--spacing-sm); border: 1px solid rgba(255,255,255,0.05);">
-                                    <img src="${item.url}" style="width: 100%; height: 100%; object-fit: cover;">
-                                </div>
-                                <div class="mb-sm text-center">
-                                    <strong style="font-size: 0.9rem;">${item.title}</strong>
-                                </div>
-                            </div>
-                            <div class="flex gap-xs justify-center mt-xs">
-                                <button class="btn btn-sm btn-primary" onclick="window.viewMediaDetails('${item.id}')" style="box-shadow: 0 4px 15px rgba(139, 92, 246, 0.3); flex:1; font-size: 0.75rem; letter-spacing: 1px;">👁️ VER</button>
-                                <button class="btn btn-sm btn-outline" onclick="window.openEditMediaModal('${item.id}')" title="Editar" style="width: 44px; height: 38px; display: flex; align-items: center; justify-content: center; font-size: 1.1rem; border-color: rgba(255,255,255,0.1);">✏️</button>
-                                <button class="btn btn-sm btn-danger" onclick="window.deleteMediaItem('${item.id}')" title="Eliminar" style="width: 44px; height: 38px; display: flex; align-items: center; justify-content: center; font-size: 1rem; background: #ff5252; border: none;">🗑️</button>
-                            </div>
-                        </div>
-                    `).join('')}
-                </div>
-            `;
-        }
+        };
 
         window.showAddMediaModal = function () {
             const activeTab = document.querySelector('.tab.active').textContent.includes('Vídeos') ? 'exercise' : 'recipe';
@@ -750,7 +774,10 @@
             document.getElementById('navLinks').classList.toggle('active');
         }
 
-        window.onload = loadMedia;
+        window.onload = function() {
+            // Pequeño retardo para asegurar que data-models haya inicializado la biblioteca pro
+            setTimeout(loadMedia, 150);
+        };
     </script>
 
     <script>

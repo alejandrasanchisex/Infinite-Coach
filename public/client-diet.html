@@ -788,7 +788,7 @@
         const modal = document.getElementById('shopModal');
         const body = document.getElementById('shopListBody');
         
-        // Collect all foods from option 1 of all meals
+        // Collect all unique foods from ALL options of all meals
         const items = {};
         
         let meals = diet.meals || [];
@@ -796,18 +796,22 @@
         
         meals.forEach(meal => {
             if (meal.foods && meal.foods.length > 0) {
-                meal.foods.filter(f => (f.option || 1) === 1).forEach(f => {
+                // Include ALL options, not just option 1
+                meal.foods.forEach(f => {
                     const name = f.name.trim();
                     const qtyStr = f.quantity || '';
-                    if (!items[name]) items[name] = { name, qties: [] };
-                    items[name].qties.push(qtyStr);
+                    const opt = f.option || 1;
+                    if (!items[name]) items[name] = { name, qties: [], options: new Set() };
+                    // Only add quantity once per option to avoid double-counting same food in multiple options
+                    if (!items[name].options.has(opt)) {
+                        items[name].qties.push(qtyStr);
+                        items[name].options.add(opt);
+                    }
                 });
             }
         });
 
         const listHtml = Object.values(items).map(item => {
-            // Group quantities if they are just numbers + unit
-            const summary = item.qties.join(' + ');
             return `
                 <div class="shopping-item" onclick="this.classList.toggle('checked')">
                     <div class="check-box">✓</div>
@@ -818,7 +822,7 @@
             `;
         }).join('');
 
-        body.innerHTML = listHtml || '<p class="text-center opacity-50 py-lg">No hay alimentos registrados en la opción 1.</p>';
+        body.innerHTML = listHtml || '<p class="text-center opacity-50 py-lg">No hay alimentos registrados en la dieta.</p>';
         modal.style.display = 'flex';
     }
 

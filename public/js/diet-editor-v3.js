@@ -146,9 +146,9 @@ window.renderDietEditor = function () {
 
         // Focus management if a form is active
         if (window.activeMealForm) {
-            const idx = window.activeMealForm.mealIdx;
+            const { mealIdx, option } = window.activeMealForm;
             setTimeout(() => {
-                const input = document.getElementById(`newFoodName_${idx}`);
+                const input = document.getElementById(`newFoodName_${mealIdx}_${option}`);
                 if (input) input.focus();
             }, 50);
         }
@@ -162,8 +162,22 @@ window.renderDietEditor = function () {
             if(window.onDietEditorClosed) window.onDietEditorClosed();
         };
 
+        // Función de guardado explícito al cerrar
+        window.saveAndCloseDietEditor = function() {
+            showToast('Sincronizando cambios...', 'info');
+            const diet = Diets.getById(window.editingDietId);
+            if (diet) {
+                Diets.update(window.editingDietId, diet); // Fuerza disparo de saveData()
+                window.recalculateDietTotals(window.editingDietId);
+            }
+            setTimeout(() => {
+                showToast('Dieta guardada correctamente', 'success');
+                window.closeDietEditor();
+            }, 300);
+        };
+
         showModal('Editor de Dieta', `<div id="dietEditorContainer">${content}</div>`, [
-            { text: '💾 GUARDAR CAMBIOS', class: 'btn-primary', onclick: 'showToast(\'Cambios guardados correctamente\', \'success\'); window.closeDietEditor();' },
+            { text: '💾 GUARDAR Y CERRAR', class: 'btn-primary', onclick: 'window.saveAndCloseDietEditor()' },
             { text: 'Cerrar sin guardar', class: 'btn-secondary', onclick: 'window.closeDietEditor()' }
         ], 'modal-xxl modal-compact');
     }
@@ -306,35 +320,34 @@ window.renderMealCard = function (meal, idx) {
                                 <div style="background: rgba(0,0,0,0.3); padding: 10px; margin-top: 5px; border-radius: 6px; border: 1px solid var(--primary-color);">
                                      <div class="grid grid-2 gap-sm mb-sm">
                                          <div>
-                                             <input type="text" id="newFoodName_${idx}" class="form-input text-sm" placeholder="🔍 Buscar alimento (ej: Arroz)..." autofocus oninput="window.checkFoodMacros(${idx})" list="foodList_${idx}">
-                                             <datalist id="foodList_${idx}">
+                                             <input type="text" id="newFoodName_${idx}_${optNum}" class="form-input text-sm" placeholder="🔍 Buscar alimento..." autofocus oninput="window.checkFoodMacros(${idx}, ${optNum})" list="foodList_${idx}_${optNum}">
+                                             <datalist id="foodList_${idx}_${optNum}">
                                                 ${(typeof Foods !== 'undefined') ? Foods.getAll().map(f => `<option value="${f.name}">`).join('') : ''}
-                                                ${(typeof foodDatabase !== 'undefined') ? foodDatabase.map(f => f.names.map(name => `<option value="${name}">`).join('')).join('') : ''}
                                              </datalist>
                                          </div>
                                          <div>
-                                             <input type="text" id="newFoodQty_${idx}" class="form-input text-sm" placeholder="Cant." oninput="window.checkFoodMacros(${idx})">
+                                             <input type="text" id="newFoodQty_${idx}_${optNum}" class="form-input text-sm" placeholder="Cant." oninput="window.checkFoodMacros(${idx}, ${optNum})">
                                          </div>
                                      </div>
                                      <div class="grid grid-4 gap-xs mb-sm">
                                          <div>
                                              <label class="text-xs text-muted" style="display:block; text-align:center; margin-bottom:2px;">Kcal</label>
-                                             <input type="number" id="newFoodCal_${idx}" class="form-input text-center text-sm" placeholder="0">
+                                             <input type="number" id="newFoodCal_${idx}_${optNum}" class="form-input text-center text-sm" placeholder="0">
                                          </div>
                                          <div>
                                              <label class="text-xs text-muted" style="display:block; text-align:center; margin-bottom:2px;">Prot (g)</label>
-                                             <input type="number" id="newFoodP_${idx}" class="form-input text-center text-sm" placeholder="0">
+                                             <input type="number" id="newFoodP_${idx}_${optNum}" class="form-input text-center text-sm" placeholder="0">
                                          </div>
                                          <div>
                                              <label class="text-xs text-muted" style="display:block; text-align:center; margin-bottom:2px;">Carbs (g)</label>
-                                             <input type="number" id="newFoodC_${idx}" class="form-input text-center text-sm" placeholder="0">
+                                             <input type="number" id="newFoodC_${idx}_${optNum}" class="form-input text-center text-sm" placeholder="0">
                                          </div>
                                          <div>
                                              <label class="text-xs text-muted" style="display:block; text-align:center; margin-bottom:2px;">Grasa (g)</label>
-                                             <input type="number" id="newFoodF_${idx}" class="form-input text-center text-sm" placeholder="0">
+                                             <input type="number" id="newFoodF_${idx}_${optNum}" class="form-input text-center text-sm" placeholder="0">
                                          </div>
                                      </div>
-                                     <button class="btn btn-sm btn-primary w-full" onclick="window.addFood(${idx}, ${optNum})">Guardar</button>
+                                     <button class="btn btn-sm btn-primary w-full" onclick="window.addFood(${idx}, ${optNum})">Guardar Alimento</button>
                                 </div>
                             ` : ''}
                         </div>
@@ -374,12 +387,12 @@ window.addOptionToMeal = function (mealIdx) {
 };
 
 window.addFood = function (mealIdx, optionNum) {
-    const name = document.getElementById(`newFoodName_${mealIdx}`).value;
-    const quantity = document.getElementById(`newFoodQty_${mealIdx}`).value;
-    const calories = document.getElementById(`newFoodCal_${mealIdx}`).value;
-    const protein = document.getElementById(`newFoodP_${mealIdx}`).value;
-    const carbs = document.getElementById(`newFoodC_${mealIdx}`).value;
-    const fat = document.getElementById(`newFoodF_${mealIdx}`).value;
+    const name = document.getElementById(`newFoodName_${mealIdx}_${optionNum}`).value;
+    const quantity = document.getElementById(`newFoodQty_${mealIdx}_${optionNum}`).value;
+    const calories = document.getElementById(`newFoodCal_${mealIdx}_${optionNum}`).value;
+    const protein = document.getElementById(`newFoodP_${mealIdx}_${optionNum}`).value;
+    const carbs = document.getElementById(`newFoodC_${mealIdx}_${optionNum}`).value;
+    const fat = document.getElementById(`newFoodF_${mealIdx}_${optionNum}`).value;
 
     if (!name) {
         showToast('Ingresa el nombre del alimento', 'error');
@@ -397,18 +410,19 @@ window.addFood = function (mealIdx, optionNum) {
     };
 
     const diet = Diets.getById(window.editingDietId);
+    if (!diet) return;
     if (!diet.meals[mealIdx].foods) diet.meals[mealIdx].foods = [];
 
-    const editIdx = window.activeMealForm.editIdx;
-    if (editIdx !== undefined && editIdx !== null) {
+    const editIdx = (window.activeMealForm && window.activeMealForm.editIdx !== undefined) ? window.activeMealForm.editIdx : null;
+
+    if (editIdx !== null) {
         diet.meals[mealIdx].foods[editIdx] = food;
         showToast('Alimento actualizado', 'success');
     } else {
         diet.meals[mealIdx].foods.push(food);
         showToast('Alimento añadido', 'success');
         
-        // 🔥 MEJORA: Guardar automáticamente en la base de datos de "Mis Alimentos" 
-        // si el usuario ha introducido macros (para que no se pierdan y pueda reusarlo)
+        // Guardar en base de datos global de alimentos si no existe
         const existingFood = Foods.getAll().find(f => f.name.toLowerCase() === name.toLowerCase());
         if (!existingFood) {
             Foods.create({
@@ -417,16 +431,13 @@ window.addFood = function (mealIdx, optionNum) {
                 protein: food.protein,
                 carbs: food.carbs,
                 fat: food.fat,
-                type: 'unit' // Por defecto unidad si se añade así
+                type: 'unit'
             });
-            console.log("Nuevo alimento guardado en la base de datos global:", food.name);
         }
     }
 
-    // 🔥 CRÍTICO: Guardar primero los cambios en los platos (meals)
+    // 🔥 GUARDADO INMEDIATO Y RECALCULO
     Diets.update(window.editingDietId, { meals: diet.meals });
-    
-    // Luego recalcular totales (que leerá los platos ya guardados)
     window.recalculateDietTotals(window.editingDietId);
     
     window.activeMealForm = null;
@@ -473,14 +484,14 @@ window.editFoodForm = function (mealIdx, optionNum, originalFoodIdx) {
     window.renderDietEditor();
 
     setTimeout(() => {
-        const nameInput = document.getElementById(`newFoodName_${mealIdx}`);
+        const nameInput = document.getElementById(`newFoodName_${mealIdx}_${optionNum}`);
         if (nameInput) {
             nameInput.value = food.name || '';
-            document.getElementById(`newFoodQty_${mealIdx}`).value = (food.quantity === '1 ración' || food.quantity === '-') ? '' : (food.quantity || '');
-            document.getElementById(`newFoodCal_${mealIdx}`).value = food.calories || 0;
-            document.getElementById(`newFoodP_${mealIdx}`).value = food.protein || 0;
-            document.getElementById(`newFoodC_${mealIdx}`).value = food.carbs || 0;
-            document.getElementById(`newFoodF_${mealIdx}`).value = food.fat || 0;
+            document.getElementById(`newFoodQty_${mealIdx}_${optionNum}`).value = (food.quantity === '1 ración' || food.quantity === '-') ? '' : (food.quantity || '');
+            document.getElementById(`newFoodCal_${mealIdx}_${optionNum}`).value = food.calories || 0;
+            document.getElementById(`newFoodP_${mealIdx}_${optionNum}`).value = food.protein || 0;
+            document.getElementById(`newFoodC_${mealIdx}_${optionNum}`).value = food.carbs || 0;
+            document.getElementById(`newFoodF_${mealIdx}_${optionNum}`).value = food.fat || 0;
             nameInput.focus();
         }
     }, 50);

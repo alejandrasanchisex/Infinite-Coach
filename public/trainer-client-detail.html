@@ -4709,8 +4709,17 @@
         window.copyClientAccessLink = function () {
             if (!clientId) return;
             // Get the current path but point to the client view
-            const baseUrl = window.location.origin + window.location.pathname.replace('trainer-client-detail.html', 'client-dashboard.html');
-            // Crucial: we append the trainer ID so the client app knows where to pull data from Firebase
+            // Robust replacement handling clean URLs (without .html)
+            let path = window.location.pathname;
+            if (path.includes('trainer-client-detail')) {
+                path = path.replace('trainer-client-detail', 'client-dashboard');
+            } else {
+                // Fallback for unexpected path structures
+                path = '/client-dashboard.html';
+            }
+            const baseUrl = window.location.origin + path;
+            
+            // Crucial: we append the trainer ID so the client app knows where to pull data from
             const fullUrl = `${baseUrl}?id=${clientId}&t=${activeTrainerId}`;
             copyToClipboard(fullUrl);
             showToast('¡Link copiado! Envíalo a tu cliente.', 'success');
