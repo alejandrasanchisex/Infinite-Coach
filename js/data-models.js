@@ -131,6 +131,7 @@ const getData = () => {
 // Save all data
 const saveData = (data) => {
   try {
+    data.lastModified = new Date().toISOString();
     const currentId = window.activeTrainerId || localStorage.getItem('activeTrainerId') || 'default';
     const sKey = getStorageKey();
     localStorage.setItem(sKey, JSON.stringify(data));
@@ -181,6 +182,17 @@ const syncFromCloud = async () => {
 
     if (cloudData) {
         const localData = getData();
+        if (localData && localData.lastModified && cloudData.lastModified) {
+            const localTime = new Date(localData.lastModified).getTime();
+            const cloudTime = new Date(cloudData.lastModified).getTime();
+            if (localTime > cloudTime) {
+                console.log("⚠️ Cambios locales más recientes detectados. Sincronizando con la nube...");
+                if (window.SupabaseService) {
+                    await window.SupabaseService.saveTrainerData(currentId, localData);
+                }
+                return localData;
+            }
+        }
 
         /**
          * Smart merge: combines two arrays by ID.

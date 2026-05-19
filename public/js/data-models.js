@@ -73,10 +73,14 @@ const getData = () => {
 window.getData = getData;
 
 const saveData = (data) => {
+  data.lastModified = new Date().toISOString();
   localStorage.setItem(getStorageKey(), JSON.stringify(data));
   if (window.SupabaseService) {
     const currentId = window.activeTrainerId || localStorage.getItem('activeTrainerId') || 'default';
-    if (currentId !== 'default') window.SupabaseService.saveTrainerData(currentId, data);
+    if (currentId !== 'default') {
+      window.SupabaseService.saveTrainerData(currentId, data)
+          .catch(e => console.warn('Supabase DB Sync Error:', e));
+    }
   }
 };
 window.saveData = saveData;
@@ -86,7 +90,28 @@ window.syncFromCloud = async () => {
     if (currentId === 'default' || !window.SupabaseService) return null;
     try {
         const cloudData = await window.SupabaseService.getTrainerData(currentId);
+        
+        // Obtener datos locales actuales
+        const localRaw = localStorage.getItem(getStorageKey());
+        let localData = null;
+        if (localRaw) {
+            try { localData = JSON.parse(localRaw); } catch(e){}
+        }
+
         if (cloudData) {
+            // Smart Merge/Timestamp Check:
+            // Si localData es más reciente que cloudData, no sobrescribir localData.
+            // En su lugar, subir localData a la nube.
+            if (localData && localData.lastModified && cloudData.lastModified) {
+                const localTime = new Date(localData.lastModified).getTime();
+                const cloudTime = new Date(cloudData.lastModified).getTime();
+                if (localTime > cloudTime) {
+                    console.log("⚠️ Cambios locales más recientes detectados. Sincronizando con la nube...");
+                    await window.SupabaseService.saveTrainerData(currentId, localData);
+                    return localData;
+                }
+            }
+
             // Preservar SIEMPRE el brand guardado explícitamente por el entrenador.
             // _trainerBrand es la fuente de verdad absoluta para la marca.
             const trainerBrandRaw = localStorage.getItem('_trainerBrand');
@@ -101,6 +126,11 @@ window.syncFromCloud = async () => {
             }
             localStorage.setItem(getStorageKey(), JSON.stringify(cloudData));
             return cloudData;
+        } else if (localData) {
+            // Si no hay datos en la nube pero sí locales, subirlos
+            console.log("📤 Subiendo datos locales iniciales a la nube...");
+            await window.SupabaseService.saveTrainerData(currentId, localData);
+            return localData;
         }
     } catch (e) { console.error("Sync Error:", e); }
     return null;
