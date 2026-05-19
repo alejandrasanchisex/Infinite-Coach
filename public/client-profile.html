@@ -150,6 +150,10 @@
     <script src="js/firebase-config.js"></script>
     <script src="js/firebase-service.js"></script>
 
+    <!-- Supabase SDK & Service -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="js/supabase-service.js"></script>
+
     <script src="js/config.js?v=100"></script>
     <script src="js/data-models.js?v=20"></script>
     <script src="js/cloud-storage.js?v=20"></script>
@@ -161,19 +165,37 @@
             window.location.href = 'client-login.html';
         }
 
-        // Apply brand theme
-        BrandConfig.applyTheme();
-        const brand = BrandConfig.get();
-        document.getElementById('brandName').textContent = brand.name;
-        if (brand.logo) {
-            document.getElementById('brandLogo').src = brand.logo;
-            document.getElementById('brandLogo').style.display = 'block';
-        }
+        let client = null;
 
-        // Load client data
-        let client = Clients.getById(clientId);
-        console.log('Cliente recuperado:', client);
-        if (client) {
+        document.addEventListener('DOMContentLoaded', async () => {
+            // Sincronizar con la nube antes de cargar datos
+            if (window.SupabaseService) {
+                window.SupabaseService.init();
+                await window.syncFromCloud();
+            } else if (window.FirebaseService) {
+                await window.FirebaseService.init();
+                await window.syncFromCloud();
+            }
+
+            client = Clients.getById(clientId);
+            console.log('Cliente recuperado tras sync:', client);
+            if (!client) {
+                alert('Error: No se encontró al cliente con ID ' + clientId + ' en la base de datos.');
+                window.location.href = 'client-login.html';
+                return;
+            }
+
+            // Aplicar branding y logo
+            if (typeof BrandConfig !== 'undefined') {
+                BrandConfig.applyTheme();
+                const brand = BrandConfig.get();
+                if (document.getElementById('brandName')) document.getElementById('brandName').textContent = brand.name;
+                if (brand.logo && document.getElementById('brandLogo')) {
+                    document.getElementById('brandLogo').src = brand.logo;
+                    document.getElementById('brandLogo').style.display = 'block';
+                }
+            }
+
             const navAvatar = document.getElementById('navClientProfileAvatar');
             if (navAvatar) {
                 if (client.profilePhoto) {
@@ -184,21 +206,13 @@
                     navAvatar.style.background = 'var(--primary-color)';
                 }
             }
-        }
-        
-        if (!client) {
-            alert('Error: No se encontró al cliente con ID ' + clientId + ' en la base de datos local.');
-            window.location.href = 'client-login.html';
-        } else {
-            // alert('Éxito: Cargando ficha de ' + client.name);
-        }
 
-        // Sync cloud removed for local validation
+            if (!client.technicalData) {
+                client.technicalData = { weight: 0, height: 0, age: 0, goals: '', injuries: '', allergies: '', notes: '' };
+            }
 
-        // Initialize technicalData if missing
-        if (!client.technicalData) {
-            client.technicalData = { weight: 0, height: 0, age: 0, goals: '', injuries: '', allergies: '', notes: '' };
-        }
+            loadClientData();
+        });
 
         function loadClientData() {
             try {
@@ -457,8 +471,7 @@
         };
 
         // Load data on start
-        loadClientData();
     </script>
-</body>
+    <script src="js/custom-recipes.js?v=129"></script></body>
 
 </html>

@@ -1,48 +1,254 @@
 // ============================================
 // UTILITY FUNCTIONS
 // ============================================
+// ============================================
+// UTILITY FUNCTIONS
+// ============================================
+
+// ============================================
+// MIGRACIÓN: Promover brand_settings → _trainerBrand
+// Ejecutar una sola vez para proteger datos ya guardados
+// ============================================
+(function migrateBrandSettings() {
+    try {
+        const _isValidLogo = (url) => {
+            if (!url || typeof url !== 'string' || url.length < 5) return false;
+            if (url.startsWith('data:image') || url.startsWith('blob:') || url.startsWith('img/')) return true;
+            if (url.startsWith('http')) {
+                const isStorageCDN = url.includes('supabase.co') || url.includes('firebasestorage') ||
+                                     url.includes('cloudinary') || url.includes('amazonaws');
+                const hasImageExt = /\.(jpg|jpeg|png|gif|webp|svg|ico)(\?|$|#)/i.test(url);
+                return isStorageCDN || hasImageExt;
+            }
+            return false;
+        };
+
+        // Limpiar _trainerBrand si tiene logo corrupto
+        const existingBrand = localStorage.getItem('_trainerBrand');
+        if (existingBrand) {
+            try {
+                const eb = JSON.parse(existingBrand);
+                if (eb.logo && !_isValidLogo(eb.logo)) {
+                    eb.logo = 'img/logo-infinite-marble.png';
+                    localStorage.setItem('_trainerBrand', JSON.stringify(eb));
+                    console.log('🧹 Logo corrupto eliminado de _trainerBrand');
+                }
+            } catch(e) { localStorage.removeItem('_trainerBrand'); }
+        }
+
+        // Migrar brand_settings → _trainerBrand si no existe
+        if (!localStorage.getItem('_trainerBrand')) {
+            const legacy = localStorage.getItem('brand_settings');
+            if (legacy) {
+                try {
+                    const parsed = JSON.parse(legacy);
+                    // Solo migrar si tiene un nombre real (no el default hardcodeado)
+                    if (parsed && parsed.name && parsed.name !== 'Infinite Coach') {
+                        parsed.logo = _isValidLogo(parsed.logo) ? parsed.logo : 'img/logo-infinite-marble.png';
+                        localStorage.setItem('_trainerBrand', JSON.stringify(parsed));
+                        console.log('✅ Brand migrado a clave protegida:', parsed.name);
+                    }
+                } catch(e) { /* ignorar */ }
+            }
+        }
+    } catch(e) { /* silencioso */ }
+})();
 
 // ============================================
 // BRAND CONFIGURATION (Modo Real - Infinite Coach)
 // ============================================
 
 window.BrandConfig = {
+    isConfigured: function() {
+        const brand = this.get();
+        return brand && brand.configured;
+    },
     get: function() {
-        const stored = localStorage.getItem('brand_settings');
         const defaults = {
             name: 'Infinite Coach',
-            logo: 'img/logo-infinite-marble.png', // Logo Pure Marble por defecto
+            logo: 'img/logo-infinite-marble.png',
             primaryColor: '#00D9FF',
             secondaryColor: '#8B5CF6',
-            whatsapp: '+34000000000'
+            whatsapp: '+34000000000',
+            configured: true,
+            colors: { primary: '#00D9FF', secondary: '#8B5CF6', accent: '#FF6B6B' }
         };
-        return stored ? {...defaults, ...JSON.parse(stored)} : defaults;
-    },
-    applyTheme: function() {
-        const config = this.get();
-        document.documentElement.style.setProperty('--primary-color', config.primaryColor);
-        document.documentElement.style.setProperty('--secondary-color', config.secondaryColor);
-        
-        // Actualizar títulos de página
-        if (config.name && config.name !== 'Fitness App') {
-            const pageTitle = document.querySelector('title');
-            if (pageTitle && !pageTitle.dataset.custom) {
-                pageTitle.textContent = `${pageTitle.textContent.split(' - ')[0]} - ${config.name}`;
-                pageTitle.dataset.custom = "true";
+
+        // Validar que un logo sea una URL de imagen real (no un nombre de página HTML)
+        const isValidLogo = (url) => {
+            if (!url || typeof url !== 'string' || url.length < 5) return false;
+            if (url.startsWith('data:image')) return true;
+            if (url.startsWith('blob:')) return true;
+            if (url.startsWith('img/') || url.startsWith('./img/')) return true;
+            if (url.startsWith('http')) {
+                // Aceptar solo si es un CDN de almacenamiento conocido o tiene extensión de imagen
+                const isStorageCDN = url.includes('supabase.co') || url.includes('firebasestorage') || 
+                                     url.includes('cloudinary') || url.includes('amazonaws');
+                const hasImageExt = /\.(jpg|jpeg|png|gif|webp|svg|ico)(\?|$|#)/i.test(url);
+                return isStorageCDN || hasImageExt;
+            }
+            return false;
+        };
+
+        // 1. PRIORIDAD MÁXIMA: clave dedicada que syncFromCloud NUNCA toca
+        const trainerBrandRaw = localStorage.getItem('_trainerBrand');
+        let trainerBrand = null;
+        if (trainerBrandRaw) {
+            try {
+                const parsed = JSON.parse(trainerBrandRaw);
+                trainerBrand = {
+                    ...parsed,
+                    logo: isValidLogo(parsed.logo) ? parsed.logo : defaults.logo,
+                    colors: parsed.colors || {
+                        primary: parsed.primaryColor || defaults.primaryColor,
+                        secondary: parsed.secondaryColor || defaults.secondaryColor,
+                        accent: (parsed.colors && parsed.colors.accent) || defaults.colors.accent
+                    },
+                    configured: true
+                };
+            } catch(e) { console.error('Error parsing _trainerBrand:', e); }
+        }
+        if (trainerBrand) return trainerBrand;
+
+        // 2. Fallback: brand_settings (legacy)
+        const stored = localStorage.getItem('brand_settings');
+        if (stored) {
+            try {
+                const parsed = JSON.parse(stored);
+                return {
+                    ...defaults,
+                    ...parsed,
+                    colors: parsed.colors || {
+                        primary: parsed.primaryColor || defaults.primaryColor,
+                        secondary: parsed.secondaryColor || defaults.secondaryColor,
+                        accent: (parsed.colors && parsed.colors.accent) || defaults.colors.accent
+                    },
+                    configured: true
+                };
+            } catch(e) { console.error('Error parsing brand_settings:', e); }
+        }
+
+        // 3. Fallback: DB local (puede estar contaminada por syncFromCloud)
+        if (window.getData) {
+            const db = getData();
+            if (db && db.brand && db.brand.name && db.brand.name !== 'Infinite Coach') {
+                return { ...defaults, ...db.brand, configured: true };
             }
         }
-        
-        // Inyectar nombre en elementos identificados
-        const brandNames = document.querySelectorAll('.brand-name-display, #brandName');
-        brandNames.forEach(el => el.textContent = config.name);
 
-        // Inyectar Logo
-        const brandLogos = document.querySelectorAll('.brand-logo-display, #brandLogo');
-        brandLogos.forEach(el => {
-            if (config.logo) el.src = config.logo;
-        });
+        return defaults;
+    },
+    set: function(brandData) {
+        // SIEMPRE guardar en la clave dedicada que nada más toca
+        const current = this.get();
+        const updated = { ...current, ...brandData, configured: true };
+        localStorage.setItem('_trainerBrand', JSON.stringify(updated));
+        localStorage.setItem('brand_settings', JSON.stringify(updated)); // legacy
+
+        // Guardar también en la BD local y en Supabase
+        if (window.getData && window.saveData) {
+            try {
+                const db = getData();
+                if (!db.brand) db.brand = {};
+                db.brand = { ...db.brand, ...updated };
+                db.brand.configured = true;
+                saveData(db);
+                const currentId = window.activeTrainerId || localStorage.getItem('activeTrainerId');
+                if (window.SupabaseService && currentId && currentId !== 'default') {
+                    window.SupabaseService.saveTrainerData(currentId, db)
+                        .catch(e => console.warn('Supabase brand sync:', e));
+                }
+            } catch(e) { console.error('BrandConfig.set db error:', e); }
+        }
+        return updated;
+    },
+    applyTheme: function() {
+        const brand = this.get();
+        if (brand) {
+            const colors = brand.colors || {
+                primary: brand.primaryColor || '#00D9FF',
+                secondary: brand.secondaryColor || '#8B5CF6',
+                accent: '#FF6B6B'
+            };
+            document.documentElement.style.setProperty('--primary-color', colors.primary);
+            document.documentElement.style.setProperty('--secondary-color', colors.secondary);
+            document.documentElement.style.setProperty('--accent-color', colors.accent || '#FF6B6B');
+
+            // Convert Primary to RGB for transparencies
+            const hexToRgb = (hex) => {
+                const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+                return result ? 
+                    `${parseInt(result[1], 16)}, ${parseInt(result[2], 16)}, ${parseInt(result[3], 16)}` : 
+                    '0, 217, 255';
+            };
+            document.documentElement.style.setProperty('--primary-color-rgb', hexToRgb(colors.primary));
+        }
+
+        // Dynamic Header (Logo & Name)
+        const headerLogos = document.querySelectorAll('.logo-img, #brandLogo');
+        const previewLogos = document.querySelectorAll('#logoPreview');
+        const nameSpan = document.getElementById('brandName');
         
-        console.log(`🎨 Theme Applied: ${config.name}`);
+        // Titulo de la página dinámico si existe
+        const baseTitle = document.title.split(' - ')[0]; // Tomar parte antes del guion
+        
+        if (brand) {
+            headerLogos.forEach(logoImg => {
+                if (brand.logo && brand.logo.length > 5) {
+                    logoImg.src = brand.logo;
+                    const extraStyles = "background: white; padding: 2px; border-radius: 4px;";
+                    logoImg.style.cssText = `display: block !important; opacity: 1 !important; visibility: visible !important; max-height: 40px !important; width: auto !important; object-fit: contain !important; ${extraStyles}`;
+                    
+                    logoImg.onerror = () => {
+                        if (!logoImg.src.includes('blob:')) {
+                            console.warn("Logo failed to load:", logoImg.src);
+                            logoImg.style.display = 'none';
+                        }
+                    };
+                } else {
+                    logoImg.src = '';
+                    logoImg.style.display = 'none';
+                }
+            });
+
+            previewLogos.forEach(logoImg => {
+                if (brand.logo && brand.logo.length > 5) {
+                    logoImg.src = brand.logo;
+                    logoImg.style.cssText = `display: block !important; opacity: 1 !important; visibility: visible !important; max-width: 150px !important; max-height: 150px !important; object-fit: contain !important; background: white; padding: 10px; border-radius: 4px;`;
+                } else {
+                    logoImg.src = 'img/logo-infinite-marble.png';
+                    logoImg.style.cssText = `max-width: 150px !important; max-height: 150px !important; object-fit: contain !important; background: white; padding: 10px;`;
+                }
+            });
+            
+            if (nameSpan) {
+                nameSpan.textContent = brand.name || 'Infinite Coach';
+                nameSpan.style.color = (brand.colors && brand.colors.primary) || brand.primaryColor || '#00D9FF';
+                nameSpan.style.fontWeight = '800';
+            }
+            
+            if (brand.name) {
+                document.title = `${baseTitle} - ${brand.name}`;
+            }
+        }
+
+        // Admin Master Link Check (Automatic)
+        const masterLink = document.getElementById('masterLink');
+        if (masterLink) {
+            const mid = window.activeTrainerId || localStorage.getItem('activeTrainerId') || 'default';
+            const userEmail = (typeof AUTH !== 'undefined' && AUTH.userEmail) || localStorage.getItem('_trainerEmail');
+            const b = this.get();
+            
+            const isMaster = mid === 'default' || 
+                             (userEmail && userEmail.toLowerCase().includes('asteam')) || 
+                             (b && b.name && b.name.toLowerCase().includes('asteam'));
+
+            if (isMaster) {
+                masterLink.style.setProperty('display', 'block', 'important');
+            } else {
+                masterLink.style.display = 'none';
+            }
+        }
     }
 };
 

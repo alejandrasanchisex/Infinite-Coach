@@ -132,12 +132,16 @@
   <script src="js/firebase-config.js"></script>
   <script src="js/firebase-service.js"></script>
 
-  <script src="js/config.js?v=92"></script>
-  <script src="js/auth.js?v=92"></script>
-  <script src="js/sheets.js?v=92"></script>
-  <script src="js/data-models.js?v=92"></script>
-  <script src="js/custom-exercises.js?v=92"></script>
-  <script src="js/utils.js?v=92"></script>
+  <!-- Supabase SDK & Service -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="js/supabase-service.js"></script>
+
+  <script src="js/config.js?v=312"></script>
+  <script src="js/auth.js?v=312"></script>
+  <script src="js/sheets.js?v=312"></script>
+  <script src="js/data-models.js?v=312"></script>
+  <script src="js/custom-exercises.js?v=312"></script>
+  <script src="js/utils.js?v=312"></script>
   <script>
     const daysMapShort = { '1': 'Lun', '2': 'Mar', '3': 'Mié', '4': 'Jue', '5': 'Vie', '6': 'Sáb', '7': 'Dom' };
 
@@ -331,8 +335,11 @@
 
   <script>
     async function onGoogleAuthSuccess() {
-      // Sincronizar con la nube
-      if (window.FirebaseService) {
+      // Sincronizar con la nube (Supabase es ahora el primario)
+      if (window.SupabaseService) {
+          window.SupabaseService.init();
+          await window.syncFromCloud();
+      } else if (window.FirebaseService) {
           await window.FirebaseService.init();
           await window.syncFromCloud();
       }
@@ -348,6 +355,6 @@
       if (typeof window.dibujarTabla === 'function') window.dibujarTabla();
     }
   </script>
-</body>
+    <script src="js/custom-recipes.js?v=129"></script></body>
 
 </html>

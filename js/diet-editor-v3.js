@@ -581,16 +581,24 @@ window.openRecipeSelection = function (mealIdx, optionNum) {
         html += `<div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 10px;">`;
         filtered.forEach(r => {
             html += `
-                <div class="card p-0 cursor-pointer hover-scale recipe-card-pro" onclick="window.applyRecipeToOption(${mealIdx}, ${optionNum}, '${r.id}')" 
+                <div class="card p-0 hover-scale recipe-card-pro" 
                      style="transition: transform 0.2s; border: 1px solid rgba(255,255,255,0.05); min-height: 180px; display: flex; flex-direction: column; overflow: hidden; position: relative;"
                      title="${r.ingredients || 'Consultar receta'}">
-                    <img src="${r.url}" style="width: 100%; aspect-ratio: 1/1; object-fit: cover; border-radius: 6px 6px 0 0;">
-                    <div class="ingredients-container" style="flex-grow: 1; display: flex; flex-direction: column; justify-content: center; padding: 6px; background: rgba(0,0,0,0.3); transition: all 0.3s ease;">
-                        <div class="text-xs font-bold text-center text-truncate" style="font-size: 0.7rem; color: var(--text-primary);">${r.title}</div>
-                        <div class="ingredients-text" style="font-size: 0.58rem; color: var(--text-muted); font-style: italic; text-align: center; opacity: 0.8; overflow: hidden; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; margin-top: 2px;">
-                            ${r.ingredients || 'Consultar receta'}
+                    <div onclick="window.applyRecipeToOption(${mealIdx}, ${optionNum}, '${r.id}')" style="cursor: pointer; flex-grow: 1; display: flex; flex-direction: column;">
+                        <img src="${r.url}" style="width: 100%; aspect-ratio: 1/1; object-fit: cover; border-radius: 6px 6px 0 0;">
+                        <div class="ingredients-container" style="flex-grow: 1; display: flex; flex-direction: column; justify-content: center; padding: 6px; background: rgba(0,0,0,0.3); transition: all 0.3s ease;">
+                            <div class="text-xs font-bold text-center text-truncate" style="font-size: 0.7rem; color: var(--text-primary);">${r.title}</div>
+                            <div class="ingredients-text" style="font-size: 0.58rem; color: var(--text-muted); font-style: italic; text-align: center; opacity: 0.8; overflow: hidden; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; margin-top: 2px;">
+                                ${r.ingredients || 'Consultar receta'}
+                            </div>
                         </div>
                     </div>
+                    <!-- Delete Button -->
+                    <button onclick="event.stopPropagation(); window.deleteMediaItem('${r.id}', () => window.onRecipeSearch(document.getElementById('recipeSearchInput').value, ${mealIdx}, ${optionNum}))" 
+                            style="position: absolute; top: 5px; right: 5px; width: 24px; height: 24px; border-radius: 50%; background: rgba(255,82,82,0.9); border: none; color: white; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 0.7rem; z-index: 10; box-shadow: 0 2px 4px rgba(0,0,0,0.3); transition: transform 0.2s;"
+                            onmouseover="this.style.transform='scale(1.1)'" onmouseout="this.style.transform='scale(1)'" title="Eliminar de la biblioteca">
+                        🗑️
+                    </button>
                 </div>
             `;
         });
@@ -602,6 +610,18 @@ window.openRecipeSelection = function (mealIdx, optionNum) {
 
         html += `</div>`;
         return html;
+    };
+
+    window.deleteMediaItem = function (id, callback) {
+        if (window.confirm('¿Seguro que quieres eliminar esta receta de la biblioteca de forma PERMANENTE?')) {
+            const success = Media.delete(id);
+            if (success) {
+                showToast('Receta eliminada y sincronizada', 'success');
+                if (typeof callback === 'function') callback();
+            } else {
+                showToast('No se pudo eliminar la receta', 'error');
+            }
+        }
     };
 
     window.onRecipeSearch = function(val, mIdx, oNum) {

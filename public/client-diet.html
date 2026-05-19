@@ -563,10 +563,14 @@
     Chat
   </a>
 
-  <script src="js/config.js?v=92"></script>
-  <script src="js/data-models.js?v=92"></script>
-  <script src="js/utils.js?v=92"></script>
-  <script src="js/custom-recipes.js?v=92"></script>
+  <!-- Supabase SDK & Service -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="js/supabase-service.js"></script>
+
+  <script src="js/config.js?v=312"></script>
+  <script src="js/data-models.js?v=312"></script>
+  <script src="js/utils.js?v=312"></script>
+  <script src="js/custom-recipes.js?v=312"></script>
   <script>
     // Check if client is logged in
     let clientId = new URLSearchParams(window.location.search).get('id') || sessionStorage.getItem('clientId');
@@ -576,40 +580,73 @@
       sessionStorage.setItem('clientId', clientId);
     }
 
-    // Apply brand theme
-    BrandConfig.applyTheme();
-    const brand = BrandConfig.get();
-    document.getElementById('brandName').textContent = brand.name;
-    if (brand.logo) {
-      document.getElementById('brandLogo').src = brand.logo;
-      document.getElementById('brandLogo').style.display = 'block';
-    }
+    let client = null;
+    let diet = null;
+    let showCalories = true;
+    let showMacros = true;
+    let brand = null;
 
-    // Load visibility settings
-    const showCalories = brand.clientSettings?.showCalories !== false;
-    const showMacros = brand.clientSettings?.showMacros !== false;
+    document.addEventListener('DOMContentLoaded', async () => {
+      // Sync cloud (Supabase es ahora el primario)
+      if (window.SupabaseService) {
+          window.SupabaseService.init();
+          await window.syncFromCloud();
+      } else if (window.FirebaseService) {
+          await window.FirebaseService.init();
+          await window.syncFromCloud();
+      }
 
-    // Load client and diet
-    const client = Clients.getById(clientId);
-    if (client) {
-        const avatar = document.getElementById('clientProfileAvatar');
-        if (avatar) {
-            if (client.profilePhoto) {
-                avatar.innerHTML = `<img src="${client.profilePhoto}" style="width:100%;height:100%;object-fit:cover;">`;
-                avatar.style.background = 'transparent';
-            } else {
-                avatar.textContent = client.name.charAt(0).toUpperCase();
-                avatar.style.background = 'var(--primary-color)';
-            }
-        }
-    }
-    // Load diet
-    const diet = (client && client.assignedDiet && (client.dietPublished === true || client.dietPublished === undefined)) ? Diets.getById(client.assignedDiet) : null;
-    
-    // Supplementation visibility
-    const isSuppPublished = client && client.supplementationPublished !== false;
-    if (!isSuppPublished) {
-        document.getElementById('suppBtn')?.style.setProperty('display', 'none');
+      // Apply brand theme
+      BrandConfig.applyTheme();
+      brand = BrandConfig.get();
+      document.getElementById('brandName').textContent = brand.name;
+      if (brand.logo) {
+        document.getElementById('brandLogo').src = brand.logo;
+        document.getElementById('brandLogo').style.display = 'block';
+      }
+
+      showCalories = brand.clientSettings?.showCalories !== false;
+      showMacros = brand.clientSettings?.showMacros !== false;
+
+      client = Clients.getById(clientId);
+      if (client) {
+          const avatar = document.getElementById('clientProfileAvatar');
+          if (avatar) {
+              if (client.profilePhoto) {
+                  avatar.innerHTML = `<img src="${client.profilePhoto}" style="width:100%;height:100%;object-fit:cover;">`;
+                  avatar.style.background = 'transparent';
+              } else {
+                  avatar.textContent = client.name.charAt(0).toUpperCase();
+                  avatar.style.background = 'var(--primary-color)';
+              }
+          }
+      }
+
+      diet = (client && client.assignedDiet && (client.dietPublished === true || client.dietPublished === undefined)) ? Diets.getById(client.assignedDiet) : null;
+      
+      const isSuppPublished = client && client.supplementationPublished !== false;
+      if (!isSuppPublished) {
+          document.getElementById('suppBtn')?.style.setProperty('display', 'none');
+      }
+
+      // Setup WhatsApp FAB
+      setupWhatsAppFab();
+
+      if (diet) {
+          loadDiet();
+      } else {
+          document.getElementById('shopBtn')?.parentElement?.style.setProperty('display', 'none');
+          console.log('No active diet to show');
+      }
+    });
+
+    function setupWhatsAppFab() {
+      const fab = document.getElementById('whatsappFab');
+      if (fab && brand && client) {
+          const message = `Hola ${brand.name}, soy ${client.name}. Tengo una consulta.`;
+          fab.href = generateWhatsAppLink(brand.whatsapp, message);
+          fab.target = '_blank';
+      }
     }
 
     function loadDiet() {
@@ -848,13 +885,7 @@
     }
 
     // Load on page load
-    if (diet) {
-        loadDiet();
-    } else {
-        document.getElementById('shopBtn')?.parentElement?.style.setProperty('display', 'none');
-        console.log('No active diet to show');
-    }
   </script>
-</body>
+    <script src="js/custom-recipes.js?v=129"></script></body>
 
 </html>

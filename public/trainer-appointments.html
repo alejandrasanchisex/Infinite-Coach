@@ -93,12 +93,16 @@
 
     </div>
 
+    <!-- Supabase SDK & Service -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="js/supabase-service.js"></script>
+
     <!-- Nuevos Scripts de Google -->
-    <script src="js/config.js?v=92"></script>
-    <script src="js/auth.js?v=92"></script>
-    <script src="js/sheets.js?v=92"></script>
-    <script src="js/data-models.js?v=92"></script>
-    <script src="js/utils.js?v=92"></script>
+    <script src="js/config.js?v=312"></script>
+    <script src="js/auth.js?v=312"></script>
+    <script src="js/sheets.js?v=312"></script>
+    <script src="js/data-models.js?v=312"></script>
+    <script src="js/utils.js?v=312"></script>
     <script>
         if (!BrandConfig.isConfigured()) window.location.href = 'index.html';
 
@@ -257,20 +261,21 @@
 
     <script>
         // Función que llama el sistema de Google cuando la sesión es exitosa
-        function onGoogleAuthSuccess() {
+        async function onGoogleAuthSuccess() {
+            // Sincronizar con la nube (Supabase es ahora el primario)
+            if (window.SupabaseService) {
+                window.SupabaseService.init();
+                await window.syncFromCloud();
+            } else if (window.FirebaseService) {
+                await window.FirebaseService.init();
+                await window.syncFromCloud();
+            }
+
             document.getElementById('login-screen').style.display = 'none';
             document.getElementById('app').style.display = 'block';
             
-            if(typeof window.dibujarTabla === 'function') {
-                window.dibujarTabla();
-            } else if(typeof dibujarTabla === 'function') {
-                dibujarTabla();
-            }
-            if(typeof renderRoutines === 'function') renderRoutines();
-            if(typeof renderDiets === 'function') renderDiets();
-            if(typeof renderFeedbacks === 'function') renderFeedbacks();
-            if(typeof initClientData === 'function') initClientData();
+            if (typeof loadAppointments === 'function') loadAppointments();
         }
     </script>
-</body>
+    <script src="js/custom-recipes.js?v=129"></script></body>
 </html>

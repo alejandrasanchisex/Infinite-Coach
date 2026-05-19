@@ -126,10 +126,14 @@
     Chat
   </a>
 
-  <script src="js/config.js?v=92"></script>
-  <script src="js/data-models.js?v=92"></script>
-  <script src="js/custom-exercises.js?v=92"></script>
-  <script src="js/utils.js?v=92"></script>
+  <!-- Supabase SDK & Service -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="js/supabase-service.js"></script>
+
+  <script src="js/config.js?v=312"></script>
+  <script src="js/data-models.js?v=312"></script>
+  <script src="js/custom-exercises.js?v=312"></script>
+  <script src="js/utils.js?v=312"></script>
   <script>
     // --- GESTIÓN DE ERRORES ---
     window.onerror = function(msg, url, line) {
@@ -168,8 +172,17 @@
     }
 
     // --- INITIALIZATION ---
-    function initializeApp() {
+    async function initializeApp() {
       try {
+        // Sync with Cloud (Supabase es ahora el primario)
+        if (window.SupabaseService) {
+            window.SupabaseService.init();
+            await window.syncFromCloud();
+        } else if (window.FirebaseService) {
+            await window.FirebaseService.init();
+            await window.syncFromCloud();
+        }
+
         brand = BrandConfig.get() || brand;
         BrandConfig.applyTheme();
         if (document.getElementById('brandName')) document.getElementById('brandName').textContent = brand.name;
@@ -635,6 +648,6 @@
     // Trigger App Initialization
     initializeApp();
   </script>
-</body>
+    <script src="js/custom-recipes.js?v=129"></script></body>
 
 </html>

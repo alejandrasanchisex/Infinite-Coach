@@ -100,7 +100,15 @@ const SupabaseService = {
         if (!this.client) this.init();
         
         try {
-            const fileName = `${Date.now()}_${file.name || 'upload.jpg'}`;
+            // Sanitizar nombre de archivo (Ultra-agresivo para evitar errores de Supabase)
+            const cleanName = (file.name || 'upload.jpg')
+                .normalize("NFD").replace(/[\u0300-\u036f]/g, "") // Quitar acentos y ñ
+                .replace(/\s+/g, '_') // Espacios por guiones bajos
+                .replace(/[^a-zA-Z0-9._-]/g, ''); // Quitar todo lo que no sea seguro
+            
+            const fileName = `${Date.now()}_${cleanName}`;
+            console.log(`🚀 Iniciando subida a Supabase Bucket 'Media': ${fileName}`);
+
             const { data, error } = await this.client.storage
                 .from(bucket)
                 .upload(fileName, file, {
@@ -108,16 +116,22 @@ const SupabaseService = {
                     upsert: false
                 });
 
-            if (error) throw error;
+            if (error) {
+                console.error("❌ Error de Supabase Storage:", error);
+                throw error;
+            }
+
+            console.log("✅ Archivo subido, obteniendo URL pública...");
 
             // Obtener la URL pública del archivo subido
             const { data: urlData } = this.client.storage
                 .from(bucket)
                 .getPublicUrl(fileName);
 
+            console.log("🔗 URL Pública:", urlData.publicUrl);
             return urlData.publicUrl;
         } catch (error) {
-            console.error("Error subiendo a Supabase Storage:", error);
+            console.error("❌ Error crítico subiendo a Supabase Storage:", error);
             return null;
         }
     }

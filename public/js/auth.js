@@ -11,24 +11,8 @@ const AUTH = {
     },
 
     renderSignInButton: () => {
-        const btnContainer = document.getElementById('google-signin-container');
-        if (btnContainer) {
-            btnContainer.innerHTML = `
-                <div class="manual-login-form" style="margin-top: 1.5rem; text-align: left;">
-                    <div class="form-group">
-                        <label class="form-label" style="font-size: 0.8rem;">Email de Acceso</label>
-                        <input type="email" id="auth_email" class="form-input" placeholder="tu@email.com" style="background: rgba(255,255,255,0.05);">
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label" style="font-size: 0.8rem;">Contraseña</label>
-                        <input type="password" id="auth_pass" class="form-input" placeholder="••••••••" style="background: rgba(255,255,255,0.05);">
-                    </div>
-                    <button onclick="AUTH.handleManualLogin()" class="btn btn-primary" style="width:100%; margin-top: 1rem; height: 45px; font-weight: 600;">
-                        Entrar a la Academia
-                    </button>
-                </div>
-            `;
-        }
+        console.log("Redirecting to official trainer login page...");
+        window.location.href = 'trainer-login.html';
     },
 
     handleManualLogin: () => {

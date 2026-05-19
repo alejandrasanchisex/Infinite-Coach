@@ -158,10 +158,14 @@
     <script src="js/firebase-config.js"></script>
     <script src="js/firebase-service.js"></script>
 
-    <script src="js/config.js?v=92"></script>
-    <script src="js/data-models.js?v=92"></script>
-    <script src="js/utils.js?v=92"></script>
-    <script src="js/custom-exercises.js?v=92"></script>
+    <!-- Supabase SDK & Service -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="js/supabase-service.js"></script>
+
+    <script src="js/config.js?v=312"></script>
+    <script src="js/data-models.js?v=312"></script>
+    <script src="js/utils.js?v=312"></script>
+    <script src="js/custom-exercises.js?v=312"></script>
     <script>
         // CLIENT INITIALIZATION
         document.addEventListener('DOMContentLoaded', async () => {
@@ -176,8 +180,11 @@
             const clientId = sessionStorage.getItem('clientId');
             if (!clientId) window.location.href = 'client-login.html';
 
-            // Sync with Cloud
-            if (window.FirebaseService) {
+            // Sync with Cloud (Supabase es ahora el primario)
+            if (window.SupabaseService) {
+                window.SupabaseService.init();
+                await window.syncFromCloud();
+            } else if (window.FirebaseService) {
                 await window.FirebaseService.init();
                 await window.syncFromCloud();
             }
@@ -305,5 +312,5 @@
 
         function toggleMenu() { document.getElementById('navLinks').classList.toggle('active'); }
     </script>
-</body>
+    <script src="js/custom-recipes.js?v=129"></script></body>
 </html>

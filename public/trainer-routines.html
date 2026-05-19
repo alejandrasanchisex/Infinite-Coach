@@ -3,6 +3,15 @@
 
 <head>
     <meta charset="UTF-8">
+    <script>
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.getRegistrations().then(registrations => {
+                for (let registration of registrations) {
+                    registration.unregister();
+                }
+            });
+        }
+    </script>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Gestión de Rutinas - Fitness App</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -112,16 +121,24 @@
         </main>
     </div>
 
-    <script src="js/config.js?v=92"></script>
-    <script src="js/auth.js?v=92"></script>
-    <script src="js/sheets.js?v=92"></script>
-    <script src="js/data-models.js?v=92"></script>
-    <script src="js/utils.js?v=92"></script>
-    <script>
-        if (!BrandConfig.isConfigured()) window.location.href = 'index.html';
+    <!-- Supabase SDK & Service -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="js/supabase-service.js"></script>
 
-        BrandConfig.applyTheme();
-        const brand = BrandConfig.get();
+    <script src="js/config.js?v=312"></script>
+    <script src="js/auth.js?v=312"></script>
+    <script src="js/sheets.js?v=312"></script>
+    <script src="js/data-models.js?v=312"></script>
+    <script src="js/utils.js?v=312"></script>
+    <script src="js/custom-exercises.js?v=312"></script>
+    <script>
+        // Chequeo defensivo: BrandConfig puede variar entre versiones
+        if (typeof BrandConfig !== 'undefined' && typeof BrandConfig.isConfigured === 'function' && !BrandConfig.isConfigured()) {
+            window.location.href = 'index.html';
+        }
+
+        if (typeof BrandConfig !== 'undefined' && typeof BrandConfig.applyTheme === 'function') BrandConfig.applyTheme();
+        const brand = (typeof BrandConfig !== 'undefined' && typeof BrandConfig.get === 'function') ? BrandConfig.get() : { name: 'Infinite Coach' };
         document.getElementById('brandName').textContent = brand.name;
         if (brand.logo) {
             document.getElementById('brandLogo').src = brand.logo;
@@ -132,31 +149,27 @@
         // MUSCLE GROUPS CONFIGURATION
         // ============================================
 
-        function getMuscleGroups() {
-            const data = getData();
-            if (!data.muscleGroupsConfig) {
-                data.muscleGroupsConfig = {
-                    groups: ['Pecho', 'Espalda', 'Hombros', 'Bíceps', 'Tríceps', 'Piernas', 'Glúteos', 'Core'],
-                    exercises: {} // { 'Pecho': ['Press Banca', 'Aperturas'], ... }
-                };
-                // Initialize exercises if empty
-                data.muscleGroupsConfig.groups.forEach(g => {
-                    if (!data.muscleGroupsConfig.exercises[g]) data.muscleGroupsConfig.exercises[g] = [];
-                });
-                saveData(data);
-            }
-            return data.muscleGroupsConfig;
-        }
+        let customGroups = [];
 
-        function saveMuscleGroups(config) {
-            const data = getData();
-            data.muscleGroupsConfig = config;
-            saveData(data);
+        function getMuscleGroups() {
+            const exercises = Media.getAll().filter(m => m.category === 'exercise');
+            const defaultGroups = ['Pecho', 'Espalda', 'Hombros', 'Bíceps', 'Tríceps', 'Piernas', 'Glúteos', 'Core'];
+            const activeGroups = exercises.map(m => m.muscleGroup).filter(Boolean);
+            const groups = [...new Set([...defaultGroups, ...activeGroups, ...customGroups])];
+            
+            const exerciseMap = {};
+            groups.forEach(g => {
+                exerciseMap[g] = exercises
+                    .filter(m => m.muscleGroup === g)
+                    .map(m => ({ name: m.title, videoUrl: m.url, id: m.id }));
+            });
+            return { groups, exercises: exerciseMap };
         }
 
         let currentActiveGroup = null;
 
         window.showMuscleGroupsConfig = function() {
+            try {
             const config = getMuscleGroups();
             if (!currentActiveGroup) currentActiveGroup = config.groups[0];
 
@@ -185,8 +198,7 @@
 
                         <!-- Formulario Añadir Rápido -->
                         <div class="card p-xs mb-sm" style="background: rgba(var(--primary-color-rgb), 0.05); border: 1px dashed var(--primary-color); display: flex; gap: 8px; align-items: center;">
-                            <input type="text" id="newExName" class="form-input" placeholder="Nuevo ejercicio..." style="flex: 2; padding: 6px 12px; font-size: 0.85rem;">
-                            <input type="text" id="newExUrl" class="form-input" placeholder="URL Video" style="flex: 1; padding: 6px 12px; font-size: 0.85rem;">
+                            <input type="text" id="newExName" class="form-input" placeholder="Nuevo ejercicio..." style="flex: 1; padding: 6px 12px; font-size: 0.85rem;">
                             <button onclick="addNewExerciseDirect()" class="btn btn-sm btn-primary" style="padding: 6px 15px;">Añadir</button>
                         </div>
                         
@@ -197,9 +209,16 @@
                 </div>
             `;
 
-            showModal('Biblioteca de Ejercicios', content, [
-                { text: 'Cerrar Biblioteca', class: 'btn-secondary', onclick: 'window.closeModal()' }
-            ], 'modal-xl');
+                // Cerrar modales previos para evitar apilamiento
+                document.querySelectorAll('.modal-overlay').forEach(m => m.remove());
+
+                showModal('Biblioteca de Ejercicios', content, [
+                    { text: 'Cerrar Biblioteca', class: 'btn-secondary', onclick: 'window.closeModal()' }
+                ], 'modal-xl');
+            } catch(err) {
+                console.error('Error en showMuscleGroupsConfig:', err);
+                showToast('Error al abrir Grupos Musculares: ' + err.message, 'error');
+            }
         }
 
         function renderExercisesList(config, group) {
@@ -216,17 +235,19 @@
                         <div></div>
                     </div>
                     ${exercises.map((ex, idx) => {
-                        const exName = typeof ex === 'string' ? ex : ex.name;
-                        const exUrl = typeof ex === 'string' ? '' : (ex.videoUrl || '');
-                        // Creamos un ID seguro para el DOM
+                        const exName = ex.name;
+                        const exUrl = ex.videoUrl || '';
+                        const id = ex.id;
                         const domId = `${group.replace(/\s+/g, '_')}_${idx}`;
                         return `
                         <div class="card" style="display: flex; background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.05); gap: 10px; align-items: center; padding: 4px 8px; border-radius: 8px;">
                             <input type="text" id="exName_${domId}" value="${exName}" class="form-input" style="flex: 2.5; border: none; background: transparent; padding: 2px; font-size: 0.9rem;">
-                            <input type="text" id="exUrl_${domId}" value="${exUrl}" class="form-input" placeholder="Sin vídeo" style="flex: 1.5; border: none; background: transparent; padding: 2px; font-size: 0.75rem; color: var(--primary-color); opacity: 0.8;">
+                            <div style="flex: 1.5; font-size: 0.75rem; text-align: left; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; padding-left: 5px;">
+                                ${exUrl ? `<a href="${exUrl}" target="_blank" style="color: var(--primary-color); text-decoration: none; font-weight: 600;">📺 Ver Video</a>` : `<span style="opacity: 0.3;">Sin vídeo</span>`}
+                            </div>
                             <div style="display: flex; gap: 5px; width: 70px; justify-content: flex-end;">
-                                <button onclick="saveExerciseRow('${group}', ${idx})" class="btn btn-xs btn-primary" style="height: 28px; width: 28px; padding: 0; min-width: unset; font-size: 0.75rem;" title="Guardar Cambios">💾</button>
-                                <button onclick="removeExerciseFromGroup('${group}', ${idx})" class="btn btn-xs btn-outline btn-error" style="height: 28px; width: 28px; padding: 0; min-width: unset; font-size: 0.75rem; opacity: 0.6;" title="Eliminar">🗑️</button>
+                                <button onclick="saveExerciseRow('${group}', ${idx}, '${id}')" class="btn btn-xs btn-primary" style="height: 28px; width: 28px; padding: 0; min-width: unset; font-size: 0.75rem;" title="Guardar Cambios">💾</button>
+                                <button onclick="removeExerciseFromGroup('${group}', ${idx}, '${id}')" class="btn btn-xs btn-outline btn-error" style="height: 28px; width: 28px; padding: 0; min-width: unset; font-size: 0.75rem; opacity: 0.6;" title="Eliminar">🗑️</button>
                             </div>
                         </div>
                     `}).join('')}
@@ -234,60 +255,69 @@
             `;
         }
 
-        window.saveExerciseRow = function(group, idx) {
+        window.saveExerciseRow = function(group, idx, id) {
             const domId = `${group.replace(/\s+/g, '_')}_${idx}`;
             const name = document.getElementById(`exName_${domId}`).value.trim();
-            const videoUrl = document.getElementById(`exUrl_${domId}`).value.trim();
             
             if (!name) return showToast('El nombre es obligatorio', 'error');
 
-            // Operación Atómica
-            if (typeof MuscleGroups !== 'undefined' && MuscleGroups.saveExerciseAndSync) {
-                MuscleGroups.saveExerciseAndSync(group, idx, name, videoUrl);
+            // Preservar la URL de video existente para que no se pierda al renombrar
+            const config = getMuscleGroups();
+            const existingEx = (config.exercises[group] || [])[idx];
+            const videoUrl = existingEx ? (existingEx.videoUrl || '') : '';
+
+            if (id && id !== 'undefined' && id !== 'null') {
+                Media.update(id, { title: name, url: videoUrl, muscleGroup: group });
             } else {
-                // Fallback si no está el objeto (aunque debería estar en data-models.js)
-                const config = getMuscleGroups();
-                config.exercises[group][idx] = { name, videoUrl };
-                saveMuscleGroups(config);
-                if (typeof Media !== 'undefined') Media.syncFromRoutines(name, videoUrl, group);
+                const data = getData();
+                if (!data.media) data.media = [];
+                const newId = 'sys-ex-' + name.replace(/\s+/g, '-').toLowerCase();
+                const sysItems = [...(window.SYSTEM_RECIPES || []), ...(window.SYSTEM_MEDIA || [])];
+                const alreadyExists = sysItems.some(m => m.id === newId) || data.media.some(m => m.id === newId);
+                const finalId = alreadyExists ? 'sys-ex-' + generateUUID() : newId;
+                
+                data.media.push({
+                    id: finalId,
+                    type: 'video',
+                    category: 'exercise',
+                    url: videoUrl,
+                    title: name,
+                    muscleGroup: group,
+                    isSystem: false,
+                    createdAt: new Date().toISOString()
+                });
+                saveData(data);
             }
 
             showToast('Cambios guardados', 'success');
-        }
-
-        window.updateExerciseDirect = function(group, idx, field, value) {
-            // Este método se mantiene por compatibilidad si se usa en otros sitios, 
-            // pero para la lista principal ahora usamos saveExerciseRow
-            const config = getMuscleGroups();
-            if (!config.exercises[group][idx]) return;
-            if (typeof config.exercises[group][idx] === 'string') {
-                config.exercises[group][idx] = { name: config.exercises[group][idx], videoUrl: '' };
-            }
-            config.exercises[group][idx][field] = value;
-            saveMuscleGroups(config);
-            const ex = config.exercises[group][idx];
-            if (typeof Media !== 'undefined') {
-                Media.syncFromRoutines(ex.name, ex.videoUrl, group);
-            }
+            showMuscleGroupsConfig();
         }
 
         window.addNewExerciseDirect = function() {
             const name = document.getElementById('newExName').value.trim();
-            const videoUrl = document.getElementById('newExUrl').value.trim();
             if (!name) return showToast('El nombre es obligatorio', 'error');
 
             const data = getData();
-            if (!data.muscleGroupsConfig) return;
-            if (!data.muscleGroupsConfig.exercises[currentActiveGroup]) data.muscleGroupsConfig.exercises[currentActiveGroup] = [];
-            
-            // Añadir a la lista (posicion final)
-            const newIdx = data.muscleGroupsConfig.exercises[currentActiveGroup].length;
-            data.muscleGroupsConfig.exercises[currentActiveGroup].push({ name, videoUrl });
-            
-            // Usar la lógica maestra para guardar y sincronizar todo de golpe
-            MuscleGroups.saveExerciseAndSync(currentActiveGroup, newIdx, name, videoUrl);
+            if (!data.media) data.media = [];
 
-            showMuscleGroupsConfig(); // Re-render complete modal
+            const newId = 'sys-ex-' + name.replace(/\s+/g, '-').toLowerCase();
+            const sysItems = [...(window.SYSTEM_RECIPES || []), ...(window.SYSTEM_MEDIA || [])];
+            const alreadyExists = sysItems.some(m => m.id === newId) || data.media.some(m => m.id === newId);
+            const finalId = alreadyExists ? 'sys-ex-' + generateUUID() : newId;
+
+            data.media.push({
+                id: finalId,
+                type: 'video',
+                category: 'exercise',
+                url: '', // No se permite añadir enlaces de video desde aquí
+                title: name,
+                muscleGroup: currentActiveGroup,
+                isSystem: false,
+                createdAt: new Date().toISOString()
+            });
+            saveData(data);
+
+            showMuscleGroupsConfig();
             showToast('Ejercicio añadido', 'success');
         }
 
@@ -306,31 +336,34 @@
                 return;
             }
 
-            config.groups.push(name);
-            config.exercises[name] = [];
-            saveMuscleGroups(config);
+            customGroups.push(name);
             currentActiveGroup = name;
             showMuscleGroupsConfig();
         }
 
         window.deleteCurrentGroup = function() {
-            if (!confirm(`¿Estás seguro de que quieres eliminar el grupo "${currentActiveGroup}" y todos sus ejercicios?`)) return;
+            if (!confirm(`¿Estás seguro de que quieres eliminar el grupo "${currentActiveGroup}"?`)) return;
 
             const config = getMuscleGroups();
-            config.groups = config.groups.filter(g => g !== currentActiveGroup);
-            delete config.exercises[currentActiveGroup];
-            saveMuscleGroups(config);
-            currentActiveGroup = config.groups[0] || null;
+            const exercises = config.exercises[currentActiveGroup] || [];
+            exercises.forEach(ex => {
+                if (ex.id) Media.delete(ex.id);
+            });
+
+            customGroups = customGroups.filter(g => g !== currentActiveGroup);
+            currentActiveGroup = null;
             showMuscleGroupsConfig();
+            showToast('Grupo eliminado', 'success');
         }
 
-        window.removeExerciseFromGroup = function(group, idx) {
+        window.removeExerciseFromGroup = function(group, idx, id) {
             if (!confirm('¿Eliminar este ejercicio de la biblioteca?')) return;
 
-            const config = getMuscleGroups();
-            config.exercises[group].splice(idx, 1);
-            saveMuscleGroups(config);
+            if (id && id !== 'undefined' && id !== 'null') {
+                Media.delete(id);
+            }
             showMuscleGroupsConfig();
+            showToast('Ejercicio eliminado', 'success');
         }
 
         // ============================================
@@ -591,8 +624,11 @@
         loadRoutines();
 
         async function onGoogleAuthSuccess() {
-            // Sincronizar con la nube
-            if (window.FirebaseService) {
+            // Sincronizar con la nube (Supabase es ahora el primario)
+            if (window.SupabaseService) {
+                window.SupabaseService.init();
+                await window.syncFromCloud();
+            } else if (window.FirebaseService) {
                 await window.FirebaseService.init();
                 await window.syncFromCloud();
             }
@@ -608,6 +644,6 @@
             if (typeof loadRoutines === 'function') loadRoutines();
         }
     </script>
-</body>
+    <script src="js/custom-recipes.js?v=129"></script></body>
 
 </html>

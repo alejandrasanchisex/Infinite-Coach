@@ -850,17 +850,21 @@
     <script src="js/firebase-config.js"></script>
     <script src="js/firebase-service.js"></script>
 
-    <script src="js/config.js?v=92"></script>
-    <script src="js/auth.js?v=92"></script>
-    <script src="js/sheets.js?v=92"></script>
-    <script src="js/data-models.js?v=92"></script>
-    <script src="js/utils.js?v=92"></script>
-    <script src="js/custom-recipes.js?v=92"></script>
-    <script src="js/custom-exercises.js?v=92"></script>
-    <script src="js/diet-editor-v3.js?v=92"></script>
+    <!-- Supabase SDK & Service -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="js/supabase-service.js"></script>
+
+    <script src="js/config.js?v=312"></script>
+    <script src="js/auth.js?v=312"></script>
+    <script src="js/sheets.js?v=312"></script>
+    <script src="js/data-models.js?v=312"></script>
+    <script src="js/utils.js?v=312"></script>
+    <script src="js/custom-recipes.js?v=312"></script>
+    <script src="js/custom-exercises.js?v=312"></script>
+    <script src="js/diet-editor-v3.js?v=312"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.29/jspdf.plugin.autotable.min.js"></script>
-    <script src="js/export-utils.js?v=92"></script>
+    <script src="js/export-utils.js?v=312"></script>
     <script>
         const pageUrlParams = new URLSearchParams(window.location.search);
         const clientId = pageUrlParams.get('id');
@@ -3532,7 +3536,7 @@
                         <div style="max-width: 800px; margin: 0 auto; border: 1px solid #eee; padding: 30px; border-radius: 8px;">
                             ${content}
                         </div>
-                    </body>
+                        <script src="js/custom-recipes.js?v=129"></script></body>
                 </html>
             `);
             printWindow.document.close();
@@ -4815,8 +4819,11 @@
 
         <script>
         async function onGoogleAuthSuccess() {
-            // Sincronizar con la nube
-            if (window.FirebaseService) {
+            // Sincronizar con la nube (Supabase es ahora el primario)
+            if (window.SupabaseService) {
+                window.SupabaseService.init();
+                await window.syncFromCloud();
+            } else if (window.FirebaseService) {
                 await window.FirebaseService.init();
                 await window.syncFromCloud();
             }
@@ -4840,15 +4847,21 @@
             if (typeof BrandConfig !== 'undefined') BrandConfig.applyTheme();
 
             // Si ya estamos logueados (trainerAuthed), forzamos un sync rápido
-            if (sessionStorage.getItem('_trainerAuthed') === '1' && window.FirebaseService) {
-                await window.FirebaseService.init();
-                await window.syncFromCloud();
-                if (typeof BrandConfig !== 'undefined') BrandConfig.applyTheme();
+            if (sessionStorage.getItem('_trainerAuthed') === '1') {
+                if (window.SupabaseService) {
+                    window.SupabaseService.init();
+                    await window.syncFromCloud();
+                    if (typeof BrandConfig !== 'undefined') BrandConfig.applyTheme();
+                } else if (window.FirebaseService) {
+                    await window.FirebaseService.init();
+                    await window.syncFromCloud();
+                    if (typeof BrandConfig !== 'undefined') BrandConfig.applyTheme();
+                }
             }
 
             if (typeof loadClientData === 'function') loadClientData();
         });
     </script>
-</body>
+    <script src="js/custom-recipes.js?v=131"></script></body>
 
 </html>

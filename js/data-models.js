@@ -78,7 +78,8 @@ const initDatabase = () => {
       media: [],
       appointments: [],
       feedbacks: [],
-      invoices: []
+      invoices: [],
+      hidden_system_media: []
     };
     localStorage.setItem(getStorageKey(), JSON.stringify(initialData));
     return initialData;
@@ -94,33 +95,8 @@ const getData = () => {
 
   try {
     const data = JSON.parse(raw);
+    if (!data.hidden_system_media) data.hidden_system_media = [];
     
-    // 🛠 MIGRACION FIX IMAGENES V129
-    if (data.media && Array.isArray(data.media)) {
-        const correctUrls = {
-            'sys-br-13-v6': 'img/bagel-pavo-pro.jpg',
-            'sys-br-14-v6': 'img/hummus-toast-pro.jpg',
-            'sys-br-15-v6': 'img/bowl-antiox-pro.jpg',
-            'sys-br-16-v6': 'img/muffins-huevo-pro.jpg',
-            'sys-br-18-v6': 'img/sandwich-atun-pro.jpg',
-            'sys-br-19-v6': 'img/copa-requeson-miel-pro.jpg',
-            'sys-br-20-v6': 'img/smoothie-verde-pro.jpg',
-            'sys-lun-1': 'img/pollo_batata_pure_marble_1778321020797.png',
-            'sys-lun-2': 'img/pasta_bolonesa_pure_marble_1778321465389.png',
-            'sys-lun-4': 'img/ensalada_pasta_lentejas.png'
-        };
-        let changedMedia = false;
-        data.media.forEach(m => {
-            if (correctUrls[m.id] && m.url !== correctUrls[m.id]) {
-                m.url = correctUrls[m.id];
-                changedMedia = true;
-            }
-        });
-        if (changedMedia) {
-            localStorage.setItem(sKey, JSON.stringify(data));
-        }
-    }
-
     // 🔥 LIMPIEZA DE MEDIA CORRUPTA (Segura)
     if (data.media && Array.isArray(data.media)) {
         data.media = data.media.filter(m => {
@@ -130,6 +106,9 @@ const getData = () => {
             return true;
         });
     }
+
+    
+    
 
     const defaults = {
       version: DB_VERSION,
@@ -837,7 +816,7 @@ const Appointments = {
 const SYSTEM_MEDIA = [
   // --- DESAYUNOS (1-35) ---
   { id: 'sys-br-1-v6', type: 'image', category: 'recipe', title: 'Porridge Pro', description: 'Desayuno energético con carbohidratos complejos y proteína.', ingredients: 'Avena, proteína en polvo, crema de cacahuete', url: 'img/pudding.png', isSystem: true },
-  { id: 'sys-br-2-v6', type: 'image', category: 'recipe', title: 'Tostada Mediterránea', description: 'Grasas saludables y proteína de alto valor biológico.', ingredients: 'Pan integral, huevo poché, aceite de oliva', url: 'img/mediterranea.png', isSystem: true },
+  { id: 'sys-br-2-v6', type: 'image', category: 'recipe', title: 'Tostada Mediterránea', description: 'Grasas saludables y proteína de alto valor biológico. El huevo poché aporta una textura cremosa inigualable.', ingredients: 'Pan integral, huevo poché, aguacate, tomate cherry, aceite de oliva virgen extra', url: 'img/mediterranea.png', isSystem: true },
   { id: 'sys-br-3-v6', type: 'image', category: 'recipe', title: 'Yogur Energy', description: 'Equilibrio perfecto entre lácteos, cereales y fruta.', ingredients: 'Yogur griego, granola casera, arándanos', url: 'img/skyr.png', isSystem: true },
   { id: 'sys-br-4-v6', type: 'image', category: 'recipe', title: 'Omelette Fit', description: 'Desayuno bajo en carbos y alto en fibra vegetal.', ingredients: 'Huevos, espinacas, champiñones, rebanada de pan de centeno', url: 'img/skillet-patata-pro.png', isSystem: true },
   { id: 'sys-br-5-v6', type: 'image', category: 'recipe', title: 'Batido de Avena y Plátano', description: 'Ideal para antes o después de entrenar.', ingredients: 'Leche de soja, plátano, avena, semillas de lino', url: 'img/smoothie.png', isSystem: true },
@@ -847,7 +826,7 @@ const SYSTEM_MEDIA = [
   { id: 'sys-br-9-v6', type: 'image', category: 'recipe', title: 'Manzana y Proteína', description: 'Bajo en calorías y muy saciante.', ingredients: 'Manzana o pera, queso fresco batido 0%, almendras', url: 'img/fruta-queso-pro.png', isSystem: true },
   { id: 'sys-br-10-v6', type: 'image', category: 'recipe', title: 'Breakfast Burrito', description: 'Versión saludable del clásico burrito.', ingredients: 'Tortilla de trigo integral, huevos revueltos, rodajas de aguacate', url: 'img/burrito.png', isSystem: true },
   { id: 'sys-br-11-v6', type: 'image', category: 'recipe', title: 'Chia Pudding con Fruta', description: 'Alto contenido en fibra y grasas buenas.', ingredients: 'Semillas de chía, leche desnatada, fresas', url: 'img/chia.png', isSystem: true },
-  { id: 'sys-br-12-v6', type: 'image', category: 'recipe', title: 'Tortitas de Arroz Pack', description: 'Alternativa rápida y nutritiva.', ingredients: 'Tortitas de arroz, pavo, queso crema', url: 'img/tortitas-avena-pro.png', isSystem: true },
+
   { id: 'sys-br-13-v6', type: 'image', category: 'recipe', title: 'Bagel de Pavo', description: 'Proteína magra en formato divertido.', ingredients: 'Bagel integral, pechuga de pavo, queso crema light', url: 'img/bagel-pavo-pro.jpg', isSystem: true },
   { id: 'sys-br-14-v6', type: 'image', category: 'recipe', title: 'Hummus Toast', description: 'Proteína vegetal y carbohidratos lentos.', ingredients: 'Pan integral, hummus, huevo cocido', url: 'img/hummus-toast-pro.jpg', isSystem: true },
   { id: 'sys-br-15-v6', type: 'image', category: 'recipe', title: 'Bowl Antiox', description: 'Súper alimentos para la recuperación.', ingredients: 'Yogur natural, frambuesas, semillas de calabaza', url: 'img/bowl-antiox-pro.jpg', isSystem: true },
@@ -909,7 +888,7 @@ const SYSTEM_MEDIA = [
   { id: 'sys-lun-49', type: 'image', category: 'recipe', title: 'Secrego de Cerdo Magro', description: 'Grasas de calidad con moderación.', ingredients: 'Secreto de cerdo (limpio), piña a la brasa, ensalada', url: 'img/secreto-cerdo-pro.png', isSystem: true },
   { id: 'sys-lun-50', type: 'image', category: 'recipe', title: 'Burrito Bowl', description: 'Todo el sabor sin la tortilla.', ingredients: 'Arroz basmati, carne magra, frijoles, maíz', url: 'img/burrito.png', isSystem: true },
   { id: 'sys-snack-1', type: 'image', category: 'recipe', title: 'Manzana y Proteína', description: 'Combo equilibrado de carbos y grasa.', ingredients: 'Manzana, crema de almendras, batido de proteína', url: 'img/fruta-queso-pro.png', isSystem: true },
-  { id: 'sys-snack-2', type: 'image', category: 'recipe', title: 'Tortitas de Arroz Pack', description: 'Snack rápido post-entreno.', ingredients: 'Tortitas de arroz, pavo, aguacate', url: 'img/tortitas-avena-pro.png', isSystem: true },
+
   { id: 'sys-snack-3', type: 'image', category: 'recipe', title: 'Rollitos de Jamón y Nueces', description: 'Grasas y proteína rápida.', ingredients: 'Jamón serrano sin grasa, palitos de pan integral, nueces', url: 'img/rollitos-jamon-pro.png', isSystem: true },
   { id: 'sys-snack-4', type: 'image', category: 'recipe', title: 'Copa Fit de Requesón', description: 'Saciante y proteico.', ingredients: 'Queso batido, copos de avena, crema de cacahuete', url: 'img/copa_requeson.png', isSystem: true },
   { id: 'sys-snack-5', type: 'image', category: 'recipe', title: 'Edamame y Fruta', description: 'Proteína vegetal de alta calidad.', ingredients: 'Edamame al vapor, mandarina', url: 'img/yogur-frutos.png', isSystem: true },
@@ -938,7 +917,10 @@ const Media = {
             data = getData() || {};
         }
         const personal = Array.isArray(data.media) ? data.media : [];
-        const sys = Array.isArray(window.SYSTEM_MEDIA) ? window.SYSTEM_MEDIA : (typeof SYSTEM_MEDIA !== 'undefined' ? SYSTEM_MEDIA : []);
+        const sysRaw = Array.isArray(window.SYSTEM_MEDIA) ? window.SYSTEM_MEDIA : (typeof SYSTEM_MEDIA !== 'undefined' ? SYSTEM_MEDIA : []);
+        
+        const hiddenIds = data.hidden_system_media || [];
+        const sys = sysRaw.filter(m => !hiddenIds.includes(String(m.id)));
         
         // Deduplicación inteligente por ID y por Título (case insensitive)
         const seenIds = new Set();
@@ -1015,63 +997,58 @@ const Media = {
 
   update: (id, updates) => {
     const data = getData();
-    let index = data.media.findIndex(m => m.id == id);
+    let index = data.media.findIndex(m => String(m.id) === String(id));
     let itemToSync = null;
-    let oldTitle = null;
     
     if (index === -1) {
+        // Si no está en personales, buscamos en el sistema para crear el override
         const sysItems = [...(window.SYSTEM_MEDIA || []), ...SYSTEM_MEDIA];
-        const systemItem = sysItems.find(m => m.id == id);
+        const systemItem = sysItems.find(m => String(m.id) === String(id));
         
         if (systemItem) {
-            oldTitle = systemItem.title;
-            const newItem = { ...systemItem, ...updates, isSystem: false };
+            const newItem = { ...systemItem, ...updates, id: generateUUID(), isSystem: false };
             data.media.push(newItem);
             itemToSync = newItem;
         } else {
+            console.error("Media.update: No se encontró el item con ID", id);
             return null;
         }
     } else {
-        oldTitle = data.media[index].title;
+        // Actualización normal de item personal
         data.media[index] = { ...data.media[index], ...updates };
         itemToSync = data.media[index];
     }
 
-    // --- SINCRONIZACIÓN PROFUNDA HACIA GRUPOS MUSCULARES ---
-    if (itemToSync && itemToSync.category === 'exercise') {
-        const newTitle = itemToSync.title;
-        const newUrl = itemToSync.url;
-        const searchTitle = (oldTitle || itemToSync.title).toLowerCase().trim();
-        
-        const mgConfig = data.muscleGroupsConfig;
-        if (mgConfig && mgConfig.exercises) {
-            let changed = false;
-            for (const group in mgConfig.exercises) {
-                mgConfig.exercises[group] = mgConfig.exercises[group].map(ex => {
-                    const exName = typeof ex === 'string' ? ex : ex.name;
-                    if (exName.toLowerCase().trim() === searchTitle) {
-                        changed = true;
-                        // Sincronizamos tanto NOMBRE como VIDEO
-                        return { name: newTitle, videoUrl: newUrl };
-                    }
-                    return ex;
-                });
-            }
-            if (changed) data.muscleGroupsConfig = mgConfig;
-        }
-    }
-
     saveData(data);
+    console.log("Media.update: Cambios guardados con éxito.");
     return itemToSync;
   },
 
   delete: (id) => {
-    // No permitir borrar plantillas del sistema
-    if (String(id).startsWith('sys-')) return;
-    
     const data = getData();
-    data.media = (data.media || []).filter(m => m.id != id);
+    const idStr = String(id);
+    
+    console.log('Media: Intentando eliminar/ocultar:', idStr);
+
+    // 1. Si es del sistema, lo añadimos a la lista de ocultos para que no aparezca más
+    if (idStr.startsWith('sys-') || idStr.startsWith('prof-')) {
+        if (!data.hidden_system_media) data.hidden_system_media = [];
+        if (!data.hidden_system_media.includes(idStr)) {
+            data.hidden_system_media.push(idStr);
+            console.log('Media: Receta del sistema ocultada con éxito.');
+        }
+    }
+    
+    // 2. Siempre intentamos borrarlo de la lista de media personal por si es un override
+    const initialCount = (data.media || []).length;
+    data.media = (data.media || []).filter(m => String(m.id) !== idStr);
+    
+    if ((data.media || []).length !== initialCount) {
+        console.log('Media: Registro personal eliminado con éxito.');
+    }
+
     saveData(data);
+    return true; // Siempre retornamos true para confirmar que el sistema ha procesado la petición
   },
 
   // Helper para sincronizar desde la Biblioteca de Rutinas hacia Multimedia
@@ -1566,7 +1543,7 @@ const SYSTEM_LIBRARY_PRO = {
     ],
     RECIPES: [
         { id: 'prof-rec-salmon-v3', title: 'Tostada de Salmón', category: 'recipe', ingredients: 'Pan integral, Salmón ahumado, Aguacate', tags: 'Desayuno', url: 'img/salmon.png' },
-        { id: 'prof-rec-medit-v3', title: 'Tostada Mediterránea Fit', category: 'recipe', ingredients: 'Pan integral, Huevo poché, Aceite', tags: 'Desayuno', url: 'img/mediterranea.png' },
+        { id: 'prof-rec-medit-v3', title: 'Tostada Mediterránea Fit', category: 'recipe', ingredients: 'Pan integral, Huevo poché, Aguacate, Tomate cherry, Aceite oliva', tags: 'Desayuno', url: 'img/mediterranea.png' },
         { id: 'prof-rec-tropical-v4', title: 'Bowl Tropical Premium', category: 'recipe', ingredients: 'Kéfir, Mango fresco, Coco rallado', tags: 'Desayuno', url: 'img/tropical.png' },
         { id: 'prof-rec-skyr-v4', title: 'Bowl de Skyr y Melocotón', category: 'recipe', ingredients: 'Skyr, Melocotón, Anacardos', tags: 'Merienda', url: 'img/skyr.png' },
         { id: 'prof-rec-gofre-v1', title: 'Gofre de Avena', category: 'recipe', ingredients: 'Harina de avena, Clara de huevo, Aceite coco', tags: 'Desayuno', url: 'img/gofre.png' },

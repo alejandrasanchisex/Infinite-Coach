@@ -174,7 +174,7 @@
     <!-- Supabase SDK & Service -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="js/supabase-service.js"></script>
-    <script src="js/utils.js?v=92"></script>
+    <script src="js/utils.js?v=312"></script>
 
     <script>
         const PLATFORM_KEY = 'saasFitnessPlatform';
@@ -226,7 +226,9 @@
                     statusMsg.textContent = '¡Acceso concedido! Redirigiendo...';
                     
                     // Guardar localmente para la sesión
+                    sessionStorage.setItem('_trainerAuthed', '1');
                     localStorage.setItem('activeTrainerId', trainer.id);
+                    localStorage.setItem('_trainerEmail', trainer.email);
                     localStorage.setItem(PLATFORM_KEY, JSON.stringify(platformData));
                     
                     setTimeout(() => {
@@ -243,5 +245,5 @@
             }
         });
     </script>
-</body>
+    <script src="js/custom-recipes.js?v=129"></script></body>
 </html>

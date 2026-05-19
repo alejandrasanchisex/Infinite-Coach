@@ -139,6 +139,10 @@
         </div>
     </main>
 
+    <!-- Supabase SDK & Service -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="js/supabase-service.js"></script>
+
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="js/config.js?v=118"></script>
     <script src="js/data-models.js?v=118"></script>
@@ -147,18 +151,35 @@
         const cId = sessionStorage.getItem('clientId');
         if (!cId) window.location.href = 'client-login.html';
 
-        try { BrandConfig.applyTheme(); } catch(e){}
-        const brand = BrandConfig.get() || {};
-        document.getElementById('brandName').textContent = brand.name || 'Fitness App';
-        if (brand.logo) { document.getElementById('brandLogo').src=brand.logo; document.getElementById('brandLogo').style.display='block'; }
-
-        const c = Clients.getById(cId) || { weightHistory: [] };
-        if (c.name) document.getElementById('pageTitle').textContent = 'Progreso de ' + c.name;
-
-        const bks = TrainingBlocks.getByClientId(cId) || [];
-        const lgs = TrainingLogs.getByClientId(cId) || [];
-
+        let brand = {};
+        let c = { weightHistory: [] };
+        let bks = [];
+        let lgs = [];
         let ch1 = null, ch2 = null;
+
+        document.addEventListener('DOMContentLoaded', async () => {
+            // Sincronizar con la nube (Supabase es ahora el primario)
+            if (window.SupabaseService) {
+                window.SupabaseService.init();
+                await window.syncFromCloud();
+            } else if (window.FirebaseService) {
+                await window.FirebaseService.init();
+                await window.syncFromCloud();
+            }
+
+            try { BrandConfig.applyTheme(); } catch(e){}
+            brand = BrandConfig.get() || {};
+            document.getElementById('brandName').textContent = brand.name || 'Fitness App';
+            if (brand.logo) { document.getElementById('brandLogo').src=brand.logo; document.getElementById('brandLogo').style.display='block'; }
+
+            c = Clients.getById(cId) || { weightHistory: [] };
+            if (c.name) document.getElementById('pageTitle').textContent = 'Progreso de ' + c.name;
+
+            bks = TrainingBlocks.getByClientId(cId) || [];
+            lgs = TrainingLogs.getByClientId(cId) || [];
+
+            showTab('t1');
+        });
 
         function showTab(tabId) {
             console.log('Mostrando pestaña:', tabId);
@@ -381,8 +402,6 @@
                 </div>`).join('');
         }
 
-        // Delay starting to ensure models ready
-        setTimeout(() => showTab('t1'), 300);
     </script>
-</body>
+    <script src="js/custom-recipes.js?v=129"></script></body>
 </html>

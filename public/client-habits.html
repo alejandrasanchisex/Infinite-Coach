@@ -190,9 +190,13 @@
         </div>
     </main>
 
-    <script src="js/config.js?v=106"></script>
-    <script src="js/data-models.js?v=106"></script>
-    <script src="js/utils.js?v=106"></script>
+    <!-- Supabase SDK & Service -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="js/supabase-service.js"></script>
+
+    <script src="js/config.js?v=312"></script>
+    <script src="js/data-models.js?v=312"></script>
+    <script src="js/utils.js?v=312"></script>
     <script>
         const clientId = sessionStorage.getItem('clientId');
         if (!clientId) { window.location.href = 'client-login.html'; }
@@ -201,18 +205,31 @@
         let currentHabitFilter = 'all';
         let currentPeriod = 7;
 
-        // Theme
-        BrandConfig.applyTheme();
-        const brand = BrandConfig.get();
-        document.getElementById('brandName').textContent = brand.name;
-        if (brand.logo) {
-            document.getElementById('brandLogo').src = brand.logo;
-            document.getElementById('brandLogo').style.display = 'block';
-        }
+        document.addEventListener('DOMContentLoaded', async () => {
+            // Sincronizar con la nube (Supabase es ahora el primario)
+            if (window.SupabaseService) {
+                window.SupabaseService.init();
+                await window.syncFromCloud();
+            } else if (window.FirebaseService) {
+                await window.FirebaseService.init();
+                await window.syncFromCloud();
+            }
 
-        // Date Display
-        const dateOptions = { weekday: 'long', day: 'numeric', month: 'long' };
-        document.getElementById('todayDateLabel').textContent = new Date().toLocaleDateString('es-ES', dateOptions);
+            // Theme
+            BrandConfig.applyTheme();
+            const brand = BrandConfig.get();
+            document.getElementById('brandName').textContent = brand.name;
+            if (brand.logo) {
+                document.getElementById('brandLogo').src = brand.logo;
+                document.getElementById('brandLogo').style.display = 'block';
+            }
+
+            // Date Display
+            const dateOptions = { weekday: 'long', day: 'numeric', month: 'long' };
+            document.getElementById('todayDateLabel').textContent = new Date().toLocaleDateString('es-ES', dateOptions);
+
+            loadHabits();
+        });
 
         function loadHabits() {
             const h = Habits.getToday(clientId) || { water: 0, steps: 0, sleep: 0 };
@@ -401,8 +418,6 @@
         }
 
         function toggleMenu() { document.getElementById('navLinks').classList.toggle('active'); }
-
-        loadHabits();
     </script>
-</body>
+    <script src="js/custom-recipes.js?v=129"></script></body>
 </html>

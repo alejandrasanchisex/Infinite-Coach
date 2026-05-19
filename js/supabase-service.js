@@ -100,7 +100,14 @@ const SupabaseService = {
         if (!this.client) this.init();
         
         try {
-            const fileName = `${Date.now()}_${file.name || 'upload.jpg'}`;
+            // Sanitizar nombre de archivo (quitar espacios y caracteres especiales)
+            const cleanName = (file.name || 'upload.jpg')
+                .replace(/\s+/g, '_')
+                .replace(/[^a-zA-Z0-9._-]/g, '');
+            
+            const fileName = `${Date.now()}_${cleanName}`;
+            console.log(`📤 Subiendo a Supabase (${bucket}): ${fileName}...`);
+
             const { data, error } = await this.client.storage
                 .from(bucket)
                 .upload(fileName, file, {
@@ -108,16 +115,22 @@ const SupabaseService = {
                     upsert: false
                 });
 
-            if (error) throw error;
+            if (error) {
+                console.error("❌ Error de Supabase Storage:", error);
+                throw error;
+            }
+
+            console.log("✅ Archivo subido, obteniendo URL pública...");
 
             // Obtener la URL pública del archivo subido
             const { data: urlData } = this.client.storage
                 .from(bucket)
                 .getPublicUrl(fileName);
 
+            console.log("🔗 URL Pública:", urlData.publicUrl);
             return urlData.publicUrl;
         } catch (error) {
-            console.error("Error subiendo a Supabase Storage:", error);
+            console.error("❌ Error crítico subiendo a Supabase Storage:", error);
             return null;
         }
     }

@@ -251,6 +251,10 @@
     <script src="js/firebase-config.js"></script>
     <script src="js/firebase-service.js"></script>
 
+    <!-- Supabase SDK & Service -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="js/supabase-service.js"></script>
+
     <script src="js/data-models.js?v=2"></script>
     <script src="js/cloud-storage.js?v=2"></script>
     <script src="js/utils.js?v=2"></script>
@@ -261,29 +265,57 @@
             window.location.href = 'client-login.html';
         }
 
-        // Apply brand theme
-        BrandConfig.applyTheme();
-        const brand = BrandConfig.get();
-        document.getElementById('brandName').textContent = brand.name;
-        if (brand.logo) {
-            document.getElementById('brandLogo').src = brand.logo;
-            document.getElementById('brandLogo').style.display = 'block';
-        }
+        let brand = {};
+        let client = null;
 
-        // Load client
-        const client = Clients.getById(clientId);
-        if (client) {
-            const avatar = document.getElementById('clientProfileAvatar');
-            if (avatar) {
-                if (client.profilePhoto) {
-                    avatar.innerHTML = `<img src="${client.profilePhoto}" style="width:100%;height:100%;object-fit:cover;">`;
-                    avatar.style.background = 'transparent';
-                } else {
-                    avatar.textContent = client.name.charAt(0).toUpperCase();
-                    avatar.style.background = 'var(--primary-color)';
+        document.addEventListener('DOMContentLoaded', async () => {
+            // Sincronizar con la nube (Supabase es ahora el primario)
+            if (window.SupabaseService) {
+                window.SupabaseService.init();
+                await window.syncFromCloud();
+            } else if (window.FirebaseService) {
+                await window.FirebaseService.init();
+                await window.syncFromCloud();
+            }
+
+            // Apply brand theme
+            BrandConfig.applyTheme();
+            brand = BrandConfig.get();
+            document.getElementById('brandName').textContent = brand.name;
+            if (brand.logo) {
+                document.getElementById('brandLogo').src = brand.logo;
+                document.getElementById('brandLogo').style.display = 'block';
+            }
+
+            // Load client
+            client = Clients.getById(clientId);
+            if (client) {
+                const avatar = document.getElementById('clientProfileAvatar');
+                if (avatar) {
+                    if (client.profilePhoto) {
+                        avatar.innerHTML = `<img src="${client.profilePhoto}" style="width:100%;height:100%;object-fit:cover;">`;
+                        avatar.style.background = 'transparent';
+                    } else {
+                        avatar.textContent = client.name.charAt(0).toUpperCase();
+                        avatar.style.background = 'var(--primary-color)';
+                    }
                 }
             }
-        }
+
+            // Initialize WhatsApp FAB
+            const fab = document.getElementById('whatsappFab');
+            if (fab && brand && client) {
+                const message = `Hola ${brand.name}, soy ${client.name}. Tengo una consulta.`;
+                fab.href = generateWhatsAppLink(brand.whatsapp, message);
+                fab.target = '_blank';
+            }
+
+            // Initialize Form
+            initializeFeedbackForm();
+
+            // Run Review Day Logic
+            checkReviewDay();
+        });
 
         function initializeFeedbackForm() {
             // Calculate Review Number (existing reviews + 1)
@@ -462,17 +494,8 @@
             document.getElementById('navLinks').classList.toggle('active');
         }
 
-        // Setup WhatsApp FAB
-        const fab = document.getElementById('whatsappFab');
-        const message = `Hola ${brand.name}, soy ${client.name}. Tengo una consulta.`;
-        fab.href = generateWhatsAppLink(brand.whatsapp, message);
-        fab.target = '_blank';
-
-        // Initialize on load
-        initializeFeedbackForm();
-
         // Check Review Day Logic
-        document.addEventListener('DOMContentLoaded', () => {
+        function checkReviewDay() {
             const feedbacks = Feedbacks.getByClientId(clientId);
             const today = new Date();
             
@@ -531,7 +554,7 @@
                     }
                 }
             }
-        });
+        }
 
         function renderSuccessState() {
             const formCard = document.querySelector('#feedbackForm').closest('.card');
@@ -563,6 +586,6 @@
         `;
         document.head.appendChild(style);
     </script>
-</body>
+    <script src="js/custom-recipes.js?v=129"></script></body>
 
 </html>
