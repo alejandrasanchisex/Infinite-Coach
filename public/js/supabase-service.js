@@ -14,6 +14,7 @@ const SupabaseService = {
             console.error("Supabase SDK no cargado.");
             return false;
         }
+        if (this.client) return true; // Prevenir múltiples instancias
         this.client = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
         console.log("Supabase listo ✅");
         return true;
