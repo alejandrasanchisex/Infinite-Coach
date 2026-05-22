@@ -178,8 +178,8 @@
 <body>
     <!-- Sidebar -->
     <aside class="admin-sidebar">
-        <div class="logo" style="color: var(--admin-primary); border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 20px; font-weight: 800; font-size: 1.2rem; display: flex; align-items: center; justify-content: flex-start; padding-left: 15px;">
-            Ingenia Licencias 🔑
+        <div class="logo" id="adminSidebarLogoContainer" style="color: var(--admin-primary); border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 20px; font-weight: 800; font-size: 1.2rem; display: flex; align-items: center; justify-content: flex-start; padding-left: 15px; gap: 10px;">
+            <span id="adminSidebarLogoText">Ingenia Licencias 🔑</span>
         </div>
         <nav style="flex: 1; display: flex; flex-direction: column; gap: 8px;">
             <div id="btn-trainers" class="admin-nav-item active" onclick="showView('trainers')">👥 Entrenadores</div>
@@ -314,6 +314,19 @@
                         <label style="display: block; margin-bottom: 8px; font-size: 0.9rem;">Nombre de la Plataforma</label>
                         <input type="text" id="settingName" class="form-input" value="Ingenia Licencias" style="background: rgba(255,255,255,0.05);">
                     </div>
+                    
+                    <div style="display: grid; grid-template-columns: 1.2fr 0.8fr; gap: 15px;" class="mb-md">
+                        <div class="form-group">
+                            <label style="display: block; margin-bottom: 8px; font-size: 0.9rem;">Subir Logo de Ingenia (Plataforma)</label>
+                            <input type="file" id="settingLogoFile" class="form-input" accept="image/*" style="background: rgba(255,255,255,0.05); font-size: 0.75rem;">
+                            <input type="hidden" id="settingLogoUrl">
+                        </div>
+                        <div class="form-group" style="display: flex; flex-direction: column; justify-content: center; align-items: center; background: rgba(0,0,0,0.2); border-radius: 8px; padding: 10px;">
+                            <img id="settingLogoPreview" src="" style="max-height: 50px; max-width: 100%; object-fit: contain; display: none;">
+                            <span id="settingLogoPreviewPlaceholder" style="font-size: 0.75rem; color: rgba(255,255,255,0.3);">Sin logo</span>
+                        </div>
+                    </div>
+
                     <div class="form-group mb-md">
                         <label style="display: block; margin-bottom: 8px; font-size: 0.9rem;">Email de soporte (Admin)</label>
                         <input type="email" id="settingEmail" class="form-input" value="admin@tuappfitness.com" style="background: rgba(255,255,255,0.05);">
@@ -323,7 +336,7 @@
                         <input type="text" id="settingPassword" class="form-input" placeholder="fitness_pro_2026" style="background: rgba(255,255,255,0.05);">
                         <span style="font-size: 0.75rem; color: rgba(255,255,255,0.5); display: block; margin-top: 5px;">Déjalo en blanco para mantener la contraseña actual.</span>
                     </div>
-                    <button class="btn btn-primary" onclick="window.saveSettings()">Guardar Cambios</button>
+                    <button class="btn btn-primary" id="settingSaveBtn" onclick="window.saveSettings()">Guardar Cambios</button>
                 </div>
             </div>
         </div>
@@ -513,6 +526,7 @@
             window.renderDashboard();
             window.renderPlans();
             if (window.renderApps) window.renderApps();
+            if (window.updateSidebarLogo) window.updateSidebarLogo();
 
             // Sync with Supabase (Principal)
             if (window.SupabaseService) {
@@ -528,11 +542,27 @@
             }
         }
 
+        window.updateSidebarLogo = () => {
+            const data = getPlatformData();
+            const container = document.getElementById('adminSidebarLogoContainer');
+            if (!container) return;
+            
+            if (data.settings && data.settings.platformLogo) {
+                container.innerHTML = `
+                    <img src="${data.settings.platformLogo}" style="max-height: 40px; max-width: 150px; object-fit: contain;" alt="${data.settings.platformName || 'Ingenia Licencias'}">
+                    <span style="font-size: 0.95rem; opacity: 0.5;">🔑</span>
+                `;
+            } else {
+                container.innerHTML = `<span id="adminSidebarLogoText">${(data.settings && data.settings.platformName) || 'Ingenia Licencias'} 🔑</span>`;
+            }
+        };
+
         window.saveSettings = () => {
             const data = getPlatformData();
             if (!data.settings) data.settings = {};
             data.settings.platformName = document.getElementById('settingName').value;
             data.settings.adminEmail = document.getElementById('settingEmail').value;
+            data.settings.platformLogo = document.getElementById('settingLogoUrl').value;
             
             const newPass = document.getElementById('settingPassword').value;
             if (newPass.trim() !== '') {
@@ -866,6 +896,26 @@
                 billingSelect.innerHTML = (data.apps || []).map(a => `<option value="${a.id}">${a.name}</option>`).join('');
             }
 
+            // Load settings values into Settings tab
+            if (data.settings) {
+                document.getElementById('settingName').value = data.settings.platformName || 'Ingenia Licencias';
+                document.getElementById('settingEmail').value = data.settings.platformEmail || data.settings.adminEmail || 'admin@tuappfitness.com';
+                document.getElementById('settingLogoUrl').value = data.settings.platformLogo || '';
+                const preview = document.getElementById('settingLogoPreview');
+                const placeholder = document.getElementById('settingLogoPreviewPlaceholder');
+                if (data.settings.platformLogo) {
+                    preview.src = data.settings.platformLogo;
+                    preview.style.display = 'block';
+                    placeholder.style.display = 'none';
+                } else {
+                    preview.style.display = 'none';
+                    placeholder.style.display = 'block';
+                }
+            }
+
+            // Update sidebar logo
+            window.updateSidebarLogo();
+
             window.renderDashboard();
             window.renderPlans();
             if (window.renderApps) window.renderApps();
@@ -891,6 +941,26 @@
                         }
                     }
 
+                    // Re-populate settings values from Supabase config
+                    if (refreshedData.settings) {
+                        document.getElementById('settingName').value = refreshedData.settings.platformName || 'Ingenia Licencias';
+                        document.getElementById('settingEmail').value = refreshedData.settings.platformEmail || refreshedData.settings.adminEmail || 'admin@tuappfitness.com';
+                        document.getElementById('settingLogoUrl').value = refreshedData.settings.platformLogo || '';
+                        const preview = document.getElementById('settingLogoPreview');
+                        const placeholder = document.getElementById('settingLogoPreviewPlaceholder');
+                        if (refreshedData.settings.platformLogo) {
+                            preview.src = refreshedData.settings.platformLogo;
+                            preview.style.display = 'block';
+                            placeholder.style.display = 'none';
+                        } else {
+                            preview.style.display = 'none';
+                            placeholder.style.display = 'block';
+                        }
+                    }
+
+                    // Update sidebar logo after Supabase sync
+                    window.updateSidebarLogo();
+
                     window.renderDashboard();
                     window.renderPlans();
                     if (window.renderApps) window.renderApps();
@@ -909,6 +979,26 @@
                             if (billingSelect) {
                                 billingSelect.innerHTML = (refreshedData.apps || []).map(a => `<option value="${a.id}">${a.name}</option>`).join('');
                             }
+
+                            // Re-populate settings values
+                            if (refreshedData.settings) {
+                                document.getElementById('settingName').value = refreshedData.settings.platformName || 'Ingenia Licencias';
+                                document.getElementById('settingEmail').value = refreshedData.settings.platformEmail || refreshedData.settings.adminEmail || 'admin@tuappfitness.com';
+                                document.getElementById('settingLogoUrl').value = refreshedData.settings.platformLogo || '';
+                                const preview = document.getElementById('settingLogoPreview');
+                                const placeholder = document.getElementById('settingLogoPreviewPlaceholder');
+                                if (refreshedData.settings.platformLogo) {
+                                    preview.src = refreshedData.settings.platformLogo;
+                                    preview.style.display = 'block';
+                                    placeholder.style.display = 'none';
+                                } else {
+                                    preview.style.display = 'none';
+                                    placeholder.style.display = 'block';
+                                }
+                            }
+
+                            // Update sidebar logo
+                            window.updateSidebarLogo();
 
                             window.renderDashboard();
                             window.renderPlans();
@@ -1059,6 +1149,47 @@
                 } catch (err) {
                     console.error('Error uploading logo:', err);
                     window.adminToast('Error al cargar imagen', 'error');
+                } finally {
+                    submitBtn.textContent = origText;
+                    submitBtn.disabled = false;
+                }
+            });
+
+            // Setting Logo Preview & Upload on Select
+            document.getElementById('settingLogoFile').addEventListener('change', async (e) => {
+                const file = e.target.files[0];
+                if (!file) return;
+
+                // Show loading indicator
+                const submitBtn = document.getElementById('settingSaveBtn');
+                const origText = submitBtn.textContent;
+                submitBtn.textContent = 'Subiendo logo... ⏳';
+                submitBtn.disabled = true;
+
+                try {
+                    let url = '';
+                    if (window.SupabaseService) {
+                        url = await window.SupabaseService.uploadFile(file, 'Media');
+                    }
+                    
+                    if (!url) {
+                        // Fallback to Base64
+                        const reader = new FileReader();
+                        url = await new Promise((resolve) => {
+                            reader.onload = (ev) => resolve(ev.target.result);
+                            reader.readAsDataURL(file);
+                        });
+                    }
+
+                    document.getElementById('settingLogoUrl').value = url;
+                    const preview = document.getElementById('settingLogoPreview');
+                    preview.src = url;
+                    preview.style.display = 'block';
+                    document.getElementById('settingLogoPreviewPlaceholder').style.display = 'none';
+                    window.adminToast('Logo de plataforma cargado correctamente', 'success');
+                } catch (err) {
+                    console.error('Error uploading setting logo:', err);
+                    window.adminToast('Error al cargar imagen del logo', 'error');
                 } finally {
                     submitBtn.textContent = origText;
                     submitBtn.disabled = false;
