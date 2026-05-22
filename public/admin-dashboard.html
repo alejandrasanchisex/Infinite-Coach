@@ -183,6 +183,7 @@
         </div>
         <nav style="flex: 1; display: flex; flex-direction: column; gap: 8px;">
             <div id="btn-trainers" class="admin-nav-item active" onclick="showView('trainers')">👥 Entrenadores</div>
+            <div id="btn-apps" class="admin-nav-item" onclick="showView('apps')">📱 Aplicaciones</div>
             <div id="btn-billing" class="admin-nav-item" onclick="showView('billing')">💰 Suscripciones</div>
             <div id="btn-settings" class="admin-nav-item" onclick="showView('settings')">⚙️ Configuración Admin</div>
         </nav>
@@ -240,6 +241,23 @@
                         </tbody>
                     </table>
                 </div>
+            </div>
+        </div>
+
+        <!-- View: Apps -->
+        <div id="apps-view" class="admin-view" style="display: none;">
+            <header class="admin-header">
+                <div>
+                    <h1 style="font-size: 1.8rem; margin: 0;">Gestión de Aplicaciones</h1>
+                    <p style="color: rgba(255,255,255,0.5); font-size: 0.9rem; margin-top: 5px;">Crea y personaliza las diferentes aplicaciones de tu catálogo SaaS.</p>
+                </div>
+                <button class="btn btn-primary" onclick="window.openAppModal()">
+                    ➕ Nueva Aplicación
+                </button>
+            </header>
+
+            <div class="grid grid-3 gap-lg mb-xl" id="appsGridContainer">
+                <!-- JS Dynamic Apps -->
             </div>
         </div>
 
@@ -322,21 +340,71 @@
                     <label style="display: block; margin-bottom: 6px; font-size: 0.85rem;">Email de Acceso</label>
                     <input type="email" id="tEmail" class="form-input" placeholder="email@ejemplo.com" required>
                 </div>
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
-                    <div class="form-group mb-lg">
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;" class="mb-md">
+                    <div class="form-group">
                         <label style="display: block; margin-bottom: 6px; font-size: 0.85rem;">Plan</label>
                         <select id="tPlan" class="form-select">
                             <!-- Dynamic Load -->
                         </select>
                     </div>
-                    <div class="form-group mb-lg">
+                    <div class="form-group">
                         <label style="display: block; margin-bottom: 6px; font-size: 0.85rem;">Día Factur.</label>
                         <input type="number" id="tBillingDay" class="form-input" value="1" min="1" max="28">
                     </div>
                 </div>
+                <div class="form-group mb-lg">
+                    <label style="display: block; margin-bottom: 6px; font-size: 0.85rem;">Aplicación Asociada / Licencia</label>
+                    <select id="tApp" class="form-select" required>
+                        <!-- Dynamic Load Apps -->
+                    </select>
+                </div>
                 <div style="display: flex; gap: 12px; margin-top: 10px;">
                     <button type="button" class="btn btn-secondary" style="flex:1" onclick="window.closeTrainerModal()">Cerrar</button>
                     <button type="submit" class="btn btn-primary" style="flex:1">🚀 Activar Licencia</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal for New/Edit App -->
+    <div class="modal-overlay-admin" id="appModal">
+        <div class="modal-content-admin">
+            <h2 id="appModalTitle" style="margin-top: 0; color: var(--admin-primary);">📱 Configurar Aplicación</h2>
+            <p style="color: rgba(255,255,255,0.6); font-size: 0.9rem; margin-bottom: 25px;">Define el branding por defecto para esta aplicación de tu catálogo SaaS.</p>
+            
+            <form id="appForm">
+                <input type="hidden" id="appEditId">
+                
+                <div class="form-group mb-md">
+                    <label style="display: block; margin-bottom: 6px; font-size: 0.85rem;">Nombre de la App *</label>
+                    <input type="text" id="appName" class="form-input" placeholder="Ej: Infinite Coach" required>
+                </div>
+
+                <div class="form-group mb-md">
+                    <label style="display: block; margin-bottom: 6px; font-size: 0.85rem;">Descripción</label>
+                    <input type="text" id="appDesc" class="form-input" placeholder="Ej: App de entrenamiento de alta gama">
+                </div>
+
+                <div style="display: grid; grid-template-columns: 1.2fr 0.8fr; gap: 15px;" class="mb-md">
+                    <div class="form-group">
+                        <label style="display: block; margin-bottom: 6px; font-size: 0.85rem;">Subir Logo de la App</label>
+                        <input type="file" id="appLogoFile" class="form-input" accept="image/*" style="font-size: 0.75rem;">
+                        <input type="hidden" id="appLogoUrl">
+                    </div>
+                    <div class="form-group">
+                        <label style="display: block; margin-bottom: 6px; font-size: 0.85rem;">Color Principal</label>
+                        <input type="color" id="appPrimaryColor" class="form-input" style="height: 38px; padding: 2px; cursor: pointer;" value="#8B5CF6">
+                    </div>
+                </div>
+
+                <div id="logoPreviewContainer" style="display:none; text-align:center; background:rgba(0,0,0,0.2); padding:10px; border-radius:8px; margin-bottom: 15px;">
+                    <img id="logoPreview" src="" style="max-height:60px; object-fit:contain;">
+                    <p class="text-xs text-muted" style="margin: 5px 0 0 0;">Previsualización de Logo</p>
+                </div>
+
+                <div style="display: flex; gap: 12px; margin-top: 10px;">
+                    <button type="button" class="btn btn-secondary" style="flex:1" onclick="window.closeAppModal()">Cerrar</button>
+                    <button type="submit" id="appSubmitBtn" class="btn btn-primary" style="flex:1">💾 Guardar App</button>
                 </div>
             </form>
         </div>
@@ -403,17 +471,24 @@
                     stats: { totalRevenue: 0 } 
                 };
                 if(!data.trainers) data.trainers = [];
+                // Ensure all trainers have appId associated
+                data.trainers.forEach(t => {
+                    if (!t.appId) t.appId = 'infinite-coach';
+                });
                 if(!data.plans) data.plans = [
                     { id: 'Basic', name: 'Plan Basic', price: 29, desc: 'Hasta 20 clientes', stripeLink: '' },
                     { id: 'Pro', name: 'Plan Pro', price: 59, desc: 'Clientes ilimitados', stripeLink: '' },
                     { id: 'Elite', name: 'Plan Elite', price: 99, desc: 'Marca blanca', stripeLink: '' },
                     { id: 'Free', name: 'Plan Gratis', price: 0, desc: 'Licencia Cortesía / Admin', stripeLink: '' }
                 ];
+                if(!data.apps) data.apps = [
+                    { id: 'infinite-coach', name: 'Infinite Coach', logo: 'https://images.unsplash.com/photo-1517838277536-f5f99be501cd?q=80&w=200&auto=format&fit=crop', primaryColor: '#8B5CF6', desc: 'Aplicación premium de entrenamiento personal y nutrición.' }
+                ];
                 if(!data.settings) data.settings = { platformName: 'Ingenia Licencias', adminEmail: 'admin@tuappfitness.com', adminPassword: 'fitness_pro_2026' };
                 return data;
             } catch(e) {
                 console.error("Error storage:", e);
-                return { trainers: [], plans: [] };
+                return { trainers: [], plans: [], apps: [] };
             }
         }
 
@@ -421,6 +496,7 @@
             localStorage.setItem(PLATFORM_KEY, JSON.stringify(data));
             window.renderDashboard();
             window.renderPlans();
+            if (window.renderApps) window.renderApps();
 
             // Sync with Supabase (Principal)
             if (window.SupabaseService) {
@@ -483,8 +559,15 @@
         // MODALS
         window.openTrainerModal = () => {
             const data = getPlatformData();
-            const select = document.getElementById('tPlan');
-            select.innerHTML = data.plans.map(p => `<option value="${p.id}">${p.name} (${p.price}€)</option>`).join('');
+            
+            // Populate Plans
+            const selectPlan = document.getElementById('tPlan');
+            selectPlan.innerHTML = data.plans.map(p => `<option value="${p.id}">${p.name} (${p.price}€)</option>`).join('');
+            
+            // Populate Apps
+            const selectApp = document.getElementById('tApp');
+            selectApp.innerHTML = (data.apps || []).map(a => `<option value="${a.id}">${a.name}</option>`).join('');
+
             document.getElementById('tName').value = '';
             document.getElementById('tEmail').value = '';
             document.getElementById('trainerModal').style.display = 'flex';
@@ -513,6 +596,39 @@
         };
         window.closePlanModal = () => { document.getElementById('planModal').style.display = 'none'; };
 
+        // APP MODALS
+        window.openAppModal = (appId = null) => {
+            const data = getPlatformData();
+            document.getElementById('appLogoFile').value = '';
+            
+            if(appId) {
+                const app = data.apps.find(x => x.id === appId);
+                document.getElementById('appModalTitle').textContent = '✏️ Editar Branding de ' + app.name;
+                document.getElementById('appEditId').value = app.id;
+                document.getElementById('appName').value = app.name;
+                document.getElementById('appDesc').value = app.desc || '';
+                document.getElementById('appLogoUrl').value = app.logo || '';
+                document.getElementById('appPrimaryColor').value = app.primaryColor || '#8B5CF6';
+                
+                if (app.logo) {
+                    document.getElementById('logoPreview').src = app.logo;
+                    document.getElementById('logoPreviewContainer').style.display = 'block';
+                } else {
+                    document.getElementById('logoPreviewContainer').style.display = 'none';
+                }
+            } else {
+                document.getElementById('appModalTitle').textContent = '📱 Nueva Aplicación';
+                document.getElementById('appEditId').value = '';
+                document.getElementById('appName').value = '';
+                document.getElementById('appDesc').value = '';
+                document.getElementById('appLogoUrl').value = '';
+                document.getElementById('appPrimaryColor').value = '#8B5CF6';
+                document.getElementById('logoPreviewContainer').style.display = 'none';
+            }
+            document.getElementById('appModal').style.display = 'flex';
+        };
+        window.closeAppModal = () => { document.getElementById('appModal').style.display = 'none'; };
+
         // RENDER LOGIC
         window.renderDashboard = () => {
             const data = getPlatformData();
@@ -530,10 +646,15 @@
             if(trainers.length === 0) {
                 table.innerHTML = '<tr><td colspan="6" style="padding: 40px; text-align: center; opacity: 0.5;">No hay entrenadores.</td></tr>';
             } else {
-                table.innerHTML = trainers.map(t => `
+                table.innerHTML = trainers.map(t => {
+                    const appObj = (data.apps || []).find(a => a.id === t.appId) || { name: 'Infinite Coach', primaryColor: '#8B5CF6' };
+                    return `
                     <tr>
                         <td style="padding: 15px; border-bottom: 1px solid rgba(255,255,255,0.03);">
-                            <div style="font-weight: 700;">${t.name}</div>
+                            <div style="font-weight: 700; display: flex; align-items: center; gap: 8px;">
+                                ${t.name}
+                                <span class="badge-sub" style="background: rgba(139, 92, 246, 0.15); color: #FFF; border: 1px solid ${appObj.primaryColor || '#8B5CF6'}; font-size: 0.65rem; border-radius: 4px; padding: 2px 6px;">📱 ${appObj.name}</span>
+                            </div>
                             <div style="font-size: 0.8rem; opacity: 0.6;">${t.email}</div>
                             <div style="margin-top: 5px; font-family: monospace; font-size: 0.75rem; color: var(--admin-primary); background: rgba(139, 92, 246, 0.1); padding: 2px 6px; border-radius: 4px; display: inline-block;">🔑 ${t.licenseKey}</div>
                         </td>
@@ -553,7 +674,7 @@
                              </div>
                         </td>
                     </tr>
-                `).join('');
+                `}).join('');
             }
         };
 
@@ -577,6 +698,65 @@
                     </div>
                 </div>
             `).join('');
+        };
+
+        window.renderApps = () => {
+            const data = getPlatformData();
+            const container = document.getElementById('appsGridContainer');
+            if(!container) return;
+
+            container.innerHTML = data.apps.map(app => {
+                const count = data.trainers.filter(t => t.appId === app.id).length;
+                const defaultLogo = 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=200&auto=format&fit=crop';
+                const logoUrl = app.logo || defaultLogo;
+
+                return `
+                <div class="plan-item" style="flex-direction: column; align-items: stretch; gap: 15px; background: var(--admin-card); border-radius: 12px; padding: 20px;">
+                    <div style="display: flex; gap: 15px; align-items: center;">
+                        <img src="${logoUrl}" style="width: 50px; height: 50px; border-radius: 8px; object-fit: cover; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1);" alt="Logo ${app.name}">
+                        <div style="flex: 1;">
+                            <div style="font-weight: 800; font-size: 1.1rem; color: #FFF; display: flex; align-items: center; gap: 8px;">
+                                ${app.name}
+                                <span style="display: inline-block; width: 12px; height: 12px; border-radius: 50%; background: ${app.primaryColor || '#8B5CF6'};" title="Color principal: ${app.primaryColor}"></span>
+                            </div>
+                            <div class="text-xs" style="color: rgba(255,255,255,0.5);">${app.desc || 'Sin descripción'}</div>
+                        </div>
+                    </div>
+
+                    <div style="display: flex; justify-content: space-between; align-items: center; background: rgba(0,0,0,0.2); padding: 8px 12px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.02);">
+                        <span style="font-size: 0.8rem; color: rgba(255,255,255,0.6);">Licencias Activas:</span>
+                        <strong style="color: var(--admin-primary); font-size: 0.95rem;">${count}</strong>
+                    </div>
+
+                    <div style="display: flex; justify-content: flex-end; gap: 10px; border-top: 1px solid rgba(255,255,255,0.05); padding-top: 10px;">
+                        <button onclick="window.openAppModal('${app.id}')" class="btn btn-xs btn-outline" style="padding: 4px 8px; font-size: 0.75rem; border: 1px solid rgba(255,255,255,0.1); border-radius:4px; background:transparent; color:#FFF; cursor:pointer;">✏️ Editar Branding</button>
+                        ${app.id === 'infinite-coach' ? `
+                            <button class="btn btn-xs btn-outline" style="padding: 4px 8px; font-size: 0.75rem; color: rgba(255,255,255,0.3); border: 1px solid rgba(255,255,255,0.05); border-radius:4px; background:transparent; cursor: not-allowed;" disabled title="La app por defecto está blindada">🗑️</button>
+                        ` : `
+                            <button onclick="window.delApp('${app.id}')" class="btn btn-xs btn-outline btn-error" style="padding: 4px 8px; font-size: 0.75rem; color: #EF4444; border: 1px solid rgba(239,68,68,0.2); border-radius:4px; background:transparent; cursor:pointer;">🗑️ Eliminar</button>
+                        `}
+                    </div>
+                </div>
+                `;
+            }).join('');
+        };
+
+        window.delApp = (id) => {
+            if (id === 'infinite-coach') {
+                window.adminToast('No se puede eliminar la aplicación base', 'error');
+                return;
+            }
+            if(!confirm("¿Estás seguro de que quieres eliminar esta aplicación? Todos los entrenadores asociados serán reasignados a Infinite Coach.")) return;
+            const data = getPlatformData();
+            
+            // Reassign trainers
+            data.trainers.forEach(t => {
+                if (t.appId === id) t.appId = 'infinite-coach';
+            });
+
+            data.apps = data.apps.filter(x => x.id !== id);
+            savePlatformData(data);
+            window.adminToast("Aplicación eliminada correctamente", "success");
         };
 
         window.sendWApp = (id) => {
@@ -626,6 +806,7 @@
 
             window.renderDashboard();
             window.renderPlans();
+            if (window.renderApps) window.renderApps();
 
             // Try to init Cloud
             if (window.SupabaseService) {
@@ -640,6 +821,7 @@
                     localStorage.setItem(PLATFORM_KEY, JSON.stringify(cloudData));
                     window.renderDashboard();
                     window.renderPlans();
+                    if (window.renderApps) window.renderApps();
                 } else {
                     // Si la nube está vacía (recién creada), buscamos en Firebase para migrar
                     console.log("Admin: Supabase vacío. Buscando en Firebase Legacy para migración...");
@@ -652,6 +834,7 @@
                             savePlatformData(fbData); // Este ya guarda en Supabase
                             window.renderDashboard();
                             window.renderPlans();
+                            if (window.renderApps) window.renderApps();
                         }
                     }
                 }
@@ -663,6 +846,7 @@
                 const data = getPlatformData();
                 const planId = document.getElementById('tPlan').value;
                 const planObj = data.plans.find(p => p.id === planId);
+                const appId = document.getElementById('tApp').value;
                 
                 const isFree = planObj.price === 0;
                 const newT = {
@@ -672,6 +856,7 @@
                     licenseKey: genKey(),
                     plan: planObj.name,
                     planPrice: planObj.price,
+                    appId: appId,
                     status: 'active',
                     lastPaymentDate: isFree ? 'LIFETIME' : new Date().toLocaleDateString('es-ES'),
                     expiryDate: isFree ? '31/12/2099' : new Date(new Date().setMonth(new Date().getMonth() + 1)).toLocaleDateString('es-ES')
@@ -705,6 +890,77 @@
                 savePlatformData(data);
                 window.closePlanModal();
                 window.adminToast("Plan configurado con Stripe", "success");
+            });
+
+            // App Form
+            document.getElementById('appForm').addEventListener('submit', (e) => {
+                e.preventDefault();
+                const data = getPlatformData();
+                const editId = document.getElementById('appEditId').value;
+                const name = document.getElementById('appName').value;
+                const desc = document.getElementById('appDesc').value;
+                const logo = document.getElementById('appLogoUrl').value;
+                const primaryColor = document.getElementById('appPrimaryColor').value;
+
+                if(editId) {
+                    const idx = data.apps.findIndex(a => a.id === editId);
+                    data.apps[idx].name = name;
+                    data.apps[idx].desc = desc;
+                    data.apps[idx].logo = logo;
+                    data.apps[idx].primaryColor = primaryColor;
+                } else {
+                    const newId = 'app-' + Math.random().toString(36).substr(2, 6);
+                    data.apps.push({
+                        id: newId,
+                        name: name,
+                        desc: desc,
+                        logo: logo,
+                        primaryColor: primaryColor,
+                        createdAt: new Date().toISOString()
+                    });
+                }
+                savePlatformData(data);
+                window.closeAppModal();
+                window.adminToast("Aplicación guardada correctamente", "success");
+            });
+
+            // App Logo Preview & Upload on Select
+            document.getElementById('appLogoFile').addEventListener('change', async (e) => {
+                const file = e.target.files[0];
+                if (!file) return;
+
+                // Show loading indicator
+                const submitBtn = document.getElementById('appSubmitBtn');
+                const origText = submitBtn.textContent;
+                submitBtn.textContent = 'Subiendo logo... ⏳';
+                submitBtn.disabled = true;
+
+                try {
+                    let url = '';
+                    if (window.SupabaseService) {
+                        url = await window.SupabaseService.uploadFile(file, 'Media');
+                    }
+                    
+                    if (!url) {
+                        // Fallback to Base64
+                        const reader = new FileReader();
+                        url = await new Promise((resolve) => {
+                            reader.onload = (ev) => resolve(ev.target.result);
+                            reader.readAsDataURL(file);
+                        });
+                    }
+
+                    document.getElementById('appLogoUrl').value = url;
+                    document.getElementById('logoPreview').src = url;
+                    document.getElementById('logoPreviewContainer').style.display = 'block';
+                    window.adminToast('Logo cargado correctamente', 'success');
+                } catch (err) {
+                    console.error('Error uploading logo:', err);
+                    window.adminToast('Error al cargar imagen', 'error');
+                } finally {
+                    submitBtn.textContent = origText;
+                    submitBtn.disabled = false;
+                }
             });
         });
     </script>
