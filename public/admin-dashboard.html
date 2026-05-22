@@ -4,11 +4,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Master ADMIN Panel - Fitness App Platform</title>
+    <title>Ingenia Licencias - Panel de Control Maestro</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="styles/theme.css">
+    <link rel="stylesheet" href="styles/theme.css?v=321">
     <link rel="stylesheet" href="styles/components.css">
     <style>
         :root {
@@ -179,14 +179,12 @@
     <!-- Sidebar -->
     <aside class="admin-sidebar">
         <div class="logo" style="color: var(--admin-primary); border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 20px; font-weight: 800; font-size: 1.2rem; display: flex; align-items: center; justify-content: flex-start; padding-left: 15px;">
-            ASTeam
+            Ingenia Licencias 🔑
         </div>
         <nav style="flex: 1; display: flex; flex-direction: column; gap: 8px;">
             <div id="btn-trainers" class="admin-nav-item active" onclick="showView('trainers')">👥 Entrenadores</div>
             <div id="btn-billing" class="admin-nav-item" onclick="showView('billing')">💰 Suscripciones</div>
             <div id="btn-settings" class="admin-nav-item" onclick="showView('settings')">⚙️ Configuración Admin</div>
-            <div class="divider"></div>
-            <div class="admin-nav-item" style="color: var(--primary-color); background: rgba(0, 217, 255, 0.05);" onclick="window.location.href='trainer-dashboard.html'">🏋️ Ir al Panel de Entrenador</div>
         </nav>
         <div class="admin-nav-item" style="color: #EF4444; margin-top: auto;" onclick="logout()">🚪 Cerrar Sesión MASTER</div>
     </aside>
@@ -292,7 +290,7 @@
                 <div class="card" style="background: var(--admin-card); border: 1px solid rgba(255,255,255,0.05); padding: 25px; border-radius: 12px;">
                     <div class="form-group mb-md">
                         <label style="display: block; margin-bottom: 8px; font-size: 0.9rem;">Nombre de la Plataforma</label>
-                        <input type="text" id="settingName" class="form-input" value="SaaS Fitness Master" style="background: rgba(255,255,255,0.05);">
+                        <input type="text" id="settingName" class="form-input" value="Ingenia Licencias" style="background: rgba(255,255,255,0.05);">
                     </div>
                     <div class="form-group mb-md">
                         <label style="display: block; margin-bottom: 8px; font-size: 0.9rem;">Email de soporte (Admin)</label>
@@ -411,7 +409,7 @@
                     { id: 'Elite', name: 'Plan Elite', price: 99, desc: 'Marca blanca', stripeLink: '' },
                     { id: 'Free', name: 'Plan Gratis', price: 0, desc: 'Licencia Cortesía / Admin', stripeLink: '' }
                 ];
-                if(!data.settings) data.settings = { platformName: 'SaaS Fitness Master', adminEmail: 'admin@tuappfitness.com', adminPassword: 'fitness_pro_2026' };
+                if(!data.settings) data.settings = { platformName: 'Ingenia Licencias', adminEmail: 'admin@tuappfitness.com', adminPassword: 'fitness_pro_2026' };
                 return data;
             } catch(e) {
                 console.error("Error storage:", e);

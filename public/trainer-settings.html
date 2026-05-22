@@ -8,8 +8,8 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="styles/theme.css">
-    <link rel="stylesheet" href="styles/components.css">
+    <link rel="stylesheet" href="styles/theme.css?v=321">
+    <link rel="stylesheet" href="styles/components.css?v=318">
     <style>
         .settings-section {
             margin-bottom: var(--spacing-xl);
@@ -90,15 +90,14 @@
                 </div>
                 <button class="menu-toggle" onclick="toggleMenu()">☰</button>
                 <ul class="nav-links" id="navLinks">
-                    <li><a href="trainer-dashboard.html" class="nav-link">Dashboard</a></li>
-                    <li><a href="trainer-clients.html" class="nav-link">Clientes</a></li>
-                    <li><a href="trainer-routines.html" class="nav-link">Rutinas</a></li>
-                    <li><a href="trainer-diets.html" class="nav-link">Dietas</a></li>
-                    <li><a href="trainer-feedbacks.html" class="nav-link">Revisiones</a></li>
-                    <li><a href="trainer-media.html" class="nav-link">Biblioteca</a></li>
-                    <li><a href="trainer-appointments.html" class="nav-link">Agenda</a></li>
-                    <li><a href="trainer-settings.html" class="nav-link active">Configuración</a></li>
-                    <li id="masterLink" style="display: none;"><a href="admin-dashboard.html" class="nav-link" style="color: #8B5CF6; font-weight: 800;">Panel Maestro</a></li>
+                    <li><a href="trainer-dashboard.html?v=319" class="nav-link">Dashboard</a></li>
+                    <li><a href="trainer-clients.html?v=319" class="nav-link">Clientes</a></li>
+                    <li><a href="trainer-routines.html?v=319" class="nav-link">Rutinas</a></li>
+                    <li><a href="trainer-diets.html?v=319" class="nav-link">Dietas</a></li>
+                    <li><a href="trainer-feedbacks.html?v=319" class="nav-link">Revisiones</a></li>
+                    <li><a href="trainer-media.html?v=319" class="nav-link">Biblioteca</a></li>
+                    <li><a href="trainer-appointments.html?v=319" class="nav-link">Agenda</a></li>
+                    <li><a href="trainer-settings.html?v=319" class="nav-link active">Configuración</a></li>
                     <li><a href="#" onclick="if(typeof AUTH !== 'undefined') { AUTH.signOut() } else { window.location.reload() }; return false;" class="nav-link" style="color:var(--error-color)">🚪 Salir</a></li>
                 </ul>
             </nav>
@@ -168,6 +167,13 @@
                                         <label class="text-xs mb-xs display-block">Acento</label>
                                         <input type="color" id="accentColorInput" class="form-input" style="height: 50px; cursor: pointer;">
                                     </div>
+                                </div>
+                                <div class="form-group mb-md">
+                                    <label class="text-xs mb-xs display-block">Modo Visual (Tema)</label>
+                                    <select id="themeModeInput" class="form-select mb-sm" style="background: rgba(255,255,255,0.05); color: var(--text-primary); border: 1px solid rgba(255,255,255,0.1); border-radius: 6px; padding: 10px; width: 100%;">
+                                        <option value="dark" style="background: var(--bg-card); color: #fff;">🌙 Modo Noche (Oscuro)</option>
+                                        <option value="light" style="background: var(--bg-card); color: #fff;">☀️ Modo Día (Claro)</option>
+                                    </select>
                                 </div>
                                 <div class="flex-column gap-sm">
                                     <button class="btn btn-primary" onclick="applyColors()">🎨 Aplicar y Guardar cambios</button>
@@ -430,18 +436,7 @@
                         </div>
                     </div>
 
-                    <!-- SaaS Admin (Solo Master) -->
-                    <div id="saasAdminCard" class="card shadow-sm" style="display: none; background: rgba(139, 92, 246, 0.05); border: 2px solid rgba(139, 92, 246, 0.2);">
-                        <div class="card-header">
-                            <h2 class="card-title" style="color: #8B5CF6;">💎 Gestión Plataforma SaaS</h2>
-                        </div>
-                        <div class="card-body">
-                            <p class="text-xs text-muted mb-md">Acceso exclusivo para el dueño del negocio. Gestiona suscripciones de otros entrenadores y monitoriza tus beneficios.</p>
-                            <button class="btn btn-primary" style="width: 100%; background-color: #8B5CF6; border-color: #8B5CF6;" onclick="window.location.href='admin-dashboard.html'">
-                                📊 Entrar al Panel Maestro
-                            </button>
-                        </div>
-                    </div>
+
                 </div>
             </div>
         </div>
@@ -465,9 +460,9 @@
     <script src="js/config.js?v=312"></script>
     <script src="js/auth.js?v=312"></script>
     <script src="js/sheets.js?v=312"></script>
-    <script src="js/data-models.js?v=312"></script>
+    <script src="js/data-models.js?v=319"></script>
     <script src="js/cloud-storage.js?v=312"></script>
-    <script src="js/utils.js?v=312"></script>
+    <script src="js/utils.js?v=318"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <script src="js/excel-manager.js?v=312"></script>
     <script>
@@ -531,6 +526,8 @@
             if (sec) sec.value = (b.colors && b.colors.secondary) ? b.colors.secondary : '#1A1A2E';
             const acc = document.getElementById('accentColorInput');
             if (acc) acc.value = (b.colors && b.colors.accent) ? b.colors.accent : '#FF6B6B';
+            const themeModeInput = document.getElementById('themeModeInput');
+            if (themeModeInput) themeModeInput.value = (b.colors && b.colors.themeMode) ? b.colors.themeMode : 'dark';
 
             // ... rest of loadSettings logic ...
             const pdf = b.pdfSettings || { showCalories: true, showMacros: true };
@@ -591,11 +588,17 @@
                 const newName = document.getElementById('brandNameInput').value.trim();
                 const newWhatsapp = document.getElementById('whatsappInput').value.trim();
                 
+                const primary = document.getElementById('primaryColorInput').value;
+                const secondary = document.getElementById('secondaryColorInput').value;
+                const accent = document.getElementById('accentColorInput').value;
+                const themeMode = document.getElementById('themeModeInput').value;
+
                 const updated = {
                     ...b,
                     name: newName,
                     whatsapp: newWhatsapp,
                     logo: currentLogoBase64 || b.logo, // IMPORTANTE: No sobrescribir con null si no se ha subido uno nuevo
+                    colors: { primary, secondary, accent, themeMode },
                     trainerSettings: {
                         ...(b.trainerSettings || {}),
                         autoSaveDietTemplate: document.getElementById('autoSaveDietTemplate').checked
@@ -910,11 +913,12 @@
                 const primary = document.getElementById('primaryColorInput').value;
                 const secondary = document.getElementById('secondaryColorInput').value;
                 const accent = document.getElementById('accentColorInput').value;
+                const themeMode = document.getElementById('themeModeInput').value;
 
                 const b = BrandConfig.get();
                 const updated = {
                     ...b,
-                    colors: { primary, secondary, accent },
+                    colors: { primary, secondary, accent, themeMode },
                     logo: currentLogoBase64 || b.logo // Asegurar que el logo se mantiene
                 };
 
@@ -931,12 +935,14 @@
             const defaults = {
                 primary: '#00D9FF',
                 secondary: '#1A1A2E',
-                accent: '#FF6B6B'
+                accent: '#FF6B6B',
+                themeMode: 'dark'
             };
 
             document.getElementById('primaryColorInput').value = defaults.primary;
             document.getElementById('secondaryColorInput').value = defaults.secondary;
             document.getElementById('accentColorInput').value = defaults.accent;
+            document.getElementById('themeModeInput').value = defaults.themeMode;
 
             const b = BrandConfig.get();
             b.colors = defaults;

@@ -58,6 +58,7 @@ const AUTH = {
         }
 
         sessionStorage.setItem('_trainerAuthed', '1');
+        localStorage.setItem('_trainerAuthed', '1');
         localStorage.setItem('_trainerEmail', AUTH.userEmail);
         
         showToast("¡Bienvenido/a de nuevo!", "success");
@@ -69,13 +70,16 @@ const AUTH = {
 
     signOut: () => {
         sessionStorage.removeItem('_trainerAuthed');
+        localStorage.removeItem('_trainerAuthed');
         window.location.reload();
     }
 };
 
 // ── PASO 1: Bypass inmediato si ya autenticó en esta sesión ───────────
 window.addEventListener('DOMContentLoaded', () => {
-    if (sessionStorage.getItem('_trainerAuthed') === '1') {
+    if (sessionStorage.getItem('_trainerAuthed') === '1' || localStorage.getItem('_trainerAuthed') === '1') {
+        sessionStorage.setItem('_trainerAuthed', '1');
+        localStorage.setItem('_trainerAuthed', '1');
         AUTH.isAuthorized = true;
         const loginScreen = document.getElementById('login-screen');
         const app = document.getElementById('app');
@@ -95,7 +99,9 @@ window.addEventListener('DOMContentLoaded', () => {
 // Auto-disparar sincronización si ya hay sesión activa (para refrescos de página en cualquier pestaña)
 document.addEventListener('DOMContentLoaded', () => {
     setTimeout(() => {
-        if (sessionStorage.getItem('_trainerAuthed') === '1' && typeof onGoogleAuthSuccess === 'function') {
+        if ((sessionStorage.getItem('_trainerAuthed') === '1' || localStorage.getItem('_trainerAuthed') === '1') && typeof onGoogleAuthSuccess === 'function') {
+            sessionStorage.setItem('_trainerAuthed', '1');
+            localStorage.setItem('_trainerAuthed', '1');
             console.log("Sesión persistente detectada -> Disparando onGoogleAuthSuccess global");
             onGoogleAuthSuccess();
         }

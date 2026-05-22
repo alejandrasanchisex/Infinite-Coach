@@ -7,7 +7,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="styles/theme.css">
+    <link rel="stylesheet" href="styles/theme.css?v=321">
     <link rel="stylesheet" href="styles/components.css">
     <style>
         body {
@@ -227,6 +227,7 @@
                     
                     // Guardar localmente para la sesión
                     sessionStorage.setItem('_trainerAuthed', '1');
+                    localStorage.setItem('_trainerAuthed', '1');
                     localStorage.setItem('activeTrainerId', trainer.id);
                     localStorage.setItem('_trainerEmail', trainer.email);
                     localStorage.setItem(PLATFORM_KEY, JSON.stringify(platformData));

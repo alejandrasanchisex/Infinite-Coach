@@ -4,38 +4,34 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard - Fitness App</title>
+    <title>Dashboard - Infinite Coach</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="styles/theme.css">
-    <link rel="stylesheet" href="styles/components.css">
+    <link rel="stylesheet" href="styles/theme.css?v=321">
+    <link rel="stylesheet" href="styles/components.css?v=317">
     <link rel="stylesheet" href="styles/mobile.css">
     <link rel="manifest" href="manifest.json">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 </head>
 
-<body>
+<body class="theme-client">
     <!-- Header -->
     <header class="header">
         <div class="container">
             <nav class="nav">
-                <div class="logo">
+                <div class="logo" style="display: flex; align-items: center; gap: 10px; cursor: pointer;" onclick="window.location.href='client-dashboard.html'">
                     <img id="brandLogo" class="logo-img" alt="Logo" style="display: none;">
-                    <span id="brandName">Fitness App</span>
+                    <span id="brandName">Infinite Coach</span>
                 </div>
-                <button class="menu-toggle" onclick="toggleMenu()">☰</button>
                 <ul class="nav-links" id="navLinks">
-                    <li><a href="client-dashboard.html" class="nav-link active">Inicio</a></li>
-                    <li><a href="client-profile.html" class="nav-link">Ficha Técnica</a></li>
+                    <li><a href="client-dashboard.html?v=319" class="nav-link active">Inicio</a></li>
+                    <li><a href="client-profile.html?v=319" class="nav-link">Ficha Técnica</a></li>
 
-                    <li><a href="client-login.html" class="nav-link">Salir</a></li>
+                    <li><a href="client-login.html?v=319" class="nav-link">Salir</a></li>
                 </ul>
-                <div id="clientProfileAvatar" style="width: 35px; height: 35px; border-radius: 50%; background: var(--primary-color); display: flex; align-items: center; justify-content: center; font-size: 0.9rem; font-weight: 800; color: #000; overflow: hidden; border: 2px solid rgba(255,255,255,0.1); margin-left: 15px; cursor: pointer; flex-shrink: 0;" onclick="window.location.href='client-profile.html'">
-                    U
-                </div>
-                <button class="menu-toggle" onclick="toggleMenu()" style="margin-left: 10px;">☰</button>
+                <button class="menu-toggle" onclick="toggleMenu()" style="margin-left: auto;">☰</button>
             </nav>
         </div>
     </header>
@@ -49,7 +45,7 @@
                     <h1 style="margin: 0; font-size: 1.8rem; font-weight: 800; color: #fff; letter-spacing: -0.5px; line-height: 1.2;">Hola, <span id="clientName">Cliente</span>! 👋</h1>
                     <p class="text-muted" style="margin-top: 5px; font-size: 0.9rem;">Hoy es un gran día para entrenar.</p>
                 </div>
-                <div id="todayDate" class="text-xs uppercase letter-spacing-1" style="background: rgba(255,255,255,0.05); padding: 8px 15px; border-radius: 100px; border: 1px solid rgba(255,255,255,0.08);">---</div>
+                <div id="todayDate" class="text-xs uppercase letter-spacing-1" style="background: rgba(255,255,255,0.05); padding: 8px 15px; border-radius: 100px; border: 1px solid rgba(255,255,255,0.08); white-space: nowrap; flex-shrink: 0;">---</div>
             </div>
 
             <!-- SECCIÓN WOW: TU OBJETIVO DE HOY (Estilo Apple Fitness+) -->
@@ -163,23 +159,34 @@
     <script src="js/supabase-service.js?v=312"></script>
 
     <script src="js/config.js?v=312"></script>
-    <script src="js/data-models.js?v=312"></script>
+    <script src="js/data-models.js?v=319"></script>
     <script src="js/utils.js?v=312"></script>
     <script src="js/custom-exercises.js?v=312"></script>
     <script>
         // CLIENT INITIALIZATION
+        // Support for Trainer ID and Client ID in URL immediately
+        const urlParams = new URLSearchParams(window.location.search);
+        const clientIdFromUrl = urlParams.get('id');
+        const trainerIdFromUrl = urlParams.get('t');
+        
+        if (clientIdFromUrl) {
+            sessionStorage.setItem('clientId', clientIdFromUrl);
+            localStorage.setItem('clientId', clientIdFromUrl);
+        }
+        if (trainerIdFromUrl) {
+            localStorage.setItem('activeTrainerId', trainerIdFromUrl);
+            window.activeTrainerId = trainerIdFromUrl;
+        }
+
+        const clientId = sessionStorage.getItem('clientId') || localStorage.getItem('clientId');
+        if (!clientId) {
+            window.location.replace('client-login.html');
+        } else {
+            sessionStorage.setItem('clientId', clientId);
+            localStorage.setItem('clientId', clientId);
+        }
+
         document.addEventListener('DOMContentLoaded', async () => {
-            // Support for Trainer ID in URL (?t=TRAINER_ID)
-            const urlParams = new URLSearchParams(window.location.search);
-            const clientIdFromUrl = urlParams.get('id');
-            const trainerIdFromUrl = urlParams.get('t');
-            
-            if (clientIdFromUrl) sessionStorage.setItem('clientId', clientIdFromUrl);
-            if (trainerIdFromUrl) localStorage.setItem('activeTrainerId', trainerIdFromUrl);
-
-            const clientId = sessionStorage.getItem('clientId');
-            if (!clientId) window.location.href = 'client-login.html';
-
             // Sync with Cloud (Supabase es ahora el primario)
             if (window.SupabaseService) {
                 window.SupabaseService.init();
@@ -192,6 +199,12 @@
             BrandConfig.applyTheme();
             const brand = BrandConfig.get();
             const client = Clients.getById(clientId);
+            if (!client) {
+                localStorage.removeItem('clientId');
+                sessionStorage.removeItem('clientId');
+                window.location.replace('client-login.html');
+                return;
+            }
 
             document.getElementById('brandName').textContent = brand.name;
             if (brand.logo) { document.getElementById('brandLogo').src = brand.logo; document.getElementById('brandLogo').style.display = 'block'; }
@@ -305,12 +318,16 @@
 
         function contactTrainer() {
             const brand = BrandConfig.get();
-            const client = Clients.getById(clientId);
-            const msg = `Hola ${brand.name}, soy ${client.name}. ¿Podemos hablar?`;
+            const storedClientId = sessionStorage.getItem('clientId') || localStorage.getItem('clientId');
+            const client = storedClientId ? Clients.getById(storedClientId) : null;
+            const clientName = client ? client.name : 'un cliente';
+            const msg = `Hola ${brand.name}, soy ${clientName}. ¿Podemos hablar?`;
             window.open(generateWhatsAppLink(brand.whatsapp, msg), '_blank');
         }
 
         function toggleMenu() { document.getElementById('navLinks').classList.toggle('active'); }
     </script>
-    <script src="js/custom-recipes.js?v=129"></script></body>
+    <script src="js/custom-recipes.js?v=129"></script>
+    <script src="js/pwa-install.js?v=321"></script>
+</body>
 </html>

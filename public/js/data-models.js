@@ -54,6 +54,143 @@ const getData = () => {
         }
     }
 
+    // 🔥 MIGRACIÓN: Poblar "Mis Alimentos" con ingredientes maestros
+    if (!localStorage.getItem('v316_seed_foods_done_v4')) {
+        if (!data.foods) data.foods = [];
+        const initialFoodsSeed = [
+            { name: 'Pollo (Pechuga, Desmechado, Crudo)', calories: 120, protein: 23, carbs: 0, fat: 2.5, type: 'g' },
+            { name: 'Pavo (Pechuga, Fiambre, Solomillo)', calories: 105, protein: 22, carbs: 0, fat: 1.5, type: 'g' },
+            { name: 'Salmón (Fresco o Ahumado)', calories: 180, protein: 20, carbs: 0, fat: 11, type: 'g' },
+            { name: 'Atún al natural', calories: 116, protein: 26, carbs: 0, fat: 1, type: 'g' },
+            { name: 'Ternera magra', calories: 150, protein: 21, carbs: 0, fat: 5, type: 'g' },
+            { name: 'Pescado blanco (Merluza, Lubina)', calories: 80, protein: 18, carbs: 0, fat: 1, type: 'g' },
+            { name: 'Gambas cocidas', calories: 85, protein: 20, carbs: 0.5, fat: 0.8, type: 'g' },
+            { name: 'Bacalao desmigado', calories: 82, protein: 18, carbs: 0, fat: 0.7, type: 'g' },
+            { name: 'Sepia salteada', calories: 80, protein: 16, carbs: 0.7, fat: 0.9, type: 'g' },
+            { name: 'Mejillones al vapor', calories: 86, protein: 12, carbs: 3.4, fat: 2.2, type: 'g' },
+            { name: 'Jamón serrano (Limpio)', calories: 240, protein: 30, carbs: 0, fat: 13, type: 'g' },
+            { name: 'Huevo entero', calories: 155, protein: 13, carbs: 1.1, fat: 11, type: 'unit' },
+            { name: 'Claras de Huevo', calories: 52, protein: 11, carbs: 0.7, fat: 0.2, type: 'g' },
+            { name: 'Requesón', calories: 100, protein: 12, carbs: 3, fat: 4, type: 'g' },
+            { name: 'Queso cottage', calories: 98, protein: 11, carbs: 3.4, fat: 4.3, type: 'g' },
+            { name: 'Queso fresco tipo Burgos', calories: 110, protein: 11, carbs: 3, fat: 6, type: 'g' },
+            { name: 'Queso batido 0%', calories: 47, protein: 8, carbs: 3.5, fat: 0.1, type: 'g' },
+            { name: 'Skyr', calories: 65, protein: 11, carbs: 4, fat: 0.2, type: 'g' },
+            { name: 'Yogur griego', calories: 115, protein: 10, carbs: 3, fat: 7, type: 'unit' },
+            { name: 'Yogur natural', calories: 60, protein: 3.5, carbs: 4.7, fat: 3.3, type: 'g' },
+            { name: 'Kéfir', calories: 60, protein: 3.5, carbs: 4.8, fat: 3, type: 'g' },
+            { name: 'Queso crema light', calories: 150, protein: 6, carbs: 5, fat: 12, type: 'g' },
+            { name: 'Queso mozzarella light', calories: 200, protein: 22, carbs: 2, fat: 12, type: 'g' },
+            { name: 'Queso curado / gratinado', calories: 380, protein: 25, carbs: 1.3, fat: 30, type: 'g' },
+            { name: 'Queso havarti (Loncha)', calories: 330, protein: 21, carbs: 0.5, fat: 26, type: 'g' },
+            { name: 'Leche desnatada', calories: 34, protein: 3.4, carbs: 5, fat: 0.1, type: 'g' },
+            { name: 'Leche de soja', calories: 45, protein: 3.3, carbs: 2.5, fat: 1.8, type: 'g' },
+            { name: 'Leche de almendras / avellanas', calories: 24, protein: 0.5, carbs: 3, fat: 1.1, type: 'g' },
+            { name: 'Copos de avena / Harina de avena', calories: 389, protein: 16.9, carbs: 66, fat: 6.9, type: 'g' },
+            { name: 'Arroz (Blanco, Integral, Basmati, Jazmín)', calories: 350, protein: 7, carbs: 78, fat: 0.5, type: 'g' },
+            { name: 'Pasta integral', calories: 350, protein: 12, carbs: 72, fat: 1.5, type: 'g' },
+            { name: 'Pan integral / Centeno / Masa madre', calories: 250, protein: 9, carbs: 45, fat: 2.5, type: 'g' },
+            { name: 'Tortitas de arroz o maíz', calories: 380, protein: 8, carbs: 80, fat: 3, type: 'unit' },
+            { name: 'Tortilla de trigo integral', calories: 290, protein: 8, carbs: 45, fat: 6, type: 'unit' },
+            { name: 'Tortilla de maíz', calories: 220, protein: 5, carbs: 45, fat: 2.5, type: 'unit' },
+            { name: 'Batata / Boniato (asado)', calories: 86, protein: 1.6, carbs: 20, fat: 0.1, type: 'g' },
+            { name: 'Patata (Asada, Puré, Baby)', calories: 77, protein: 2, carbs: 17, fat: 0.1, type: 'g' },
+            { name: 'Quinoa cocida', calories: 370, protein: 14, carbs: 64, fat: 6, type: 'g' },
+            { name: 'Cuscús integral', calories: 350, protein: 12, carbs: 73, fat: 1.5, type: 'g' },
+            { name: 'Colines / Bastones integrales', calories: 390, protein: 11, carbs: 72, fat: 5, type: 'g' },
+            { name: 'Granola casera', calories: 450, protein: 10, carbs: 60, fat: 18, type: 'g' },
+            { name: 'Arepa de maíz precocido', calories: 360, protein: 7, carbs: 77, fat: 2.5, type: 'g' },
+            { name: 'Garbanzos cocidos', calories: 364, protein: 19, carbs: 61, fat: 6, type: 'g' },
+            { name: 'Lentejas cocidas', calories: 350, protein: 25, carbs: 63, fat: 1, type: 'g' },
+            { name: 'Alubias blancas cocidas', calories: 330, protein: 21, carbs: 60, fat: 0.8, type: 'g' },
+            { name: 'Falafel horneado', calories: 250, protein: 13, carbs: 30, fat: 8, type: 'g' },
+            { name: 'Hummus de garbanzo', calories: 170, protein: 5, carbs: 14, fat: 10, type: 'g' },
+            { name: 'Tofu firme', calories: 76, protein: 8, carbs: 1.9, fat: 4.8, type: 'g' },
+            { name: 'Edamame al vapor', calories: 120, protein: 11, carbs: 9, fat: 5, type: 'g' },
+            { name: 'Aguacate (Guacamole)', calories: 160, protein: 2, carbs: 9, fat: 15, type: 'g' },
+            { name: 'Aceite de oliva virgen extra', calories: 884, protein: 0, carbs: 0, fat: 100, type: 'g' },
+            { name: 'Crema de cacahuete o almendras', calories: 588, protein: 25, carbs: 20, fat: 50, type: 'g' },
+            { name: 'Nueces', calories: 654, protein: 15, carbs: 14, fat: 65, type: 'g' },
+            { name: 'Almendras naturales', calories: 579, protein: 21, carbs: 22, fat: 49, type: 'g' },
+            { name: 'Pistachos o Anacardos', calories: 560, protein: 19, carbs: 29, fat: 44.5, type: 'g' },
+            { name: 'Semillas (Chía, Lino, Calabaza)', calories: 530, protein: 19, carbs: 30, fat: 43, type: 'g' },
+            { name: 'Plátano', calories: 89, protein: 1.1, carbs: 23, fat: 0.3, type: 'unit' },
+            { name: 'Manzana', calories: 52, protein: 0.3, carbs: 14, fat: 0.2, type: 'unit' },
+            { name: 'Arándanos frescos', calories: 57, protein: 0.7, carbs: 14, fat: 0.3, type: 'g' },
+            { name: 'Fresas', calories: 32, protein: 0.7, carbs: 7.7, fat: 0.3, type: 'g' },
+            { name: 'Kiwi', calories: 61, protein: 1.1, carbs: 15, fat: 0.5, type: 'unit' },
+            { name: 'Mango', calories: 60, protein: 0.8, carbs: 15, fat: 0.4, type: 'g' },
+            { name: 'Frambuesas', calories: 52, protein: 1.2, carbs: 12, fat: 0.7, type: 'g' },
+            { name: 'Pera', calories: 57, protein: 0.4, carbs: 15, fat: 0.1, type: 'unit' },
+            { name: 'Piña natural', calories: 50, protein: 0.5, carbs: 13, fat: 0.1, type: 'g' },
+            { name: 'Melocotón', calories: 39, protein: 0.9, carbs: 9.5, fat: 0.3, type: 'unit' },
+            { name: 'Papaya', calories: 43, protein: 0.5, carbs: 11, fat: 0.3, type: 'g' },
+            { name: 'Higos frescos', calories: 74, protein: 0.8, carbs: 19, fat: 0.3, type: 'g' },
+            { name: 'Uvas rojas', calories: 67, protein: 0.6, carbs: 17, fat: 0.4, type: 'g' },
+            { name: 'Mandarina', calories: 53, protein: 0.8, carbs: 13, fat: 0.3, type: 'unit' },
+            { name: 'Proteína en polvo (Whey)', calories: 380, protein: 80, carbs: 5, fat: 4, type: 'g' },
+            { name: 'Miel de abejas', calories: 304, protein: 0.3, carbs: 82, fat: 0, type: 'g' },
+            { name: 'Dátil', calories: 282, protein: 2.5, carbs: 75, fat: 0.4, type: 'unit' },
+            { name: 'Cacao puro en polvo', calories: 228, protein: 20, carbs: 58, fat: 14, type: 'g' },
+            { name: 'Sirope de ágave', calories: 310, protein: 0, carbs: 78, fat: 0, type: 'g' },
+            { name: 'Salsa Pesto', calories: 529, protein: 5.2, carbs: 6, fat: 53, type: 'g' },
+            { name: 'Salsa de yogur light', calories: 80, protein: 3.5, carbs: 7, fat: 4, type: 'g' },
+            { name: 'Fruta contable', calories: 70, protein: 0.8, carbs: 16, fat: 0.3, type: 'unit' },
+            { name: 'Fruta incontable', calories: 50, protein: 0.7, carbs: 11, fat: 0.2, type: 'g' }
+        ];
+
+        initialFoodsSeed.forEach(item => {
+            const exists = data.foods.some(f => f.name.toLowerCase() === item.name.toLowerCase());
+            if (!exists) {
+                // Generate a pseudo-random UUID structure manually
+                const s4 = () => Math.floor((1 + Math.random()) * 0x10000).toString(16).substring(1);
+                const newId = s4() + s4() + '-' + s4() + '-' + s4() + '-' + s4() + '-' + s4() + s4() + s4();
+                data.foods.push({
+                    id: newId,
+                    name: item.name,
+                    calories: item.calories,
+                    protein: item.protein,
+                    carbs: item.carbs,
+                    fat: item.fat,
+                    type: item.type,
+                    createdAt: new Date().toISOString()
+                });
+            }
+        });
+        localStorage.setItem('v316_seed_foods_done_v4', 'true');
+        setTimeout(() => { saveData(data); }, 50);
+    }
+
+    // 🔥 MIGRACIÓN: Eliminar alimentos anteriores/duplicados obsoletos
+    if (!localStorage.getItem('v316_clean_duplicates_done_v5')) {
+        if (data.foods && Array.isArray(data.foods)) {
+            const obsoleteNames = [
+                'mejillones',
+                'pavo (solomillo/pechuga)',
+                'pollo (pechuga/solomillo)',
+                'pechuga de pollo',
+                'arándanos',
+                'pechuga de pavo',
+                'arroz (integral/jazmín/basmati)',
+                'arroz (blanco, integral, basmati)'
+            ];
+            const initialLen = data.foods.length;
+            data.foods = data.foods.filter(food => {
+                const lowerName = food.name.toLowerCase().trim();
+                return !obsoleteNames.includes(lowerName);
+            });
+            if (data.foods.length !== initialLen) {
+                console.log(`🧹 Eliminados ${initialLen - data.foods.length} alimentos duplicados u obsoletos.`);
+                localStorage.setItem('v316_clean_duplicates_done_v5', 'true');
+                setTimeout(() => { saveData(data); }, 100);
+            } else {
+                localStorage.setItem('v316_clean_duplicates_done_v5', 'true');
+            }
+        } else {
+            localStorage.setItem('v316_clean_duplicates_done_v5', 'true');
+        }
+    }
+
     // 🔥 PURGA DE RECETAS NO OFICIALES (Blindaje 145)
     if (data.media && Array.isArray(data.media)) {
         const initialLen = data.media.length;
@@ -1499,6 +1636,45 @@ window.Media = {
     });
     return Array.from(mediaMap.values());
   },
+  create: (mediaData) => {
+    const data = getData();
+    const newMedia = {
+      id: generateUUID(),
+      type: mediaData.type || 'video', // 'video' | 'image'
+      category: mediaData.category || 'exercise', // 'exercise' | 'recipe'
+      url: mediaData.url || '', // Base64 or external URL
+      title: mediaData.title || '',
+      description: mediaData.description || '',
+      ingredients: mediaData.ingredients || '', // Para recetas
+      muscleGroup: mediaData.muscleGroup || '', // Para ejercicios
+      isSystem: false, // Forzar que es contenido de usuario
+      createdAt: new Date().toISOString()
+    };
+    if (!data.media) data.media = [];
+    data.media.push(newMedia);
+    
+    // --- SINCRONIZACIÓN HACIA GRUPOS MUSCULARES ---
+    if (newMedia.category === 'exercise' && newMedia.url) {
+        const mgConfig = data.muscleGroupsConfig;
+        if (mgConfig && mgConfig.exercises) {
+            let changed = false;
+            for (const group in mgConfig.exercises) {
+                mgConfig.exercises[group] = mgConfig.exercises[group].map(ex => {
+                    const exName = typeof ex === 'string' ? ex : ex.name;
+                    if (exName.toLowerCase().trim() === newMedia.title.toLowerCase().trim()) {
+                        changed = true;
+                        return { name: exName, videoUrl: newMedia.url };
+                    }
+                    return ex;
+                });
+            }
+            if (changed) data.muscleGroupsConfig = mgConfig;
+        }
+    }
+
+    saveData(data);
+    return newMedia;
+  },
   update: (id, updates) => {
     const data = getData();
     let index = data.media.findIndex(m => m.id == id);
@@ -1527,6 +1703,26 @@ window.Media = {
     }
     saveData(data);
     return true;
+  },
+  syncFromRoutines: (exerciseName, videoUrl, muscleGroup) => {
+    if (!exerciseName) return;
+    const data = getData();
+    const allMedia = window.Media.getAll(); 
+    const existing = allMedia.find(m => m.category === 'exercise' && m.title.toLowerCase().trim() === exerciseName.toLowerCase().trim());
+    
+    if (existing) {
+        if (existing.url !== videoUrl) {
+            window.Media.update(existing.id, { url: videoUrl, muscleGroup });
+        }
+    } else if (videoUrl) {
+        window.Media.create({
+            type: 'video',
+            category: 'exercise',
+            title: exerciseName,
+            url: videoUrl,
+            muscleGroup: muscleGroup
+        });
+    }
   }
 };
 
@@ -1822,20 +2018,157 @@ const Diets = {
 // FOODS CRUD
 // ============================================
 
+const SYSTEM_FOODS = [
+  // PROTEINAS
+  { name: "Pechuga de Pollo", calories: 165, protein: 31, carbs: 0, fat: 3.6 },
+  { name: "Pavo (Solomillo/Pechuga)", calories: 105, protein: 24, carbs: 0, fat: 1 },
+  { name: "Ternera Magra (Picada/Tiras)", calories: 170, protein: 26, carbs: 0, fat: 7 },
+  { name: "Lomo de Cerdo (Cinta)", calories: 155, protein: 22, carbs: 0, fat: 7 },
+  { name: "Cordero Magro", calories: 220, protein: 20, carbs: 0, fat: 15 },
+  { name: "Conejo", calories: 133, protein: 21, carbs: 0, fat: 5 },
+  { name: "Jamón Serrano (sin grasa)", calories: 210, protein: 30, carbs: 0.5, fat: 10 },
+  { name: "Taquitos de Jamón Cocido", calories: 105, protein: 18, carbs: 1.5, fat: 3 },
+  { name: "Salmón Fresco", calories: 208, protein: 20, carbs: 0, fat: 13 },
+  { name: "Salmón Ahumado", calories: 184, protein: 22, carbs: 0.5, fat: 10 },
+  { name: "Atún al Natural (Lata)", calories: 116, protein: 26, carbs: 0, fat: 1 },
+  { name: "Atún Fresco", calories: 130, protein: 25, carbs: 0, fat: 3 },
+  { name: "Merluza / Pescado Blanco", calories: 78, protein: 17, carbs: 0, fat: 0.8 },
+  { name: "Bacalao (Fresco/Desmigado)", calories: 82, protein: 18, carbs: 0, fat: 0.7 },
+  { name: "Sepia / Calamar", calories: 80, protein: 16, carbs: 1, fat: 1 },
+  { name: "Gambas / Langostinos", calories: 95, protein: 20, carbs: 1, fat: 1 },
+  { name: "Mejillones", calories: 86, protein: 12, carbs: 3, fat: 2 },
+  { name: "Dorada / Trucha", calories: 120, protein: 19, carbs: 0, fat: 4.5 },
+  { name: "Ventresca de Atún", calories: 210, protein: 24, carbs: 0, fat: 12 },
+  { name: "Tofu Firme", calories: 83, protein: 10, carbs: 1, fat: 5 },
+  { name: "Seitán", calories: 120, protein: 24, carbs: 4, fat: 2 },
+  { name: "Edamame (sin vaina)", calories: 122, protein: 11, carbs: 10, fat: 5 },
+  { name: "Proteína en Polvo (Media)", calories: 370, protein: 80, carbs: 6, fat: 3 },
+
+  // HUEVOS Y LÁCTEOS
+  { name: "Huevo Entero (1 ud L)", calories: 75, protein: 6.5, carbs: 0.5, fat: 5, type: 'unit' },
+  { name: "Clara de Huevo (100ml)", calories: 50, protein: 11, carbs: 0.7, fat: 0.1 },
+  { name: "Yogur Griego", calories: 115, protein: 9, carbs: 4, fat: 8 },
+  { name: "Queso Fresco Batido 0%", calories: 46, protein: 8, carbs: 3.5, fat: 0.1 },
+  { name: "Queso Cottage", calories: 98, protein: 11, carbs: 3.4, fat: 4.3 },
+  { name: "Queso Skyr", calories: 63, protein: 11, carbs: 4, fat: 0.2 },
+  { name: "Queso Requesón / Ricotta", calories: 170, protein: 11.5, carbs: 3, fat: 12 },
+  { name: "Queso Feta", calories: 264, protein: 14, carbs: 4, fat: 21 },
+  { name: "Queso Mozzarella", calories: 280, protein: 22, carbs: 2, fat: 20 },
+  { name: "Queso Havarti / Curado", calories: 350, protein: 25, carbs: 1, fat: 28 },
+  { name: "Queso Crema Light", calories: 150, protein: 8, carbs: 5, fat: 11 },
+  { name: "Quesitos Light (1 ud)", calories: 35, protein: 2.5, carbs: 1, fat: 2, type: 'unit' },
+  { name: "Leche Desnatada", calories: 35, protein: 3.4, carbs: 5, fat: 0.1 },
+  { name: "Bebida de Soja / Almendras", calories: 35, protein: 3, carbs: 1, fat: 1.5 },
+  { name: "Kéfir", calories: 60, protein: 3.5, carbs: 4, fat: 3.5 },
+
+  // FRUTAS Y VERDURAS
+  { name: "Plátano", calories: 89, protein: 1.1, carbs: 23, fat: 0.3 },
+  { name: "Manzana / Pera", calories: 52, protein: 0.3, carbs: 14, fat: 0.2 },
+  { name: "Frutos Rojos (Mix)", calories: 45, protein: 0.8, carbs: 10, fat: 0.4 },
+  { name: "Mango / Papaya", calories: 60, protein: 0.7, carbs: 15, fat: 0.3 },
+  { name: "Piña / Melocotón", calories: 50, protein: 0.5, carbs: 13, fat: 0.1 },
+  { name: "Brócoli / Espinacas", calories: 30, protein: 2.8, carbs: 5, fat: 0.4 },
+  { name: "Pimientos / Tomate", calories: 22, protein: 1, carbs: 4, fat: 0.2 },
+  { name: "Berenjena / Calabacín", calories: 20, protein: 1.2, carbs: 3.5, fat: 0.2 },
+  { name: "Champiñones / Setas", calories: 25, protein: 3, carbs: 3, fat: 0.3 },
+
+  // GRASAS Y FRUTOS SECOS
+  { name: "Aceite de Oliva / Coco", calories: 884, protein: 0, carbs: 0, fat: 100 },
+  { name: "Aguacate", calories: 160, protein: 2, carbs: 9, fat: 15 },
+  { name: "Crema de Cacahuete/Almendra", calories: 595, protein: 25, carbs: 12, fat: 50 },
+  { name: "Nueces / Almendras / Pistachos", calories: 610, protein: 19, carbs: 14, fat: 52 },
+  { name: "Anacardos / Avellanas", calories: 580, protein: 17, carbs: 22, fat: 48 },
+  { name: "Semillas (Chía/Cáñamo/Lino)", calories: 520, protein: 20, carbs: 10, fat: 40 },
+  { name: "Hummus", calories: 175, protein: 8, carbs: 14, fat: 10 },
+  { name: "Tahini", calories: 595, protein: 17, carbs: 21, fat: 54 },
+  { name: "Aceitunas (Verdes/Negras)", calories: 145, protein: 1, carbs: 3, fat: 15 },
+
+  // CEREALES E HIDRATOS
+  { name: "Avena (Copos/Harina)", calories: 380, protein: 13, carbs: 66, fat: 7 },
+  { name: "Arroz (Integral/Jazmín/Basmati)", calories: 355, protein: 7, carbs: 78, fat: 0.7 },
+  { name: "Pasta Integral / Espelta", calories: 350, protein: 12.5, carbs: 70, fat: 1.5 },
+  { name: "Pasta de Lentejas", calories: 335, protein: 25, carbs: 50, fat: 2 },
+  { name: "Quinoa (Cruda)", calories: 368, protein: 14, carbs: 64, fat: 6 },
+  { name: "Cuscús Integral", calories: 345, protein: 12.8, carbs: 67, fat: 1.5 },
+  { name: "Garbanzos / Lentejas (Cocidos)", calories: 140, protein: 8.5, carbs: 20, fat: 2 },
+  { name: "Patata / Batata (Cruda)", calories: 80, protein: 2, carbs: 18, fat: 0.1 },
+  { name: "Pan Integral / Centeno", calories: 240, protein: 8.5, carbs: 45, fat: 2.5 },
+  { name: "Tortilla Trigo/Maíz (1 ud)", calories: 120, protein: 3.5, carbs: 20, fat: 2.5, type: 'unit' },
+  { name: "Bagel Integral (1 ud)", calories: 245, protein: 10, carbs: 48, fat: 2, type: 'unit' },
+  { name: "Arepa de Maíz (Masa)", calories: 165, protein: 3, carbs: 35, fat: 1 },
+  { name: "Granola Casera", calories: 460, protein: 10, carbs: 60, fat: 20 },
+  { name: "Dátiles (1 ud Medjool)", calories: 66, protein: 0.4, carbs: 16, fat: 0, type: 'unit' },
+  { name: "Miel / Sirope Ágave (1 cda)", calories: 60, protein: 0, carbs: 15, fat: 0, type: 'unit' }
+];
+
 const Foods = {
   getAll: () => {
     const data = getData();
-    return data.foods || [];
+    const trainerFoods = data.foods || [];
+    
+    // Generar la lista final uniendo SYSTEM_FOODS de forma blindada
+    const finalFoods = [];
+    const processedSysIds = new Set();
+    
+    SYSTEM_FOODS.forEach(sys => {
+      const sysId = 'seed_food_' + sys.name.toLowerCase().replace(/[^a-z0-9]/g, '_');
+      processedSysIds.add(sysId);
+      
+      // Buscar si el entrenador ha guardado alguna edición local de este alimento del sistema
+      const localEdit = trainerFoods.find(lf => lf.id === sysId || lf.name === sys.name);
+      
+      if (localEdit) {
+        finalFoods.push({
+          ...localEdit,
+          id: sysId, // Siempre forzar ID de sistema blindado
+          name: sys.name, // Siempre forzar nombre original
+          type: sys.type || 'g', // Siempre forzar tipo original
+          isSystem: true
+        });
+      } else {
+        finalFoods.push({
+          id: sysId,
+          name: sys.name,
+          calories: sys.calories || 0,
+          protein: sys.protein || 0,
+          carbs: sys.carbs || 0,
+          fat: sys.fat || 0,
+          type: sys.type || 'g',
+          isSystem: true
+        });
+      }
+    });
+    
+    // Añadir los alimentos personalizados creados por el entrenador
+    trainerFoods.forEach(tf => {
+      const isSystem = tf.id && (String(tf.id).startsWith('seed_') || processedSysIds.has(tf.id));
+      const matchesSystemName = SYSTEM_FOODS.some(sf => sf.name === tf.name);
+      
+      if (!isSystem && !matchesSystemName) {
+        finalFoods.push({
+          ...tf,
+          isSystem: false
+        });
+      }
+    });
+    
+    return finalFoods;
   },
 
   getById: (id) => {
-    const data = getData();
-    return (data.foods || []).find(f => f.id === id);
+    return Foods.getAll().find(f => f.id === id);
   },
 
   create: (foodData) => {
     const data = getData();
     if (!data.foods) data.foods = [];
+    
+    // Evitar duplicar nombres del sistema
+    const matchesSystemName = SYSTEM_FOODS.some(sf => sf.name.toLowerCase() === foodData.name.toLowerCase());
+    if (matchesSystemName) {
+      throw new Error('No puedes crear un alimento con el mismo nombre que un alimento del sistema.');
+    }
+    
     const newFood = {
       id: generateUUID(),
       name: foodData.name,
@@ -1843,7 +2176,7 @@ const Foods = {
       protein: foodData.protein || 0,
       carbs: foodData.carbs || 0,
       fat: foodData.fat || 0,
-      type: foodData.type || 'g', // 'g' for grams (100g base), 'unit' for unit base
+      type: foodData.type || 'g',
       createdAt: new Date().toISOString()
     };
     data.foods.push(newFood);
@@ -1854,16 +2187,67 @@ const Foods = {
   update: (id, updates) => {
     const data = getData();
     if (!data.foods) data.foods = [];
-    const index = data.foods.findIndex(f => f.id == id);
-    if (index !== -1) {
-      data.foods[index] = { ...data.foods[index], ...updates };
-      saveData(data);
-      return data.foods[index];
+    
+    const isSys = String(id).startsWith('seed_');
+    
+    if (isSys) {
+      // Si es un alimento del sistema, el entrenador SOLO puede actualizar kcal y macros
+      const sysFood = SYSTEM_FOODS.find(sf => {
+        const sysId = 'seed_food_' + sf.name.toLowerCase().replace(/[^a-z0-9]/g, '_');
+        return sysId === id;
+      });
+      
+      if (!sysFood) return null;
+      
+      let index = data.foods.findIndex(f => f.id == id);
+      if (index === -1) {
+        // Si aún no tenía edición local, la creamos a partir de los datos base del sistema
+        const localCopy = {
+          id: id,
+          name: sysFood.name,
+          type: sysFood.type || 'g',
+          calories: updates.calories !== undefined ? updates.calories : sysFood.calories,
+          protein: updates.protein !== undefined ? updates.protein : sysFood.protein,
+          carbs: updates.carbs !== undefined ? updates.carbs : sysFood.carbs,
+          fat: updates.fat !== undefined ? updates.fat : sysFood.fat,
+          createdAt: new Date().toISOString()
+        };
+        data.foods.push(localCopy);
+        saveData(data);
+        return localCopy;
+      } else {
+        // Si ya tenía edición local, actualizamos solo kcal y macros, forzando name y type base
+        data.foods[index] = {
+          ...data.foods[index],
+          calories: updates.calories !== undefined ? updates.calories : data.foods[index].calories,
+          protein: updates.protein !== undefined ? updates.protein : data.foods[index].protein,
+          carbs: updates.carbs !== undefined ? updates.carbs : data.foods[index].carbs,
+          fat: updates.fat !== undefined ? updates.fat : data.foods[index].fat,
+          name: sysFood.name, // Forzado
+          type: sysFood.type || 'g' // Forzado
+        };
+        saveData(data);
+        return data.foods[index];
+      }
+    } else {
+      // Alimento personalizado normal
+      const index = data.foods.findIndex(f => f.id == id);
+      if (index !== -1) {
+        data.foods[index] = { ...data.foods[index], ...updates };
+        saveData(data);
+        return data.foods[index];
+      }
     }
     return null;
   },
 
   delete: (id) => {
+    const isSys = String(id).startsWith('seed_');
+    if (isSys) {
+      // Bloqueo total de eliminación para alimentos de sistema
+      throw new Error('Los alimentos del sistema están blindados y no se pueden eliminar.');
+    }
+    
     const data = getData();
     if (!data.foods) return;
     data.foods = data.foods.filter(f => f.id != id);
@@ -1984,24 +2368,354 @@ const Appointments = {
   }
 };
 
+const MuscleGroups = {
+  saveExerciseAndSync: (group, idx, name, videoUrl) => {
+    const data = getData();
+    if (!data.muscleGroupsConfig) return;
+    
+    // 1. Actualizar configuración local de ejercicios
+    data.muscleGroupsConfig.exercises[group][idx] = { name, videoUrl };
+
+    // 2. Sincronizar Multimedia - Versión Ultra-Robusta
+    const cleanName = name.toLowerCase().trim();
+    
+    // Obtenemos el item existente (buscando en personales primero)
+    const personalMedia = data.media || [];
+    const systemItems = [...(window.SYSTEM_MEDIA || []), ...SYSTEM_MEDIA];
+    
+    let existing = personalMedia.find(m => m.title.toLowerCase().trim() === cleanName);
+    if (!existing) {
+        existing = systemItems.find(m => m.title.toLowerCase().trim() === cleanName);
+    }
+
+    if (existing) {
+        let personalIdx = data.media.findIndex(m => m.id === existing.id);
+        if (personalIdx === -1) {
+            // Crear override de sistema
+            data.media.push({
+                ...existing,
+                url: videoUrl,
+                muscleGroup: group,
+                isSystem: false,
+                updatedAt: new Date().toISOString()
+            });
+        } else {
+            // Actualizar personal
+            data.media[personalIdx].url = videoUrl;
+            data.media[personalIdx].muscleGroup = group;
+            data.media[personalIdx].updatedAt = new Date().toISOString();
+        }
+    } else if (videoUrl) {
+        // Crear nuevo totalmente
+        data.media.push({
+            id: generateUUID(),
+            type: 'video',
+            category: 'exercise',
+            title: name,
+            url: videoUrl,
+            muscleGroup: group,
+            isSystem: false,
+            createdAt: new Date().toISOString()
+        });
+    }
+
+    saveData(data);
+    return data;
+  }
+};
+
+const TrainingLogs = {
+  getAll: () => {
+    const data = getData();
+    return data.trainingLogs || [];
+  },
+
+  getByClientId: (clientId) => {
+    const data = getData();
+    return (data.trainingLogs || []).filter(l => l.clientId == clientId);
+  },
+
+  create: (logData) => {
+    const data = getData();
+
+    // Find active block for this client
+    const activeBlock = (data.trainingBlocks || []).find(b => b.clientId == logData.clientId && b.status === 'active');
+
+    const newLog = {
+      id: generateUUID(),
+      clientId: logData.clientId,
+      routineId: logData.routineId,
+      dayNumber: logData.dayNumber,
+      blockId: activeBlock ? activeBlock.id : null,
+      date: logData.date || new Date().toISOString(),
+      exercises: logData.exercises || [], // array of { name, sets: [{ weight, reps, rir }] }
+      completed: true, // Mark as completed when saved
+      createdAt: new Date().toISOString()
+    };
+    if (!data.trainingLogs) data.trainingLogs = [];
+    data.trainingLogs.push(newLog);
+    saveData(data);
+    return newLog;
+  },
+
+  update: (id, updates) => {
+    const data = getData();
+    if (!data.trainingLogs) return null;
+    const index = data.trainingLogs.findIndex(l => l.id == id);
+    if (index !== -1) {
+      data.trainingLogs[index] = { ...data.trainingLogs[index], ...updates };
+      saveData(data);
+      return data.trainingLogs[index];
+    }
+    return null;
+  },
+
+  getExercisePR: (clientId, exerciseName) => {
+    const logs = TrainingLogs.getByClientId(clientId);
+    let maxWeight = 0;
+    logs.forEach(l => {
+      (l.exercises || []).forEach(ex => {
+        if (ex.name === exerciseName) {
+          const m = Math.max(...(ex.sets || []).map(s => parseFloat(s.weight) || 0));
+          if (m > maxWeight) maxWeight = m;
+        }
+      });
+    });
+    return maxWeight;
+  },
+
+  getExercisePRDetails: (clientId, exerciseName) => {
+    const logs = TrainingLogs.getByClientId(clientId);
+    let bestSet = { weight: 0, reps: 0 };
+    logs.forEach(l => {
+      (l.exercises || []).forEach(ex => {
+        if (ex.name === exerciseName) {
+          (ex.sets || []).forEach(s => {
+            const w = parseFloat(s.weight) || 0;
+            const r = parseInt(s.reps) || 0;
+            if (w > bestSet.weight) {
+                bestSet = { weight: w, reps: r };
+            } else if (w > 0 && w === bestSet.weight && r > bestSet.reps) {
+                bestSet.reps = r;
+            }
+          });
+        }
+      });
+    });
+    return bestSet;
+  }
+};
+
+const Habits = {
+  getAll: () => {
+    const data = getData();
+    return data.habits || [];
+  },
+
+  getByClientId: (clientId) => {
+    return Habits.getAll().filter(h => h.clientId == clientId);
+  },
+
+  getToday: (clientId) => {
+    const today = new Date().toLocaleDateString('en-CA'); // YYYY-MM-DD
+    return (Habits.getAll() || []).find(h => h.clientId === clientId && h.date === today);
+  },
+
+  save: (clientId, habitsData) => {
+    const data = getData();
+    if (!data.habits) data.habits = [];
+    
+    const today = new Date().toLocaleDateString('en-CA');
+    const index = data.habits.findIndex(h => h.clientId === clientId && h.date === today);
+    
+    const entry = {
+      clientId,
+      date: today,
+      water: parseFloat(habitsData.water) || 0,
+      steps: parseInt(habitsData.steps) || 0,
+      sleep: parseFloat(habitsData.sleep) || 0,
+      updatedAt: new Date().toISOString()
+    };
+
+    if (index !== -1) {
+      data.habits[index] = { ...data.habits[index], ...entry };
+    } else {
+      data.habits.push(entry);
+    }
+    
+    saveData(data);
+    return entry;
+  }
+};
+
+const TrainingBlocks = {
+  getAll: () => {
+    const data = getData();
+    return data.trainingBlocks || [];
+  },
+
+  getByClientId: (clientId) => {
+    return TrainingBlocks.getAll().filter(b => b.clientId == clientId);
+  },
+
+  getById: (id) => {
+    return TrainingBlocks.getAll().find(b => b.id == id);
+  },
+
+  create: (blockData) => {
+    const data = getData();
+
+    if (!data.trainingBlocks) data.trainingBlocks = [];
+
+    const newBlock = {
+      id: generateUUID(),
+      clientId: blockData.clientId,
+      name: blockData.name,
+      startDate: blockData.startDate || new Date().toISOString(),
+      goal: blockData.goal || '',
+      endDate: blockData.endDate || null,
+      status: blockData.status || 'active',
+      published: blockData.published || false,
+      createdAt: new Date().toISOString(),
+      weeks: []
+    };
+
+    data.trainingBlocks.push(newBlock);
+    saveData(data);
+    return newBlock;
+  },
+
+  update: (id, updates) => {
+    const data = getData();
+    if (!data.trainingBlocks) return null;
+    const index = data.trainingBlocks.findIndex(b => b.id == id);
+    if (index !== -1) {
+      data.trainingBlocks[index] = { ...data.trainingBlocks[index], ...updates };
+      saveData(data);
+      return data.trainingBlocks[index];
+    }
+    return null;
+  },
+
+  delete: (id) => {
+    const data = getData();
+    if (!data.trainingBlocks) return;
+    data.trainingBlocks = data.trainingBlocks.filter(b => b.id != id);
+    saveData(data);
+  }
+};
+
+const Invoices = {
+  getAll: () => {
+    const data = getData();
+    return data.invoices || [];
+  },
+
+  getByClientId: (clientId) => {
+    return Invoices.getAll().filter(i => i.clientId == clientId);
+  },
+
+  getById: (id) => {
+    return Invoices.getAll().find(i => i.id == id);
+  },
+
+  getLast: () => {
+    const all = Invoices.getAll();
+    return all.length > 0 ? all[all.length - 1] : null;
+  },
+
+  getNextNumber: () => {
+    const all = Invoices.getAll();
+    const brand = BrandConfig.get();
+    const prefix = (brand.fiscalData && brand.fiscalData.invoiceSeries) ? brand.fiscalData.invoiceSeries + '-' : `F${new Date().getFullYear()}-`;
+    
+    const yearInvoices = all.filter(i => i.number && i.number.startsWith(prefix));
+    
+    if (yearInvoices.length === 0) return `${prefix}0001`;
+    
+    const lastNum = yearInvoices[yearInvoices.length - 1].number;
+    const seq = parseInt(lastNum.split('-')[1]) + 1;
+    return `${prefix}${seq.toString().padStart(4, '0')}`;
+  },
+
+  create: async (invoiceData) => {
+    const data = getData();
+    if (!data.invoices) data.invoices = [];
+
+    const lastInvoice = Invoices.getLast();
+    const prevHash = lastInvoice ? lastInvoice.hash : "";
+    
+    const brand = BrandConfig.get();
+    const ivaRate = (brand.fiscalData && brand.fiscalData.defaultIva) || 21;
+    const total = parseFloat(invoiceData.amount) || 0;
+    const base = total / (1 + (ivaRate / 100));
+    const ivaAmount = total - base;
+
+    const newInvoice = {
+      id: generateUUID(),
+      clientId: invoiceData.clientId,
+      clientName: invoiceData.clientName || 'Cliente',
+      date: new Date().toISOString(),
+      number: Invoices.getNextNumber(),
+      amount: total,
+      base: base,
+      ivaRate: ivaRate,
+      ivaAmount: ivaAmount,
+      description: invoiceData.description || 'Cuota Mensual',
+      status: 'paid',
+      previousHash: prevHash,
+      hash: "" // Will be calculated below
+    };
+
+    // Calculate Hash (Simple SHA-256 simulation or actual WebCrypto)
+    // For VeriFactu compliance, we use the specific fields chain.
+    const chainData = `${newInvoice.number}|${newInvoice.date}|${newInvoice.amount}|${prevHash}`;
+    newInvoice.hash = await Invoices.generateHash(chainData);
+
+    data.invoices.push(newInvoice);
+    saveData(data);
+    return newInvoice;
+  },
+
+  generateHash: async (text) => {
+    const msgUint8 = new TextEncoder().encode(text);
+    const hashBuffer = await crypto.subtle.digest('SHA-256', msgUint8);
+    const hashArray = Array.from(new Uint8Array(hashBuffer));
+    return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+  }
+};
+
 window.Clients = Clients;
 window.Routines = Routines;
 window.Diets = Diets;
 window.Foods = Foods;
 window.Feedbacks = Feedbacks;
 window.Appointments = Appointments;
+window.MuscleGroups = MuscleGroups;
+window.TrainingLogs = TrainingLogs;
+window.Habits = Habits;
+window.TrainingBlocks = TrainingBlocks;
+window.Invoices = Invoices;
 const BrandConfig = {
   get: () => {
     if (window.BrandConfig && window.BrandConfig !== BrandConfig) {
       return window.BrandConfig.get();
     }
     const data = getData();
-    return data.brand || {
+    let res = data.brand || {
         name: 'Infinite Coach',
+        logo: 'img/logo-infinite-marble.png',
         configured: true,
         colors: { primary: '#00D9FF', secondary: '#1A1A2E', accent: '#FF6B6B' },
         fiscalData: { invoiceSeries: 'F' + new Date().getFullYear() }
     };
+    if (res && (res.name === 'MyFitness' || res.name === 'Fitness App')) {
+        res.name = 'Infinite Coach';
+    }
+    if (res && (!res.logo || res.logo.length < 5)) {
+        res.logo = 'img/logo-infinite-marble.png';
+    }
+    return res;
   },
 
   set: (brandData) => {
@@ -2065,24 +2779,19 @@ const BrandConfig = {
     
     if (brand) {
         headerLogos.forEach(logoImg => {
-            if (brand.logo && brand.logo.length > 5) {
-                // Ensure cloud images load correctly
-                logoImg.src = brand.logo;
-                
-                const extraStyles = "background: white; padding: 2px; border-radius: 4px;";
-                logoImg.style.cssText = `display: block !important; opacity: 1 !important; visibility: visible !important; max-height: 40px !important; width: auto !important; object-fit: contain !important; ${extraStyles}`;
-                
-                logoImg.onerror = () => {
-                    // Solo ocultar si realmente falla la carga DESPUÉS de intentarlo
-                    if (!logoImg.src.includes('blob:')) {
-                        console.warn("Logo failed to load:", logoImg.src);
-                        logoImg.style.display = 'none';
-                    }
-                };
-            } else {
-                logoImg.src = '';
-                logoImg.style.display = 'none';
-            }
+            const defaultLogo = 'img/logo-infinite-marble.png';
+            const hasLogo = brand.logo && brand.logo.length > 5;
+            logoImg.src = hasLogo ? brand.logo : defaultLogo;
+            
+            const extraStyles = "background: white; padding: 2px; border-radius: 4px;";
+            logoImg.style.cssText = `display: block !important; opacity: 1 !important; visibility: visible !important; max-height: 40px !important; width: auto !important; object-fit: contain !important; ${extraStyles}`;
+            
+            logoImg.onerror = () => {
+                if (logoImg.src !== defaultLogo && !logoImg.src.includes('blob:')) {
+                    console.warn("Logo failed to load, falling back to default:", logoImg.src);
+                    logoImg.src = defaultLogo;
+                }
+            };
         });
 
         previewLogos.forEach(logoImg => {
@@ -2105,29 +2814,6 @@ const BrandConfig = {
         // Actualizar título de la ventana
         if (brand.name) {
             document.title = `${baseTitle} - ${brand.name}`;
-        }
-    }
-
-    // Admin Master Link Check (Automatic)
-    const masterLink = document.getElementById('masterLink');
-    if (masterLink) {
-        const mid = window.activeTrainerId || localStorage.getItem('activeTrainerId') || 'default';
-        const userEmail = (typeof AUTH !== 'undefined' && AUTH.userEmail) || localStorage.getItem('_trainerEmail');
-        const b = BrandConfig.get();
-        
-        // Debug
-        console.log("Master Check:", { mid, userEmail, bName: b?.name });
-
-        // Si el usuario es 'default' o su email contiene 'asteam' o el nombre de marca es ASTeam
-        const isMaster = mid === 'default' || 
-                         (userEmail && userEmail.toLowerCase().includes('asteam')) || 
-                         (b && b.name && b.name.toLowerCase().includes('asteam'));
-
-        if (isMaster) {
-            masterLink.style.setProperty('display', 'block', 'important');
-        } else {
-            // No forzar display:none si ya estaba visible, pero ocultar si se requiere seguridad estricta
-            masterLink.style.display = 'none';
         }
     }
   }

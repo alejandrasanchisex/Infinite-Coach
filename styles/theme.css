@@ -261,14 +261,17 @@ a:hover {
 }
 
 .logo {
-  display: flex;
+
+display: flex;
   align-items: center;
   gap: var(--spacing-sm);
-  font-size: 1.1rem;
-  font-weight: 700;
+  font-size: 1.2rem;
+  font-weight: 800;
   color: var(--primary-color);
   padding: var(--spacing-sm) 0;
   line-height: 1;
+  text-transform: uppercase;
+  letter-spacing: 1px;
 }
 
 .logo-img:not([src]), 
@@ -492,7 +495,8 @@ a:hover {
   width: 40px;
   height: 40px;
   padding: 0;
-  border-radius: 50%;
+
+border-radius: 50%;
 }
 
 /* ============================================
@@ -704,3 +708,326 @@ a:hover {
     transform: rotate(360deg);
   }
 }
+
+/* ============================================
+   LIGHT MODE OVERRIDES (MODO DÍA)
+   ============================================ */
+:root {
+  --light-bg-dark: #F4F6F9;
+  --light-bg-card: #FFFFFF;
+  --light-bg-input: #FFFFFF;
+  --light-text-primary: #1E293B;
+  --light-text-secondary: #475569;
+  --light-text-muted: #64748B;
+  --light-border: rgba(0, 0, 0, 0.08);
+}
+
+html.theme-light,
+body.theme-light {
+  background: var(--light-bg-dark) !important;
+  color: var(--light-text-primary) !important;
+}
+
+html.theme-light .card,
+html.theme-light .wizard-card,
+html.theme-light .modal,
+body.theme-light .card,
+body.theme-light .wizard-card,
+body.theme-light .modal {
+  background: var(--light-bg-card) !important;
+  border-color: var(--light-border) !important;
+
+box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03) !important;
+  color: var(--light-text-primary) !important;
+}
+
+html.theme-light .card-title,
+html.theme-light h1,
+html.theme-light h2,
+html.theme-light h3,
+html.theme-light h4,
+html.theme-light h5,
+html.theme-light h6,
+body.theme-light .card-title,
+body.theme-light h1,
+body.theme-light h2,
+body.theme-light h3,
+body.theme-light h4,
+body.theme-light h5,
+body.theme-light h6 {
+  color: var(--light-text-primary) !important;
+}
+
+html.theme-light p,
+html.theme-light .text-muted,
+html.theme-light .form-hint,
+body.theme-light p,
+body.theme-light .text-muted,
+body.theme-light .form-hint {
+  color: var(--light-text-secondary) !important;
+}
+
+html.theme-light .form-input,
+html.theme-light .form-select,
+html.theme-light .form-textarea,
+body.theme-light .form-input,
+body.theme-light .form-select,
+body.theme-light .form-textarea {
+  background: var(--light-bg-input) !important;
+  color: var(--light-text-primary) !important;
+  border: 1px solid rgba(0, 0, 0, 0.15) !important;
+}
+
+html.theme-light .form-input:focus,
+html.theme-light .form-select:focus,
+html.theme-light .form-textarea:focus,
+body.theme-light .form-input:focus,
+body.theme-light .form-select:focus,
+body.theme-light .form-textarea:focus {
+  border-color: var(--primary-color) !important;
+  box-shadow: 0 0 0 2px rgba(var(--primary-color-rgb), 0.2) !important;
+}
+
+html.theme-light .form-input::placeholder,
+html.theme-light .form-textarea::placeholder,
+body.theme-light .form-input::placeholder,
+body.theme-light .form-textarea::placeholder {
+  color: rgba(0, 0, 0, 0.4) !important;
+}
+
+html.theme-light .form-label,
+body.theme-light .form-label {
+  color: var(--light-text-primary) !important;
+  font-weight: 600 !important;
+}
+
+html.theme-light .divider,
+body.theme-light .divider {
+  background: var(--light-border) !important;
+}
+
+html.theme-light .header,
+body.theme-light .header {
+  background: #FFFFFF !important;
+  border-bottom: 1px solid var(--light-border) !important;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.02) !important;
+}
+
+html.theme-light .nav-link,
+body.theme-light .nav-link {
+  color: var(--light-text-secondary) !important;
+}
+
+html.theme-light .menu-toggle,
+body.theme-light .menu-toggle {
+  color: var(--light-text-primary) !important;
+}
+
+@media (max-width: 768px) {
+  html.theme-light .nav-links,
+  body.theme-light .nav-links {
+    background: #FFFFFF !important;
+    border: 1px solid var(--light-border) !important;
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05) !important;
+  }
+}
+
+html.theme-light .nav-link:hover,
+html.theme-light .nav-link.active,
+body.theme-light .nav-link:hover,
+body.theme-light .nav-link.active {
+  color: var(--primary-color) !important;
+}
+
+/* Specific component fixes for light mode */
+html.theme-light .table th,
+body.theme-light .table th {
+  background: rgba(0, 0, 0, 0.02) !important;
+  color: var(--light-text-primary) !important;
+  border-bottom: 2px solid var(--light-border) !important;
+}
+
+html.theme-light .table td,
+body.theme-light .table td {
+  border-bottom: 1px solid var(--light-border) !important;
+  color: var(--light-text-secondary) !important;
+}
+
+html.theme-light .table tr:hover,
+body.theme-light .table tr:hover {
+  background: rgba(0, 0, 0, 0.01) !important;
+}
+
+html.theme-light .modal-header,
+body.theme-light .modal-header {
+  border-bottom: 1px solid var(--light-border) !important;
+}
+
+html.theme-light .modal-footer,
+body.theme-light .modal-footer {
+  border-top: 1px solid var(--light-border) !important;
+}
+
+html.theme-light .client-card,
+html.theme-light .routine-card,
+html.theme-light .diet-card,
+body.theme-light .client-card,
+body.theme-light .routine-card,
+body.theme-light .diet-card {
+  background: #FFFFFF !important;
+  border: 1px solid var(--light-border) !important;
+}
+
+html.theme-light .list-group-item,
+html.theme-light .food-item,
+html.theme-light .exercise-item,
+body.theme-light .list-group-item,
+body.theme-light .food-item,
+body.theme-light .exercise-item {
+  background: #FFFFFF !important;
+  border: 1px solid var(--light-border) !important;
+  color: var(--light-text-primary) !important;
+}
+
+html.theme-light .search-box,
+body.theme-light .search-box {
+  background: #FFFFFF !important;
+  border: 1px solid rgba(0, 0, 0, 0.15) !important;
+}
+
+html.theme-light .btn-secondary,
+body.theme-light .btn-secondary {
+  background: #E2E8F0 !important;
+  color: #1E293B !important;
+  border: 1px solid #CBD5E1 !important;
+}
+
+html.theme-light .btn-secondary:hover,
+body.theme-light .btn-secondary:hover {
+  background: #CBD5E1 !important;
+}
+
+html.theme-light .sidebar,
+body.theme-light .sidebar {
+  background: #FFFFFF !important;
+  border-right: 1px solid var(--light-border) !important;
+}
+
+html.theme-light .card-header,
+body.theme-light .card-header {
+  border-bottom: 1px solid var(--light-border) !important;
+}
+
+/* ============================================
+   LIGHT MODE ADDITIONAL REFINEMENTS
+   ============================================ */
+html.theme-light h1,
+html.theme-light h2,
+html.theme-light h3,
+html.theme-light h4,
+html.theme-light h5,
+html.theme-light h6,
+body.theme-light h1,
+body.theme-light h2,
+body.theme-light h3,
+body.theme-light h4,
+body.theme-light h5,
+body.theme-light h6,
+body.theme-light .tool-title,
+body.theme-light #clientName,
+body.theme-light #brandName,
+body.theme-light .client-info h2,
+body.theme-light .metric-value,
+body.theme-light .stat-number,
+body.theme-light .profile-header h2,
+body.theme-light #sessionExercises,
+body.theme-light #sessionExercises + span {
+  color: var(--light-text-primary) !important;
+}
+
+html.theme-light .main-tool-card,
+body.theme-light .main-tool-card {
+  background: var(--light-bg-card) !important;
+  border: 1px solid var(--light-border) !important;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03) !important;
+}
+
+html.theme-light .main-tool-card .tool-title,
+body.theme-light .main-tool-card .tool-title {
+  color: var(--light-text-primary) !important;
+}
+
+html.theme-light .main-tool-card:hover,
+body.theme-light .main-tool-card:hover {
+  background: #F8F9FD !important;
+}
+
+html.theme-light .metric-card,
+body.theme-light .metric-card {
+  background: var(--light-bg-card) !important;
+  border: 1px solid var(--light-border) !important;
+}
+
+html.theme-light .metric-label,
+body.theme-light .metric-label {
+  color: var(--light-text-secondary) !important;
+}
+
+/* ==========================================================================
+   PREMIUM INTERACTION SYSTEM (MODO DINÁMICO & COLORES DE MARCA)
+   ========================================================================== */
+
+/* 1. Suavizado de todas las transiciones del sistema */
+.btn, .card, .nav-link, .tab, .media-card, .list-group-item {
+  transition: all var(--transition-fast) cubic-bezier(0.4, 0, 0.2, 1) !important;
+}
+
+
+
+/* 3. Estilo estático elegante para tarjetas (sin movimiento) */
+.card:hover, .media-card:hover {
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.25) !important;
+}
+
+/* 4. Aplicación de colores secundarios y acentos para resaltar la marca */
+.btn-primary {
+  background: var(--primary-color) !important;
+  color: #000000 !important; /* Máxima legibilidad y contraste premium */
+}
+
+/* El botón secundario realiza una transición al color secundario personalizado */
+.btn-secondary:hover:not(:disabled) {
+  background: var(--secondary-color) !important;
+  color: #ffffff !important;
+  border-color: var(--secondary-color) !important;
+}
+
+/* El botón principal realiza un destello glow al color de acento al pasar el ratón */
+.btn-primary:hover:not(:disabled) {
+  background: var(--accent-color) !important;
+  box-shadow: 0 0 20px rgba(var(--primary-color-rgb), 0.4) !important;
+}
+
+/* 5. PROTECCIÓN ESTÁTICA TOTAL Y GLOBAL (Desactiva por completo el movimiento en hovers y clicks) */
+.btn:hover, .btn:active,
+[class*="btn"]:hover, [class*="btn"]:active,
+button:hover, button:active,
+.card:hover, .card:active,
+.media-card:hover, .media-card:active,
+.list-group-item:hover, .list-group-item:active,
+.table tr:hover, .table tr:active,
+a:hover, a:active,
+.nav-link:hover, .nav-link:active,
+.tab:hover, .tab:active,
+.hover-scale:hover, .hover-scale:active,
+[role="button"]:hover, [role="button"]:active {
+  transform: none !important;
+}
+
+/* El hover de botones secundarios mantiene el color de la marca sin movimiento */
+.btn-secondary:hover:not(:disabled),
+.theme-client .btn-secondary:hover:not(:disabled) {
+  background: var(--secondary-color) !important;
+  color: #ffffff !important;
+}
+

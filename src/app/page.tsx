@@ -40,7 +40,7 @@ export default function TrainerDashboard() {
             </h1>
             <p className="text-gray-400 text-lg">Resumen de tu academia para hoy, {new Date().toLocaleDateString('es-ES', { weekday: 'long', day: 'numeric', month: 'long' })}.</p>
           </div>
-          <button className="flex items-center gap-2 bg-primary hover:bg-primary-dark transition-all px-6 py-3 rounded-xl text-black font-bold shadow-lg shadow-primary/20 scale-100 hover:scale-105 active:scale-95">
+          <button className="flex items-center gap-2 bg-primary hover:bg-primary-dark transition-colors px-6 py-3 rounded-xl text-black font-bold shadow-lg shadow-primary/20">
             <Plus size={20} />
             Nuevo Cliente
           </button>

@@ -4,12 +4,12 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Mi Dieta - Fitness App</title>
+  <title>Mi Dieta - Infinite Coach</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="styles/theme.css">
-  <link rel="stylesheet" href="styles/components.css">
+  <link rel="stylesheet" href="styles/theme.css?v=321">
+  <link rel="stylesheet" href="styles/components.css?v=317">
   <link rel="stylesheet" href="styles/mobile.css">
   <link rel="manifest" href="manifest.json">
   <meta name="apple-mobile-web-app-capable" content="yes">
@@ -88,17 +88,14 @@
     .food-item {
       display: flex;
       align-items: center;
-      gap: 4px;
-      font-size: 0.75rem;
-      color: var(--text-secondary);
-      line-height: 1.2;
+      gap: 8px;
+      margin-bottom: 6px;
+      width: max-content;
       white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
     }
 
     .food-name {
-      display: inline;
+      display: block;
     }
 
     .food-qty {
@@ -134,11 +131,19 @@
       margin: 0;
       position: relative;
       z-index: 10;
+      display: flex;
+      flex-direction: column;
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: none;
+      width: 100%;
+    }
+    .food-list::-webkit-scrollbar {
+      display: none;
     }
 
 
     .food-item:hover {
-      transform: translateX(5px);
       background: rgba(255,255,255,0.08);
     }
 
@@ -146,9 +151,10 @@
       font-weight: 600;
       color: #fafafa;
       font-size: 1.05rem;
-      display: flex;
-      align-items: center;
-      gap: 10px;
+      display: block;
+      white-space: nowrap;
+      flex: 1;
+      min-width: 0;
     }
 
     .food-name span {
@@ -160,15 +166,16 @@
       font-weight: 800;
       color: var(--primary-color);
       background: var(--primary-glow);
-      padding: 8px 16px;
-      border-radius: 12px;
-      font-size: 0.95rem;
+      padding: 4px 8px;
+      border-radius: 8px;
+      font-size: 0.8rem;
       border: 1px solid rgba(0, 217, 255, 0.3);
-      min-width: 90px;
+      min-width: 65px;
       text-align: center;
-      box-shadow: 0 4px 15px rgba(0, 217, 255, 0.1);
+      box-shadow: 0 4px 10px rgba(0, 217, 255, 0.1);
       z-index: 5;
       position: relative;
+      flex-shrink: 0;
     }
 
     .macros-summary-grid {
@@ -251,10 +258,6 @@
 
     .meal-image-container img {
         transition: transform 0.5s ease;
-    }
-
-    .meal-card:hover .meal-image-container img {
-        transform: scale(1.05);
     }
 
     /* Option Slider */
@@ -471,25 +474,22 @@
   </style>
 </head>
 
-<body class="page-wrapper">
+<body class="page-wrapper theme-client">
   <!-- Header -->
   <header class="header">
     <div class="container">
       <nav class="nav">
-        <div class="logo">
-          <img id="brandLogo" class="logo-img" alt="Logo">
-          <span id="brandName">Fitness App</span>
+        <div class="logo" style="display: flex; align-items: center; gap: 10px; cursor: pointer;" onclick="window.location.href='client-dashboard.html'">
+          <img id="brandLogo" class="logo-img" alt="Logo" style="display: none;">
+          <span id="brandName">Infinite Coach</span>
         </div>
         <ul class="nav-links" id="navLinks">
-          <li><a href="client-dashboard.html" class="nav-link">Inicio</a></li>
-          <li><a href="client-profile.html" class="nav-link">Ficha Técnica</a></li>
+          <li><a href="client-dashboard.html?v=319" class="nav-link">Inicio</a></li>
+          <li><a href="client-profile.html?v=319" class="nav-link">Ficha Técnica</a></li>
 
-          <li><a href="client-login.html" class="nav-link">Salir</a></li>
+          <li><a href="client-login.html?v=319" class="nav-link">Salir</a></li>
         </ul>
-        <div id="clientProfileAvatar" style="width: 35px; height: 35px; border-radius: 50%; background: var(--primary-color); display: flex; align-items: center; justify-content: center; font-size: 0.9rem; font-weight: 800; color: #000; overflow: hidden; border: 2px solid rgba(255,255,255,0.1); margin-left: 15px; cursor: pointer; flex-shrink: 0;" onclick="window.location.href='client-profile.html'">
-            U
-        </div>
-        <button class="menu-toggle" onclick="toggleMenu()" style="margin-left: 10px;">☰</button>
+        <button class="menu-toggle" onclick="toggleMenu()" style="margin-left: auto;">☰</button>
       </nav>
     </div>
   </header>
@@ -568,16 +568,16 @@
   <script src="js/supabase-service.js?v=312"></script>
 
   <script src="js/config.js?v=312"></script>
-  <script src="js/data-models.js?v=312"></script>
+  <script src="js/data-models.js?v=319"></script>
   <script src="js/utils.js?v=312"></script>
   <script src="js/custom-recipes.js?v=312"></script>
   <script>
-    // Check if client is logged in
-    let clientId = new URLSearchParams(window.location.search).get('id') || sessionStorage.getItem('clientId');
+    let clientId = new URLSearchParams(window.location.search).get('id') || sessionStorage.getItem('clientId') || localStorage.getItem('clientId');
     if (!clientId) {
-      window.location.href = 'client-login.html';
+      window.location.replace('client-login.html');
     } else {
       sessionStorage.setItem('clientId', clientId);
+      localStorage.setItem('clientId', clientId);
     }
 
     let client = null;
@@ -609,6 +609,13 @@
       showMacros = brand.clientSettings?.showMacros !== false;
 
       client = Clients.getById(clientId);
+      if (!client) {
+          localStorage.removeItem('clientId');
+          sessionStorage.removeItem('clientId');
+          window.location.replace('client-login.html');
+          return;
+      }
+
       if (client) {
           const avatar = document.getElementById('clientProfileAvatar');
           if (avatar) {

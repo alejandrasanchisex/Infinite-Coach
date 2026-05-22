@@ -27,3 +27,27 @@
     text-wrap: balance;
   }
 }
+
+/* ============================================================
+   BLOQUEO GLOBAL DE MOVIMIENTO FÍSICO EN HOVER / ACTIVE
+   Desactiva cualquier transform (scale, translate, rotate)
+   en todos los elementos interactivos de la app.
+   ============================================================ */
+@layer base {
+  *:hover,
+  *:active {
+    --tw-scale-x: 1 !important;
+    --tw-scale-y: 1 !important;
+    --tw-translate-x: 0 !important;
+    --tw-translate-y: 0 !important;
+  }
+
+  button:hover,
+  button:active,
+  a:hover,
+  a:active,
+  [role="button"]:hover,
+  [role="button"]:active {
+    transform: none !important;
+  }
+}

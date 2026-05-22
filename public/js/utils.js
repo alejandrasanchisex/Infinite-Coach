@@ -108,35 +108,57 @@ window.BrandConfig = {
                 };
             } catch(e) { console.error('Error parsing _trainerBrand:', e); }
         }
-        if (trainerBrand) return trainerBrand;
 
-        // 2. Fallback: brand_settings (legacy)
-        const stored = localStorage.getItem('brand_settings');
-        if (stored) {
-            try {
-                const parsed = JSON.parse(stored);
-                return {
-                    ...defaults,
-                    ...parsed,
-                    colors: parsed.colors || {
-                        primary: parsed.primaryColor || defaults.primaryColor,
-                        secondary: parsed.secondaryColor || defaults.secondaryColor,
-                        accent: (parsed.colors && parsed.colors.accent) || defaults.colors.accent
-                    },
-                    configured: true
-                };
-            } catch(e) { console.error('Error parsing brand_settings:', e); }
-        }
-
-        // 3. Fallback: DB local (puede estar contaminada por syncFromCloud)
-        if (window.getData) {
-            const db = getData();
-            if (db && db.brand && db.brand.name && db.brand.name !== 'Infinite Coach') {
-                return { ...defaults, ...db.brand, configured: true };
+        let result = defaults;
+        if (trainerBrand) {
+            result = trainerBrand;
+        } else {
+            // 2. Fallback: brand_settings (legacy)
+            const stored = localStorage.getItem('brand_settings');
+            if (stored) {
+                try {
+                    const parsed = JSON.parse(stored);
+                    result = {
+                        ...defaults,
+                        ...parsed,
+                        colors: parsed.colors || {
+                            primary: parsed.primaryColor || defaults.primaryColor,
+                            secondary: parsed.secondaryColor || defaults.secondaryColor,
+                            accent: (parsed.colors && parsed.colors.accent) || defaults.colors.accent
+                        },
+                        configured: true
+                    };
+                } catch(e) { console.error('Error parsing brand_settings:', e); }
+            } else if (window.getData) {
+                // 3. Fallback: DB local
+                const db = getData();
+                if (db && db.brand && db.brand.name) {
+                    result = { ...defaults, ...db.brand, configured: true };
+                }
             }
         }
 
-        return defaults;
+        // Auto-migrate legacy brand names (MyFitness or Fitness App) to the official Infinite Coach
+        if (result && (result.name === 'MyFitness' || result.name === 'Fitness App')) {
+            result.name = 'Infinite Coach';
+            try {
+                localStorage.setItem('_trainerBrand', JSON.stringify(result));
+                localStorage.setItem('brand_settings', JSON.stringify(result));
+                if (window.getData && window.saveData) {
+                    const db = getData();
+                    if (db && db.brand) {
+                        db.brand.name = 'Infinite Coach';
+                        saveData(db);
+                    }
+                }
+            } catch(e) {}
+        }
+
+        if (result) {
+            result.logo = isValidLogo(result.logo) ? result.logo : defaults.logo;
+        }
+
+        return result;
     },
     set: function(brandData) {
         // SIEMPRE guardar en la clave dedicada que nada más toca
@@ -170,6 +192,16 @@ window.BrandConfig = {
                 secondary: brand.secondaryColor || '#8B5CF6',
                 accent: '#FF6B6B'
             };
+            
+            // Determine active theme mode (prioritize client-specific selection over coach's default)
+            let activeThemeMode = colors.themeMode || 'dark';
+            if (typeof localStorage !== 'undefined') {
+                const clientPref = localStorage.getItem('clientThemeMode');
+                if (clientPref && clientPref !== 'default') {
+                    activeThemeMode = clientPref;
+                }
+            }
+
             document.documentElement.style.setProperty('--primary-color', colors.primary);
             document.documentElement.style.setProperty('--secondary-color', colors.secondary);
             document.documentElement.style.setProperty('--accent-color', colors.accent || '#FF6B6B');
@@ -182,6 +214,69 @@ window.BrandConfig = {
                     '0, 217, 255';
             };
             document.documentElement.style.setProperty('--primary-color-rgb', hexToRgb(colors.primary));
+
+            // Apply theme class (light/dark)
+            const isLight = activeThemeMode === 'light';
+            document.documentElement.classList.toggle('theme-light', isLight);
+            if (document.body) {
+                document.body.classList.toggle('theme-light', isLight);
+            }
+
+            // Dynamic Favicon, Apple Touch Icon, and Web Manifest
+            const defaultLogo = 'img/logo-infinite-marble.png';
+            const currentLogo = (brand && brand.logo && brand.logo.length > 5) ? brand.logo : defaultLogo;
+            const absoluteLogo = currentLogo.startsWith('http') || currentLogo.startsWith('data:')
+                ? currentLogo
+                : new URL(currentLogo, window.location.origin).href;
+
+            // 1. Update/Create Favicon link
+            let favicon = document.querySelector('link[rel="icon"], link[rel="shortcut icon"]');
+            if (!favicon) {
+                favicon = document.createElement('link');
+                favicon.rel = 'icon';
+                favicon.type = 'image/png';
+                document.head.appendChild(favicon);
+            }
+            favicon.href = absoluteLogo;
+
+            // 2. Update/Create Apple Touch Icon link (for iOS PWAs)
+            let appleIcon = document.querySelector('link[rel="apple-touch-icon"]');
+            if (!appleIcon) {
+                appleIcon = document.createElement('link');
+                appleIcon.rel = 'apple-touch-icon';
+                document.head.appendChild(appleIcon);
+            }
+            appleIcon.href = absoluteLogo;
+
+            // 3. Update Web Manifest dynamically (for PWA homescreen installations)
+            const manifestLink = document.querySelector('link[rel="manifest"]');
+            if (manifestLink) {
+                const baseManifest = {
+                    "name": brand.name || "Infinite Coach",
+                    "short_name": brand.name || "Infinite Coach",
+                    "start_url": "client-login.html",
+                    "display": "standalone",
+                    "background_color": "#0F0F1E",
+                    "theme_color": colors.primary || "#00D9FF",
+                    "orientation": "portrait",
+                    "icons": [
+                        {
+                            "src": absoluteLogo,
+                            "sizes": "192x192",
+                            "type": "image/png"
+                        },
+                        {
+                            "src": absoluteLogo,
+                            "sizes": "512x512",
+                            "type": "image/png"
+                        }
+                    ]
+                };
+                const manifestStr = JSON.stringify(baseManifest);
+                const blob = new Blob([manifestStr], { type: 'application/json' });
+                const manifestURL = URL.createObjectURL(blob);
+                manifestLink.setAttribute('href', manifestURL);
+            }
         }
 
         // Dynamic Header (Logo & Name)
@@ -194,21 +289,19 @@ window.BrandConfig = {
         
         if (brand) {
             headerLogos.forEach(logoImg => {
-                if (brand.logo && brand.logo.length > 5) {
-                    logoImg.src = brand.logo;
-                    const extraStyles = "background: white; padding: 2px; border-radius: 4px;";
-                    logoImg.style.cssText = `display: block !important; opacity: 1 !important; visibility: visible !important; max-height: 40px !important; width: auto !important; object-fit: contain !important; ${extraStyles}`;
-                    
-                    logoImg.onerror = () => {
-                        if (!logoImg.src.includes('blob:')) {
-                            console.warn("Logo failed to load:", logoImg.src);
-                            logoImg.style.display = 'none';
-                        }
-                    };
-                } else {
-                    logoImg.src = '';
-                    logoImg.style.display = 'none';
-                }
+                const defaultLogo = 'img/logo-infinite-marble.png';
+                const hasLogo = brand.logo && brand.logo.length > 5;
+                logoImg.src = hasLogo ? brand.logo : defaultLogo;
+                
+                const extraStyles = "background: white; padding: 2px; border-radius: 4px;";
+                logoImg.style.cssText = `display: block !important; opacity: 1 !important; visibility: visible !important; max-height: 40px !important; width: auto !important; object-fit: contain !important; ${extraStyles}`;
+                
+                logoImg.onerror = () => {
+                    if (logoImg.src !== defaultLogo && !logoImg.src.includes('blob:')) {
+                        console.warn("Logo failed to load, falling back to default:", logoImg.src);
+                        logoImg.src = defaultLogo;
+                    }
+                };
             });
 
             previewLogos.forEach(logoImg => {
@@ -229,25 +322,6 @@ window.BrandConfig = {
             
             if (brand.name) {
                 document.title = `${baseTitle} - ${brand.name}`;
-            }
-        }
-
-        // Admin Master Link Check (Automatic)
-        const masterLink = document.getElementById('masterLink');
-        if (masterLink) {
-            const mid = window.activeTrainerId || localStorage.getItem('activeTrainerId') || 'default';
-            const userEmail = (typeof AUTH !== 'undefined' && AUTH.userEmail) || localStorage.getItem('_trainerEmail');
-            const b = this.get();
-            
-            const isMaster = mid === 'default' || 
-                             (userEmail && userEmail.toLowerCase().includes('asteam')) || 
-                             (b && b.name && b.name.toLowerCase().includes('asteam'));
-
-            if (isMaster) {
-                masterLink.style.setProperty('display', 'block', 'important');
-            } else {
-                masterLink.style.display = 'none';
-            }
         }
     }
 };
@@ -255,6 +329,19 @@ window.BrandConfig = {
 // Auto-apply on load
 if (typeof document !== 'undefined') {
     document.addEventListener('DOMContentLoaded', () => window.BrandConfig.applyTheme());
+
+    // Interceptar clicks en links de "Salir" (login) para limpiar sesión local
+    document.addEventListener('click', function(e) {
+        const target = e.target.closest('a');
+        if (target && target.getAttribute('href') && target.getAttribute('href').includes('client-login.html')) {
+            localStorage.removeItem('clientId');
+            sessionStorage.removeItem('clientId');
+            const href = target.getAttribute('href');
+            if (!href.includes('logout=true')) {
+                target.setAttribute('href', href + (href.includes('?') ? '&' : '?') + 'logout=true');
+            }
+        }
+    });
 }
 
 // Format date to readable string
@@ -347,7 +434,12 @@ const formatPhoneForWhatsApp = (phone) => {
 
 // Generate WhatsApp Link
 const generateWhatsAppLink = (phone, message) => {
-    const cleanedPhone = formatPhoneForWhatsApp(phone);
+    // Si el número está vacío, es inválido o es el valor de prueba/por defecto, usar el número oficial de ASTeam (615760338)
+    let targetPhone = phone;
+    if (!targetPhone || targetPhone.replace(/\s/g, '').includes('000000000') || targetPhone.length < 5) {
+        targetPhone = '615760338';
+    }
+    const cleanedPhone = formatPhoneForWhatsApp(targetPhone);
     return `https://wa.me/${cleanedPhone}?text=${encodeURIComponent(message)}`;
 };
 window.generateWhatsAppLink = generateWhatsAppLink;
@@ -803,7 +895,7 @@ window.NotificationManager = NotificationManager;
 // ============================================
 
 const checkAndNotifyPR = (exerciseName, currentWeight, currentReps = 0) => {
-    const clientId = sessionStorage.getItem('clientId');
+    const clientId = sessionStorage.getItem('clientId') || localStorage.getItem('clientId');
     if (!clientId) return false;
 
     if (typeof TrainingLogs === 'undefined') return false;

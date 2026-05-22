@@ -3,124 +3,380 @@
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Acceso Cliente - Fitness App</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <title>Acceso Cliente</title>
+    <link rel="manifest" href="manifest.json">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="styles/theme.css">
-    <link rel="stylesheet" href="styles/components.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
-        .login-container {
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+        :root {
+            --gold:       #C9A84C;
+            --gold-light: #E8C97A;
+            --bg:         #0D0D0F;
+            --text:       #F0EDE8;
+            --muted:      #6B6865;
+            --soft:       #9E9B97;
+        }
+
+        html, body {
+            height: 100%;
+            font-family: 'Inter', system-ui, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            -webkit-font-smoothing: antialiased;
+            -webkit-text-size-adjust: 100%;
+        }
+
+        .bg {
+            position: fixed; inset: 0; z-index: 0; overflow: hidden;
+            background:
+                radial-gradient(ellipse 90% 70% at 15% 5%,  rgba(201,168,76,.08) 0%, transparent 55%),
+                radial-gradient(ellipse 70% 80% at 85% 95%, rgba(201,168,76,.05) 0%, transparent 55%),
+                #0D0D0F;
+        }
+        .bg-grid {
+            position: absolute; inset: 0;
+            background-image:
+                linear-gradient(rgba(201,168,76,.035) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(201,168,76,.035) 1px, transparent 1px);
+            background-size: 55px 55px;
+            mask-image: radial-gradient(ellipse 65% 65% at 50% 50%, black 20%, transparent 100%);
+        }
+        .orb { position: absolute; border-radius: 50%; filter: blur(70px); pointer-events: none; }
+        .orb-1 { width:400px;height:400px;background:rgba(201,168,76,.06);top:-15%;left:-10%;
+                  animation: drift 20s ease-in-out infinite; }
+        .orb-2 { width:280px;height:280px;background:rgba(201,168,76,.04);bottom:0;right:-5%;
+                  animation: drift 25s ease-in-out infinite reverse; }
+        @keyframes drift { 0%,100%{transform:translate(0,0)} 50%{transform:translate(25px,-35px)} }
+
+        .page {
+            position: relative; z-index: 1;
             min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: var(--spacing-lg);
-            background: linear-gradient(135deg, var(--bg-dark) 0%, var(--secondary-color) 100%);
+            display: flex; align-items: center; justify-content: center;
+            padding: 24px 20px;
         }
 
-        .login-card {
-            max-width: 450px;
+        .card {
+            width: 100%; max-width: 400px;
+            background: rgba(20,20,22,.92);
+            border: 1px solid rgba(201,168,76,.2);
+            border-radius: 24px;
+            padding: 44px 36px 36px;
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            box-shadow: 0 40px 100px rgba(0,0,0,.65);
+            animation: appear .55s cubic-bezier(.22,1,.36,1) both;
+        }
+        @keyframes appear {
+            from { opacity:0; transform:translateY(20px) scale(.97) }
+            to   { opacity:1; transform:translateY(0)    scale(1)   }
+        }
+
+        .logo-wrap { text-align: center; margin-bottom: 32px; }
+        .logo-box {
+            width: 76px; height: 76px; border-radius: 20px;
+            background: rgba(201,168,76,.1);
+            border: 1px solid rgba(201,168,76,.22);
+            display: inline-flex; align-items: center; justify-content: center;
+            font-size: 2.2rem; margin-bottom: 18px; overflow: hidden;
+        }
+        .logo-box img { width:100%;height:100%;object-fit:contain;border-radius:19px; }
+        .brand-name { font-size:1.4rem;font-weight:700;letter-spacing:-.02em;margin-bottom:5px; }
+        .brand-tag  { font-size:.72rem;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--gold); }
+
+        .sep {
+            display:flex;align-items:center;gap:10px;
+            margin: 26px 0 24px;
+        }
+        .sep::before,.sep::after { content:'';flex:1;height:1px;background:rgba(255,255,255,.06); }
+        .sep span { font-size:.68rem;letter-spacing:.1em;text-transform:uppercase;color:var(--muted); }
+
+        .field-label {
+            display:block;
+            font-size:.72rem;font-weight:600;
+            letter-spacing:.09em;text-transform:uppercase;
+            color:var(--soft);margin-bottom:10px;
+        }
+
+        #accessCode {
+            display: block;
             width: 100%;
-        }
-
-        .login-header {
-            text-align: center;
-            margin-bottom: var(--spacing-xl);
-        }
-
-        .login-logo {
-            width: 100px;
-            height: 100px;
-            margin: 0 auto var(--spacing-md);
-            border-radius: var(--radius-lg);
-        }
-
-        .access-code-input {
-            text-align: center;
-            font-size: 1.5rem;
-            letter-spacing: 0.2em;
-            text-transform: uppercase;
+            height: 62px;
+            background: rgba(255,255,255,.04);
+            border: 1.5px solid rgba(255,255,255,.1);
+            border-radius: 14px;
+            color: var(--text);
+            font-family: 'Inter', monospace;
+            font-size: 16px;   /* MUST be 16px to prevent iOS zoom */
             font-weight: 700;
+            letter-spacing: .22em;
+            text-align: center;
+            text-transform: uppercase;
+            outline: none;
+            transition: border-color .2s, box-shadow .2s, background .2s;
+            -webkit-appearance: none;
+            appearance: none;
+            caret-color: var(--gold);
+            padding: 0 12px;
+        }
+        #accessCode::placeholder {
+            color: rgba(255,255,255,.2);
+            letter-spacing: .1em;
+            font-weight: 500;
+        }
+        #accessCode:focus {
+            border-color: var(--gold);
+            background: rgba(201,168,76,.07);
+            box-shadow: 0 0 0 3px rgba(201,168,76,.12);
+        }
+
+        .field-hint { margin-top:8px;margin-bottom:24px;font-size:.72rem;color:var(--muted);line-height:1.5; }
+
+        .btn-submit {
+            width: 100%; height: 52px;
+            background: linear-gradient(110deg, #B8922E 0%, #E8C97A 50%, #B8922E 100%);
+            background-size: 200% 100%;
+            border: none; border-radius: 12px;
+            color: #0D0D0F;
+            font-family: 'Inter', sans-serif;
+            font-size: .9rem; font-weight: 700; letter-spacing: .04em;
+            cursor: pointer;
+            transition: background-position .4s, transform .15s, box-shadow .2s, opacity .2s;
+            box-shadow: 0 4px 20px rgba(201,168,76,.28);
+            display: flex; align-items: center; justify-content: center; gap: 8px;
+            -webkit-tap-highlight-color: transparent;
+            touch-action: manipulation;
+        }
+        .btn-submit:active { transform:translateY(1px); }
+        .btn-submit:disabled { opacity:.6; cursor:not-allowed; }
+
+        .spinner {
+            display:inline-block;
+            width:18px;height:18px;
+            border:2.5px solid rgba(0,0,0,.2);
+            border-top-color:#0D0D0F;
+            border-radius:50%;
+            animation:spin .7s linear infinite;
+        }
+        @keyframes spin{to{transform:rotate(360deg)}}
+
+        .footer { text-align:center;margin-top:26px;font-size:.73rem;color:var(--muted);line-height:1.65; }
+
+        #toast {
+            position:fixed;bottom:28px;left:50%;
+            transform:translateX(-50%) translateY(16px);
+            background:rgba(20,20,22,.97);
+            border:1px solid rgba(255,255,255,.1);
+            color:var(--text);
+            padding:11px 22px;border-radius:100px;
+            font-size:.83rem;font-weight:500;
+            opacity:0;
+            transition:opacity .25s,transform .25s;
+            z-index:999;box-shadow:0 8px 32px rgba(0,0,0,.5);
+            max-width:88vw;text-align:center;
+        }
+        #toast.show  { opacity:1;transform:translateX(-50%) translateY(0); }
+        #toast.error { border-color:rgba(239,68,68,.4);color:#FC8181; }
+        #toast.ok    { border-color:rgba(201,168,76,.4);color:var(--gold-light); }
+
+        @media(max-width:420px){
+            .card { padding:36px 22px 30px;border-radius:20px; }
         }
     </style>
 </head>
 
 <body>
-    <div class="login-container">
-        <div class="card-glass login-card">
-            <div class="login-header">
-                <div class="login-logo" id="brandLogoContainer">
-                    <div style="font-size: 4rem;">💪</div>
-                </div>
-                <h1 id="brandName">Fitness App</h1>
-                <p class="text-muted">Acceso para clientes</p>
-            </div>
+<div class="bg">
+    <div class="bg-grid"></div>
+    <div class="orb orb-1"></div>
+    <div class="orb orb-2"></div>
+</div>
 
-            <form id="loginForm">
-                <div class="form-group">
-                    <label class="form-label">Código de Acceso</label>
-                    <input type="text" class="form-input access-code-input" id="accessCode" placeholder="XXXXXXXX"
-                        maxlength="8" required autocomplete="off">
-                    <div class="form-hint">Introduce el código proporcionado por tu entrenador</div>
-                </div>
-
-                <button type="submit" class="btn btn-primary btn-lg" style="width: 100%;">
-                    🔓 Acceder
-                </button>
-            </form>
-
-            <div class="divider"></div>
-
-            <div class="text-center text-muted" style="font-size: 0.875rem;">
-                ¿No tienes código? Contacta con tu entrenador
-            </div>
+<div class="page">
+    <div class="card">
+        <div class="logo-wrap">
+            <div class="logo-box" id="brandLogoContainer"><span>💪</span></div>
+            <div class="brand-name" id="brandName">Infinite Coach</div>
+            <div class="brand-tag">Área de clientes</div>
         </div>
+
+        <div class="sep"><span>Acceso seguro</span></div>
+
+        <!-- NO form tag — button uses onclick to avoid any native submit -->
+        <div>
+            <label class="field-label" for="accessCode">Tu código de acceso</label>
+            <input
+                type="text"
+                id="accessCode"
+                maxlength="8"
+                placeholder="XXXXXXXX"
+                autocomplete="off"
+                autocorrect="off"
+                autocapitalize="characters"
+                spellcheck="false"
+                inputmode="text"
+                enterkeyhint="go"
+            >
+            <p class="field-hint">Código de 8 caracteres facilitado por tu entrenador.</p>
+            <button class="btn-submit" id="submitBtn" onclick="doLogin()">
+                <span id="btnContent">Acceder</span>
+            </button>
+        </div>
+
+        <p class="footer">¿No tienes código?<br>Contacta con tu entrenador personal.</p>
     </div>
+</div>
 
-    <script src="js/config.js"></script>
-    <script src="js/data-models.js"></script>
-    <script src="js/utils.js"></script>
-    <script>
-        // Apply brand theme if configured
-        if (BrandConfig.isConfigured()) {
-            BrandConfig.applyTheme();
-            const brand = BrandConfig.get();
-            document.getElementById('brandName').textContent = brand.name;
+<div id="toast"></div>
 
-            if (brand.logo) {
-                document.getElementById('brandLogoContainer').innerHTML = `
-          <img src="${brand.logo}" alt="Logo" style="width: 100%; height: 100%; object-fit: contain; border-radius: var(--radius-lg);">
-        `;
-            }
+<!-- ── Scripts ──────────────────────────────────────────────────── -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="js/supabase-service.js?v=312"></script>
+<script src="js/config.js"></script>
+<script src="js/data-models.js?v=319"></script>
+<script src="js/utils.js?v=321"></script>
+<script>
+// ── Auto-Redirección (Mantener sesión activa) ─────────────────────
+(function() {
+    var storedClientId = localStorage.getItem('clientId') || sessionStorage.getItem('clientId');
+    var params = new URLSearchParams(window.location.search);
+    if (storedClientId && params.get('logout') !== 'true') {
+        window.location.replace('client-dashboard.html');
+    }
+})();
+
+// ── Toast ────────────────────────────────────────────────────────
+function showMsg(msg, type) {
+    var el = document.getElementById('toast');
+    if (!el) return;
+    el.textContent = msg;
+    el.className = 'show ' + (type || 'error');
+    clearTimeout(el._t);
+    el._t = setTimeout(function(){ el.className = ''; }, 4000);
+}
+
+// ── Uppercase as user types ──────────────────────────────────────
+document.getElementById('accessCode').addEventListener('input', function() {
+    var pos = this.selectionStart;
+    this.value = this.value.toUpperCase();
+    try { this.setSelectionRange(pos, pos); } catch(e){}
+});
+
+// Enter key triggers login
+document.getElementById('accessCode').addEventListener('keydown', function(e) {
+    if (e.key === 'Enter') { e.preventDefault(); doLogin(); }
+});
+
+// ── Trainer ID from URL ──────────────────────────────────────────
+(function() {
+    var params = new URLSearchParams(window.location.search);
+    var tid = params.get('t') || localStorage.getItem('activeTrainerId') || 'admin';
+    localStorage.setItem('activeTrainerId', tid);
+    window.activeTrainerId = tid;
+    if (typeof updateActiveTrainerId === 'function') updateActiveTrainerId(tid);
+})();
+
+// ── Cloud sync on load (background) ─────────────────────────────
+var syncDone = false;
+var syncReady = (function() {
+    return new Promise(function(resolve) {
+        if (!window.SupabaseService) { syncDone = true; resolve(); return; }
+        window.SupabaseService.init();
+        window.syncFromCloud().then(function() {
+            syncDone = true;
+            resolve();
+            // Apply brand theme after sync
+            try {
+                if (BrandConfig.isConfigured()) {
+                    BrandConfig.applyTheme();
+                    var brand = BrandConfig.get();
+                    if (brand && brand.name) document.getElementById('brandName').textContent = brand.name;
+                    if (brand && brand.logo) {
+                        document.getElementById('brandLogoContainer').innerHTML =
+                            '<img src="' + brand.logo + '" alt="' + (brand.name||'') + '">';
+                    }
+                }
+            } catch(e) {}
+        }).catch(function(err) {
+            console.error('[Login] Sync error:', err);
+            syncDone = true;
+            resolve();
+        });
+    });
+})();
+
+// ── Login function ───────────────────────────────────────────────
+async function doLogin() {
+    var btn     = document.getElementById('submitBtn');
+    var content = document.getElementById('btnContent');
+    var codeEl  = document.getElementById('accessCode');
+    var code    = codeEl.value.trim().toUpperCase();
+
+    if (!code || code.length < 3) {
+        showMsg('Introduce tu código de acceso');
+        codeEl.focus();
+        return;
+    }
+
+    // Disable button & show spinner
+    btn.disabled = true;
+    content.innerHTML = '<span class="spinner"></span>';
+
+    try {
+        // Wait for sync if not done
+        await syncReady;
+
+        // If sync didn't load anything, try once more explicitly
+        if (!syncDone || Clients.getAll().length === 0) {
+            window.SupabaseService.init();
+            await window.syncFromCloud();
         }
 
-        // Auto-uppercase input
-        document.getElementById('accessCode').addEventListener('input', (e) => {
-            e.target.value = e.target.value.toUpperCase();
-        });
+        var trainerId = window.activeTrainerId || localStorage.getItem('activeTrainerId') || 'admin';
+        var clients   = Clients.getAll();
 
-        // Handle login
-        document.getElementById('loginForm').addEventListener('submit', async (e) => {
-            e.preventDefault();
+        console.log('[Login] trainerID:', trainerId);
+        console.log('[Login] clients loaded:', clients.length);
+        console.log('[Login] searching code:', code);
+        if (clients.length > 0) {
+            console.log('[Login] available codes:', clients.map(function(c){ return c.accessCode; }));
+        }
 
-            const code = document.getElementById('accessCode').value.trim();
-            const clients = Clients.getAll();
-            let client = clients.find(c => (c.accessCode || '').toUpperCase() === code.toUpperCase());
+        var client = null;
+        for (var i = 0; i < clients.length; i++) {
+            var stored = (clients[i].accessCode || '').trim().toUpperCase();
+            if (stored === code) { client = clients[i]; break; }
+        }
 
-            // Sincronización desactivada temporalmente para validación local
-            console.log('Login flow continues locally...');
+        if (client) {
+            sessionStorage.setItem('clientId', client.id);
+            localStorage.setItem('clientId', client.id);
+            content.textContent = '✓';
+            btn.style.background = 'linear-gradient(110deg,#22c55e,#4ade80)';
+            setTimeout(function(){ window.location.replace('client-dashboard.html'); }, 400);
+        } else {
+            var msg = clients.length === 0
+                ? 'Sin datos del servidor (entrenador: ' + trainerId + '). Comprueba tu conexión.'
+                : 'Código incorrecto. Comprueba que esté bien escrito.';
+            showMsg(msg);
+            btn.disabled = false;
+            content.textContent = 'Acceder';
+            codeEl.select();
+        }
 
-            if (client) {
-                // Store client session
-                sessionStorage.setItem('clientId', client.id);
-                window.location.href = 'client-dashboard.html';
-            } else {
-                showToast('Código de acceso incorrecto o no encontrado', 'error');
-            }
-        });
-    </script>
-    <script src="js/custom-recipes.js?v=129"></script></body>
-
+    } catch(err) {
+        console.error('[Login] Error:', err);
+        showMsg('Error: ' + (err.message || 'Inténtalo de nuevo'));
+        btn.disabled = false;
+        content.textContent = 'Acceder';
+    }
+}
+</script>
+<script src="js/custom-recipes.js?v=129"></script>
+<script src="js/pwa-install.js?v=321"></script>
+</body>
 </html>

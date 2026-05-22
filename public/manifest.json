@@ -1,6 +1,6 @@
 {
-  "name": "Fitness App",
-  "short_name": "FitApp",
+  "name": "Infinite Coach",
+  "short_name": "InfiniteCoach",
   "start_url": "client-login.html",
   "display": "standalone",
   "background_color": "#0F0F1E",

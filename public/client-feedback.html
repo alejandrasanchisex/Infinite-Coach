@@ -4,13 +4,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Revisión Semanal - Fitness App</title>
+    <title>Revisión Semanal - Infinite Coach</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="styles/theme.css">
-    <link rel="stylesheet" href="styles/components.css">
-    <link rel="stylesheet" href="styles/mobile.css">
+    <link rel="stylesheet" href="styles/theme.css?v=321">
+    <link rel="stylesheet" href="styles/components.css?v=318">
+    <link rel="stylesheet" href="styles/mobile.css?v=318">
     <link rel="manifest" href="manifest.json">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -67,25 +67,22 @@
     </style>
 </head>
 
-<body>
+<body class="theme-client">
     <!-- Header -->
     <header class="header">
         <div class="container">
             <nav class="nav">
-                <div class="logo">
-                    <img id="brandLogo" class="logo-img" alt="Logo">
-                    <span id="brandName">Fitness App</span>
+                <div class="logo" style="display: flex; align-items: center; gap: 10px; cursor: pointer;" onclick="window.location.href='client-dashboard.html'">
+                    <img id="brandLogo" class="logo-img" alt="Logo" style="display: none;">
+                    <span id="brandName">Infinite Coach</span>
                 </div>
                 <ul class="nav-links" id="navLinks">
-                    <li><a href="client-dashboard.html" class="nav-link">Inicio</a></li>
-                    <li><a href="client-profile.html" class="nav-link">Ficha Técnica</a></li>
+                    <li><a href="client-dashboard.html?v=319" class="nav-link">Inicio</a></li>
+                    <li><a href="client-profile.html?v=319" class="nav-link">Ficha Técnica</a></li>
 
-                    <li><a href="client-login.html" class="nav-link">Salir</a></li>
+                    <li><a href="client-login.html?v=319" class="nav-link">Salir</a></li>
                 </ul>
-                <div id="clientProfileAvatar" style="width: 35px; height: 35px; border-radius: 50%; background: var(--primary-color); display: flex; align-items: center; justify-content: center; font-size: 0.9rem; font-weight: 800; color: #000; overflow: hidden; border: 2px solid rgba(255,255,255,0.1); margin-left: 15px; cursor: pointer; flex-shrink: 0;" onclick="window.location.href='client-profile.html'">
-                    U
-                </div>
-                <button class="menu-toggle" onclick="toggleMenu()" style="margin-left: 10px;">☰</button>
+                <button class="menu-toggle" onclick="toggleMenu()" style="margin-left: auto;">☰</button>
             </nav>
         </div>
     </header>
@@ -111,97 +108,111 @@
                                 <div class="form-hint">Corresponde a tu revisión secuencial</div>
                             </div>
 
-                            <div class="form-group">
-                                <div class="rating-group">
-                                    <div class="rating-label">
-                                        <label class="form-label" style="margin: 0;">Nivel de Energía</label>
-                                        <span class="rating-value" id="energyValue">3</span>
-                                    </div>
-                                    <input type="range" class="slider" id="energyRating" min="1" max="5" value="3"
-                                        oninput="updateRating('energy', this.value)">
-                                    <div class="flex-between text-muted" style="font-size: 0.75rem;">
-                                        <span>Muy bajo</span>
-                                        <span>Excelente</span>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                <label class="form-label" style="display: flex; align-items: center; gap: 8px;">
-                                    📏 Perímetros (cm)
-                                    <span class="text-muted" style="font-size: 0.7rem; font-weight: 400;">Opcional</span>
-                                </label>
-                                <div class="grid grid-3 gap-sm" id="dynamicPerimeters">
-                                    <!-- Dynamic Perimeters -->
-                                </div>
-                            </div>
-
-                            <div class="form-group">
-                                <div class="rating-group">
-                                    <div class="rating-label">
-                                        <label class="form-label" style="margin: 0;">Adherencia al Plan</label>
-                                        <span class="rating-value" id="adherenceValue">3</span>
-                                    </div>
-                                    <input type="range" class="slider" id="adherenceRating" min="1" max="5" value="3"
-                                        oninput="updateRating('adherence', this.value)">
-                                    <div class="flex-between text-muted" style="font-size: 0.75rem;">
-                                        <span>Muy baja</span>
-                                        <span>Perfecta</span>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="form-group">
-                                <div class="rating-group">
-                                    <div class="rating-label">
-                                        <label class="form-label" style="margin: 0;">Satisfacción General</label>
-                                        <span class="rating-value" id="satisfactionValue">3</span>
-                                    </div>
-                                    <input type="range" class="slider" id="satisfactionRating" min="1" max="5" value="3"
-                                        oninput="updateRating('satisfaction', this.value)">
-                                    <div class="flex-between text-muted" style="font-size: 0.75rem;">
-                                        <span>Muy baja</span>
-                                        <span>Excelente</span>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="form-group grid grid-2 gap-sm">
-                                <div>
+                            <!-- 1. PESO Y PERÍMETROS -->
+                            <div style="background: rgba(255,255,255,0.02); padding: 15px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.05); margin-bottom: 20px;">
+                                <h4 style="color: var(--primary-color); margin-bottom: 12px; display: flex; align-items: center; gap: 8px;">⚖️ Peso y Medidas</h4>
+                                <div class="form-group">
                                     <label class="form-label">Peso Actual (kg)</label>
                                     <input type="number" step="0.1" class="form-input" id="currentWeight" placeholder="0.0">
                                 </div>
-                                <div class="rating-group">
-                                    <div class="rating-label">
-                                        <label class="form-label" style="margin: 0;">Calidad del Sueño</label>
-                                        <span class="rating-value" id="sleepValue">3</span>
-                                    </div>
-                                    <input type="range" class="slider" id="sleepRating" min="1" max="5" value="3"
-                                        oninput="updateRating('sleep', this.value)">
-                                </div>
-                            </div>
-
-                            <div class="form-group">
-                                <div class="rating-group">
-                                    <div class="rating-label">
-                                        <label class="form-label" style="margin: 0;">Nivel de Estrés</label>
-                                        <span class="rating-value" id="stressValue">3</span>
-                                    </div>
-                                    <input type="range" class="slider" id="stressRating" min="1" max="5" value="3"
-                                        oninput="updateRating('stress', this.value)">
-                                    <div class="flex-between text-muted" style="font-size: 0.75rem;">
-                                        <span>Relajado</span>
-                                        <span>Muy estresado</span>
+                                <div class="form-group" style="margin-bottom: 0;">
+                                    <label class="form-label" style="display: flex; align-items: center; gap: 8px;">
+                                        📏 Perímetros (cm)
+                                    </label>
+                                    <div class="grid grid-3 gap-sm" id="dynamicPerimeters">
+                                        <!-- Dynamic Perimeters -->
                                     </div>
                                 </div>
                             </div>
 
-                            <div id="dynamicQuestions">
+                            <!-- 2. PREGUNTAS Y COMENTARIOS -->
+                            <div id="dynamicQuestions" style="margin-bottom: 20px;">
                                 <!-- Dynamic questions will be rendered here -->
                             </div>
 
-                            <div class="form-group">
+                            <div class="form-group" style="margin-bottom: 20px;">
                                 <label class="form-label">Comentarios Adicionales</label>
                                 <textarea id="additionalComments" class="form-textarea" rows="3" placeholder="Algo más que quieras contarle a tu entrenador..."></textarea>
+                            </div>
+
+                            <!-- 3. INDICADORES DE NIVELES (BARRA) -->
+                            <div style="background: rgba(255,255,255,0.02); padding: 15px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.05); margin-bottom: 20px;">
+                                <h4 style="color: var(--primary-color); margin-bottom: 15px; display: flex; align-items: center; gap: 8px;">📊 Tus Niveles Semanales</h4>
+                                
+                                <div class="form-group">
+                                    <div class="rating-group">
+                                        <div class="rating-label">
+                                            <label class="form-label" style="margin: 0;">Nivel de Energía</label>
+                                            <span class="rating-value" id="energyValue">3</span>
+                                        </div>
+                                        <input type="range" class="slider" id="energyRating" min="1" max="5" value="3"
+                                            oninput="updateRating('energy', this.value)">
+                                        <div class="flex-between text-muted" style="font-size: 0.75rem;">
+                                            <span>Muy bajo</span>
+                                            <span>Excelente</span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <div class="rating-group">
+                                        <div class="rating-label">
+                                            <label class="form-label" style="margin: 0;">Adherencia al Plan</label>
+                                            <span class="rating-value" id="adherenceValue">3</span>
+                                        </div>
+                                        <input type="range" class="slider" id="adherenceRating" min="1" max="5" value="3"
+                                            oninput="updateRating('adherence', this.value)">
+                                        <div class="flex-between text-muted" style="font-size: 0.75rem;">
+                                            <span>Muy baja</span>
+                                            <span>Perfecta</span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <div class="rating-group">
+                                        <div class="rating-label">
+                                            <label class="form-label" style="margin: 0;">Satisfacción General</label>
+                                            <span class="rating-value" id="satisfactionValue">3</span>
+                                        </div>
+                                        <input type="range" class="slider" id="satisfactionRating" min="1" max="5" value="3"
+                                            oninput="updateRating('satisfaction', this.value)">
+                                        <div class="flex-between text-muted" style="font-size: 0.75rem;">
+                                            <span>Muy baja</span>
+                                            <span>Excelente</span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <div class="rating-group">
+                                        <div class="rating-label">
+                                            <label class="form-label" style="margin: 0;">Calidad del Sueño</label>
+                                            <span class="rating-value" id="sleepValue">3</span>
+                                        </div>
+                                        <input type="range" class="slider" id="sleepRating" min="1" max="5" value="3"
+                                            oninput="updateRating('sleep', this.value)">
+                                        <div class="flex-between text-muted" style="font-size: 0.75rem;">
+                                            <span>Muy mala</span>
+                                            <span>Excelente</span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="form-group" style="margin-bottom: 0;">
+                                    <div class="rating-group">
+                                        <div class="rating-label">
+                                            <label class="form-label" style="margin: 0;">Nivel de Estrés</label>
+                                            <span class="rating-value" id="stressValue">3</span>
+                                        </div>
+                                        <input type="range" class="slider" id="stressRating" min="1" max="5" value="3"
+                                            oninput="updateRating('stress', this.value)">
+                                        <div class="flex-between text-muted" style="font-size: 0.75rem;">
+                                            <span>Relajado</span>
+                                            <span>Muy estresado</span>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
 
                             <!-- Photo Upload Section -->
@@ -255,20 +266,23 @@
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="js/supabase-service.js?v=312"></script>
 
-    <script src="js/data-models.js?v=2"></script>
+    <script src="js/data-models.js?v=319"></script>
     <script src="js/cloud-storage.js?v=2"></script>
-    <script src="js/utils.js?v=2"></script>
+    <script src="js/utils.js?v=318"></script>
     <script>
-        // Check if client is logged in
-        const clientId = sessionStorage.getItem('clientId');
+        const clientId = sessionStorage.getItem('clientId') || localStorage.getItem('clientId');
         if (!clientId) {
-            window.location.href = 'client-login.html';
+            window.location.replace('client-login.html');
+        } else {
+            sessionStorage.setItem('clientId', clientId);
+            localStorage.setItem('clientId', clientId);
         }
 
         let brand = {};
         let client = null;
 
         document.addEventListener('DOMContentLoaded', async () => {
+            if (!clientId) return;
             // Sincronizar con la nube (Supabase es ahora el primario)
             if (window.SupabaseService) {
                 window.SupabaseService.init();
@@ -289,6 +303,13 @@
 
             // Load client
             client = Clients.getById(clientId);
+            if (!client) {
+                localStorage.removeItem('clientId');
+                sessionStorage.removeItem('clientId');
+                window.location.replace('client-login.html');
+                return;
+            }
+
             if (client) {
                 const avatar = document.getElementById('clientProfileAvatar');
                 if (avatar) {

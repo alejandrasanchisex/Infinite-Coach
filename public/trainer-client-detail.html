@@ -8,10 +8,17 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="styles/theme.css">
-    <link rel="stylesheet" href="styles/components.css">
+    <link rel="stylesheet" href="styles/theme.css?v=321">
+    <link rel="stylesheet" href="styles/components.css?v=321">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <style>
+        /* Bulletproof sizing override for routine editor and xl modals */
+        .modal-overlay.modal-xl .modal,
+        .modal-overlay:has(.routine-editor) .modal {
+            max-width: 1250px !important;
+            width: 96% !important;
+        }
+
         .client-header {
             background: var(--bg-card);
             border-radius: var(--radius-lg);
@@ -178,15 +185,14 @@
                     </div>
                     <button class="menu-toggle" onclick="toggleMenu()">☰</button>
                     <ul class="nav-links" id="navLinks">
-                        <li><a href="trainer-dashboard.html" class="nav-link">Dashboard</a></li>
-                        <li><a href="trainer-clients.html" class="nav-link active">Clientes</a></li>
-                        <li><a href="trainer-routines.html" class="nav-link">Rutinas</a></li>
-                        <li><a href="trainer-diets.html" class="nav-link">Dietas</a></li>
-                        <li><a href="trainer-feedbacks.html" class="nav-link">Revisiones</a></li>
-                        <li><a href="trainer-media.html" class="nav-link">Biblioteca</a></li>
-                        <li><a href="trainer-appointments.html" class="nav-link">Agenda</a></li>
-                        <li><a href="trainer-settings.html" class="nav-link">Configuración</a></li>
-                        <li id="masterLink" style="display: none;"><a href="admin-dashboard.html" class="nav-link" style="color: #8B5CF6; font-weight: 800;">Panel Maestro</a></li>
+                        <li><a href="trainer-dashboard.html?v=319" class="nav-link">Dashboard</a></li>
+                        <li><a href="trainer-clients.html?v=319" class="nav-link active">Clientes</a></li>
+                        <li><a href="trainer-routines.html?v=319" class="nav-link">Rutinas</a></li>
+                        <li><a href="trainer-diets.html?v=319" class="nav-link">Dietas</a></li>
+                        <li><a href="trainer-feedbacks.html?v=319" class="nav-link">Revisiones</a></li>
+                        <li><a href="trainer-media.html?v=319" class="nav-link">Biblioteca</a></li>
+                        <li><a href="trainer-appointments.html?v=319" class="nav-link">Agenda</a></li>
+                        <li><a href="trainer-settings.html?v=319" class="nav-link">Configuración</a></li>
                         <li><a href="#" onclick="if(typeof AUTH !== 'undefined') { AUTH.signOut() } else { window.location.reload() }; return false;" class="nav-link" style="color:var(--error-color)">🚪 Salir</a></li>
                     </ul>
                 </nav>
@@ -795,7 +801,7 @@
                                     </div>
                                     <div class="card-body">
                                         <div id="stripeNotConfigured" style="display: none;">
-                                            <p class="text-xs text-muted mb-md">Configura tus claves de Stripe en los <a href="trainer-settings.html" style="color: var(--primary-color);">Ajustes</a> para habilitar cobros automáticos.</p>
+                                            <p class="text-xs text-muted mb-md">Configura tus claves de Stripe en los <a href="trainer-settings.html?v=319" style="color: var(--primary-color);">Ajustes</a> para habilitar cobros automáticos.</p>
                                         </div>
                                         <div id="stripeActiveConfig">
                                             <p class="text-xs text-muted mb-md">Genera un enlace de pago recurrente para este cliente usando tus planes configurados.</p>
@@ -857,11 +863,11 @@
     <script src="js/config.js?v=312"></script>
     <script src="js/auth.js?v=312"></script>
     <script src="js/sheets.js?v=312"></script>
-    <script src="js/data-models.js?v=312"></script>
+    <script src="js/data-models.js?v=319"></script>
     <script src="js/utils.js?v=312"></script>
     <script src="js/custom-recipes.js?v=312"></script>
     <script src="js/custom-exercises.js?v=312"></script>
-    <script src="js/diet-editor-v3.js?v=312"></script>
+    <script src="js/diet-editor-v3.js?v=317"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.29/jspdf.plugin.autotable.min.js"></script>
     <script src="js/export-utils.js?v=312"></script>
@@ -2278,6 +2284,126 @@
                         // Sort muscle groups by volume
                         const sortedGroups = Object.entries(muscleGroupVolume).sort((a, b) => b[1] - a[1]);
 
+                        const isInlineEditing = (block.id === inlineEditingBlockId && idx === inlineEditingWeekIdx);
+
+                        if (isInlineEditing) {
+                            const data = getData();
+                            const muscleConfig = data.muscleGroupsConfig || { groups: [], exercises: {} };
+                            
+                            let allExercisesList = [];
+                            if (muscleConfig.exercises) {
+                                for (const group in muscleConfig.exercises) {
+                                    (muscleConfig.exercises[group] || []).forEach(ex => {
+                                        const exName = (typeof ex === 'string') ? ex : (ex.name || 'Sin nombre');
+                                        allExercisesList.push({ name: exName, group: group });
+                                    });
+                                }
+                            }
+                            const parameterizedExercises = allExercisesList.sort((a,b) => (a.name || '').localeCompare(b.name || ''));
+
+                            const editingDays = editingRoutine.days || [];
+
+                            return `
+                                <div class="card p-md" style="background: linear-gradient(135deg, rgba(0, 217, 255, 0.08) 0%, rgba(0, 217, 255, 0.02) 100%); border: 1px solid rgba(0, 217, 255, 0.2); border-radius: 12px; margin-bottom: 20px;">
+                                    <div class="week-container mb-lg" style="background: rgba(0,0,0,0.2); border: 1px solid rgba(255,255,255,0.05); border-radius: 8px; overflow: hidden;">
+                                        <!-- Week Header Inline Editor -->
+                                        <div class="flex-between p-md" style="background: rgba(255,255,255,0.03); border-bottom: 1px solid rgba(255,255,255,0.05);">
+                                            <div class="flex gap-md align-center" style="width: 70%;">
+                                                <div style="background: var(--accent-color); color: white; font-weight: 700; padding: 4px 10px; border-radius: 6px; font-size: 0.9rem;">
+                                                    S${week.number}
+                                                </div>
+                                                <div style="flex: 1;">
+                                                    <input type="text" class="form-input" id="inlineWeekName" value="${editingRoutine.name || week.name}" style="font-weight: 700; font-size: 1.1rem; color: #fff; background: rgba(255,255,255,0.08); border-radius: 6px; border: 1px solid rgba(255,255,255,0.15); padding: 6px 12px; width: 100%;" placeholder="Nombre de la Semana">
+                                                    <div style="font-size: 0.75rem; color: var(--accent-color); margin-top: 4px; font-weight: 600;">
+                                                        ✏️ MODO DISEÑO VISUAL DIRECTO ACTIVO
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="flex gap-sm">
+                                                <button class="btn btn-sm btn-success" onclick="saveInlineWeek('${block.id}', ${idx})" style="background-color: var(--success-color); color: #000; font-weight: 700; border: none; padding: 8px 16px;">💾 Guardar</button>
+                                                <button class="btn btn-sm btn-secondary" onclick="cancelInlineEdit()" style="background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); padding: 8px 16px;">❌ Cancelar</button>
+                                            </div>
+                                        </div>
+
+                                        <!-- Parameterized Exercises Auto-Suggestion Datalist -->
+                                        <datalist id="inlineExercisesDatalist">
+                                            ${parameterizedExercises.map(ex => `<option value="${ex.name}">${ex.name} (${ex.group})</option>`).join('')}
+                                        </datalist>
+
+                                        <!-- Days & Exercises Form -->
+                                        <div class="p-md">
+                                            ${editingDays.length > 0 ? `
+                                                <div style="display: grid; gap: 24px;">
+                                                    ${editingDays.map((day, dIdx) => `
+                                                        <div class="day-table-container card p-sm" style="background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.05); margin-bottom: 12px;">
+                                                            <!-- Day Title Input -->
+                                                            <div style="margin-bottom: 12px; display: flex; align-items: center; justify-content: space-between; gap: 12px;">
+                                                                <div style="display: flex; align-items: center; gap: 8px; width: 60%;">
+                                                                    <span style="color: var(--accent-color); font-weight: 700; font-size: 0.9rem; white-space: nowrap;">Día ${dIdx + 1}</span>
+                                                                    <input type="text" class="form-input" placeholder="Nombre (Ej: Piernas, Empuje...)" value="${day.name || ''}" onchange="updateInlineDayName(${dIdx}, this.value)" style="font-size: 0.85rem; font-weight: 600; padding: 6px 10px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); width: 100%;">
+                                                                </div>
+                                                                <button class="btn btn-xs btn-outline" onclick="removeInlineDay(${dIdx})" style="color: var(--error-color); border-color: rgba(239, 68, 68, 0.2); padding: 4px 10px;" title="Eliminar Día">🗑️ Eliminar Día</button>
+                                                            </div>
+                                                            
+                                                            <div style="overflow-x: auto;">
+                                                                <table class="table" style="width: 100%; border-collapse: collapse; font-size: 0.85rem;">
+                                                                    <thead>
+                                                                        <tr style="border-bottom: 1px solid rgba(255,255,255,0.1);">
+                                                                            <th style="text-align: left; padding: 6px; color: var(--text-muted); font-weight: 600; font-size: 0.75rem; width: 45%;">EJERCICIO Y NOTAS</th>
+                                                                            <th style="text-align: center; padding: 6px; color: var(--text-muted); font-weight: 600; font-size: 0.75rem; width: 6%;">SERIES</th>
+                                                                            <th style="text-align: center; padding: 6px; color: var(--text-muted); font-weight: 600; font-size: 0.75rem; width: 25%;">REPS</th>
+                                                                            <th style="text-align: center; padding: 6px; color: var(--text-muted); font-weight: 600; font-size: 0.75rem; width: 6%;">RIR</th>
+                                                                            <th style="text-align: center; padding: 6px; color: var(--text-muted); font-weight: 600; font-size: 0.75rem; width: 18%;">ACCIONES</th>
+                                                                        </tr>
+                                                                    </thead>
+                                                                    <tbody>
+                                                                        ${(day.exercises || []).map((ex, exIdx) => `
+                                                                            <tr style="border-bottom: 1px solid rgba(255,255,255,0.03); background: rgba(255,255,255,0.01);">
+                                                                                <td style="padding: 6px;">
+                                                                                    <div style="display: flex; gap: 8px; width: 100%;">
+                                                                                        <input type="text" class="form-input" placeholder="Nombre del ejercicio" value="${ex.name || ''}" onchange="updateInlineExercise(${dIdx}, ${exIdx}, 'name', this.value)" list="inlineExercisesDatalist" style="font-size: 0.85rem; padding: 6px; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); flex: 1.1; min-width: 0;">
+                                                                                        <input type="text" class="form-input" placeholder="💬 Notas, aproximaciones, descansos..." value="${ex.notes || ''}" onchange="updateInlineExercise(${dIdx}, ${exIdx}, 'notes', this.value)" style="font-size: 0.75rem; padding: 4px 6px; background: rgba(255,255,255,0.01); border: 1px solid rgba(255,255,255,0.03); color: var(--accent-color); flex: 1.9; min-width: 0;">
+                                                                                    </div>
+                                                                                </td>
+                                                                                <td style="padding: 6px; text-align: center;">
+                                                                                    <input type="text" class="form-input" placeholder="3" value="${ex.sets || ''}" onchange="updateInlineExercise(${dIdx}, ${exIdx}, 'sets', this.value)" style="font-size: 0.85rem; padding: 6px; text-align: center; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); width: 40px; margin: 0 auto; color: var(--accent-color); font-weight: 700;">
+                                                                                </td>
+                                                                                <td style="padding: 6px; text-align: center;">
+                                                                                    <input type="text" class="form-input" placeholder="12 a 15" value="${ex.reps || ''}" onchange="updateInlineExercise(${dIdx}, ${exIdx}, 'reps', this.value)" style="font-size: 0.85rem; padding: 6px; text-align: center; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); width: 100%; max-width: 170px; margin: 0 auto;">
+                                                                                </td>
+                                                                                <td style="padding: 6px; text-align: center;">
+                                                                                    <input type="text" class="form-input" placeholder="1" value="${ex.intensity || ex.rir || ''}" onchange="updateInlineExercise(${dIdx}, ${exIdx}, 'intensity', this.value)" style="font-size: 0.85rem; padding: 6px; text-align: center; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); width: 40px; margin: 0 auto;">
+                                                                                </td>
+                                                                                <td style="padding: 6px; text-align: center;">
+                                                                                    <div style="display: flex; gap: 4px; justify-content: center; align-items: center;">
+                                                                                        <button class="btn btn-xs btn-outline" onclick="moveInlineExercise(${dIdx}, ${exIdx}, -1)" title="Subir orden" style="padding: 4px 6px; border: 1px solid rgba(255,255,255,0.1); border-radius: 4px;">⬆️</button>
+                                                                                        <button class="btn btn-xs btn-outline" onclick="moveInlineExercise(${dIdx}, ${exIdx}, 1)" title="Bajar orden" style="padding: 4px 6px; border: 1px solid rgba(255,255,255,0.1); border-radius: 4px;">⬇️</button>
+                                                                                        <button class="btn btn-xs btn-outline" onclick="deleteInlineExercise(${dIdx}, ${exIdx})" title="Eliminar Ejercicio" style="padding: 4px 6px; color: var(--error-color); border: 1px solid rgba(239,68,68,0.2); border-radius: 4px;">🗑️</button>
+                                                                                    </div>
+                                                                                </td>
+                                                                            </tr>
+                                                                        `).join('')}
+                                                                        ${(!day.exercises || day.exercises.length === 0) ? `
+                                                                            <tr><td colspan="5" style="padding: 16px; text-align: center; color: var(--text-muted); font-style: italic;">No hay ejercicios. ¡Crea uno abajo!</td></tr>
+                                                                        ` : ''}
+                                                                    </tbody>
+                                                                </table>
+                                                            </div>
+                                                            <button class="btn btn-xs btn-outline mt-sm" onclick="addInlineExercise(${dIdx})" style="border-style: dashed; width: 100%; border-color: rgba(0, 217, 255, 0.3); color: var(--primary-color);">➕ Añadir Ejercicio</button>
+                                                        </div>
+                                                    `).join('')}
+                                                </div>
+                                            ` : '<div style="padding: 20px; text-align: center; color: var(--text-muted);">No hay días configurados. Añade un día abajo.</div>'}
+                                            
+                                            <div style="margin-top: 16px; display: flex; gap: 12px; justify-content: center;">
+                                                <button class="btn btn-sm btn-outline" onclick="addInlineDay()" style="border-style: dashed; flex: 1; border-color: rgba(255, 107, 107, 0.3); color: var(--accent-color);">➕ Añadir Nuevo Día de Entrenamiento</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            `;
+                        }
+
                         return `
                                 <div class="card p-md" style="background: linear-gradient(135deg, rgba(255,255,255,0.05) 0%, rgba(255,255,255,0.02) 100%); border: 1px solid rgba(255,255,255,0.08);">
                                     <div class="week-container mb-lg" style="background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.05); border-radius: 8px; overflow: hidden;">
@@ -2493,6 +2619,8 @@
 
         let editingRoutine = null;
         let activeDayIndex = 0;
+        let inlineEditingBlockId = null;
+        let inlineEditingWeekIdx = null;
 
         function importTemplateToBlock(blockId) {
             const routines = Routines.getAll();
@@ -2710,15 +2838,102 @@
             const block = blocks.find(b => b.id === blockId);
             if (!block || !block.weeks[weekIdx]) return;
 
-            editingRoutine = JSON.parse(JSON.stringify(block.weeks[weekIdx]));
-            // Add routine name for context
-            editingRoutine.name = `${block.name} - ${editingRoutine.name}`;
+            inlineEditingBlockId = blockId;
+            inlineEditingWeekIdx = weekIdx;
 
+            editingRoutine = JSON.parse(JSON.stringify(block.weeks[weekIdx]));
             editingContext = { type: 'block', blockId: blockId, weekIdx: weekIdx };
-            activeDayIndex = 0;
-            renderRoutineEditor();
+            
+            updateAssignedRoutineView();
+            showToast('Modo de diseño visual directo activado', 'info');
         }
         window.editBlockWeek = editBlockWeek;
+
+        window.updateInlineDayName = function (dIdx, val) {
+            if (editingRoutine && editingRoutine.days[dIdx]) {
+                editingRoutine.days[dIdx].name = val;
+            }
+        };
+
+        window.addInlineDay = function () {
+            if (editingRoutine) {
+                if (!editingRoutine.days) editingRoutine.days = [];
+                editingRoutine.days.push({ name: `Día ${editingRoutine.days.length + 1}`, exercises: [] });
+                updateAssignedRoutineView();
+            }
+        };
+
+        window.removeInlineDay = function (dIdx) {
+            if (editingRoutine && editingRoutine.days) {
+                if (confirm('¿Seguro que quieres eliminar este día de entrenamiento y todos sus ejercicios?')) {
+                    editingRoutine.days.splice(dIdx, 1);
+                    updateAssignedRoutineView();
+                }
+            }
+        };
+
+        window.updateInlineExercise = function (dIdx, exIdx, field, val) {
+            if (editingRoutine && editingRoutine.days[dIdx] && editingRoutine.days[dIdx].exercises[exIdx]) {
+                editingRoutine.days[dIdx].exercises[exIdx][field] = val;
+            }
+        };
+
+        window.addInlineExercise = function (dIdx) {
+            if (editingRoutine && editingRoutine.days[dIdx]) {
+                if (!editingRoutine.days[dIdx].exercises) editingRoutine.days[dIdx].exercises = [];
+                editingRoutine.days[dIdx].exercises.push({ name: '', sets: '', reps: '', intensity: '', notes: '' });
+                updateAssignedRoutineView();
+            }
+        };
+
+        window.deleteInlineExercise = function (dIdx, exIdx) {
+            if (editingRoutine && editingRoutine.days[dIdx] && editingRoutine.days[dIdx].exercises) {
+                editingRoutine.days[dIdx].exercises.splice(exIdx, 1);
+                updateAssignedRoutineView();
+            }
+        };
+
+        window.moveInlineExercise = function (dIdx, exIdx, direction) {
+            if (editingRoutine && editingRoutine.days[dIdx] && editingRoutine.days[dIdx].exercises) {
+                const exercises = editingRoutine.days[dIdx].exercises;
+                const targetIdx = exIdx + direction;
+                if (targetIdx < 0 || targetIdx >= exercises.length) return;
+                
+                // Swap exercises
+                const temp = exercises[exIdx];
+                exercises[exIdx] = exercises[targetIdx];
+                exercises[targetIdx] = temp;
+                updateAssignedRoutineView();
+            }
+        };
+
+        window.cancelInlineEdit = function () {
+            inlineEditingBlockId = null;
+            inlineEditingWeekIdx = null;
+            updateAssignedRoutineView();
+            showToast('Edición directa cancelada', 'info');
+        };
+
+        window.saveInlineWeek = function (blockId, weekIdx) {
+            const newName = document.getElementById('inlineWeekName').value.trim();
+            if (!newName) {
+                showToast('El nombre de la semana no puede estar vacío', 'error');
+                return;
+            }
+
+            const blocks = TrainingBlocks.getAll();
+            const block = blocks.find(b => b.id === blockId);
+            if (block) {
+                block.weeks[weekIdx].days = editingRoutine.days;
+                block.weeks[weekIdx].name = newName;
+                TrainingBlocks.update(blockId, { weeks: block.weeks });
+                showToast('Semana guardada correctamente', 'success');
+            }
+
+            inlineEditingBlockId = null;
+            inlineEditingWeekIdx = null;
+            loadClientData();
+        };
 
         function editBlock(blockId) {
             const block = TrainingBlocks.getAll().find(b => b.id === blockId);
@@ -2817,6 +3032,7 @@
 
             const existingModal = document.querySelector('.modal-overlay');
             if (existingModal) {
+                existingModal.classList.add('modal-xl');
                 existingModal.querySelector('.modal-body').innerHTML = modalContent;
                 existingModal.querySelector('.modal-footer').innerHTML = `
                     <button class="btn btn-secondary" onclick="this.closest('.modal-overlay').remove()">Cerrar</button>
@@ -2826,7 +3042,7 @@
                 showModal(modalTitle, modalContent, [
                     { text: 'Cancelar', class: 'btn-secondary', onclick: 'this.closest(".modal-overlay").remove()' },
                     { text: 'Guardar para Cliente', class: 'btn-primary', onclick: 'saveClientRoutine()' }
-                ]);
+                ], 'modal-xl');
             }
         }
         window.renderRoutineEditor = renderRoutineEditor;
@@ -4712,19 +4928,17 @@
 
         window.copyClientAccessLink = function () {
             if (!clientId) return;
-            // Get the current path but point to the client view
-            // Robust replacement handling clean URLs (without .html)
+            // Get the current path but point to the client login view
             let path = window.location.pathname;
             if (path.includes('trainer-client-detail')) {
-                path = path.replace('trainer-client-detail', 'client-dashboard');
+                path = path.replace('trainer-client-detail', 'client-login');
             } else {
-                // Fallback for unexpected path structures
-                path = '/client-dashboard.html';
+                path = '/client-login.html';
             }
             const baseUrl = window.location.origin + path;
             
-            // Crucial: we append the trainer ID so the client app knows where to pull data from
-            const fullUrl = `${baseUrl}?id=${clientId}&t=${activeTrainerId}`;
+            // Append only the trainer ID so the client lands on the login page and enters their code
+            const fullUrl = `${baseUrl}?t=${activeTrainerId}`;
             copyToClipboard(fullUrl);
             showToast('¡Link copiado! Envíalo a tu cliente.', 'success');
         };
@@ -4834,6 +5048,7 @@
             }
 
             sessionStorage.setItem('_trainerAuthed', '1');
+            localStorage.setItem('_trainerAuthed', '1');
             document.getElementById('login-screen').style.display = 'none';
             document.getElementById('app').style.display = 'block';
             
@@ -4847,7 +5062,7 @@
             if (typeof BrandConfig !== 'undefined') BrandConfig.applyTheme();
 
             // Si ya estamos logueados (trainerAuthed), forzamos un sync rápido
-            if (sessionStorage.getItem('_trainerAuthed') === '1') {
+            if (sessionStorage.getItem('_trainerAuthed') === '1' || localStorage.getItem('_trainerAuthed') === '1') {
                 if (window.SupabaseService) {
                     window.SupabaseService.init();
                     await window.syncFromCloud();

@@ -320,7 +320,7 @@ window.renderMealCard = function (meal, idx) {
                                 <div style="background: rgba(0,0,0,0.3); padding: 10px; margin-top: 5px; border-radius: 6px; border: 1px solid var(--primary-color);">
                                      <div class="grid grid-2 gap-sm mb-sm">
                                          <div>
-                                             <input type="text" id="newFoodName_${idx}_${optNum}" class="form-input text-sm" placeholder="🔍 Buscar alimento..." autofocus oninput="window.checkFoodMacros(${idx}, ${optNum})" list="foodList_${idx}_${optNum}">
+                                             <input type="text" id="newFoodName_${idx}_${optNum}" class="form-input text-sm" placeholder="🔍 Buscar alimento..." autofocus onchange="window.checkFoodMacros(${idx}, ${optNum})" list="foodList_${idx}_${optNum}">
                                              <datalist id="foodList_${idx}_${optNum}">
                                                 ${(typeof Foods !== 'undefined') ? Foods.getAll().map(f => `<option value="${f.name}">`).join('') : ''}
                                              </datalist>
@@ -487,12 +487,18 @@ window.editFoodForm = function (mealIdx, optionNum, originalFoodIdx) {
         const nameInput = document.getElementById(`newFoodName_${mealIdx}_${optionNum}`);
         if (nameInput) {
             nameInput.value = food.name || '';
-            document.getElementById(`newFoodQty_${mealIdx}_${optionNum}`).value = (food.quantity === '1 ración' || food.quantity === '-') ? '' : (food.quantity || '');
+            const qtyVal = (food.quantity === '1 ración' || food.quantity === '-') ? '' : (food.quantity || '');
+            document.getElementById(`newFoodQty_${mealIdx}_${optionNum}`).value = qtyVal;
             document.getElementById(`newFoodCal_${mealIdx}_${optionNum}`).value = food.calories || 0;
             document.getElementById(`newFoodP_${mealIdx}_${optionNum}`).value = food.protein || 0;
             document.getElementById(`newFoodC_${mealIdx}_${optionNum}`).value = food.carbs || 0;
             document.getElementById(`newFoodF_${mealIdx}_${optionNum}`).value = food.fat || 0;
             nameInput.focus();
+
+            // Si tiene nombre y cantidad, y los macros están a 0, intentar autocalcular desde "Mis Alimentos"
+            if (nameInput.value && qtyVal && (parseInt(food.calories) === 0 || !food.calories)) {
+                window.checkFoodMacros(mealIdx, optionNum);
+            }
         }
     }, 50);
 };
@@ -707,8 +713,8 @@ window.applyRecipeToOption = function (mealIdx, optionNum, recipeId) {
     // 2. Asignar Título como nota (ocultando ingredientes crudos) y desglosar alimentos
     if (recipe.ingredients) {
         if (!diet.meals[mealIdx].optionIngredients) diet.meals[mealIdx].optionIngredients = {};
-        // Solo guardamos el título de la receta, no los ingredientes crudos
-        diet.meals[mealIdx].optionIngredients[optionNum] = recipe.title;
+        // Desactivado a petición del usuario: no se añade la nota con el título
+        diet.meals[mealIdx].optionIngredients[optionNum] = '';
         
         const rawIngs = recipe.ingredients || '';
         if (rawIngs) {
@@ -1002,46 +1008,156 @@ window._archiveDiet = function (clientId, dietId) {
 // --- DATABASE AND UTILS ---
 
 window.foodDatabase = [
-    { names: ['Pollo', 'Pechuga de pollo', 'Pollo (crudo)'], cals: 115, p: 23, c: 0, f: 1.5 },
-    { names: ['Arroz blanco', 'Arroz crudo'], cals: 350, p: 7, c: 78, f: 0.5 },
-    { names: ['Huevo', 'Huevo entero', 'Huevo cocido'], cals: 155, p: 13, c: 1.1, f: 11, weightPerUnit: 55 },
-    { names: ['Avena', 'Copos de avena'], cals: 389, p: 16.9, c: 66, f: 6.9 },
+    // 1. Proteínas / Carnes / Pescados
+    { names: ['Pollo', 'Pechuga de pollo', 'Pollo desmechado', 'Pollo (crudo)'], cals: 120, p: 23, c: 0, f: 2.5 },
+    { names: ['Pavo', 'Pechuga de pavo', 'Fiambre de pavo', 'Solomillo de pavo', 'Pavo picado', 'Carne de pavo'], cals: 105, p: 22, c: 0, f: 1.5 },
+    { names: ['Salmón', 'Salmón ahumado', 'Salmón al horno'], cals: 180, p: 20, c: 0, f: 11 },
+    { names: ['Atún al natural', 'Lata de atún', 'Atún'], cals: 116, p: 26, c: 0, f: 1 },
+    { names: ['Ternera', 'Carne de ternera', 'Carne picada de ternera', 'Ternera magra', 'Tiras de ternera', 'Dados de ternera', 'Hamburguesa de ternera', 'Carne magra de ternera'], cals: 150, p: 21, c: 0, f: 5 },
+    { names: ['Merluza', 'Pescado blanco', 'Filete de pescado blanco'], cals: 80, p: 18, c: 0, f: 1 },
+    { names: ['Gambas'], cals: 85, p: 20, c: 0.5, f: 0.8 },
+    { names: ['Bacalao', 'Bacalao desmigado'], cals: 82, p: 18, c: 0, f: 0.7 },
+    { names: ['Sepia'], cals: 80, p: 16, c: 0.7, f: 0.9 },
+    { names: ['Mejillones', 'Mejillones al vapor'], cals: 86, p: 12, c: 3.4, f: 2.2 },
+    { names: ['Jamón serrano', 'Jamón serrano sin grasa'], cals: 240, p: 30, c: 0, f: 13 },
+
+    // 2. Lácteos / Huevos
+    { names: ['Huevo', 'Huevo entero', 'Huevo cocido', 'Huevo duro', 'Huevo poché', 'Huevo a la plancha', 'Huevos', 'Huevos revueltos'], cals: 155, p: 13, c: 1.1, f: 11, type: 'unit', weightPerUnit: 55 },
+    { names: ['Claras', 'Claras de huevo'], cals: 52, p: 11, c: 0.7, f: 0.2 },
+    { names: ['Requesón'], cals: 100, p: 12, c: 3, f: 4 },
+    { names: ['Queso cottage', 'Cottage'], cals: 98, p: 11, c: 3.4, f: 4.3 },
+    { names: ['Queso fresco tipo Burgos', 'Queso fresco'], cals: 110, p: 11, c: 3, f: 6 },
+    { names: ['Queso batido'], cals: 47, p: 8, c: 3.5, f: 0.1 },
+    { names: ['Skyr'], cals: 65, p: 11, c: 4, f: 0.2 },
+    { names: ['Yogur griego'], cals: 115, p: 10, c: 3, f: 7, type: 'unit', weightPerUnit: 125 },
+    { names: ['Yogur natural'], cals: 60, p: 3.5, c: 4.7, f: 3.3 },
+    { names: ['Kéfir'], cals: 60, p: 3.5, c: 4.8, f: 3 },
+    { names: ['Queso crema', 'Queso crema light'], cals: 150, p: 6, c: 5, f: 12 },
+    { names: ['Queso mozzarella light', 'Queso mozzarella'], cals: 200, p: 22, c: 2, f: 12 },
+    { names: ['Queso gratinado', 'Queso curado'], cals: 380, p: 25, c: 1.3, f: 30 },
+    { names: ['Loncha de queso havarti', 'Queso havarti'], cals: 330, p: 21, c: 0.5, f: 26 },
     { names: ['Leche desnatada'], cals: 34, p: 3.4, c: 5, f: 0.1 },
-    { names: ['Atún al natural', 'Lata de atún'], cals: 116, p: 26, c: 0, f: 1 },
-    { names: ['Yogur griego'], cals: 115, p: 10, c: 3, f: 7, weightPerUnit: 125 },
-    { names: ['Banana', 'Plátano'], cals: 89, p: 1.1, c: 23, f: 0.3, weightPerUnit: 120 },
-    { names: ['Manzana'], cals: 52, p: 0.3, c: 14, f: 0.2, weightPerUnit: 150 },
-    { names: ['Carne picada de ternera', 'Ternera magra'], cals: 150, p: 21, c: 0, f: 5 },
-    { names: ['Proteina en polvo', 'Batido de proteina', 'Whey Protein'], cals: 380, p: 80, c: 5, f: 4, weightPerUnit: 30 }
+    { names: ['Leche de soja', 'Bebida de soja'], cals: 45, p: 3.3, c: 2.5, f: 1.8 },
+    { names: ['Bebida avellanas', 'Bebida de almendras', 'Leche de almendras'], cals: 24, p: 0.5, c: 3, f: 1.1 },
+
+    // 3. Carbohidratos / Cereales
+    { names: ['Avena', 'Copos de avena', 'Avena integral', 'Harina de avena', 'Harina avena'], cals: 389, p: 16.9, c: 66, f: 6.9 },
+    { names: ['Arroz', 'Arroz blanco', 'Arroz integral', 'Arroz basmati', 'Arroz jazmín', 'Arroz cocido', 'Arroz (Blanco, Integral, Basmati, Jazmín)', 'Arroz (Integral/Jazmín/Basmati)', 'Arroz (Blanco, Integral, Basmati)'], cals: 350, p: 7, c: 78, f: 0.5 },
+    { names: ['Pasta', 'Pasta integral'], cals: 350, p: 12, c: 72, f: 1.5 },
+    { names: ['Pan integral', 'Pan Integral / Centeno', 'Rebanada de pan', 'Tostada de pan', 'Bagel integral', 'Pan tostado'], cals: 250, p: 9, c: 45, f: 2.5 },
+    { names: ['Pan de centeno', 'Rebanada de pan de centeno'], cals: 260, p: 9, c: 48, f: 2 },
+    { names: ['Pan de masa madre', 'Tostada de pan de masa madre'], cals: 275, p: 10, c: 52, f: 1.5 },
+    { names: ['Tortitas de arroz', 'Tortita de arroz', 'Tortitas de arroz o maíz', 'Tortitas de maíz'], cals: 380, p: 8, c: 80, f: 3, type: 'unit', weightPerUnit: 8 },
+    { names: ['Tortilla de trigo integral', 'Tortilla integral'], cals: 290, p: 8, c: 45, f: 6, type: 'unit', weightPerUnit: 40 },
+    { names: ['Tortillas de maíz', 'Tortilla de maíz'], cals: 220, p: 5, c: 45, f: 2.5, type: 'unit', weightPerUnit: 25 },
+    { names: ['Batata asada', 'Batata', 'Sweet potato'], cals: 86, p: 1.6, c: 20, f: 0.1 },
+    { names: ['Patata', 'Patatas', 'Patata asada', 'Patatas panadera', 'Patatas baby', 'Patatas baby cocidas', 'Puré de patata casero'], cals: 77, p: 2, c: 17, f: 0.1 },
+    { names: ['Quinoa', 'Quinoa cocida'], cals: 370, p: 14, c: 64, f: 6 },
+    { names: ['Cuscús cocido', 'Cuscús integral', 'Cuscús'], cals: 350, p: 12, c: 73, f: 1.5 },
+    { names: ['Bastones de pan integral', 'Colines', 'Picatostes integrales', 'Palitos integrales'], cals: 390, p: 11, c: 72, f: 5 },
+    { names: ['Granola casera', 'Granola'], cals: 450, p: 10, c: 60, f: 18 },
+    { names: ['Maíz precocido', 'Arepa', 'Harina de maíz'], cals: 360, p: 7, c: 77, f: 2.5 },
+
+    // 4. Legumbres / Vegetales
+    { names: ['Garbanzos', 'Garbanzos tostados'], cals: 364, p: 19, c: 61, f: 6 },
+    { names: ['Lentejas', 'Lentejas cocidas'], cals: 350, p: 25, c: 63, f: 1 },
+    { names: ['Alubias blancas cocidas', 'Alubias blancas'], cals: 330, p: 21, c: 60, f: 0.8 },
+    { names: ['Falafel', 'Falafel horneado'], cals: 250, p: 13, c: 30, f: 8 },
+    { names: ['Hummus', 'Hummus de garbanzo'], cals: 170, p: 5, c: 14, f: 10 },
+    { names: ['Tofu', 'Tofu firme', 'Tofu scramble', 'Tofu firme crujiente'], cals: 76, p: 8, c: 1.9, f: 4.8 },
+    { names: ['Edamame', 'Edamame al vapor'], cals: 120, p: 11, c: 9, f: 5 },
+    { names: ['Aguacate', 'Guacamole'], cals: 160, p: 2, c: 9, f: 15 },
+    { names: ['Tomate', 'Tomates', 'Cherries', 'Tomates cherry', 'Sofrito', 'Tomate natural en rodajas'], cals: 18, p: 0.9, c: 3.9, f: 0.2 },
+    { names: ['Espinacas', 'Base de espinacas'], cals: 23, p: 2.9, c: 3.6, f: 0.4 },
+    { names: ['Champiñones', 'Setas'], cals: 22, p: 3.1, c: 3.3, f: 0.3 },
+    { names: ['Berenjena'], cals: 25, p: 1, c: 6, f: 0.2 },
+    { names: ['Calabacín'], cals: 17, p: 1.2, c: 3.1, f: 0.3 },
+    { names: ['Calabaza'], cals: 26, p: 1, c: 6.5, f: 0.1 },
+    { names: ['Pimientos', 'Pimiento rojo'], cals: 20, p: 0.9, c: 4.6, f: 0.2 },
+    { names: ['Pepino'], cals: 15, p: 0.7, c: 3.6, f: 0.1 },
+    { names: ['Cebolla', 'Cebolla roja'], cals: 40, p: 1.1, c: 9.3, f: 0.1 },
+    { names: ['Espárragos al vapor', 'Espárragos'], cals: 20, p: 2.2, c: 3.9, f: 0.1 },
+    { names: ['Zanahoria'], cals: 41, p: 0.9, c: 9.6, f: 0.2 },
+    { names: ['Lechuga'], cals: 15, p: 1.4, c: 2.9, f: 0.2 },
+
+    // 5. Frutas
+    { names: ['Banana', 'Plátano', 'Plátano pequeño'], cals: 89, p: 1.1, c: 23, f: 0.3, type: 'unit', weightPerUnit: 120 },
+    { names: ['Manzana'], cals: 52, p: 0.3, c: 14, f: 0.2, type: 'unit', weightPerUnit: 150 },
+    { names: ['Arándanos'], cals: 57, p: 0.7, c: 14, f: 0.3 },
+    { names: ['Fresas'], cals: 32, p: 0.7, c: 7.7, f: 0.3 },
+    { names: ['Kiwi'], cals: 61, p: 1.1, c: 15, f: 0.5, type: 'unit', weightPerUnit: 75 },
+    { names: ['Mango'], cals: 60, p: 0.8, c: 15, f: 0.4 },
+    { names: ['Frambuesas'], cals: 52, p: 1.2, c: 12, f: 0.7 },
+    { names: ['Pera'], cals: 57, p: 0.4, c: 15, f: 0.1, type: 'unit', weightPerUnit: 160 },
+    { names: ['Piña natural', 'Piña'], cals: 50, p: 0.5, c: 13, f: 0.1 },
+    { names: ['Melocotón'], cals: 39, p: 0.9, c: 9.5, f: 0.3, type: 'unit', weightPerUnit: 150 },
+    { names: ['Papaya'], cals: 43, p: 0.5, c: 11, f: 0.3 },
+    { names: ['Higos frescos', 'Higos'], cals: 74, p: 0.8, c: 19, f: 0.3 },
+    { names: ['Uvas rojas', 'Uvas'], cals: 67, p: 0.6, c: 17, f: 0.4 },
+    { names: ['Mandarina'], cals: 53, p: 0.8, c: 13, f: 0.3, type: 'unit', weightPerUnit: 80 },
+    { names: ['Fruta contable'], cals: 70, p: 0.8, c: 16, f: 0.3, type: 'unit', weightPerUnit: 120 },
+    { names: ['Fruta incontable'], cals: 50, p: 0.7, c: 11, f: 0.2 },
+
+    // 6. Grasas / Semillas / Otros
+    { names: ['Aceite de oliva', 'Aceite de oliva virgen extra', 'Aceite'], cals: 884, p: 0, c: 0, f: 100 },
+    { names: ['Crema de cacahuete', 'Crema de almendras'], cals: 588, p: 25, c: 20, f: 50 },
+    { names: ['Semillas de calabaza', 'Semillas de lino', 'Semillas de chía', 'Semillas de sésamo', 'Semillas de cáñamo'], cals: 530, p: 19, c: 30, f: 43 },
+    { names: ['Coco rallado'], cals: 660, p: 6.9, c: 24, f: 65 },
+    { names: ['Nueces'], cals: 654, p: 15, c: 14, f: 65 },
+    { names: ['Anacardos'], cals: 553, p: 18, c: 30, f: 44 },
+    { names: ['Pistachos'], cals: 562, p: 20, c: 28, f: 45 },
+    { names: ['Almendras', 'Almendras laminadas', 'Almendra molida'], cals: 579, p: 21, c: 22, f: 49 },
+    { names: ['Proteina en polvo', 'Batido de proteina', 'Whey Protein', 'Proteína de vainilla', 'Proteína chocolate', 'Proteína', 'Proteína en polvo isolate'], cals: 380, p: 80, c: 5, f: 4, type: 'unit', weightPerUnit: 30 },
+    { names: ['Miel'], cals: 304, p: 0.3, c: 82, f: 0 },
+    { names: ['Dátil'], cals: 282, p: 2.5, c: 75, f: 0.4, type: 'unit', weightPerUnit: 8 },
+    { names: ['Cacao'], cals: 228, p: 20, c: 58, f: 14 },
+    { names: ['Sirope de ágave'], cals: 310, p: 0, c: 78, f: 0 },
+    { names: ['Aceitunas'], cals: 115, p: 0.8, c: 6.3, f: 10.7 },
+    { names: ['Pesto'], cals: 529, p: 5.2, c: 6, f: 53 },
+    { names: ['Mayonesa ligera'], cals: 180, p: 0.9, c: 8, f: 16 },
+    { names: ['Salsa de yogur light', 'Salsa de yogur'], cals: 80, p: 3.5, c: 7, f: 4 },
+    { names: ['Canela'], cals: 247, p: 4, c: 81, f: 1.2 },
+    { names: ['Cúrcuma'], cals: 354, p: 8, c: 65, f: 10 }
 ];
 
-window.checkFoodMacros = function (mealIdx) {
-    const nameInput = document.getElementById(`newFoodName_${mealIdx}`).value.trim().toLowerCase();
-    const qtyInput = document.getElementById(`newFoodQty_${mealIdx}`).value;
+window.checkFoodMacros = function (mealIdx, optionNum) {
+    const suffix = (optionNum !== undefined && optionNum !== null) ? `${mealIdx}_${optionNum}` : `${mealIdx}`;
+    const nameEl = document.getElementById(`newFoodName_${suffix}`);
+    const qtyEl = document.getElementById(`newFoodQty_${suffix}`);
+    if (!nameEl || !qtyEl) return;
+
+    const nameInput = nameEl.value.trim().toLowerCase();
+    const qtyInput = qtyEl.value;
     
     // Si no hay nombre, limpiamos campos
     if (!nameInput) {
-        document.getElementById(`newFoodCal_${mealIdx}`).value = '';
-        document.getElementById(`newFoodP_${mealIdx}`).value = '';
-        document.getElementById(`newFoodC_${mealIdx}`).value = '';
-        document.getElementById(`newFoodF_${mealIdx}`).value = '';
+        const calEl = document.getElementById(`newFoodCal_${suffix}`);
+        const pEl = document.getElementById(`newFoodP_${suffix}`);
+        const cEl = document.getElementById(`newFoodC_${suffix}`);
+        const fEl = document.getElementById(`newFoodF_${suffix}`);
+        if (calEl) calEl.value = '';
+        if (pEl) pEl.value = '';
+        if (cEl) cEl.value = '';
+        if (fEl) fEl.value = '';
         return;
     }
 
     const qty = parseFloat(qtyInput) || 0;
 
-    // 1. Buscar en la base de datos de usuario (Foods) - Ahora con búsqueda flexible .includes()
+    // 1. Buscar en la base de datos de usuario (Foods) - Ahora con búsqueda flexible e inmune a nulos
     let found = null;
     if (typeof Foods !== 'undefined') {
         const allFoods = Foods.getAll();
-        // Primero intentamos match exacto, luego por inclusión
-        found = allFoods.find(f => f.name.toLowerCase() === nameInput) || 
-                allFoods.find(f => f.name.toLowerCase().includes(nameInput));
+        if (Array.isArray(allFoods)) {
+            // Primero intentamos match exacto, luego por inclusión, comparando de forma segura
+            found = allFoods.find(f => f && f.name && typeof f.name === 'string' && f.name.trim().toLowerCase() === nameInput) || 
+                    allFoods.find(f => f && f.name && typeof f.name === 'string' && f.name.trim().toLowerCase().includes(nameInput));
+        }
     }
 
     // 2. Si no, buscar en la base de datos interna básica
-    if (!found && typeof window.foodDatabase !== 'undefined') {
-        found = window.foodDatabase.find(f => f.names.some(n => n.toLowerCase().includes(nameInput)));
+    if (!found && typeof window.foodDatabase !== 'undefined' && Array.isArray(window.foodDatabase)) {
+        found = window.foodDatabase.find(f => f && f.names && Array.isArray(f.names) && f.names.some(n => n && typeof n === 'string' && n.trim().toLowerCase().includes(nameInput)));
     }
 
     if (found && qty > 0) {
@@ -1061,14 +1177,20 @@ window.checkFoodMacros = function (mealIdx) {
             factor = qty / 100; // 200g / 100 = factor 2
         }
 
-        document.getElementById(`newFoodCal_${mealIdx}`).value = Math.round(baseCals * factor);
-        document.getElementById(`newFoodP_${mealIdx}`).value = (baseP * factor).toFixed(1);
-        document.getElementById(`newFoodC_${mealIdx}`).value = (baseC * factor).toFixed(1);
-        document.getElementById(`newFoodF_${mealIdx}`).value = (baseF * factor).toFixed(1);
+        const calEl = document.getElementById(`newFoodCal_${suffix}`);
+        const pEl = document.getElementById(`newFoodP_${suffix}`);
+        const cEl = document.getElementById(`newFoodC_${suffix}`);
+        const fEl = document.getElementById(`newFoodF_${suffix}`);
+        
+        if (calEl) calEl.value = Math.round(baseCals * factor);
+        if (pEl) pEl.value = (baseP * factor).toFixed(1);
+        if (cEl) cEl.value = (baseC * factor).toFixed(1);
+        if (fEl) fEl.value = (baseF * factor).toFixed(1);
     } else if (found) {
         // Si encontramos el alimento pero no hay cantidad aún, podrías poner los valores base de 100g/1ud como ayuda
         const baseCals = found.calories || found.cals || 0;
-        document.getElementById(`newFoodCal_${mealIdx}`).placeholder = baseCals;
+        const calEl = document.getElementById(`newFoodCal_${suffix}`);
+        if (calEl) calEl.placeholder = baseCals;
     }
 };
 
