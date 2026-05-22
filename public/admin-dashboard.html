@@ -275,11 +275,15 @@
             
             <div class="grid grid-2 gap-lg mb-xl">
                 <div class="card" style="background: var(--admin-card); border: 1px solid rgba(255,255,255,0.05); padding: 20px;">
-                    <div class="flex-between mb-md">
-                        <h3 style="margin-top: 0;">Gestión de Planes SaaS</h3>
-                        <span class="text-xs" style="color: #10B981;">● Activo con Stripe</span>
+                    <div class="flex-between mb-md items-center" style="gap: 15px; flex-wrap: wrap;">
+                        <h3 style="margin: 0;">Gestión de Planes SaaS</h3>
+                        <div class="form-group" style="margin: 0; min-width: 200px;">
+                            <select id="billingAppFilter" class="form-select" onchange="window.renderPlans()" style="padding: 6px 12px; background: rgba(255, 255, 255, 0.05); border-radius: 6px; font-size: 0.85rem; color: #FFF; border: 1px solid rgba(255,255,255,0.1);">
+                                <!-- Loaded dynamically -->
+                            </select>
+                        </div>
                     </div>
-                    <div id="planListContainer" style="display: flex; flex-direction: column; gap: 12px;">
+                    <div id="planListContainer" style="display: flex; flex-direction: column; gap: 12px; margin-top: 15px;">
                         <!-- JS Dynamic Plans -->
                     </div>
                 </div>
@@ -416,6 +420,14 @@
             <h2 id="planModalTitle" style="margin-top: 0; color: var(--admin-primary);">Configurar Plan</h2>
             <form id="planForm">
                 <input type="hidden" id="planEditId">
+                
+                <div class="form-group mb-md">
+                    <label style="display: block; margin-bottom: 6px; font-size: 0.85rem;">Aplicación Asociada a este Plan</label>
+                    <select id="pApp" class="form-select" required>
+                        <!-- Dynamic load apps -->
+                    </select>
+                </div>
+
                 <div class="form-group mb-md">
                     <label style="display: block; margin-bottom: 6px; font-size: 0.85rem;">Nombre del Plan</label>
                     <input type="text" id="pName" class="form-input" placeholder="Ej: Plan Pro" required>
@@ -464,9 +476,9 @@
                 const data = raw ? JSON.parse(raw) : { 
                     trainers: [], 
                     plans: [
-                        { id: 'Basic', name: 'Plan Basic', price: 29, desc: 'Hasta 20 clientes', stripeLink: '' },
-                        { id: 'Pro', name: 'Plan Pro', price: 59, desc: 'Clientes ilimitados', stripeLink: '' },
-                        { id: 'Elite', name: 'Plan Elite', price: 99, desc: 'Marca blanca', stripeLink: '' }
+                        { id: 'Basic', name: 'Plan Basic', price: 29, desc: 'Hasta 20 clientes', stripeLink: '', appId: 'infinite-coach' },
+                        { id: 'Pro', name: 'Plan Pro', price: 59, desc: 'Clientes ilimitados', stripeLink: '', appId: 'infinite-coach' },
+                        { id: 'Elite', name: 'Plan Elite', price: 99, desc: 'Marca blanca', stripeLink: '', appId: 'infinite-coach' }
                     ],
                     stats: { totalRevenue: 0 } 
                 };
@@ -476,11 +488,15 @@
                     if (!t.appId) t.appId = 'infinite-coach';
                 });
                 if(!data.plans) data.plans = [
-                    { id: 'Basic', name: 'Plan Basic', price: 29, desc: 'Hasta 20 clientes', stripeLink: '' },
-                    { id: 'Pro', name: 'Plan Pro', price: 59, desc: 'Clientes ilimitados', stripeLink: '' },
-                    { id: 'Elite', name: 'Plan Elite', price: 99, desc: 'Marca blanca', stripeLink: '' },
-                    { id: 'Free', name: 'Plan Gratis', price: 0, desc: 'Licencia Cortesía / Admin', stripeLink: '' }
+                    { id: 'Basic', name: 'Plan Basic', price: 29, desc: 'Hasta 20 clientes', stripeLink: '', appId: 'infinite-coach' },
+                    { id: 'Pro', name: 'Plan Pro', price: 59, desc: 'Clientes ilimitados', stripeLink: '', appId: 'infinite-coach' },
+                    { id: 'Elite', name: 'Plan Elite', price: 99, desc: 'Marca blanca', stripeLink: '', appId: 'infinite-coach' },
+                    { id: 'Free', name: 'Plan Gratis', price: 0, desc: 'Licencia Cortesía / Admin', stripeLink: '', appId: 'infinite-coach' }
                 ];
+                // Ensure all plans have appId associated
+                data.plans.forEach(p => {
+                    if (!p.appId) p.appId = 'infinite-coach';
+                });
                 if(!data.apps) data.apps = [
                     { id: 'infinite-coach', name: 'Infinite Coach', logo: 'https://images.unsplash.com/photo-1517838277536-f5f99be501cd?q=80&w=200&auto=format&fit=crop', primaryColor: '#8B5CF6', desc: 'Aplicación premium de entrenamiento personal y nutrición.' }
                 ];
@@ -557,16 +573,28 @@
         };
 
         // MODALS
+        window.updateTrainerModalPlans = () => {
+            const data = getPlatformData();
+            const selectedAppId = document.getElementById('tApp').value;
+            const selectPlan = document.getElementById('tPlan');
+            
+            const appPlans = data.plans.filter(p => p.appId === selectedAppId);
+            if (appPlans.length === 0) {
+                selectPlan.innerHTML = `<option value="">-- Sin planes creados para esta app --</option>`;
+            } else {
+                selectPlan.innerHTML = appPlans.map(p => `<option value="${p.id}">${p.name} (${p.price}€)</option>`).join('');
+            }
+        };
+
         window.openTrainerModal = () => {
             const data = getPlatformData();
-            
-            // Populate Plans
-            const selectPlan = document.getElementById('tPlan');
-            selectPlan.innerHTML = data.plans.map(p => `<option value="${p.id}">${p.name} (${p.price}€)</option>`).join('');
             
             // Populate Apps
             const selectApp = document.getElementById('tApp');
             selectApp.innerHTML = (data.apps || []).map(a => `<option value="${a.id}">${a.name}</option>`).join('');
+
+            // Update Plans dynamically based on selected App
+            window.updateTrainerModalPlans();
 
             document.getElementById('tName').value = '';
             document.getElementById('tEmail').value = '';
@@ -576,10 +604,16 @@
 
         window.openPlanModal = (planId = null) => {
             const data = getPlatformData();
+
+            // Populate Apps select list inside plan modal
+            const selectApp = document.getElementById('pApp');
+            selectApp.innerHTML = (data.apps || []).map(a => `<option value="${a.id}">${a.name}</option>`).join('');
+
             if(planId) {
                 const p = data.plans.find(x => x.id === planId);
                 document.getElementById('planModalTitle').textContent = 'Editar Plan Stripe';
                 document.getElementById('planEditId').value = p.id;
+                document.getElementById('pApp').value = p.appId || 'infinite-coach';
                 document.getElementById('pName').value = p.name;
                 document.getElementById('pPrice').value = p.price;
                 document.getElementById('pDesc').value = p.desc;
@@ -587,6 +621,9 @@
             } else {
                 document.getElementById('planModalTitle').textContent = 'Nuevo Plan Stripe';
                 document.getElementById('planEditId').value = '';
+                // Default to current app filter selection in billing view
+                const billingSelect = document.getElementById('billingAppFilter');
+                document.getElementById('pApp').value = billingSelect ? billingSelect.value : 'infinite-coach';
                 document.getElementById('pName').value = '';
                 document.getElementById('pPrice').value = '';
                 document.getElementById('pDesc').value = '';
@@ -682,7 +719,19 @@
             const data = getPlatformData();
             const container = document.getElementById('planListContainer');
             if(!container) return;
-            container.innerHTML = data.plans.map(p => `
+
+            // Get selected App filter value
+            const billingSelect = document.getElementById('billingAppFilter');
+            const selectedAppId = billingSelect ? billingSelect.value : 'infinite-coach';
+
+            const filteredPlans = data.plans.filter(p => p.appId === selectedAppId);
+
+            if (filteredPlans.length === 0) {
+                container.innerHTML = `<div style="text-align: center; padding: 30px; opacity: 0.5; font-size: 0.85rem; color: rgba(255,255,255,0.6);">No hay planes configurados para esta aplicación.</div>`;
+                return;
+            }
+
+            container.innerHTML = filteredPlans.map(p => `
                 <div class="plan-item">
                     <div style="flex: 1;">
                         <div style="font-weight: 700;">${p.name}</div>
@@ -754,6 +803,11 @@
                 if (t.appId === id) t.appId = 'infinite-coach';
             });
 
+            // Reassign plans
+            data.plans.forEach(p => {
+                if (p.appId === id) p.appId = 'infinite-coach';
+            });
+
             data.apps = data.apps.filter(x => x.id !== id);
             savePlatformData(data);
             window.adminToast("Aplicación eliminada correctamente", "success");
@@ -804,6 +858,14 @@
                 return;
             }
 
+            const data = getPlatformData();
+
+            // Populate Billing App selector filter
+            const billingSelect = document.getElementById('billingAppFilter');
+            if (billingSelect) {
+                billingSelect.innerHTML = (data.apps || []).map(a => `<option value="${a.id}">${a.name}</option>`).join('');
+            }
+
             window.renderDashboard();
             window.renderPlans();
             if (window.renderApps) window.renderApps();
@@ -819,6 +881,16 @@
                 if (hasCloudData) {
                     console.log("Admin: Cargando configuración desde Supabase.");
                     localStorage.setItem(PLATFORM_KEY, JSON.stringify(cloudData));
+                    
+                    const refreshedData = getPlatformData();
+                    if (billingSelect) {
+                        const prevVal = billingSelect.value;
+                        billingSelect.innerHTML = (refreshedData.apps || []).map(a => `<option value="${a.id}">${a.name}</option>`).join('');
+                        if (prevVal && refreshedData.apps.some(a => a.id === prevVal)) {
+                            billingSelect.value = prevVal;
+                        }
+                    }
+
                     window.renderDashboard();
                     window.renderPlans();
                     if (window.renderApps) window.renderApps();
@@ -832,6 +904,12 @@
                             console.log("Admin: Migrando datos de Firebase a Supabase...");
                             localStorage.setItem(PLATFORM_KEY, JSON.stringify(fbData));
                             savePlatformData(fbData); // Este ya guarda en Supabase
+                            
+                            const refreshedData = getPlatformData();
+                            if (billingSelect) {
+                                billingSelect.innerHTML = (refreshedData.apps || []).map(a => `<option value="${a.id}">${a.name}</option>`).join('');
+                            }
+
                             window.renderDashboard();
                             window.renderPlans();
                             if (window.renderApps) window.renderApps();
@@ -839,6 +917,9 @@
                     }
                 }
             }
+
+            // Change listener on Trainer App Select to filter plans
+            document.getElementById('tApp').addEventListener('change', window.updateTrainerModalPlans);
 
             // Trainer Form
             document.getElementById('trainerForm').addEventListener('submit', (e) => {
@@ -848,6 +929,11 @@
                 const planObj = data.plans.find(p => p.id === planId);
                 const appId = document.getElementById('tApp').value;
                 
+                if (!planObj) {
+                    window.adminToast("Por favor, configura un Plan para esta aplicación primero.", "error");
+                    return;
+                }
+
                 const isFree = planObj.price === 0;
                 const newT = {
                     id: genUUID(),
@@ -872,8 +958,11 @@
                 e.preventDefault();
                 const data = getPlatformData();
                 const editId = document.getElementById('planEditId').value;
+                const associatedAppId = document.getElementById('pApp').value;
+                
                 if(editId) {
                     const idx = data.plans.findIndex(p => p.id === editId);
+                    data.plans[idx].appId = associatedAppId;
                     data.plans[idx].name = document.getElementById('pName').value;
                     data.plans[idx].price = parseInt(document.getElementById('pPrice').value);
                     data.plans[idx].desc = document.getElementById('pDesc').value;
@@ -881,6 +970,7 @@
                 } else {
                     data.plans.push({
                         id: 'p-' + Math.random().toString(36).substr(2, 5),
+                        appId: associatedAppId,
                         name: document.getElementById('pName').value,
                         price: parseInt(document.getElementById('pPrice').value),
                         desc: document.getElementById('pDesc').value,
@@ -919,7 +1009,19 @@
                         createdAt: new Date().toISOString()
                     });
                 }
+
+                // Make sure we rebuild selectors
                 savePlatformData(data);
+
+                const refreshedData = getPlatformData();
+                if (billingSelect) {
+                    const prevVal = billingSelect.value;
+                    billingSelect.innerHTML = (refreshedData.apps || []).map(a => `<option value="${a.id}">${a.name}</option>`).join('');
+                    if (prevVal && refreshedData.apps.some(a => a.id === prevVal)) {
+                        billingSelect.value = prevVal;
+                    }
+                }
+
                 window.closeAppModal();
                 window.adminToast("Aplicación guardada correctamente", "success");
             });
