@@ -3,6 +3,16 @@
   "cleanUrls": true,
   "trailingSlash": false,
   "rewrites": [
+    {
+      "source": "/",
+      "has": [
+        {
+          "type": "host",
+          "value": "licencias.ingeniaia.es"
+        }
+      ],
+      "destination": "/admin-login.html"
+    },
     { "source": "/(.*).html", "destination": "/$1.html" }
   ]
 }

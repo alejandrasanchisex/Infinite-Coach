@@ -31,11 +31,21 @@ const getData = () => {
     version: DB_VERSION, clients: [], routines: [], diets: [], foods: [], media: [], 
     hidden_system_media: [], deleted_system_media: [], brand: { name: 'Infinite Coach', configured: true }
   };
-  if (!raw) return defaults;
+  if (!raw) {
+    const activeId = window.activeTrainerId || localStorage.getItem('activeTrainerId') || 'default';
+    if (activeId !== 'default') {
+      localStorage.setItem('isNewInstall_' + activeId, 'true');
+      console.log(`🆕 Nueva instalación o caché limpia detectada para el entrenador ${activeId}. Registrando bandera 'isNewInstall'.`);
+    }
+    return defaults;
+  }
   try {
     const parsed = JSON.parse(raw);
     
     const data = { ...defaults, ...parsed };
+    if (!data.feedbacks) data.feedbacks = [];
+    if (!data.appointments) data.appointments = [];
+    if (!data.invoices) data.invoices = [];
 
     // 🔥 MIGRACIÓN ÚNICA: Restaurar recetas ocultas a activas
     if (!localStorage.getItem('v310_unhide_recipes_done')) {
@@ -236,21 +246,133 @@ window.syncFromCloud = async () => {
         }
 
         if (cloudData) {
-            // Smart Merge/Timestamp Check:
-            // Si localData es más reciente que cloudData, no sobrescribir localData.
-            // En su lugar, subir localData a la nube.
-            if (localData && localData.lastModified && cloudData.lastModified) {
-                const localTime = new Date(localData.lastModified).getTime();
-                const cloudTime = new Date(cloudData.lastModified).getTime();
-                if (localTime > cloudTime) {
-                    console.log("⚠️ Cambios locales más recientes detectados. Sincronizando con la nube...");
-                    await window.SupabaseService.saveTrainerData(currentId, localData);
-                    return localData;
+            // Garantizar que todos los arrays existen en la nube
+            const collections = ['clients', 'routines', 'diets', 'foods', 'media', 'feedbacks', 'appointments', 'invoices', 'trainingBlocks'];
+            collections.forEach(col => {
+                if (!cloudData[col]) cloudData[col] = [];
+            });
+
+            if (localData) {
+                // Garantizar que todos los arrays existen localmente
+                collections.forEach(col => {
+                    if (!localData[col]) localData[col] = [];
+                });
+
+                // 1. DETECTAR SI LOCAL ES UN BEBÉ (FRESHLY INITIALIZED EMPTY SLATE)
+                // Si el local no tiene ningún dato creado por el entrenador (clientes, rutinas, dietas, trainingBlocks)
+                // pero la nube sí tiene datos, entonces ignoramos timestamps y descargamos TODO de la nube.
+                const localHasClients = localData.clients && localData.clients.length > 0;
+                const localHasRoutines = localData.routines && localData.routines.length > 0;
+                const localHasDiets = localData.diets && localData.diets.length > 0;
+                const localHasBlocks = localData.trainingBlocks && localData.trainingBlocks.length > 0;
+
+                const cloudHasClients = cloudData.clients && cloudData.clients.length > 0;
+                const cloudHasRoutines = cloudData.routines && cloudData.routines.length > 0;
+                const cloudHasDiets = cloudData.diets && cloudData.diets.length > 0;
+                const cloudHasBlocks = cloudData.trainingBlocks && cloudData.trainingBlocks.length > 0;
+
+                const isLocalFreshlyInitialized = !localHasClients && !localHasRoutines && !localHasDiets && !localHasBlocks;
+                const cloudHasTrainerData = cloudHasClients || cloudHasRoutines || cloudHasDiets || cloudHasBlocks;
+                const isNewInstall = localStorage.getItem('isNewInstall_' + currentId) === 'true';
+
+                if ((isNewInstall || isLocalFreshlyInitialized) && cloudHasTrainerData) {
+                    console.log("📥 El almacenamiento local estaba vacío o es nuevo, pero la nube tiene datos. Descargando de la nube...");
+                    localStorage.removeItem('isNewInstall_' + currentId);
+                    // Preservar branding local si lo hay
+                    const trainerBrandRaw = localStorage.getItem('_trainerBrand');
+                    const brandSettingsRaw = localStorage.getItem('brand_settings');
+                    const localBrandRaw = trainerBrandRaw || brandSettingsRaw;
+                    if (localBrandRaw) {
+                        try {
+                            const localBrand = JSON.parse(localBrandRaw);
+                            if (!cloudData.brand) cloudData.brand = {};
+                            cloudData.brand = { ...cloudData.brand, ...localBrand };
+                        } catch(e) {}
+                    }
+                    localStorage.setItem(getStorageKey(), JSON.stringify(cloudData));
+                    return cloudData;
                 }
+
+                // 2. FUSIÓN INTELIGENTE BIDIRECCIONAL POR ID Y TIMESTAMP
+                const localTime = localData.lastModified ? new Date(localData.lastModified).getTime() : 0;
+                const cloudTime = cloudData.lastModified ? new Date(cloudData.lastModified).getTime() : 0;
+                
+                let dataChanged = false;
+                const mergedData = { ...cloudData }; // Empezamos con copia de cloud
+
+                collections.forEach(col => {
+                    const localItems = localData[col] || [];
+                    const cloudItems = cloudData[col] || [];
+                    
+                    const localMap = new Map(localItems.map(item => [item.id, item]));
+                    const cloudMap = new Map(cloudItems.map(item => [item.id, item]));
+
+                    const allIds = new Set([...localMap.keys(), ...cloudMap.keys()]);
+                    const mergedItems = [];
+
+                    allIds.forEach(id => {
+                        if (!id) return;
+                        const localItem = localMap.get(id);
+                        const cloudItem = cloudMap.get(id);
+
+                        if (localItem && cloudItem) {
+                            // Existe en ambos: decidir por timestamp
+                            if (localTime > cloudTime) {
+                                mergedItems.push(localItem);
+                                // Si son diferentes, marcamos cambio
+                                if (JSON.stringify(localItem) !== JSON.stringify(cloudItem)) {
+                                    dataChanged = true;
+                                }
+                            } else {
+                                mergedItems.push(cloudItem);
+                                if (JSON.stringify(localItem) !== JSON.stringify(cloudItem)) {
+                                    dataChanged = true;
+                                }
+                            }
+                        } else if (localItem) {
+                            // Solo existe localmente (nuevo item local o eliminado en la nube)
+                            // Si local es más nuevo o si queremos conservar todo para evitar pérdidas, lo añadimos
+                            mergedItems.push(localItem);
+                            dataChanged = true;
+                        } else if (cloudItem) {
+                            // Solo existe en la nube (nuevo item de otro dispositivo o eliminado localmente)
+                            // Si el usuario eliminó localmente, y local es más nuevo (localTime > cloudTime), respetamos la eliminación.
+                            // De lo contrario, lo añadimos.
+                            if (localTime > cloudTime) {
+                                // Eliminado localmente, no lo añadimos a mergedItems, marcamos cambio
+                                dataChanged = true;
+                            } else {
+                                mergedItems.push(cloudItem);
+                            }
+                        }
+                    });
+
+                    mergedData[col] = mergedItems;
+                });
+
+                // Preservar marca
+                const trainerBrandRaw = localStorage.getItem('_trainerBrand');
+                const brandSettingsRaw = localStorage.getItem('brand_settings');
+                const localBrandRaw = trainerBrandRaw || brandSettingsRaw;
+                if (localBrandRaw) {
+                    try {
+                        const localBrand = JSON.parse(localBrandRaw);
+                        if (!mergedData.brand) mergedData.brand = {};
+                        mergedData.brand = { ...mergedData.brand, ...localBrand };
+                    } catch(e) {}
+                }
+
+                if (localTime > cloudTime || dataChanged) {
+                    console.log("📤 Sincronizando cambios locales fusionados a la nube...");
+                    mergedData.lastModified = new Date().toISOString();
+                    await window.SupabaseService.saveTrainerData(currentId, mergedData);
+                }
+
+                localStorage.setItem(getStorageKey(), JSON.stringify(mergedData));
+                return mergedData;
             }
 
-            // Preservar SIEMPRE el brand guardado explícitamente por el entrenador.
-            // _trainerBrand es la fuente de verdad absoluta para la marca.
+            // Preservar marca
             const trainerBrandRaw = localStorage.getItem('_trainerBrand');
             const brandSettingsRaw = localStorage.getItem('brand_settings');
             const localBrandRaw = trainerBrandRaw || brandSettingsRaw;
@@ -259,7 +381,7 @@ window.syncFromCloud = async () => {
                     const localBrand = JSON.parse(localBrandRaw);
                     if (!cloudData.brand) cloudData.brand = {};
                     cloudData.brand = { ...cloudData.brand, ...localBrand };
-                } catch(e) { /* ignorar */ }
+                } catch(e) {}
             }
             localStorage.setItem(getStorageKey(), JSON.stringify(cloudData));
             return cloudData;
@@ -276,6 +398,24 @@ window.syncFromCloud = async () => {
 // BIBLIOTECA MAESTRA (100+ EJERCICIOS)
 // RECETAS A FUEGO (148)
 window.SYSTEM_RECIPES = [
+  {
+    "id": "sys-rec-salmorejo-jamon-v1",
+    "type": "image",
+    "category": "recipe",
+    "title": "Salmorejo Cordobés con Jamón y Huevo",
+    "url": "img/salmorejo_huevo_jamon.png",
+    "ingredients": "Salmorejo, Huevo, Jamón serrano",
+    "description": "Crema fría de tomate tradicional cordobesa, densa y aterciopelada, decorada con huevo duro picado finamente, virutas crujientes de jamón serrano y un toque de aceite de oliva virgen extra."
+  },
+  {
+    "id": "sys-rec-tostada-pina-v1",
+    "type": "image",
+    "category": "recipe",
+    "title": "Tostada Serrana con Piña",
+    "url": "img/tostada_serrana_pina.png",
+    "ingredients": "Tostada pan, Huevo, Jamón serrano, Piña",
+    "description": "Exquisito desayuno gourmet que combina el sabor salado del jamón serrano y el huevo a la plancha con la frescura dulce de la piña sobre pan tostado."
+  },
   {
     "id": "sys-br-1-v6",
     "type": "image",
@@ -1804,12 +1944,33 @@ const Clients = {
 
   getAll: () => {
     const data = getData();
-    return data.clients;
+    const clients = data.clients || [];
+    return clients.map(c => {
+      if (c && c.paymentExpiry && c.paymentStatus === 'paid') {
+        try {
+          const parts = c.paymentExpiry.split('/');
+          if (parts.length === 3) {
+            const day = parseInt(parts[0]);
+            const month = parseInt(parts[1]) - 1;
+            let year = parseInt(parts[2]);
+            if (year < 100) year += 2000;
+            const expiryDate = new Date(year, month, day);
+            if (!isNaN(expiryDate)) {
+              const today = new Date();
+              today.setHours(0,0,0,0);
+              if (expiryDate < today) {
+                c.paymentStatus = 'pending';
+              }
+            }
+          }
+        } catch (e) {}
+      }
+      return c;
+    });
   },
 
   getById: (id) => {
-    const data = getData();
-    return data.clients.find(c => c.id == id);
+    return Clients.getAll().find(c => c.id == id);
   },
 
   create: (clientData) => {

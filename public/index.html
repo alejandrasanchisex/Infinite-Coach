@@ -1,196 +1,61 @@
 <!DOCTYPE html>
 <html lang="es">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Configuración Inicial - Infinite Coach</title>
+    <title>Cargando... - Infinite Coach</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="styles/theme.css?v=321">
-    <link rel="stylesheet" href="styles/components.css">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700&display=swap" rel="stylesheet">
     <style>
-        .wizard-container {
+        body {
+            background-color: #0B0B1A;
+            color: white;
+            font-family: 'Outfit', sans-serif;
+            display: flex;
+            align-items: center;
+            justify-content: center;
             min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: var(--spacing-lg);
+            margin: 0;
         }
-
-        .wizard-card {
-            max-width: 600px;
-            width: 100%;
-        }
-
-        .wizard-header {
+        .loader-container {
             text-align: center;
-            margin-bottom: var(--spacing-xl);
         }
-
-        .wizard-icon {
-            font-size: 4rem;
-            margin-bottom: var(--spacing-md);
+        .spinner {
+            width: 50px;
+            height: 50px;
+            border: 4px solid rgba(255, 255, 255, 0.1);
+            border-left-color: #00D9FF;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
         }
-
-        .color-picker-group {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: var(--spacing-md);
+        @keyframes spin {
+            100% { transform: rotate(360deg); }
         }
-
-        .color-picker-item {
-            display: flex;
-            flex-direction: column;
-            gap: var(--spacing-sm);
-        }
-
-        .color-preview {
-            width: 100%;
-            height: 60px;
-            border-radius: var(--radius-md);
-            border: 2px solid rgba(255, 255, 255, 0.1);
-            cursor: pointer;
-            transition: transform var(--transition-fast);
-        }
-
-        .color-preview:hover {
-            transform: scale(1.05);
-        }
-
-        .logo-preview {
-            width: 120px;
-            height: 120px;
-            margin: 0 auto var(--spacing-md);
-            border-radius: var(--radius-lg);
-            background: var(--bg-input);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            overflow: hidden;
-        }
-
-        .logo-preview img {
-            max-width: 100%;
-            max-height: 100%;
-            object-fit: contain;
-        }
-
-        .logo-placeholder {
-            font-size: 3rem;
-            color: var(--text-muted);
+        p {
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 0.95rem;
         }
     </style>
-</head>
-
-<body>
-    <div class="wizard-container">
-        <div class="card wizard-card">
-            <div class="wizard-header">
-                <div class="wizard-icon">💪</div>
-                <h1>Configuración Inicial</h1>
-                <p class="text-muted">Personaliza tu plataforma fitness en 5 pasos</p>
-            </div>
-
-            <form id="configForm">
-                <!-- Paso 1: Información Básica -->
-                <div class="form-group">
-                    <label class="form-label">Nombre de tu negocio/marca</label>
-                    <input type="text" class="form-input" id="brandName" placeholder="Ej: FitCoach Pro" required>
-                    <div class="form-hint">Este nombre aparecerá en toda la aplicación</div>
-                </div>
-
-                <!-- Paso 2: Logo -->
-                <div class="form-group">
-                    <label class="form-label">Logo (opcional)</label>
-                    <div class="logo-preview" id="logoPreview">
-                        <span class="logo-placeholder">📷</span>
-                    </div>
-                    <div class="file-upload">
-                        <input type="file" id="logoInput" accept="image/*">
-                        <label class="file-upload-label" for="logoInput">
-                            <span>📁 Seleccionar imagen</span>
-                        </label>
-                    </div>
-                    <div class="form-hint">Formatos: JPG, PNG. Tamaño recomendado: 500x500px</div>
-                </div>
-
-                <!-- Paso 3: Colores de Marca -->
-                <div class="form-group">
-                    <label class="form-label">Colores de tu marca</label>
-                    <div class="color-picker-group">
-                        <div class="color-picker-item">
-                            <label>Color Principal</label>
-                            <input type="color" id="primaryColor" value="#00D9FF" class="color-preview">
-                        </div>
-                        <div class="color-picker-item">
-                            <label>Color Secundario</label>
-                            <input type="color" id="secondaryColor" value="#1A1A2E" class="color-preview">
-                        </div>
-                        <div class="color-picker-item">
-                            <label>Color de Acento</label>
-                            <input type="color" id="accentColor" value="#FF6B6B" class="color-preview">
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Paso 4: WhatsApp -->
-                <div class="form-group">
-                    <label class="form-label">Número de WhatsApp</label>
-                    <input type="tel" class="form-input" id="whatsappNumber" placeholder="Ej: +34 600 123 456" required>
-                    <div class="form-hint">Los clientes podrán contactarte directamente por WhatsApp</div>
-                </div>
-
-
-                <div class="divider"></div>
-
-                <button type="submit" class="btn btn-primary btn-lg" style="width: 100%;">
-                    🚀 Completar Configuración
-                </button>
-            </form>
-        </div>
-    </div>
-
-    <script src="js/data-models.js?v=319"></script>
-    <script src="js/utils.js"></script>
     <script>
-        let logoBase64 = null;
-
-        // Logo preview
-        document.getElementById('logoInput').addEventListener('change', async (e) => {
-            const file = e.target.files[0];
-            if (file) {
-                logoBase64 = await imageToBase64(file);
-                const preview = document.getElementById('logoPreview');
-                preview.innerHTML = `<img src="${logoBase64}" alt="Logo">`;
+        // Redirigir de inmediato al destino correcto
+        try {
+            if (localStorage.getItem('_trainerAuthed') === '1') {
+                const activeTrainerId = localStorage.getItem('activeTrainerId') || 'default';
+                window.location.replace('trainer-dashboard.html?t=' + activeTrainerId);
+            } else {
+                window.location.replace('trainer-login.html');
             }
-        });
-
-        // Form submission
-        document.getElementById('configForm').addEventListener('submit', async (e) => {
-            e.preventDefault();
-
-            const brandData = {
-                name: document.getElementById('brandName').value,
-                logo: logoBase64,
-                colors: {
-                    primary: document.getElementById('primaryColor').value,
-                    secondary: document.getElementById('secondaryColor').value,
-                    accent: document.getElementById('accentColor').value
-                },
-                whatsapp: document.getElementById('whatsappNumber').value
-            };
-
-            // Save brand configuration
-            BrandConfig.set(brandData);
-
-
-            // Redirect to trainer dashboard
-            window.location.href = 'trainer-dashboard.html?v=319';
-        });
-
+        } catch (e) {
+            window.location.replace('trainer-login.html');
+        }
     </script>
-    <script src="js/custom-recipes.js?v=129"></script></body>
-
+</head>
+<body>
+    <div class="loader-container">
+        <div class="spinner"></div>
+        <p>Cargando aplicación...</p>
+    </div>
+</body>
 </html>

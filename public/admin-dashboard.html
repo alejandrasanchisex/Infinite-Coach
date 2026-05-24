@@ -570,6 +570,10 @@
             }
             
             savePlatformData(data);
+            window.updateSidebarLogo();
+            if (typeof BrandConfig !== 'undefined' && typeof BrandConfig.applyTheme === 'function') {
+                BrandConfig.applyTheme();
+            }
             window.adminToast('Ajustes guardados correctamente', 'success');
             document.getElementById('settingPassword').value = '';
         };

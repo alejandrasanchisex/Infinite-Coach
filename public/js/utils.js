@@ -14,12 +14,7 @@
         const _isValidLogo = (url) => {
             if (!url || typeof url !== 'string' || url.length < 5) return false;
             if (url.startsWith('data:image') || url.startsWith('blob:') || url.startsWith('img/')) return true;
-            if (url.startsWith('http')) {
-                const isStorageCDN = url.includes('supabase.co') || url.includes('firebasestorage') ||
-                                     url.includes('cloudinary') || url.includes('amazonaws');
-                const hasImageExt = /\.(jpg|jpeg|png|gif|webp|svg|ico)(\?|$|#)/i.test(url);
-                return isStorageCDN || hasImageExt;
-            }
+            if (url.startsWith('http://') || url.startsWith('https://')) return true;
             return false;
         };
 
@@ -64,9 +59,40 @@ window.BrandConfig = {
         return brand && brand.configured;
     },
     get: function() {
+        // Buscar el logo parametrizado de la aplicación desde la configuración maestra de Ingenia Licencias
+        let defaultAppLogo = 'img/logo-infinite-marble.png';
+        try {
+            if (typeof localStorage !== 'undefined') {
+                const platformRaw = localStorage.getItem('saasFitnessPlatform');
+                if (platformRaw) {
+                    const platform = JSON.parse(platformRaw);
+                    const currentTrainerId = window.activeTrainerId || localStorage.getItem('activeTrainerId') || 'default';
+                    let appId = 'infinite-coach'; // app por defecto
+                    
+                    // 1. Obtener el appId asociado a este entrenador
+                    if (currentTrainerId !== 'default' && platform.trainers) {
+                        const trainerObj = platform.trainers.find(t => t.id === currentTrainerId || t.email === currentTrainerId);
+                        if (trainerObj && trainerObj.appId) {
+                            appId = trainerObj.appId;
+                        }
+                    }
+                    
+                    // 2. Extraer el logo parametrizado de la app
+                    if (platform.apps) {
+                        const appObj = platform.apps.find(a => a.id === appId);
+                        if (appObj && appObj.logo) {
+                            defaultAppLogo = appObj.logo;
+                        }
+                    }
+                }
+            }
+        } catch (e) {
+            console.warn('Error al recuperar el logo por defecto de la aplicación:', e);
+        }
+
         const defaults = {
             name: 'Infinite Coach',
-            logo: 'img/logo-infinite-marble.png',
+            logo: defaultAppLogo,
             primaryColor: '#00D9FF',
             secondaryColor: '#8B5CF6',
             whatsapp: '+34000000000',
@@ -80,13 +106,7 @@ window.BrandConfig = {
             if (url.startsWith('data:image')) return true;
             if (url.startsWith('blob:')) return true;
             if (url.startsWith('img/') || url.startsWith('./img/')) return true;
-            if (url.startsWith('http')) {
-                // Aceptar solo si es un CDN de almacenamiento conocido o tiene extensión de imagen
-                const isStorageCDN = url.includes('supabase.co') || url.includes('firebasestorage') || 
-                                     url.includes('cloudinary') || url.includes('amazonaws');
-                const hasImageExt = /\.(jpg|jpeg|png|gif|webp|svg|ico)(\?|$|#)/i.test(url);
-                return isStorageCDN || hasImageExt;
-            }
+            if (url.startsWith('http://') || url.startsWith('https://')) return true;
             return false;
         };
 
@@ -185,6 +205,43 @@ window.BrandConfig = {
         return updated;
     },
     applyTheme: function() {
+        // 0. Si estamos en páginas del Panel Maestro (Ingenia Licencias), usar el logo de la plataforma
+        if (window.location.pathname.includes('admin-dashboard.html') || window.location.pathname.includes('admin-login.html')) {
+            try {
+                if (typeof localStorage !== 'undefined') {
+                    const platformRaw = localStorage.getItem('saasFitnessPlatform');
+                    if (platformRaw) {
+                        const platform = JSON.parse(platformRaw);
+                        if (platform.settings && platform.settings.platformLogo) {
+                            const adminLogo = platform.settings.platformLogo;
+                            const finalLogoUrl = adminLogo + (adminLogo.startsWith('data:') ? '' : (adminLogo.includes('?') ? '&' : '?') + 'v=' + new Date().getTime());
+                            
+                            document.querySelectorAll('link[rel*="icon"]').forEach(el => el.remove());
+                            
+                            const shortcut = document.createElement('link');
+                            shortcut.rel = 'shortcut icon';
+                            shortcut.type = 'image/png';
+                            shortcut.href = finalLogoUrl;
+                            document.head.appendChild(shortcut);
+                            
+                            const icon = document.createElement('link');
+                            icon.rel = 'icon';
+                            icon.type = 'image/png';
+                            icon.href = finalLogoUrl;
+                            document.head.appendChild(icon);
+                            
+                            const originalTitle = document.title;
+                            document.title = originalTitle + ' ';
+                            setTimeout(() => { document.title = originalTitle; }, 50);
+                        }
+                    }
+                }
+            } catch (e) {
+                console.warn('Error applying Master Admin favicon:', e);
+            }
+            return;
+        }
+
         const brand = this.get();
         if (brand) {
             const colors = brand.colors || {
@@ -229,15 +286,29 @@ window.BrandConfig = {
                 ? currentLogo
                 : new URL(currentLogo, window.location.origin).href;
 
-            // 1. Update/Create Favicon link
-            let favicon = document.querySelector('link[rel="icon"], link[rel="shortcut icon"]');
-            if (!favicon) {
-                favicon = document.createElement('link');
-                favicon.rel = 'icon';
-                favicon.type = 'image/png';
-                document.head.appendChild(favicon);
-            }
-            favicon.href = absoluteLogo;
+            // 1. Update/Create Favicon link with cache-busting and shortcut icon override to force Chrome/Safari tab redrawing
+            const finalLogoUrl = absoluteLogo.startsWith('data:') 
+                ? absoluteLogo 
+                : absoluteLogo + (absoluteLogo.includes('?') ? '&' : '?') + 'v=' + new Date().getTime();
+
+            document.querySelectorAll('link[rel*="icon"]').forEach(el => el.remove());
+
+            const shortcut = document.createElement('link');
+            shortcut.rel = 'shortcut icon';
+            shortcut.type = 'image/png';
+            shortcut.href = finalLogoUrl;
+            document.head.appendChild(shortcut);
+
+            const icon = document.createElement('link');
+            icon.rel = 'icon';
+            icon.type = 'image/png';
+            icon.href = finalLogoUrl;
+            document.head.appendChild(icon);
+
+            // Trigger Title Redraw to force Chrome to refresh favicon rendering
+            const originalTitle = document.title;
+            document.title = originalTitle + ' ';
+            setTimeout(() => { document.title = originalTitle; }, 50);
 
             // 2. Update/Create Apple Touch Icon link (for iOS PWAs)
             let appleIcon = document.querySelector('link[rel="apple-touch-icon"]');
@@ -322,6 +393,7 @@ window.BrandConfig = {
             
             if (brand.name) {
                 document.title = `${baseTitle} - ${brand.name}`;
+            }
         }
     }
 };
@@ -955,3 +1027,10 @@ const showPRModal = (exerciseName, oldPR, newPR) => {
         { text: '¡Seguir!', class: 'btn-primary', onclick: 'window.closeModal()' }
     ]);
 };
+
+// Automatically apply theme/branding on page load
+document.addEventListener('DOMContentLoaded', () => {
+    if (typeof BrandConfig !== 'undefined' && typeof BrandConfig.applyTheme === 'function') {
+        BrandConfig.applyTheme();
+    }
+});

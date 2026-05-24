@@ -230,7 +230,7 @@
     <script src="js/config.js?v=312"></script>
     <script src="js/auth.js?v=312"></script>
     <script src="js/sheets.js?v=312"></script>
-    <script src="js/data-models.js?v=319"></script>
+    <script src="js/data-models.js?v=321"></script>
     <script src="js/utils.js?v=312"></script>
     <script>
         // Branding is handled via onGoogleAuthSuccess() and global listeners
@@ -701,7 +701,10 @@
                 const adminEmail = "alejandra.asteam@gmail.com"; // Email dueño
 
                 if (currentTrainer && currentTrainer.email === adminEmail) {
-                    document.getElementById('masterLink').style.display = 'block';
+                    const masterLink = document.getElementById('masterLink');
+                    if (masterLink) {
+                        masterLink.style.display = 'block';
+                    }
                     sessionStorage.setItem('_isMasterAdmin', 'true'); // Dar permisos para entrar
                 }
             } else if (window.FirebaseService) {

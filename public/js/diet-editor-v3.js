@@ -254,6 +254,23 @@ window.renderMealCard = function (meal, idx) {
                                 <div class="flex align-center gap-md">
                                     <div class="text-sm font-bold flex align-center gap-sm">
                                         <span style="color: ${optNum === 1 ? 'var(--text-primary)' : 'var(--text-secondary)'};">Opción ${optNum}</span>
+                                        
+                                        <!-- Reorder Controls -->
+                                        <div class="flex align-center gap-xs" style="display: inline-flex; margin-left: 2px;">
+                                            ${optNum > optionKeys[0] ? `
+                                                <button class="btn btn-xs" 
+                                                        style="background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 4px; width: 18px; height: 18px; display: inline-flex; align-items: center; justify-content: center; cursor: pointer; color: var(--text-secondary); padding: 0; font-size: 8px;" 
+                                                        onclick="window.moveOption(${idx}, ${optNum}, 'up')" 
+                                                        title="Subir Opción">▲</button>
+                                            ` : ''}
+                                            ${optNum < optionKeys[optionKeys.length - 1] ? `
+                                                <button class="btn btn-xs" 
+                                                        style="background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 4px; width: 18px; height: 18px; display: inline-flex; align-items: center; justify-content: center; cursor: pointer; color: var(--text-secondary); padding: 0; font-size: 8px;" 
+                                                        onclick="window.moveOption(${idx}, ${optNum}, 'down')" 
+                                                        title="Bajar Opción">▼</button>
+                                            ` : ''}
+                                        </div>
+
                                         ${optNum > 1 ? `<span class="text-xs text-muted" style="cursor:pointer;" onclick="window.removeOption(${idx}, ${optNum})">Eliminar</span>` : ''}
                                     </div>
                                     <div class="flex align-center gap-xs">
@@ -520,8 +537,82 @@ window.removeOption = function (mealIdx, optionNum) {
     if (diet.meals[mealIdx].optionPhotos && diet.meals[mealIdx].optionPhotos[optionNum]) {
         delete diet.meals[mealIdx].optionPhotos[optionNum];
     }
+    if (diet.meals[mealIdx].optionIngredients && diet.meals[mealIdx].optionIngredients[optionNum]) {
+        delete diet.meals[mealIdx].optionIngredients[optionNum];
+    }
     
     Diets.update(window.editingDietId, { meals: diet.meals });
+    window.renderDietEditor();
+};
+
+window.moveOption = function (mealIdx, optNum, direction) {
+    const diet = Diets.getById(window.editingDietId);
+    if (!diet) return;
+    const meal = diet.meals[mealIdx];
+    if (!meal) return;
+
+    // Obtener la lista ordenada de opciones de comida en esta comida
+    const options = {};
+    (meal.foods || []).forEach(f => {
+        const opt = f.option || 1;
+        options[opt] = true;
+    });
+    let optionKeys = Object.keys(options).map(Number);
+    optionKeys.sort((a, b) => a - b);
+
+    const currentIdx = optionKeys.indexOf(optNum);
+    if (currentIdx === -1) return;
+
+    let targetOptNum = null;
+    if (direction === 'up' && currentIdx > 0) {
+        targetOptNum = optionKeys[currentIdx - 1];
+    } else if (direction === 'down' && currentIdx < optionKeys.length - 1) {
+        targetOptNum = optionKeys[currentIdx + 1];
+    }
+
+    if (targetOptNum === null) return;
+
+    // 1. Intercambiar la propiedad option de los alimentos
+    meal.foods.forEach(f => {
+        const currentOpt = f.option || 1;
+        if (currentOpt === optNum) {
+            f.option = targetOptNum;
+        } else if (currentOpt === targetOptNum) {
+            f.option = optNum;
+        }
+    });
+
+    // 2. Intercambiar fotos
+    if (!meal.optionPhotos) meal.optionPhotos = {};
+    const tempPhoto = meal.optionPhotos[optNum];
+    if (meal.optionPhotos[targetOptNum] !== undefined) {
+        meal.optionPhotos[optNum] = meal.optionPhotos[targetOptNum];
+    } else {
+        delete meal.optionPhotos[optNum];
+    }
+    if (tempPhoto !== undefined) {
+        meal.optionPhotos[targetOptNum] = tempPhoto;
+    } else {
+        delete meal.optionPhotos[targetOptNum];
+    }
+
+    // 3. Intercambiar ingredientes/notas
+    if (!meal.optionIngredients) meal.optionIngredients = {};
+    const tempIng = meal.optionIngredients[optNum];
+    if (meal.optionIngredients[targetOptNum] !== undefined) {
+        meal.optionIngredients[optNum] = meal.optionIngredients[targetOptNum];
+    } else {
+        delete meal.optionIngredients[optNum];
+    }
+    if (tempIng !== undefined) {
+        meal.optionIngredients[targetOptNum] = tempIng;
+    } else {
+        delete meal.optionIngredients[targetOptNum];
+    }
+
+    // Guardar cambios, recalcular totales y volver a renderizar
+    Diets.update(window.editingDietId, { meals: diet.meals });
+    window.recalculateDietTotals(window.editingDietId);
     window.renderDietEditor();
 };
 

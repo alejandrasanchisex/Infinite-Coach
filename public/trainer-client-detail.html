@@ -863,11 +863,11 @@
     <script src="js/config.js?v=312"></script>
     <script src="js/auth.js?v=312"></script>
     <script src="js/sheets.js?v=312"></script>
-    <script src="js/data-models.js?v=319"></script>
+    <script src="js/data-models.js?v=321"></script>
     <script src="js/utils.js?v=312"></script>
     <script src="js/custom-recipes.js?v=312"></script>
     <script src="js/custom-exercises.js?v=312"></script>
-    <script src="js/diet-editor-v3.js?v=317"></script>
+    <script src="js/diet-editor-v3.js?v=322"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.29/jspdf.plugin.autotable.min.js"></script>
     <script src="js/export-utils.js?v=312"></script>
@@ -1034,7 +1034,7 @@
                 }
 
                 const paySelect = document.getElementById('paymentStatusSelect');
-                if (paySelect) paySelect.value = currentClient.paymentStatus || 'paid';
+                if (paySelect) paySelect.value = currentClient.paymentStatus || 'pending';
 
                 // Technical data
                 const tech = currentClient.technicalData || {};
@@ -1069,7 +1069,22 @@
                 initStripeBilling();
                 
                 const expSelect = document.getElementById('paymentExpirySelect');
-                if (expSelect) expSelect.value = currentClient.paymentExpiry || '';
+                if (expSelect) {
+                    expSelect.value = currentClient.paymentExpiry || '';
+                    const daysLeft = window.calculateDaysLeft ? window.calculateDaysLeft(currentClient.paymentExpiry) : null;
+                    const isExpired = daysLeft !== null && daysLeft < 0;
+                    if (isExpired) {
+                        expSelect.style.color = '#FF6B6B';
+                        expSelect.style.borderColor = 'rgba(255,107,107,0.4)';
+                        expSelect.style.background = 'rgba(255,107,107,0.05)';
+                        expSelect.style.fontWeight = 'bold';
+                    } else {
+                        expSelect.style.color = '';
+                        expSelect.style.borderColor = '';
+                        expSelect.style.background = '';
+                        expSelect.style.fontWeight = '';
+                    }
+                }
                 
                 // Finance
                 const subSelect = document.getElementById('subTypeSelect');
@@ -5014,7 +5029,7 @@
             const urlText = document.getElementById('generatedUrlText');
 
             // Construir link de pago simulado/preparado
-            const simulatedUrl = `https://checkout.stripe.com/pay/${priceId}?client_id=${clientId}&success_url=${window.location.origin}/client-dashboard.html`;
+            const simulatedUrl = `https://checkout.stripe.com/pay/${priceId}?client_id=${clientId}&success_url=${window.location.origin}/client-dashboard.html?payment=success`;
             
             if (resultDiv) resultDiv.style.display = 'block';
             if (urlText) urlText.textContent = simulatedUrl;

@@ -151,6 +151,11 @@
                 <input type="password" id="licenseKey" class="form-input" placeholder="FIT-XXXX-26" required>
             </div>
 
+            <div class="form-group" style="display: flex; align-items: center; gap: 8px; margin-top: 10px; margin-bottom: 15px;">
+                <input type="checkbox" id="rememberMe" style="width: 18px; height: 18px; accent-color: var(--primary-color); cursor: pointer;">
+                <label for="rememberMe" style="font-size: 0.85rem; color: rgba(255,255,255,0.7); cursor: pointer; user-select: none;">Recordar mis credenciales</label>
+            </div>
+
             <button type="submit" id="submitBtn" class="btn-login">
                 Acceder a mi Panel 🚀
             </button>
@@ -178,6 +183,38 @@
 
     <script>
         const PLATFORM_KEY = 'saasFitnessPlatform';
+
+        // Cargar configuración global en segundo plano para inicializar el branding de inmediato
+        (async function loadGlobalBranding() {
+            try {
+                let platformData = null;
+                if (window.SupabaseService) {
+                    window.SupabaseService.init();
+                    platformData = await window.SupabaseService.getGlobalConfig();
+                }
+                if (!platformData && window.FirebaseService) {
+                    await window.FirebaseService.init();
+                    platformData = await window.FirebaseService.getData('saasPlatform', 'config');
+                }
+                if (platformData) {
+                    localStorage.setItem(PLATFORM_KEY, JSON.stringify(platformData));
+                    if (window.BrandConfig && typeof window.BrandConfig.applyTheme === 'function') {
+                        window.BrandConfig.applyTheme();
+                    }
+                }
+            } catch(e) { console.warn('Background branding load error:', e); }
+        })();
+
+        // Auto-completar credenciales recordadas si existen
+        try {
+            const rememberedEmail = localStorage.getItem('_rememberedTrainerEmail');
+            const rememberedKey = localStorage.getItem('_rememberedTrainerKey');
+            if (rememberedEmail && rememberedKey) {
+                document.getElementById('email').value = rememberedEmail;
+                document.getElementById('licenseKey').value = rememberedKey;
+                document.getElementById('rememberMe').checked = true;
+            }
+        } catch(e) { console.warn('Error retrieving remembered credentials:', e); }
 
         document.getElementById('loginForm').addEventListener('submit', async (e) => {
             e.preventDefault();
@@ -232,6 +269,17 @@
                     localStorage.setItem('_trainerEmail', trainer.email);
                     localStorage.setItem(PLATFORM_KEY, JSON.stringify(platformData));
                     
+                    // Guardar o eliminar credenciales recordadas
+                    try {
+                        if (document.getElementById('rememberMe').checked) {
+                            localStorage.setItem('_rememberedTrainerEmail', email);
+                            localStorage.setItem('_rememberedTrainerKey', key);
+                        } else {
+                            localStorage.removeItem('_rememberedTrainerEmail');
+                            localStorage.removeItem('_rememberedTrainerKey');
+                        }
+                    } catch(e) { console.warn('Error saving remembered credentials:', e); }
+
                     setTimeout(() => {
                         window.location.href = 'trainer-dashboard.html?t=' + trainer.id;
                     }, 1000);

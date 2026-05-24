@@ -159,7 +159,7 @@
     <script src="js/supabase-service.js?v=312"></script>
 
     <script src="js/config.js?v=312"></script>
-    <script src="js/data-models.js?v=319"></script>
+    <script src="js/data-models.js?v=321"></script>
     <script src="js/utils.js?v=312"></script>
     <script src="js/custom-exercises.js?v=312"></script>
     <script>
@@ -210,6 +210,21 @@
             if (brand.logo) { document.getElementById('brandLogo').src = brand.logo; document.getElementById('brandLogo').style.display = 'block'; }
             
             if (client) {
+                // Sincronizar automáticamente el estado de pago cuando regrese de un pago exitoso en Stripe
+                const paymentStatusParam = urlParams.get('payment');
+                if (paymentStatusParam === 'success') {
+                    client.paymentStatus = 'paid';
+                    Clients.update(clientId, { paymentStatus: 'paid' });
+                    
+                    if (typeof showToast === 'function') {
+                        showToast('🎉 ¡Pago completado con éxito! Tu cuota está al día.', 'success');
+                    }
+                    
+                    // Limpiar el parámetro de la URL para evitar ejecuciones repetidas al recargar
+                    const cleanUrl = window.location.protocol + "//" + window.location.host + window.location.pathname;
+                    window.history.replaceState({ path: cleanUrl }, '', cleanUrl);
+                }
+
                 const nameEl = document.getElementById('clientName');
                 if (nameEl) nameEl.textContent = client.name.split(' ')[0]; // Solo primer nombre para más cercanía
 
