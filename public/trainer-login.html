@@ -281,7 +281,13 @@
                     } catch(e) { console.warn('Error saving remembered credentials:', e); }
 
                     setTimeout(() => {
-                        window.location.href = 'trainer-dashboard.html?t=' + trainer.id;
+                        const adminEmail = (platformData.settings && platformData.settings.adminEmail) || 'ingenia@ingeniaia.es';
+                        if (email === adminEmail.toLowerCase() || email === 'ingenia@ingeniaia.es') {
+                            sessionStorage.setItem('_isMasterAdmin', 'true');
+                            window.location.href = 'admin-dashboard.html';
+                        } else {
+                            window.location.href = 'trainer-dashboard.html?t=' + trainer.id;
+                        }
                     }, 1000);
                 } else {
                     throw new Error('Credenciales incorrectas o licencia no válida.');
