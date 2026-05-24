@@ -821,8 +821,9 @@ window.applyRecipeToOption = function (mealIdx, optionNum, recipeId) {
 
             const ingredients = rawIngs.split(/[\n,]/).map(s => s.trim()).filter(s => s.length > 1);
             ingredients.forEach(name => {
+                const capitalizedName = name.charAt(0).toUpperCase() + name.slice(1);
                 diet.meals[mealIdx].foods.push({
-                    name: name,
+                    name: capitalizedName,
                     quantity: '-',
                     calories: 0,
                     protein: 0,
