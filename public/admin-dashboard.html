@@ -329,7 +329,7 @@
 
                     <div class="form-group mb-md">
                         <label style="display: block; margin-bottom: 8px; font-size: 0.9rem;">Email de soporte (Admin)</label>
-                        <input type="email" id="settingEmail" class="form-input" value="admin@tuappfitness.com" style="background: rgba(255,255,255,0.05);">
+                        <input type="email" id="settingEmail" class="form-input" value="ingenia@ingeniaia.es" style="background: rgba(255,255,255,0.05);">
                     </div>
                     <div class="form-group mb-lg">
                         <label style="display: block; margin-bottom: 8px; font-size: 0.9rem;">Contraseña de Acceso Admin</label>
@@ -513,7 +513,7 @@
                 if(!data.apps) data.apps = [
                     { id: 'infinite-coach', name: 'Infinite Coach', logo: 'https://images.unsplash.com/photo-1517838277536-f5f99be501cd?q=80&w=200&auto=format&fit=crop', primaryColor: '#8B5CF6', desc: 'Aplicación premium de entrenamiento personal y nutrición.' }
                 ];
-                if(!data.settings) data.settings = { platformName: 'Ingenia Licencias', adminEmail: 'admin@tuappfitness.com', adminPassword: 'fitness_pro_2026' };
+                if(!data.settings) data.settings = { platformName: 'Ingenia Licencias', adminEmail: 'ingenia@ingeniaia.es', adminPassword: 'fitness_pro_2026' };
                 return data;
             } catch(e) {
                 console.error("Error storage:", e);
@@ -903,7 +903,7 @@
             // Load settings values into Settings tab
             if (data.settings) {
                 document.getElementById('settingName').value = data.settings.platformName || 'Ingenia Licencias';
-                document.getElementById('settingEmail').value = data.settings.platformEmail || data.settings.adminEmail || 'admin@tuappfitness.com';
+                document.getElementById('settingEmail').value = data.settings.platformEmail || data.settings.adminEmail || 'ingenia@ingeniaia.es';
                 document.getElementById('settingLogoUrl').value = data.settings.platformLogo || '';
                 const preview = document.getElementById('settingLogoPreview');
                 const placeholder = document.getElementById('settingLogoPreviewPlaceholder');
@@ -948,7 +948,7 @@
                     // Re-populate settings values from Supabase config
                     if (refreshedData.settings) {
                         document.getElementById('settingName').value = refreshedData.settings.platformName || 'Ingenia Licencias';
-                        document.getElementById('settingEmail').value = refreshedData.settings.platformEmail || refreshedData.settings.adminEmail || 'admin@tuappfitness.com';
+                        document.getElementById('settingEmail').value = refreshedData.settings.platformEmail || refreshedData.settings.adminEmail || 'ingenia@ingeniaia.es';
                         document.getElementById('settingLogoUrl').value = refreshedData.settings.platformLogo || '';
                         const preview = document.getElementById('settingLogoPreview');
                         const placeholder = document.getElementById('settingLogoPreviewPlaceholder');
@@ -987,7 +987,7 @@
                             // Re-populate settings values
                             if (refreshedData.settings) {
                                 document.getElementById('settingName').value = refreshedData.settings.platformName || 'Ingenia Licencias';
-                                document.getElementById('settingEmail').value = refreshedData.settings.platformEmail || refreshedData.settings.adminEmail || 'admin@tuappfitness.com';
+                                document.getElementById('settingEmail').value = refreshedData.settings.platformEmail || refreshedData.settings.adminEmail || 'ingenia@ingeniaia.es';
                                 document.getElementById('settingLogoUrl').value = refreshedData.settings.platformLogo || '';
                                 const preview = document.getElementById('settingLogoPreview');
                                 const placeholder = document.getElementById('settingLogoPreviewPlaceholder');
