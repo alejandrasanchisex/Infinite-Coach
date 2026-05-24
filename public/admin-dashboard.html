@@ -182,7 +182,7 @@
             <span id="adminSidebarLogoText">Ingenia Licencias 🔑</span>
         </div>
         <nav style="flex: 1; display: flex; flex-direction: column; gap: 8px;">
-            <div id="btn-trainers" class="admin-nav-item active" onclick="showView('trainers')">👥 Entrenadores</div>
+            <div id="btn-trainers" class="admin-nav-item active" onclick="showView('trainers')">👥 Licencias</div>
             <div id="btn-apps" class="admin-nav-item" onclick="showView('apps')">📱 Aplicaciones</div>
             <div id="btn-billing" class="admin-nav-item" onclick="showView('billing')">💰 Suscripciones</div>
             <div id="btn-settings" class="admin-nav-item" onclick="showView('settings')">⚙️ Configuración Admin</div>
@@ -197,7 +197,7 @@
             <header class="admin-header">
                 <div>
                     <h1 style="font-size: 1.8rem; margin: 0;">Gestión de Licencias</h1>
-                    <p style="color: rgba(255,255,255,0.5); font-size: 0.9rem; margin-top: 5px;">Monitoriza tus entrenadores y sus pagos activos.</p>
+                    <p style="color: rgba(255,255,255,0.5); font-size: 0.9rem; margin-top: 5px;">Monitoriza tus licencias y sus pagos activos.</p>
                 </div>
                 <button class="btn btn-primary" onclick="window.openTrainerModal()">
                     ➕ Nueva Licencia / Alta
@@ -206,7 +206,7 @@
 
             <div class="grid grid-3 gap-lg mb-xl">
                 <div class="stat-card-admin">
-                    <span class="label">Entrenadores Totales</span>
+                    <span class="label">Licencias Totales</span>
                     <span class="value" id="totalTrainers">0</span>
                 </div>
                 <div class="stat-card-admin">
@@ -228,7 +228,7 @@
                     <table class="table" style="width: 100%; border-collapse: collapse;">
                         <thead style="background: rgba(255,255,255,0.02);">
                             <tr>
-                                <th style="text-align: left; padding: 15px;">Entrenador</th>
+                                <th style="text-align: left; padding: 15px;">Usuario / Titular</th>
                                 <th style="text-align: left; padding: 15px;">Plan</th>
                                 <th style="text-align: left; padding: 15px;">Estado</th>
                                 <th style="text-align: left; padding: 15px;">Último Pago</th>
@@ -293,7 +293,7 @@
                     <div style="font-size: 3rem; font-weight: 800; color: var(--admin-primary);" id="billingTotalRev">0 €</div>
                     <p style="color: rgba(255,255,255,0.5);">Ingresos totales acumulados este mes.</p>
                     <div class="mt-lg p-sm" style="background: rgba(139, 92, 246, 0.05); border-radius: 8px; border: 1px dashed var(--admin-primary);">
-                        <p class="text-xs" style="color: var(--admin-primary); margin: 0;">💡 Consejo: Usa "Payment Links" de Stripe para que tus entrenadores se suscriban solos. Pega el link en cada plan.</p>
+                        <p class="text-xs" style="color: var(--admin-primary); margin: 0;">💡 Consejo: Usa "Payment Links" de Stripe para que los usuarios se suscriban solos. Pega el link en cada plan.</p>
                     </div>
                 </div>
             </div>
@@ -346,12 +346,12 @@
     <div class="modal-overlay-admin" id="trainerModal">
         <div class="modal-content-admin">
             <h2 style="margin-top: 0; color: var(--admin-primary);">🎁 Nueva Licencia</h2>
-            <p style="color: rgba(255,255,255,0.6); font-size: 0.9rem; margin-bottom: 25px;">Al dar de alta a un entrenador, se le generará una clave de acceso única.</p>
+            <p style="color: rgba(255,255,255,0.6); font-size: 0.9rem; margin-bottom: 25px;">Al dar de alta una licencia, se le generará una clave de acceso única.</p>
             
             <form id="trainerForm">
                 <div class="form-group mb-md">
                     <label style="display: block; margin-bottom: 6px; font-size: 0.85rem;">Nombre Completo</label>
-                    <input type="text" id="tName" class="form-input" placeholder="Nombre completo del entrenador" required>
+                    <input type="text" id="tName" class="form-input" placeholder="Nombre completo del titular" required>
                 </div>
                 <div class="form-group mb-md">
                     <label style="display: block; margin-bottom: 6px; font-size: 0.85rem;">Email de Acceso</label>
@@ -715,7 +715,7 @@
             document.getElementById('lastUpdate').textContent = new Date().toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' });
 
             if(trainers.length === 0) {
-                table.innerHTML = '<tr><td colspan="6" style="padding: 40px; text-align: center; opacity: 0.5;">No hay entrenadores.</td></tr>';
+                table.innerHTML = '<tr><td colspan="6" style="padding: 40px; text-align: center; opacity: 0.5;">No hay licencias activadas.</td></tr>';
             } else {
                 table.innerHTML = trainers.map(t => {
                     const appObj = (data.apps || []).find(a => a.id === t.appId) || { name: 'Infinite Coach', primaryColor: '#8B5CF6' };
@@ -829,7 +829,7 @@
                 window.adminToast('No se puede eliminar la aplicación base', 'error');
                 return;
             }
-            if(!confirm("¿Estás seguro de que quieres eliminar esta aplicación? Todos los entrenadores asociados serán reasignados a Infinite Coach.")) return;
+            if(!confirm("¿Estás seguro de que quieres eliminar esta aplicación? Todas las licencias asociadas serán reasignados a Infinite Coach.")) return;
             const data = getPlatformData();
             
             // Reassign trainers
@@ -862,11 +862,11 @@
         };
 
         window.delT = (id) => {
-            if(!confirm("¿Eliminar entrenador?")) return;
+            if(!confirm("¿Eliminar licencia o titular?")) return;
             const data = getPlatformData();
             data.trainers = data.trainers.filter(x => x.id !== id);
             savePlatformData(data);
-            window.adminToast("Entrenador eliminado", "error");
+            window.adminToast("Licencia eliminada", "error");
         };
 
         window.delPlan = (id) => {
