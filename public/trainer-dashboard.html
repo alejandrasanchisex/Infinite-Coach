@@ -115,7 +115,7 @@
                     <!-- Recent Feedbacks -->
                     <div class="card">
                         <div class="card-header">
-                            <h3 class="card-title">Últimas Revisiones</h3>
+                            <h3 class="card-title">Revisiones Pendientes</h3>
                             <button class="btn btn-sm btn-secondary"
                                 onclick="window.location.href='trainer-feedbacks.html'">
                                 Ver todas
@@ -123,9 +123,9 @@
                         </div>
                         <div class="card-body" id="recentFeedbacks">
                             <div class="empty-state">
-                                <div class="empty-state-icon">⭐</div>
-                                <div class="empty-state-title">No hay revisiones</div>
-                                <div class="empty-state-text">Aquí aparecerán los feedbacks de tus clientes</div>
+                                <div class="empty-state-icon">✅</div>
+                                <div class="empty-state-title">¡Todo al día!</div>
+                                <div class="empty-state-text">No hay revisiones pendientes de respuesta</div>
                             </div>
                         </div>
                     </div>
@@ -339,21 +339,24 @@
         }
 
         function loadRecentFeedbacks() {
-            const feedbacks = Feedbacks.getAll().slice(-5).reverse();
+            const allFeedbacks = Feedbacks.getAll();
+            const feedbacks = allFeedbacks
+                .filter(fb => !fb.trainerResponse || fb.trainerResponse === '')
+                .sort((a, b) => new Date(b.date) - new Date(a.date))
+                .slice(0, 5);
             const container = document.getElementById('recentFeedbacks');
 
             if (feedbacks.length === 0) return;
 
             container.innerHTML = feedbacks.map(fb => {
                 const client = Clients.getById(fb.clientId);
-                const needsResponse = !fb.trainerResponse || fb.trainerResponse === '';
                 return `
-          <div class="flex-between mb-md">
+          <div class="flex-between mb-md" style="cursor:pointer;" onclick="window.location.href='trainer-feedbacks.html'">
             <div>
               <strong>${client?.name || 'Cliente'}</strong>
               <div class="text-muted" style="font-size: 0.8rem;">Semana ${fb.week} - ${formatDateTime(fb.date)}</div>
             </div>
-            ${needsResponse ? '<span class="badge badge-warning">Pendiente</span>' : '<span class="badge badge-success">Respondido</span>'}
+            <span class="badge badge-warning">Pendiente</span>
           </div>
         `;
             }).join('');
