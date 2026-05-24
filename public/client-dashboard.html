@@ -187,17 +187,77 @@
         }
 
         document.addEventListener('DOMContentLoaded', async () => {
-            // Sync with Cloud (Supabase es ahora el primario)
-            if (window.SupabaseService) {
-                window.SupabaseService.init();
-                await window.syncFromCloud();
-            } else if (window.FirebaseService) {
-                await window.FirebaseService.init();
-                await window.syncFromCloud();
+            // --- 1. RENDER INMEDIATO DE DATOS LOCALES (UX ULTRA-RÁPIDA) ---
+            function renderLocalData() {
+                try {
+                    // Cargar tema y branding
+                    BrandConfig.applyTheme();
+                    const brand = BrandConfig.get() || { name: 'Infinite Coach' };
+                    document.getElementById('brandName').textContent = brand.name || 'Infinite Coach';
+                    if (brand.logo) { 
+                        document.getElementById('brandLogo').src = brand.logo; 
+                        document.getElementById('brandLogo').style.display = 'block'; 
+                    }
+
+                    // Cargar fecha de hoy
+                    const dateEl = document.getElementById('todayDate');
+                    if (dateEl) {
+                        const options = { weekday: 'long', day: 'numeric', month: 'short' };
+                        dateEl.textContent = new Date().toLocaleDateString('es-ES', options);
+                    }
+
+                    // Cargar datos del cliente
+                    const client = Clients.getById(clientId);
+                    if (client) {
+                        const nameEl = document.getElementById('clientName');
+                        if (nameEl && client.name) {
+                            nameEl.textContent = client.name.split(' ')[0]; // Solo primer nombre para más cercanía
+                        }
+
+                        // Carga de objetivo de hoy (rutina)
+                        const sessions = Routines.getAll().filter(r => r.clientId === clientId);
+                        if (sessions.length > 0) {
+                            const routine = sessions[0];
+                            const exercises = routine.exercises || [];
+                            document.getElementById('todayTargetSection').style.display = 'block';
+                            document.getElementById('nextSessionName').textContent = routine.name || 'Entrenamiento de Hoy';
+                            document.getElementById('sessionExercises').textContent = exercises.length;
+                            
+                            const name = (routine.name || '').toLowerCase();
+                            if(name.includes('pecho')) document.getElementById('todayTargetSection').querySelector('.card').style.borderLeft = '4px solid #ff4757';
+                            if(name.includes('pierna')) document.getElementById('todayTargetSection').querySelector('.card').style.borderLeft = '4px solid #2ed573';
+                        } else {
+                            document.getElementById('todayTargetSection').style.display = 'none';
+                        }
+
+                        // Check if quota payment is needed
+                        if (client.status === 'unpaid' || client.daysRemaining <= 3) {
+                            document.getElementById('payQuotaBtn').style.display = 'flex';
+                        } else {
+                            document.getElementById('payQuotaBtn').style.display = 'none';
+                        }
+                    }
+                } catch(e) { console.warn('Error in immediate local render:', e); }
             }
 
-            BrandConfig.applyTheme();
-            const brand = BrandConfig.get();
+            // Renderizar localmente al instante
+            renderLocalData();
+
+            // --- 2. SINCRONIZACIÓN EN SEGUNDO PLANO (SIN BLOQUEAR LA PANTALLA) ---
+            try {
+                if (window.SupabaseService) {
+                    window.SupabaseService.init();
+                    await window.syncFromCloud();
+                } else if (window.FirebaseService) {
+                    await window.FirebaseService.init();
+                    await window.syncFromCloud();
+                }
+            } catch(e) { console.warn('Cloud sync error:', e); }
+
+            // --- 3. RE-RENDERIZAR CON DATOS ACTUALIZADOS DE LA NUBE ---
+            renderLocalData();
+
+            // --- 4. ACCIONES ADICIONALES (STRIPE / NOTIFICACIONES) ---
             const client = Clients.getById(clientId);
             if (!client) {
                 localStorage.removeItem('clientId');
@@ -206,10 +266,7 @@
                 return;
             }
 
-            document.getElementById('brandName').textContent = brand.name;
-            if (brand.logo) { document.getElementById('brandLogo').src = brand.logo; document.getElementById('brandLogo').style.display = 'block'; }
-            
-            if (client) {
+            try {
                 // Sincronizar automáticamente el estado de pago cuando regrese de un pago exitoso en Stripe
                 const paymentStatusParam = urlParams.get('payment');
                 if (paymentStatusParam === 'success') {
@@ -220,60 +277,20 @@
                         showToast('🎉 ¡Pago completado con éxito! Tu cuota está al día.', 'success');
                     }
                     
-                    // Limpiar el parámetro de la URL para evitar ejecuciones repetidas al recargar
                     const cleanUrl = window.location.protocol + "//" + window.location.host + window.location.pathname;
                     window.history.replaceState({ path: cleanUrl }, '', cleanUrl);
+                    renderLocalData(); // Re-renderizar estado de pago
                 }
+            } catch(e) { console.warn('Payment success check error:', e); }
 
-                const nameEl = document.getElementById('clientName');
-                if (nameEl) nameEl.textContent = client.name.split(' ')[0]; // Solo primer nombre para más cercanía
-
-                const dateEl = document.getElementById('todayDate');
-                if (dateEl) {
-                    const options = { weekday: 'long', day: 'numeric', month: 'short' };
-                    dateEl.textContent = new Date().toLocaleDateString('es-ES', options);
-                }
-
-                const avatar = document.getElementById('clientProfileAvatar');
-                if (avatar) {
-                    if (client.profilePhoto) {
-                        avatar.innerHTML = `<img src="${client.profilePhoto}" style="width:100%;height:100%;object-fit:cover;">`;
-                        avatar.style.background = 'transparent';
-                    } else {
-                        avatar.textContent = (client.name || 'U').charAt(0).toUpperCase();
-                        avatar.style.background = 'var(--primary-color)';
-                    }
-                }
-
-                // CARGA DE OBJETIVO DE HOY
-                const sessions = Routines.getAll().filter(r => r.clientId === clientId);
-                if (sessions.length > 0) {
-                    const routine = sessions[0];
-                    const exercises = routine.exercises || [];
-                    
-                    // Lógica Básica: Mostrar la primera sesión o la siguiente según el último entrenamiento (demo)
-                    document.getElementById('todayTargetSection').style.display = 'block';
-                    document.getElementById('nextSessionName').textContent = routine.name || 'Entrenamiento de Hoy';
-                    document.getElementById('sessionExercises').textContent = exercises.length;
-                    
-                    // Si hay grupos musculares en el nombre, estilizarlos
-                    const name = routine.name.toLowerCase();
-                    if(name.includes('pecho')) document.getElementById('todayTargetSection').querySelector('.card').style.borderLeft = '4px solid #ff4757';
-                    if(name.includes('pierna')) document.getElementById('todayTargetSection').querySelector('.card').style.borderLeft = '4px solid #2ed573';
-                }
-
+            try {
                 // PWA Notification logic
                 if (window.Notification && Notification.permission === 'default') {
                     setTimeout(() => NotificationManager.requestPermission(), 3000);
                 } else if (window.NotificationManager) {
-                    NotificationManager.checkReminders(client, brand);
+                    NotificationManager.checkReminders(client, BrandConfig.get());
                 }
-
-                // Check if quota payment is needed
-                if (client.status === 'unpaid' || client.daysRemaining <= 3) {
-                    document.getElementById('payQuotaBtn').style.display = 'flex';
-                }
-            }
+            } catch(e) { console.warn('PWA notification error:', e); }
         });
 
         function openPaymentModal() {
