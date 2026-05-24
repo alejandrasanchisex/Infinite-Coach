@@ -72,6 +72,11 @@ window.getDietEditorHTML = function (diet) {
 
     const goalInputStyle = 'width: 60px; background: rgba(0,0,0,0.2); border: 1px solid rgba(255,255,255,0.1); border-radius: 4px; color: inherit; text-align: center; padding: 2px; font-size: 0.9em;';
 
+    const roundedCals = Math.round(currentCalories * 10) / 10;
+    const roundedProtein = Math.round(currentMacros.protein * 10) / 10;
+    const roundedCarbs = Math.round(currentMacros.carbs * 10) / 10;
+    const roundedFat = Math.round(currentMacros.fat * 10) / 10;
+
     return `
         <div class="mb-lg flex-between align-start">
             <div>
@@ -93,28 +98,28 @@ window.getDietEditorHTML = function (diet) {
                 <div>
                     <div class="text-xs text-muted mb-xs uppercase">Calorías</div>
                     <div class="text-lg font-bold text-white flex justify-center align-center gap-xs">
-                        ${currentCalories} <span class="text-xs text-muted">/ <input type="number" value="${diet.calories || 0}" onchange="window.updateDietGoal('calories', this.value)" style="${goalInputStyle}"></span>
+                        ${roundedCals} <span class="text-xs text-muted">/ <input type="number" value="${diet.calories || 0}" onchange="window.updateDietGoal('calories', this.value)" style="${goalInputStyle}"></span>
                     </div>
                      <div class="progress-bar mt-xs" style="height: 6px; background: rgba(255,255,255,0.1); border-radius: 3px;"><div style="width: ${calPercent}%; height: 100%; background: var(--primary-color); border-radius: 3px; transition: width 0.3s;"></div></div>
                 </div>
                 <div>
                     <div class="text-xs text-muted mb-xs uppercase">Proteína</div>
                     <div class="text-lg font-bold text-success flex justify-center align-center gap-xs">
-                        ${currentMacros.protein}g <span class="text-xs text-muted">/ <input type="number" value="${diet.macros?.protein || 0}" onchange="window.updateDietGoal('protein', this.value)" style="${goalInputStyle}">g</span>
+                        ${roundedProtein}g <span class="text-xs text-muted">/ <input type="number" value="${diet.macros?.protein || 0}" onchange="window.updateDietGoal('protein', this.value)" style="${goalInputStyle}">g</span>
                     </div>
                      <div class="progress-bar mt-xs" style="height: 6px; background: rgba(255,255,255,0.1); border-radius: 3px;"><div style="width: ${proteinPercent}%; height: 100%; background: #00e676; border-radius: 3px; transition: width 0.3s;"></div></div>
                 </div>
                 <div>
                     <div class="text-xs text-muted mb-xs uppercase">Carbos</div>
                     <div class="text-lg font-bold text-warning flex justify-center align-center gap-xs">
-                        ${currentMacros.carbs}g <span class="text-xs text-muted">/ <input type="number" value="${diet.macros?.carbs || 0}" onchange="window.updateDietGoal('carbs', this.value)" style="${goalInputStyle}">g</span>
+                        ${roundedCarbs}g <span class="text-xs text-muted">/ <input type="number" value="${diet.macros?.carbs || 0}" onchange="window.updateDietGoal('carbs', this.value)" style="${goalInputStyle}">g</span>
                     </div>
                      <div class="progress-bar mt-xs" style="height: 6px; background: rgba(255,255,255,0.1); border-radius: 3px;"><div style="width: ${carbPercent}%; height: 100%; background: #ff9800; border-radius: 3px; transition: width 0.3s;"></div></div>
                 </div>
                 <div>
                     <div class="text-xs text-muted mb-xs uppercase">Grasas</div>
                     <div class="text-lg font-bold text-error flex justify-center align-center gap-xs">
-                        ${currentMacros.fat}g <span class="text-xs text-muted">/ <input type="number" value="${diet.macros?.fat || 0}" onchange="window.updateDietGoal('fat', this.value)" style="${goalInputStyle}">g</span>
+                        ${roundedFat}g <span class="text-xs text-muted">/ <input type="number" value="${diet.macros?.fat || 0}" onchange="window.updateDietGoal('fat', this.value)" style="${goalInputStyle}">g</span>
                     </div>
                      <div class="progress-bar mt-xs" style="height: 6px; background: rgba(255,255,255,0.1); border-radius: 3px;"><div style="width: ${fatPercent}%; height: 100%; background: #ff5252; border-radius: 3px; transition: width 0.3s;"></div></div>
                 </div>
