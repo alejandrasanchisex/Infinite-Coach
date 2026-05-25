@@ -243,8 +243,8 @@
 // ── Cache buster redirect ─────────────────────────────────────────
 (function() {
     var params = new URLSearchParams(window.location.search);
-    if (params.get('v') !== '327') {
-        params.set('v', '327');
+    if (params.get('v') !== '331') {
+        params.set('v', '331');
         window.location.replace(window.location.pathname + '?' + params.toString());
     }
 })();
@@ -450,7 +450,7 @@ async function doLogin() {
             content.textContent = '✓';
             btn.style.background = 'linear-gradient(110deg,#22c55e,#4ade80)';
             setTimeout(function(){ 
-                window.location.replace('client-dashboard.html?t=' + foundTrainerId + '&v=328'); 
+                window.location.replace('client-dashboard.html?t=' + foundTrainerId + '&v=331'); 
             }, 400);
         } else {
             showMsg('Código de acceso incorrecto. Por favor, verifícalo.');
