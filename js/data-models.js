@@ -3,7 +3,15 @@
 // ============================================
 
 const DB_VERSION = '1.0.1';
-let activeTrainerId = localStorage.getItem('activeTrainerId') || 'default';
+let activeTrainerId = localStorage.getItem('activeTrainerId');
+if (!activeTrainerId || activeTrainerId === 'default' || activeTrainerId === 'admin') {
+    if (typeof window !== 'undefined' && window.location.hostname.includes('infinitecoach.es')) {
+        activeTrainerId = 't-w0iybl7qb';
+        localStorage.setItem('activeTrainerId', 't-w0iybl7qb');
+    } else {
+        activeTrainerId = 'default';
+    }
+}
 window.activeTrainerId = activeTrainerId;
 const getStorageKey = () => `fitnessAppData_${window.activeTrainerId || 'default'}`;
 
@@ -1970,8 +1978,55 @@ const Clients = {
   },
 
   getById: (id) => {
-    const data = getData();
-    return Clients.getAll().find(c => c.id == id);
+    let client = Clients.getAll().find(c => c.id == id);
+    if (client) return client;
+
+    // Fallback: Buscar en otros perfiles locales si hubo migración de ID o pérdida de caché
+    try {
+        console.warn("⚠️ Client not found in active profile. Running local database recovery fallback...");
+        for (let i = 0; i < localStorage.length; i++) {
+            const key = localStorage.key(i);
+            if (key && key.startsWith('fitnessAppData_')) {
+                const raw = localStorage.getItem(key);
+                if (raw) {
+                    const parsed = JSON.parse(raw);
+                    if (parsed && parsed.clients) {
+                        const found = parsed.clients.find(c => c.id == id);
+                        if (found) {
+                            console.log(`🎉 Recovered client from ${key}! Copying client to active database...`);
+                            // Copiar el cliente y sus datos al perfil activo para guardarlo localmente
+                            const activeKey = getStorageKey();
+                            const activeRaw = localStorage.getItem(activeKey);
+                            const activeData = activeRaw ? JSON.parse(activeRaw) : {};
+                            if (!activeData.clients) activeData.clients = [];
+                            
+                            // Evitar duplicados
+                            if (!activeData.clients.some(c => c.id == id)) {
+                                activeData.clients.push(found);
+                                // También migrar rutinas y dietas asociadas si existen en esa base
+                                if (parsed.routines) {
+                                    if (!activeData.routines) activeData.routines = [];
+                                    parsed.routines.filter(r => r.clientId === id).forEach(r => {
+                                        if (!activeData.routines.some(x => x.id === r.id)) activeData.routines.push(r);
+                                    });
+                                }
+                                if (parsed.diets) {
+                                    if (!activeData.diets) activeData.diets = [];
+                                    parsed.diets.filter(d => d.clientId === id).forEach(d => {
+                                        if (!activeData.diets.some(x => x.id === d.id)) activeData.diets.push(d);
+                                    });
+                                }
+                                localStorage.setItem(activeKey, JSON.stringify(activeData));
+                                console.log("✅ Client copied successfully!");
+                            }
+                            return found;
+                        }
+                    }
+                }
+            }
+        }
+    } catch(err) { console.warn("Error inside client recovery fallback:", err); }
+    return null;
   },
 
   create: (clientData) => {
@@ -2864,12 +2919,42 @@ const BrandConfig = {
       return window.BrandConfig.get();
     }
     const data = getData();
-    return data.brand || {
+    
+    // Default brand settings
+    let defaultBrand = {
         name: 'Infinite Coach',
+        logo: 'img/logo-infinite-marble.png',
         configured: true,
         colors: { primary: '#00D9FF', secondary: '#1A1A2E', accent: '#FF6B6B' },
         fiscalData: { invoiceSeries: 'F' + new Date().getFullYear() }
     };
+
+    // Instant corporate brand override for ASTeam custom domain / active trainer
+    if (typeof window !== 'undefined' && 
+        (window.location.hostname.includes('infinitecoach.es') || 
+         window.activeTrainerId === 't-w0iybl7qb' || 
+         localStorage.getItem('activeTrainerId') === 't-w0iybl7qb')) {
+        defaultBrand = {
+            name: 'ASTeam',
+            logo: 'img/logo-infinite-marble.png',
+            configured: true,
+            colors: { primary: '#00d9ff', secondary: '#1a1a2e', accent: '#ff6b6b' },
+            whatsapp: '615760338',
+            fiscalData: { invoiceSeries: 'FAST' + new Date().getFullYear() }
+        };
+    }
+
+    let res = data.brand || defaultBrand;
+    
+    if (res && (res.name === 'MyFitness' || res.name === 'Fitness App' || (res.name === 'Infinite Coach' && defaultBrand.name === 'ASTeam'))) {
+        res.name = defaultBrand.name;
+        res.colors = defaultBrand.colors;
+        if (defaultBrand.whatsapp) res.whatsapp = defaultBrand.whatsapp;
+    }
+    if (res && (!res.logo || res.logo.length < 5)) {
+        res.logo = 'img/logo-infinite-marble.png';
+    }
+    return res;
   },
 
   set: (brandData) => {
@@ -2927,30 +3012,33 @@ const BrandConfig = {
     const headerLogos = document.querySelectorAll('.logo-img, #brandLogo');
     const previewLogos = document.querySelectorAll('#logoPreview');
     const nameSpan = document.getElementById('brandName');
+    const loginLogoContainer = document.getElementById('brandLogoContainer');
     
     // Titulo de la página dinámico si existe
     const baseTitle = document.title.split(' - ')[0]; // Tomar parte antes del guion
     
     if (brand) {
+        if (loginLogoContainer) {
+            const defaultLogo = 'img/logo-infinite-marble.png';
+            const hasLogo = brand.logo && brand.logo.length > 5;
+            const logoSrc = hasLogo ? brand.logo : defaultLogo;
+            loginLogoContainer.innerHTML = `<img src="${logoSrc}" alt="${brand.name || ''}" style="width: 100%; height: 100%; object-fit: contain; border-radius: 19px;">`;
+        }
+
         headerLogos.forEach(logoImg => {
-            if (brand.logo && brand.logo.length > 5) {
-                // Ensure cloud images load correctly
-                logoImg.src = brand.logo;
-                
-                const extraStyles = "background: white; padding: 2px; border-radius: 4px;";
-                logoImg.style.cssText = `display: block !important; opacity: 1 !important; visibility: visible !important; max-height: 40px !important; width: auto !important; object-fit: contain !important; ${extraStyles}`;
-                
-                logoImg.onerror = () => {
-                    // Solo ocultar si realmente falla la carga DESPUÉS de intentarlo
-                    if (!logoImg.src.includes('blob:')) {
-                        console.warn("Logo failed to load:", logoImg.src);
-                        logoImg.style.display = 'none';
-                    }
-                };
-            } else {
-                logoImg.src = '';
-                logoImg.style.display = 'none';
-            }
+            const defaultLogo = 'img/logo-infinite-marble.png';
+            const hasLogo = brand.logo && brand.logo.length > 5;
+            logoImg.src = hasLogo ? brand.logo : defaultLogo;
+            
+            const extraStyles = "background: white; padding: 2px; border-radius: 4px;";
+            logoImg.style.cssText = `display: block !important; opacity: 1 !important; visibility: visible !important; max-height: 40px !important; width: auto !important; object-fit: contain !important; ${extraStyles}`;
+            
+            logoImg.onerror = () => {
+                if (logoImg.src !== defaultLogo && !logoImg.src.includes('blob:')) {
+                    console.warn("Logo failed to load, falling back to default:", logoImg.src);
+                    logoImg.src = defaultLogo;
+                }
+            };
         });
 
         previewLogos.forEach(logoImg => {
@@ -2973,29 +3061,6 @@ const BrandConfig = {
         // Actualizar título de la ventana
         if (brand.name) {
             document.title = `${baseTitle} - ${brand.name}`;
-        }
-    }
-
-    // Admin Master Link Check (Automatic)
-    const masterLink = null;
-    if (masterLink) {
-        const mid = window.activeTrainerId || localStorage.getItem('activeTrainerId') || 'default';
-        const userEmail = (typeof AUTH !== 'undefined' && AUTH.userEmail) || localStorage.getItem('_trainerEmail');
-        const b = BrandConfig.get();
-        
-        // Debug
-        console.log("Master Check:", { mid, userEmail, bName: b?.name });
-
-        // Si el usuario es 'default' o su email contiene 'asteam' o el nombre de marca es ASTeam
-        const isMaster = mid === 'default' || 
-                         (userEmail && userEmail.toLowerCase().includes('asteam')) || 
-                         (b && b.name && b.name.toLowerCase().includes('asteam'));
-
-        if (isMaster) {
-            masterLink.style.setProperty('display', 'block', 'important');
-        } else {
-            // No forzar display:none si ya estaba visible, pero ocultar si se requiere seguridad estricta
-            masterLink.style.display = 'none';
         }
     }
   }

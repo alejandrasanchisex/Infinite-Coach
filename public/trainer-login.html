@@ -3,11 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Acceso | Ingenia Licencias</title>
+    <title>Acceso | Infinite Coach</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="styles/theme.css?v=321">
+    <link rel="stylesheet" href="styles/theme.css?v=328">
     <link rel="stylesheet" href="styles/components.css">
     <style>
         body {
@@ -178,8 +178,8 @@
 
     <!-- Supabase SDK & Service -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="js/supabase-service.js?v=312"></script>
-    <script src="js/utils.js?v=312"></script>
+    <script src="js/supabase-service.js?v=328"></script>
+    <script src="js/utils.js?v=328"></script>
 
     <script>
         const PLATFORM_KEY = 'saasFitnessPlatform';
@@ -281,8 +281,10 @@
                     } catch(e) { console.warn('Error saving remembered credentials:', e); }
 
                     setTimeout(() => {
+                        const isSaaSDomain = window.location.hostname.includes('licencias.ingeniaia.es');
                         const adminEmail = (platformData.settings && platformData.settings.adminEmail) || 'ingenia@ingeniaia.es';
-                        if (email === adminEmail.toLowerCase() || email === 'ingenia@ingeniaia.es') {
+                        
+                        if (isSaaSDomain && (email === adminEmail.toLowerCase() || email === 'ingenia@ingeniaia.es')) {
                             sessionStorage.setItem('_isMasterAdmin', 'true');
                             window.location.href = 'admin-dashboard.html';
                         } else {

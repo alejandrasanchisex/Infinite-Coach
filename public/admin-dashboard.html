@@ -8,7 +8,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="styles/theme.css?v=321">
+    <link rel="stylesheet" href="styles/theme.css?v=328">
     <link rel="stylesheet" href="styles/components.css">
     <style>
         :root {
@@ -474,9 +474,9 @@
 
     <!-- Supabase SDK & Service -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="js/supabase-service.js?v=312"></script>
+    <script src="js/supabase-service.js?v=328"></script>
 
-    <script src="js/utils.js?v=312"></script>
+    <script src="js/utils.js?v=328"></script>
 
     <script>
         // MASTER STATE CONTROL
@@ -856,7 +856,7 @@
             const planObj = data.plans.find(p => p.name === t.plan);
             const stripeInfo = planObj && planObj.stripeLink ? `\nRenueva o Paga aquí: ${planObj.stripeLink}` : '';
 
-            const baseUrl = window.location.href.split('/').slice(0, -1).join('/') + '/trainer-login.html';
+            const baseUrl = 'https://infinitecoach.es/trainer-login.html';
             const message = `Hola ${t.name}.\nBienvenido a la plataforma. Tu acceso ya está listo:\n\nAcceso: ${baseUrl}\nUsuario: ${t.email}\nContraseña (Clave): *${t.licenseKey}*\n\n${stripeInfo}`;
             window.open(`https://wa.me/?text=${encodeURIComponent(message)}`, '_blank');
         };

@@ -235,17 +235,26 @@
 
 <!-- ── Scripts ──────────────────────────────────────────────────── -->
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="js/supabase-service.js?v=312"></script>
-<script src="js/config.js"></script>
-<script src="js/data-models.js?v=321"></script>
-<script src="js/utils.js?v=321"></script>
+<script src="js/supabase-service.js?v=328"></script>
+<script src="js/config.js?v=328"></script>
+<script src="js/data-models.js?v=328"></script>
+<script src="js/utils.js?v=328"></script>
 <script>
+// ── Cache buster redirect ─────────────────────────────────────────
+(function() {
+    var params = new URLSearchParams(window.location.search);
+    if (params.get('v') !== '327') {
+        params.set('v', '327');
+        window.location.replace(window.location.pathname + '?' + params.toString());
+    }
+})();
+
 // ── Auto-Redirección (Mantener sesión activa) ─────────────────────
 (function() {
     var storedClientId = localStorage.getItem('clientId') || sessionStorage.getItem('clientId');
     var params = new URLSearchParams(window.location.search);
     if (storedClientId && params.get('logout') !== 'true') {
-        window.location.replace('client-dashboard.html');
+        window.location.replace('client-dashboard.html?v=328');
     }
 })();
 
@@ -274,7 +283,14 @@ document.getElementById('accessCode').addEventListener('keydown', function(e) {
 // ── Trainer ID from URL ──────────────────────────────────────────
 (function() {
     var params = new URLSearchParams(window.location.search);
-    var tid = params.get('t') || localStorage.getItem('activeTrainerId') || 'admin';
+    var tid = params.get('t') || localStorage.getItem('activeTrainerId');
+    if (!tid || tid === 'admin' || tid === 'default') {
+        if (window.location.hostname.includes('infinitecoach.es')) {
+            tid = 't-w0iybl7qb';
+        } else {
+            tid = 'admin';
+        }
+    }
     localStorage.setItem('activeTrainerId', tid);
     window.activeTrainerId = tid;
     if (typeof updateActiveTrainerId === 'function') updateActiveTrainerId(tid);
@@ -327,42 +343,117 @@ async function doLogin() {
     content.innerHTML = '<span class="spinner"></span>';
 
     try {
-        // Wait for sync if not done
+        // Wait for basic sync first
         await syncReady;
 
-        // If sync didn't load anything, try once more explicitly
-        if (!syncDone || Clients.getAll().length === 0) {
-            window.SupabaseService.init();
-            await window.syncFromCloud();
+        var foundClient = null;
+        var foundTrainerId = null;
+        var foundTrainerData = null;
+
+        // 1. Prioridad: Buscar en Supabase en tiempo real en todos los perfiles de entrenadores
+        if (window.SupabaseService && window.SupabaseService.client) {
+            try {
+                const { data: profiles, error } = await window.SupabaseService.client
+                    .from('trainer_profiles')
+                    .select('trainer_id, full_data');
+                
+                if (!error && profiles) {
+                    for (var i = 0; i < profiles.length; i++) {
+                        var p = profiles[i];
+                        var clientsList = (p.full_data && p.full_data.clients) || [];
+                        for (var j = 0; j < clientsList.length; j++) {
+                            var c = clientsList[j];
+                            if ((c.accessCode || '').trim().toUpperCase() === code) {
+                                foundClient = c;
+                                foundTrainerId = p.trainer_id;
+                                foundTrainerData = p.full_data;
+                                break;
+                            }
+                        }
+                        if (foundClient) break;
+                    }
+                }
+            } catch(e) {
+                console.warn("Supabase cross-trainer search failed:", e);
+            }
         }
 
-        var trainerId = window.activeTrainerId || localStorage.getItem('activeTrainerId') || 'admin';
-        var clients   = Clients.getAll();
-
-        console.log('[Login] trainerID:', trainerId);
-        console.log('[Login] clients loaded:', clients.length);
-        console.log('[Login] searching code:', code);
-        if (clients.length > 0) {
-            console.log('[Login] available codes:', clients.map(function(c){ return c.accessCode; }));
+        // 2. Fallback: Buscar localmente en todos los perfiles guardados
+        if (!foundClient) {
+            for (var i = 0; i < localStorage.length; i++) {
+                var key = localStorage.key(i);
+                if (key && key.indexOf('fitnessAppData_') === 0) {
+                    try {
+                        var raw = localStorage.getItem(key);
+                        if (raw) {
+                            var parsed = JSON.parse(raw);
+                            var clientsList = parsed.clients || [];
+                            for (var j = 0; j < clientsList.length; j++) {
+                                var c = clientsList[j];
+                                if ((c.accessCode || '').trim().toUpperCase() === code) {
+                                    foundClient = c;
+                                    foundTrainerId = key.replace('fitnessAppData_', '');
+                                    foundTrainerData = parsed;
+                                    break;
+                                }
+                            }
+                        }
+                    } catch(err) { console.warn("Local storage scan error:", err); }
+                }
+                if (foundClient) break;
+            }
         }
 
-        var client = null;
-        for (var i = 0; i < clients.length; i++) {
-            var stored = (clients[i].accessCode || '').trim().toUpperCase();
-            if (stored === code) { client = clients[i]; break; }
+        // 3. Fallback final: Buscar en el listado del activeTrainerId actual
+        if (!foundClient) {
+            var currentClients = Clients.getAll();
+            for (var i = 0; i < currentClients.length; i++) {
+                var c = currentClients[i];
+                if ((c.accessCode || '').trim().toUpperCase() === code) {
+                    foundClient = c;
+                    foundTrainerId = window.activeTrainerId || localStorage.getItem('activeTrainerId') || 'admin';
+                    break;
+                }
+            }
         }
 
-        if (client) {
-            sessionStorage.setItem('clientId', client.id);
-            localStorage.setItem('clientId', client.id);
+        if (foundClient) {
+            // Actualizar activeTrainerId al del coach del cliente
+            localStorage.setItem('activeTrainerId', foundTrainerId);
+            window.activeTrainerId = foundTrainerId;
+            if (typeof updateActiveTrainerId === 'function') updateActiveTrainerId(foundTrainerId);
+
+            // Guardar datos del entrenador recuperados localmente para agilizar carga
+            if (foundTrainerData) {
+                localStorage.setItem('fitnessAppData_' + foundTrainerId, JSON.stringify(foundTrainerData));
+            }
+
+            sessionStorage.setItem('clientId', foundClient.id);
+            localStorage.setItem('clientId', foundClient.id);
+
+            // Intentar aplicar la marca del coach de inmediato para feedback visual al cliente
+            try {
+                if (window.BrandConfig) {
+                    window.BrandConfig.applyTheme();
+                    var brand = window.BrandConfig.get();
+                    if (brand && brand.name) {
+                        var bNameEl = document.getElementById('brandName');
+                        if (bNameEl) bNameEl.textContent = brand.name;
+                    }
+                    if (brand && brand.logo && document.getElementById('brandLogoContainer')) {
+                        document.getElementById('brandLogoContainer').innerHTML =
+                            '<img src="' + brand.logo + '" alt="' + (brand.name||'') + '">';
+                    }
+                }
+            } catch(e) { console.warn("Error applying found coach branding:", e); }
+
             content.textContent = '✓';
             btn.style.background = 'linear-gradient(110deg,#22c55e,#4ade80)';
-            setTimeout(function(){ window.location.replace('client-dashboard.html'); }, 400);
+            setTimeout(function(){ 
+                window.location.replace('client-dashboard.html?t=' + foundTrainerId + '&v=328'); 
+            }, 400);
         } else {
-            var msg = clients.length === 0
-                ? 'Sin datos del servidor (entrenador: ' + trainerId + '). Comprueba tu conexión.'
-                : 'Código incorrecto. Comprueba que esté bien escrito.';
-            showMsg(msg);
+            showMsg('Código de acceso incorrecto. Por favor, verifícalo.');
             btn.disabled = false;
             content.textContent = 'Acceder';
             codeEl.select();
@@ -370,13 +461,13 @@ async function doLogin() {
 
     } catch(err) {
         console.error('[Login] Error:', err);
-        showMsg('Error: ' + (err.message || 'Inténtalo de nuevo'));
+        showMsg('Error de red o base de datos. Inténtalo de nuevo.');
         btn.disabled = false;
         content.textContent = 'Acceder';
     }
 }
 </script>
 <script src="js/custom-recipes.js?v=129"></script>
-<script src="js/pwa-install.js?v=321"></script>
+<script src="js/pwa-install.js?v=328"></script>
 </body>
 </html>

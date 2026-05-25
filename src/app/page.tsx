@@ -15,6 +15,29 @@ import {
 } from "lucide-react";
 
 export default function TrainerDashboard() {
+  const [isRedirecting] = useState(true);
+
+  React.useEffect(() => {
+    if (typeof window !== 'undefined') {
+      try {
+        if (window.location.hostname.includes('licencias.ingeniaia.es')) {
+          window.location.replace('/admin-login.html');
+        } else if (localStorage.getItem('clientId')) {
+          window.location.replace('/client-dashboard.html?v=328');
+        } else if (localStorage.getItem('_trainerAuthed') === '1') {
+          const activeTrainerId = localStorage.getItem('activeTrainerId') || 'default';
+          window.location.replace('/trainer-dashboard.html?t=' + activeTrainerId);
+        } else if (window.location.hostname.includes('infinitecoach.es')) {
+          window.location.replace('/client-login.html?v=328');
+        } else {
+          window.location.replace('/trainer-login.html');
+        }
+      } catch (e) {
+        window.location.replace('/trainer-login.html');
+      }
+    }
+  }, []);
+
   const [stats] = useState({
     activeClients: 42,
     monthlyRevenue: "3,250€",
@@ -28,6 +51,39 @@ export default function TrainerDashboard() {
     { name: "María García", status: "Active", plan: "Pérdida de Grasa" },
     { name: "Carlos López", status: "Active", plan: "Powerlifting" }
   ];
+
+  if (isRedirecting) {
+    return (
+      <div style={{
+        backgroundColor: '#0B0B1A',
+        color: 'white',
+        fontFamily: 'sans-serif',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        minHeight: '100vh',
+        margin: 0
+      }}>
+        <div style={{ textAlign: 'center' }}>
+          <div style={{
+            width: '50px',
+            height: '50px',
+            border: '4px solid rgba(255, 255, 255, 0.1)',
+            borderLeftColor: '#00D9FF',
+            borderRadius: '50%',
+            animation: 'spin 1s linear infinite',
+            margin: '0 auto 20px'
+          }}></div>
+          <p style={{ color: 'rgba(255, 255, 255, 0.6)', fontSize: '0.95rem' }}>Cargando aplicación...</p>
+          <style>{`
+            @keyframes spin {
+              100% { transform: rotate(360deg); }
+            }
+          `}</style>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-height-screen bg-background text-white p-6 md:p-10">

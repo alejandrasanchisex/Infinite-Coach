@@ -110,8 +110,9 @@ window.BrandConfig = {
             return false;
         };
 
-        // 1. PRIORIDAD MÁXIMA: clave dedicada que syncFromCloud NUNCA toca
-        const trainerBrandRaw = localStorage.getItem('_trainerBrand');
+        // 1. PRIORIDAD MÁXIMA: clave dedicada que syncFromCloud NUNCA toca (trainer-specific)
+        const currentTrainerId = window.activeTrainerId || localStorage.getItem('activeTrainerId') || 'default';
+        const trainerBrandRaw = localStorage.getItem(`_trainerBrand_${currentTrainerId}`) || localStorage.getItem('_trainerBrand');
         let trainerBrand = null;
         if (trainerBrandRaw) {
             try {
@@ -133,8 +134,8 @@ window.BrandConfig = {
         if (trainerBrand) {
             result = trainerBrand;
         } else {
-            // 2. Fallback: brand_settings (legacy)
-            const stored = localStorage.getItem('brand_settings');
+            // 2. Fallback: brand_settings (legacy - trainer-specific fallback, then global fallback)
+            const stored = localStorage.getItem(`brand_settings_${currentTrainerId}`) || localStorage.getItem('brand_settings');
             if (stored) {
                 try {
                     const parsed = JSON.parse(stored);
@@ -162,6 +163,8 @@ window.BrandConfig = {
         if (result && (result.name === 'MyFitness' || result.name === 'Fitness App')) {
             result.name = 'Infinite Coach';
             try {
+                localStorage.setItem(`_trainerBrand_${currentTrainerId}`, JSON.stringify(result));
+                localStorage.setItem(`brand_settings_${currentTrainerId}`, JSON.stringify(result));
                 localStorage.setItem('_trainerBrand', JSON.stringify(result));
                 localStorage.setItem('brand_settings', JSON.stringify(result));
                 if (window.getData && window.saveData) {
@@ -182,8 +185,11 @@ window.BrandConfig = {
     },
     set: function(brandData) {
         // SIEMPRE guardar en la clave dedicada que nada más toca
+        const currentTrainerId = window.activeTrainerId || localStorage.getItem('activeTrainerId') || 'default';
         const current = this.get();
         const updated = { ...current, ...brandData, configured: true };
+        localStorage.setItem(`_trainerBrand_${currentTrainerId}`, JSON.stringify(updated));
+        localStorage.setItem(`brand_settings_${currentTrainerId}`, JSON.stringify(updated));
         localStorage.setItem('_trainerBrand', JSON.stringify(updated));
         localStorage.setItem('brand_settings', JSON.stringify(updated)); // legacy
 
@@ -198,6 +204,7 @@ window.BrandConfig = {
                 const currentId = window.activeTrainerId || localStorage.getItem('activeTrainerId');
                 if (window.SupabaseService && currentId && currentId !== 'default') {
                     window.SupabaseService.saveTrainerData(currentId, db)
+
                         .catch(e => console.warn('Supabase brand sync:', e));
                 }
             } catch(e) { console.error('BrandConfig.set db error:', e); }
@@ -416,11 +423,82 @@ if (typeof document !== 'undefined') {
     });
 }
 
+// Safe translation/fallback for toLocaleDateString
+const safeLocaleDateString = (dateObj, options, locale = 'es-ES') => {
+    try {
+        return dateObj.toLocaleDateString(locale, options);
+    } catch (e) {
+        // Safe manual fallback builder for iOS Webviews without full options/locale support
+        try {
+            const day = dateObj.getDate();
+            const year = dateObj.getFullYear();
+            const daysLong = ['domingo', 'lunes', 'martes', 'miércoles', 'jueves', 'viernes', 'sábado'];
+            const daysShort = ['dom', 'lun', 'mar', 'mié', 'jue', 'vie', 'sáb'];
+            const monthsLong = ['enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio', 'julio', 'agosto', 'septiembre', 'octubre', 'noviembre', 'diciembre'];
+            const monthsShort = ['ene', 'feb', 'mar', 'abr', 'may', 'jun', 'jul', 'ago', 'sep', 'oct', 'nov', 'dic'];
+            
+            let weekdayStr = '';
+            let monthStr = '';
+            
+            if (options && options.weekday) {
+                const dayIdx = dateObj.getDay();
+                weekdayStr = options.weekday === 'long' ? daysLong[dayIdx] : daysShort[dayIdx];
+            }
+            
+            if (options && options.month) {
+                const monthIdx = dateObj.getMonth();
+                monthStr = options.month === 'long' ? monthsLong[monthIdx] : monthsShort[monthIdx];
+            } else {
+                monthStr = String(dateObj.getMonth() + 1).padStart(2, '0');
+            }
+            
+            if (options && options.year) {
+                if (options.month === 'long') {
+                    return `${day} de ${monthStr} de ${year}`;
+                }
+            }
+            
+            if (weekdayStr) {
+                return `${weekdayStr}, ${day} de ${monthStr}`;
+            }
+            
+            return `${day}/${monthStr}/${year}`;
+        } catch (innerErr) {
+            try {
+                return dateObj.toISOString().split('T')[0];
+            } catch (fatalErr) {
+                return '';
+            }
+        }
+    }
+};
+window.safeLocaleDateString = safeLocaleDateString;
+
+const safeLocaleString = (dateObj, options, locale = 'es-ES') => {
+    try {
+        return dateObj.toLocaleString(locale, options);
+    } catch (e) {
+        try {
+            const dateStr = safeLocaleDateString(dateObj, options, locale);
+            const hour = String(dateObj.getHours()).padStart(2, '0');
+            const min = String(dateObj.getMinutes()).padStart(2, '0');
+            return `${dateStr} ${hour}:${min}`;
+        } catch (innerErr) {
+            try {
+                return dateObj.toISOString();
+            } catch (fatalErr) {
+                return '';
+            }
+        }
+    }
+};
+window.safeLocaleString = safeLocaleString;
+
 // Format date to readable string
 const formatDate = (dateString) => {
     const date = new Date(dateString);
     const options = { year: 'numeric', month: 'long', day: 'numeric' };
-    return date.toLocaleDateString('es-ES', options);
+    return safeLocaleDateString(date, options);
 };
 
 // Format date and time to readable string
@@ -430,7 +508,7 @@ const formatDateTime = (dateString) => {
         year: 'numeric', month: 'long', day: 'numeric',
         hour: '2-digit', minute: '2-digit'
     };
-    return date.toLocaleString('es-ES', options);
+    return safeLocaleString(date, options);
 };
 
 // Format date for input fields
@@ -946,7 +1024,7 @@ const NotificationManager = {
         if (Notification.permission !== 'granted') return;
         
         const today = new Date();
-        const dayStr = today.toLocaleDateString('es-ES', { weekday: 'long' }).toLowerCase();
+        const dayStr = safeLocaleDateString(today, { weekday: 'long' }).toLowerCase();
         
         // Review Day Check
         if (client.reviewDay) {
@@ -1034,3 +1112,12 @@ document.addEventListener('DOMContentLoaded', () => {
         BrandConfig.applyTheme();
     }
 });
+
+// Global toggleMenu function for mobile navigation across all pages
+const toggleMenu = () => {
+    const navLinks = document.getElementById('navLinks');
+    if (navLinks) {
+        navLinks.classList.toggle('active');
+    }
+};
+window.toggleMenu = toggleMenu;

@@ -3,7 +3,15 @@
 // ============================================
 
 const DB_VERSION = '1.0.1';
-let activeTrainerId = localStorage.getItem('activeTrainerId') || 'default';
+let activeTrainerId = localStorage.getItem('activeTrainerId');
+if (!activeTrainerId || activeTrainerId === 'default' || activeTrainerId === 'admin') {
+    if (typeof window !== 'undefined' && window.location.hostname.includes('infinitecoach.es')) {
+        activeTrainerId = 't-w0iybl7qb';
+        localStorage.setItem('activeTrainerId', 't-w0iybl7qb');
+    } else {
+        activeTrainerId = 'default';
+    }
+}
 window.activeTrainerId = activeTrainerId;
 const getStorageKey = () => `fitnessAppData_${window.activeTrainerId || 'default'}`;
 
@@ -278,9 +286,9 @@ window.syncFromCloud = async () => {
                 if ((isNewInstall || isLocalFreshlyInitialized) && cloudHasTrainerData) {
                     console.log("📥 El almacenamiento local estaba vacío o es nuevo, pero la nube tiene datos. Descargando de la nube...");
                     localStorage.removeItem('isNewInstall_' + currentId);
-                    // Preservar branding local si lo hay
-                    const trainerBrandRaw = localStorage.getItem('_trainerBrand');
-                    const brandSettingsRaw = localStorage.getItem('brand_settings');
+                    // Preservar marca (trainer-specific)
+                    const trainerBrandRaw = localStorage.getItem(`_trainerBrand_${currentId}`) || localStorage.getItem('_trainerBrand');
+                    const brandSettingsRaw = localStorage.getItem(`brand_settings_${currentId}`) || localStorage.getItem('brand_settings');
                     const localBrandRaw = trainerBrandRaw || brandSettingsRaw;
                     if (localBrandRaw) {
                         try {
@@ -1970,7 +1978,55 @@ const Clients = {
   },
 
   getById: (id) => {
-    return Clients.getAll().find(c => c.id == id);
+    let client = Clients.getAll().find(c => c.id == id);
+    if (client) return client;
+
+    // Fallback: Buscar en otros perfiles locales si hubo migración de ID o pérdida de caché
+    try {
+        console.warn("⚠️ Client not found in active profile. Running local database recovery fallback...");
+        for (let i = 0; i < localStorage.length; i++) {
+            const key = localStorage.key(i);
+            if (key && key.startsWith('fitnessAppData_')) {
+                const raw = localStorage.getItem(key);
+                if (raw) {
+                    const parsed = JSON.parse(raw);
+                    if (parsed && parsed.clients) {
+                        const found = parsed.clients.find(c => c.id == id);
+                        if (found) {
+                            console.log(`🎉 Recovered client from ${key}! Copying client to active database...`);
+                            // Copiar el cliente y sus datos al perfil activo para guardarlo localmente
+                            const activeKey = getStorageKey();
+                            const activeRaw = localStorage.getItem(activeKey);
+                            const activeData = activeRaw ? JSON.parse(activeRaw) : {};
+                            if (!activeData.clients) activeData.clients = [];
+                            
+                            // Evitar duplicados
+                            if (!activeData.clients.some(c => c.id == id)) {
+                                activeData.clients.push(found);
+                                // También migrar rutinas y dietas asociadas si existen en esa base
+                                if (parsed.routines) {
+                                    if (!activeData.routines) activeData.routines = [];
+                                    parsed.routines.filter(r => r.clientId === id).forEach(r => {
+                                        if (!activeData.routines.some(x => x.id === r.id)) activeData.routines.push(r);
+                                    });
+                                }
+                                if (parsed.diets) {
+                                    if (!activeData.diets) activeData.diets = [];
+                                    parsed.diets.filter(d => d.clientId === id).forEach(d => {
+                                        if (!activeData.diets.some(x => x.id === d.id)) activeData.diets.push(d);
+                                    });
+                                }
+                                localStorage.setItem(activeKey, JSON.stringify(activeData));
+                                console.log("✅ Client copied successfully!");
+                            }
+                            return found;
+                        }
+                    }
+                }
+            }
+        }
+    } catch(err) { console.warn("Error inside client recovery fallback:", err); }
+    return null;
   },
 
   create: (clientData) => {
@@ -2863,15 +2919,37 @@ const BrandConfig = {
       return window.BrandConfig.get();
     }
     const data = getData();
-    let res = data.brand || {
+    
+    // Default brand settings
+    let defaultBrand = {
         name: 'Infinite Coach',
         logo: 'img/logo-infinite-marble.png',
         configured: true,
         colors: { primary: '#00D9FF', secondary: '#1A1A2E', accent: '#FF6B6B' },
         fiscalData: { invoiceSeries: 'F' + new Date().getFullYear() }
     };
-    if (res && (res.name === 'MyFitness' || res.name === 'Fitness App')) {
-        res.name = 'Infinite Coach';
+
+    // Instant corporate brand override for ASTeam custom domain / active trainer
+    if (typeof window !== 'undefined' && 
+        (window.location.hostname.includes('infinitecoach.es') || 
+         window.activeTrainerId === 't-w0iybl7qb' || 
+         localStorage.getItem('activeTrainerId') === 't-w0iybl7qb')) {
+        defaultBrand = {
+            name: 'ASTeam',
+            logo: 'img/logo-infinite-marble.png',
+            configured: true,
+            colors: { primary: '#00d9ff', secondary: '#1a1a2e', accent: '#ff6b6b' },
+            whatsapp: '615760338',
+            fiscalData: { invoiceSeries: 'FAST' + new Date().getFullYear() }
+        };
+    }
+
+    let res = data.brand || defaultBrand;
+    
+    if (res && (res.name === 'MyFitness' || res.name === 'Fitness App' || (res.name === 'Infinite Coach' && defaultBrand.name === 'ASTeam'))) {
+        res.name = defaultBrand.name;
+        res.colors = defaultBrand.colors;
+        if (defaultBrand.whatsapp) res.whatsapp = defaultBrand.whatsapp;
     }
     if (res && (!res.logo || res.logo.length < 5)) {
         res.logo = 'img/logo-infinite-marble.png';
@@ -2934,11 +3012,19 @@ const BrandConfig = {
     const headerLogos = document.querySelectorAll('.logo-img, #brandLogo');
     const previewLogos = document.querySelectorAll('#logoPreview');
     const nameSpan = document.getElementById('brandName');
+    const loginLogoContainer = document.getElementById('brandLogoContainer');
     
     // Titulo de la página dinámico si existe
     const baseTitle = document.title.split(' - ')[0]; // Tomar parte antes del guion
     
     if (brand) {
+        if (loginLogoContainer) {
+            const defaultLogo = 'img/logo-infinite-marble.png';
+            const hasLogo = brand.logo && brand.logo.length > 5;
+            const logoSrc = hasLogo ? brand.logo : defaultLogo;
+            loginLogoContainer.innerHTML = `<img src="${logoSrc}" alt="${brand.name || ''}" style="width: 100%; height: 100%; object-fit: contain; border-radius: 19px;">`;
+        }
+
         headerLogos.forEach(logoImg => {
             const defaultLogo = 'img/logo-infinite-marble.png';
             const hasLogo = brand.logo && brand.logo.length > 5;

@@ -250,7 +250,7 @@ a:hover {
   padding: var(--spacing-md) 0;
   position: sticky;
   top: 0;
-  z-index: 100;
+  z-index: 10000;
   backdrop-filter: blur(10px);
 }
 
@@ -332,6 +332,9 @@ display: flex;
     opacity: 0;
     pointer-events: none;
     transition: all var(--transition-base);
+    z-index: 9999;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: var(--shadow-lg);
   }
 
   .nav-links.active {
