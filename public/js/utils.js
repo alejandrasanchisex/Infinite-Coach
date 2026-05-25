@@ -1114,10 +1114,9 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 // Global toggleMenu function for mobile navigation across all pages
-const toggleMenu = () => {
+window.toggleMenu = () => {
     const navLinks = document.getElementById('navLinks');
     if (navLinks) {
         navLinks.classList.toggle('active');
     }
 };
-window.toggleMenu = toggleMenu;

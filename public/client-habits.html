@@ -8,7 +8,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="styles/theme.css?v=328">
+    <link rel="stylesheet" href="styles/theme.css?v=330">
     <link rel="stylesheet" href="styles/components.css">
     <link rel="stylesheet" href="styles/mobile.css">
     <link rel="manifest" href="manifest.json">
@@ -90,10 +90,10 @@
                     <span id="brandName">Infinite Coach</span>
                 </div>
                 <ul class="nav-links" id="navLinks">
-                    <li><a href="client-dashboard.html?v=328" class="nav-link">Inicio</a></li>
-                    <li><a href="client-profile.html?v=328" class="nav-link">Ficha Técnica</a></li>
+                    <li><a href="client-dashboard.html?v=330" class="nav-link">Inicio</a></li>
+                    <li><a href="client-profile.html?v=330" class="nav-link">Ficha Técnica</a></li>
 
-                    <li><a href="client-login.html?v=328" class="nav-link">Salir</a></li>
+                    <li><a href="client-login.html?v=330" class="nav-link">Salir</a></li>
                 </ul>
                 <button class="menu-toggle" onclick="toggleMenu()" style="margin-left: auto;">☰</button>
             </nav>
@@ -104,7 +104,7 @@
     <main class="main-content">
         <div class="container">
             <div class="flex-between align-center mb-lg">
-                <a href="client-dashboard.html?v=328" class="btn btn-sm btn-secondary" style="border-radius: 50px; padding: 8px 15px;">
+                <a href="client-dashboard.html?v=330" class="btn btn-sm btn-secondary" style="border-radius: 50px; padding: 8px 15px;">
                     ← Volver
                 </a>
                 <h1 style="margin: 0; font-size: 1.5rem;">Hábitos Diarios</h1>
@@ -189,11 +189,11 @@
 
     <!-- Supabase SDK & Service -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="js/supabase-service.js?v=328"></script>
+    <script src="js/supabase-service.js?v=330"></script>
 
-    <script src="js/config.js?v=328"></script>
-    <script src="js/data-models.js?v=328"></script>
-    <script src="js/utils.js?v=328"></script>
+    <script src="js/config.js?v=330"></script>
+    <script src="js/data-models.js?v=330"></script>
+    <script src="js/utils.js?v=330"></script>
     <script>
         const clientId = sessionStorage.getItem('clientId') || localStorage.getItem('clientId');
         if (!clientId) { 
@@ -490,7 +490,7 @@
             showToast('¡Registro guardado!', 'success');
         }
 
-        function toggleMenu() { document.getElementById('navLinks').classList.toggle('active'); }
+        
     </script>
     <script src="js/custom-recipes.js?v=129"></script></body>
 </html>

@@ -8,7 +8,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="styles/theme.css?v=328">
+    <link rel="stylesheet" href="styles/theme.css?v=330">
     <link rel="stylesheet" href="styles/components.css">
 </head>
 
@@ -38,14 +38,14 @@
                     </div>
                     <button class="menu-toggle" onclick="toggleMenu()">☰</button>
                     <ul class="nav-links" id="navLinks">
-                        <li><a href="trainer-dashboard.html?v=328" class="nav-link active">Dashboard</a></li>
-                        <li><a href="trainer-clients.html?v=328" class="nav-link">Clientes</a></li>
-                        <li><a href="trainer-routines.html?v=328" class="nav-link">Rutinas</a></li>
-                        <li><a href="trainer-diets.html?v=328" class="nav-link">Dietas</a></li>
-                        <li><a href="trainer-feedbacks.html?v=328" class="nav-link">Revisiones</a></li>
-                        <li><a href="trainer-media.html?v=328" class="nav-link">Biblioteca</a></li>
-                        <li><a href="trainer-appointments.html?v=328" class="nav-link">Agenda</a></li>
-                        <li><a href="trainer-settings.html?v=328" class="nav-link">Configuración</a></li>
+                        <li><a href="trainer-dashboard.html?v=330" class="nav-link active">Dashboard</a></li>
+                        <li><a href="trainer-clients.html?v=330" class="nav-link">Clientes</a></li>
+                        <li><a href="trainer-routines.html?v=330" class="nav-link">Rutinas</a></li>
+                        <li><a href="trainer-diets.html?v=330" class="nav-link">Dietas</a></li>
+                        <li><a href="trainer-feedbacks.html?v=330" class="nav-link">Revisiones</a></li>
+                        <li><a href="trainer-media.html?v=330" class="nav-link">Biblioteca</a></li>
+                        <li><a href="trainer-appointments.html?v=330" class="nav-link">Agenda</a></li>
+                        <li><a href="trainer-settings.html?v=330" class="nav-link">Configuración</a></li>
                         <li><a href="#" onclick="if(typeof AUTH !== 'undefined') { AUTH.signOut() } else { window.location.reload() }; return false;" class="nav-link" style="color:var(--error-color)">🚪 Salir</a></li>
                     </ul>
                 </nav>
@@ -224,14 +224,14 @@
 
     <!-- Supabase SDK & Service -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="js/supabase-service.js?v=328"></script>
+    <script src="js/supabase-service.js?v=330"></script>
 
     <!-- UI Scripts -->
-    <script src="js/config.js?v=328"></script>
-    <script src="js/auth.js?v=328"></script>
-    <script src="js/sheets.js?v=328"></script>
-    <script src="js/data-models.js?v=328"></script>
-    <script src="js/utils.js?v=328"></script>
+    <script src="js/config.js?v=330"></script>
+    <script src="js/auth.js?v=330"></script>
+    <script src="js/sheets.js?v=330"></script>
+    <script src="js/data-models.js?v=330"></script>
+    <script src="js/utils.js?v=330"></script>
     <script>
         // Branding is handled via onGoogleAuthSuccess() and global listeners
 
@@ -677,8 +677,101 @@
             ], 'modal-xl');
         }
 
-        function toggleMenu() {
-            document.getElementById('navLinks').classList.toggle('active');
+        
+
+        async function runManualDiagnosticSync() {
+            const statusEl = document.getElementById('diagStatus');
+            if (statusEl) statusEl.textContent = 'Sincronizando de nuevo...';
+            try {
+                if (window.SupabaseService) {
+                    window.SupabaseService.init();
+                    const activeId = localStorage.getItem('activeTrainerId') || window.activeTrainerId;
+                    const data = await window.SupabaseService.getTrainerData(activeId);
+                    if (data) {
+                        localStorage.setItem(`fitnessAppData_${activeId}`, JSON.stringify(data));
+                        if (statusEl) statusEl.textContent = '¡Sincronizado con éxito! Recargando...';
+                        setTimeout(() => window.location.reload(), 1500);
+                    } else {
+                        if (statusEl) statusEl.textContent = 'Error: No se encontraron datos para este ID en la nube.';
+                    }
+                }
+            } catch (err) {
+                if (statusEl) statusEl.textContent = 'Error: ' + err.message;
+            }
+        }
+
+        async function runDiagnostic() {
+            const clients = Clients.getAll();
+            if (clients.length > 0) return; // Si ya hay clientes, no mostramos nada
+
+            // Crear el modal dinámicamente si no existe
+            let modal = document.getElementById('diagnosticModal');
+            if (!modal) {
+                modal = document.createElement('div');
+                modal.id = 'diagnosticModal';
+                modal.className = 'modal-overlay';
+                modal.style.cssText = 'position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); backdrop-filter: blur(8px); display: none; align-items: center; justify-content: center; z-index: 9999; padding: 20px;';
+                modal.innerHTML = `
+                    <div class="modal-content" style="max-width: 500px; padding: 2.5rem; background: #161b22; border-radius: 24px; border: 1px solid rgba(255,255,255,0.1); color: white; display: block; box-shadow: 0 20px 40px rgba(0,0,0,0.5);">
+                        <h2 style="margin-top:0; color: var(--primary-color); display: flex; align-items: center; gap: 8px; font-size: 1.5rem; font-weight:800;">
+                            🔍 Diagnóstico de Carga
+                        </h2>
+                        <p style="font-size: 0.9rem; color: rgba(255,255,255,0.7); margin-bottom: 1.5rem; line-height: 1.5;">
+                            Hemos detectado que tu panel muestra 0 clientes. Aquí tienes el estado de tu conexión en tiempo real:
+                        </p>
+                        <div style="background: rgba(255,255,255,0.02); padding: 1.2rem; border-radius: 16px; border: 1px solid rgba(255,255,255,0.05); font-family: monospace; font-size: 0.85rem; margin-bottom: 2rem; line-height: 1.6; text-align: left;">
+                            <div>📍 Hostname: <span id="diagHost" style="color: #58a6ff;">-</span></div>
+                            <div>👤 Active Trainer ID: <span id="diagTrainerId" style="color: #58a6ff;">-</span></div>
+                            <div>🔑 Autenticado: <span id="diagAuthed" style="color: #58a6ff;">-</span></div>
+                            <div>☁️ Supabase Conectado: <span id="diagSupa" style="color: #58a6ff;">-</span></div>
+                            <div>📡 Datos en Nube: <span id="diagCloudData" style="color: #58a6ff;">-</span></div>
+                            <div style="margin-top: 10px; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 10px; color: #ff7b72; font-weight: bold;">
+                                ⚠️ Estado: <span id="diagStatus" style="color: inherit;">Analizando...</span>
+                            </div>
+                        </div>
+                        <div style="display: flex; gap: 1rem;">
+                            <button class="btn btn-primary" onclick="runManualDiagnosticSync()" style="flex:1; font-weight:800;">🔄 Forzar Sincronización</button>
+                            <button class="btn" onclick="document.getElementById('diagnosticModal').style.display='none'" style="flex:1; background: rgba(255,255,255,0.05); color:white;">Cerrar</button>
+                        </div>
+                    </div>
+                `;
+                document.body.appendChild(modal);
+                window.runManualDiagnosticSync = runManualDiagnosticSync;
+            }
+
+            // Llenar datos
+            document.getElementById('diagHost').textContent = window.location.hostname;
+            const activeId = localStorage.getItem('activeTrainerId') || window.activeTrainerId || 'default';
+            document.getElementById('diagTrainerId').textContent = activeId;
+            document.getElementById('diagAuthed').textContent = (localStorage.getItem('_trainerAuthed') === '1' || sessionStorage.getItem('_trainerAuthed') === '1') ? 'Sí' : 'No';
+            
+            const isSupaLoaded = typeof window.SupabaseService !== 'undefined';
+            document.getElementById('diagSupa').textContent = isSupaLoaded ? 'Sí (Listo)' : 'No cargado';
+
+            const statusEl = document.getElementById('diagStatus');
+            statusEl.textContent = 'Analizando conexión con la nube...';
+
+            modal.style.display = 'flex';
+
+            if (isSupaLoaded) {
+                try {
+                    window.SupabaseService.init();
+                    const cloudData = await window.SupabaseService.getTrainerData(activeId);
+                    if (cloudData) {
+                        document.getElementById('diagCloudData').textContent = `Sí (${cloudData.clients ? cloudData.clients.length : 0} clientes encontrados)`;
+                        statusEl.textContent = 'Datos encontrados en la nube pero no cargados localmente. Haz clic en "Forzar Sincronización".';
+                        statusEl.style.color = '#3fb950';
+                    } else {
+                        document.getElementById('diagCloudData').textContent = 'No (Vacío o perfil inexistente)';
+                        statusEl.textContent = 'Error: No hay datos asociados a este ID de entrenador en la base de datos de la nube.';
+                        statusEl.style.color = '#ff7b72';
+                    }
+                } catch (err) {
+                    document.getElementById('diagCloudData').textContent = 'Error de conexión';
+                    statusEl.textContent = 'Error al conectar con Supabase: ' + err.message;
+                    statusEl.style.color = '#ff7b72';
+                }
+            }
         }
 
         document.addEventListener('DOMContentLoaded', () => {
@@ -686,6 +779,7 @@
                 BrandConfig.applyTheme();
             }
             loadDashboard();
+            setTimeout(runDiagnostic, 2500);
         });
 
         async function onGoogleAuthSuccess() {

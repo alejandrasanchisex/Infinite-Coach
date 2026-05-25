@@ -235,10 +235,10 @@
 
 <!-- ── Scripts ──────────────────────────────────────────────────── -->
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="js/supabase-service.js?v=328"></script>
-<script src="js/config.js?v=328"></script>
-<script src="js/data-models.js?v=328"></script>
-<script src="js/utils.js?v=328"></script>
+<script src="js/supabase-service.js?v=330"></script>
+<script src="js/config.js?v=330"></script>
+<script src="js/data-models.js?v=330"></script>
+<script src="js/utils.js?v=330"></script>
 <script>
 // ── Cache buster redirect ─────────────────────────────────────────
 (function() {
@@ -254,7 +254,7 @@
     var storedClientId = localStorage.getItem('clientId') || sessionStorage.getItem('clientId');
     var params = new URLSearchParams(window.location.search);
     if (storedClientId && params.get('logout') !== 'true') {
-        window.location.replace('client-dashboard.html?v=328');
+        window.location.replace('client-dashboard.html?v=330');
     }
 })();
 
@@ -468,6 +468,6 @@ async function doLogin() {
 }
 </script>
 <script src="js/custom-recipes.js?v=129"></script>
-<script src="js/pwa-install.js?v=328"></script>
+<script src="js/pwa-install.js?v=330"></script>
 </body>
 </html>
