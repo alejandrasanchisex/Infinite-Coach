@@ -284,6 +284,12 @@ document.getElementById('accessCode').addEventListener('keydown', function(e) {
 (function() {
     var params = new URLSearchParams(window.location.search);
     var tid = params.get('t') || localStorage.getItem('activeTrainerId');
+    if (tid) {
+        var lower = tid.toLowerCase().trim();
+        if (lower === 'asteam' || lower === 'alejandra') {
+            tid = 'alejandra_asteam_gmail_com';
+        }
+    }
     if (!tid || tid === 'admin' || tid === 'default') {
         if (window.location.hostname.includes('infinitecoach.es')) {
             tid = 't-w0iybl7qb';

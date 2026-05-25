@@ -4951,7 +4951,8 @@
             const baseUrl = window.location.origin + path;
             
             // Append only the trainer ID and cache-buster so the client lands on the fresh login page
-            const fullUrl = `${baseUrl}?t=${activeTrainerId}&v=332`;
+            const cleanTrainerId = activeTrainerId === 'alejandra_asteam_gmail_com' ? 'asteam' : activeTrainerId;
+            const fullUrl = `${baseUrl}?t=${cleanTrainerId}&v=332`;
             copyToClipboard(fullUrl);
             showToast('¡Link copiado! Envíalo a tu cliente.', 'success');
         };

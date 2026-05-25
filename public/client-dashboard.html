@@ -170,7 +170,13 @@
         }
 
         const clientIdFromUrl = urlParams.get('id');
-        const trainerIdFromUrl = urlParams.get('t');
+        let trainerIdFromUrl = urlParams.get('t');
+        if (trainerIdFromUrl) {
+            const lower = trainerIdFromUrl.toLowerCase().trim();
+            if (lower === 'asteam' || lower === 'alejandra') {
+                trainerIdFromUrl = 'alejandra_asteam_gmail_com';
+            }
+        }
         
         if (clientIdFromUrl) {
             sessionStorage.setItem('clientId', clientIdFromUrl);

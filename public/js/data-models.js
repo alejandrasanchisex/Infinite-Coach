@@ -24,8 +24,12 @@ window.updateActiveTrainerId = updateActiveTrainerId;
 
 // URL Parameter support for clients (accessing their trainer's data)
 const urlParams = new URLSearchParams(window.location.search);
-const trainerFromUrl = urlParams.get('t');
+let trainerFromUrl = urlParams.get('t');
 if (trainerFromUrl) {
+    const lower = trainerFromUrl.toLowerCase().trim();
+    if (lower === 'asteam' || lower === 'alejandra') {
+        trainerFromUrl = 'alejandra_asteam_gmail_com';
+    }
     updateActiveTrainerId(trainerFromUrl);
 }
 
@@ -2933,7 +2937,9 @@ const BrandConfig = {
     if (typeof window !== 'undefined' && 
         (window.location.hostname.includes('infinitecoach.es') || 
          window.activeTrainerId === 't-w0iybl7qb' || 
-         localStorage.getItem('activeTrainerId') === 't-w0iybl7qb')) {
+         window.activeTrainerId === 'alejandra_asteam_gmail_com' || 
+         localStorage.getItem('activeTrainerId') === 't-w0iybl7qb' ||
+         localStorage.getItem('activeTrainerId') === 'alejandra_asteam_gmail_com')) {
         defaultBrand = {
             name: 'ASTeam',
             logo: 'img/logo-infinite-marble.png',
