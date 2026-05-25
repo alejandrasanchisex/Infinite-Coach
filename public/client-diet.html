@@ -805,16 +805,8 @@
     function contactTrainer() {
       const message = `Hola ${brand.name}, soy ${client.name}. Tengo una consulta sobre mi plan nutricional.`;
       const link = generateWhatsAppLink(brand.whatsapp, message);
-      window.open(link, '_blank');
+      window.location.href = link;
     }
-
-    
-
-    // Setup WhatsApp FAB
-    const fab = document.getElementById('whatsappFab');
-    const message = `Hola ${brand.name}, soy ${client.name}. Tengo una consulta.`;
-    fab.href = generateWhatsAppLink(brand.whatsapp, message);
-    fab.target = '_blank';
 
     function updateDots(slider) {
         const index = Math.round(slider.scrollLeft / slider.offsetWidth);

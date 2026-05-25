@@ -621,7 +621,7 @@
     function contactTrainer() {
       const message = `Hola ${brand.name}, soy ${client.name}. Tengo una consulta sobre mi rutina de entrenamiento.`;
       const link = generateWhatsAppLink(brand.whatsapp, message);
-      window.open(link, '_blank');
+      window.location.href = link;
     }
 
     function openCardioModal() {

@@ -387,7 +387,7 @@
             const client = storedClientId ? Clients.getById(storedClientId) : null;
             const clientName = client ? client.name : 'un cliente';
             const msg = `Hola ${brand.name}, soy ${clientName}. ¿Podemos hablar?`;
-            window.open(generateWhatsAppLink(brand.whatsapp, msg), '_blank');
+            window.location.href = generateWhatsAppLink(brand.whatsapp, msg);
         }
 
         
