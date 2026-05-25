@@ -164,8 +164,8 @@
         // Cache-busting redirect to force loading the latest version on mobile in-app browsers
         const urlParams = new URLSearchParams(window.location.search);
         const versionParam = urlParams.get('v');
-        if (versionParam !== '327') {
-            urlParams.set('v', '327');
+        if (versionParam !== '332') {
+            urlParams.set('v', '332');
             window.location.replace(window.location.pathname + '?' + urlParams.toString());
         }
 

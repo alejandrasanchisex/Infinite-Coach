@@ -359,8 +359,8 @@ window.syncFromCloud = async () => {
                 });
 
                 // Preservar marca
-                const trainerBrandRaw = localStorage.getItem('_trainerBrand');
-                const brandSettingsRaw = localStorage.getItem('brand_settings');
+                const trainerBrandRaw = localStorage.getItem(`_trainerBrand_${currentId}`) || localStorage.getItem('_trainerBrand');
+                const brandSettingsRaw = localStorage.getItem(`brand_settings_${currentId}`) || localStorage.getItem('brand_settings');
                 const localBrandRaw = trainerBrandRaw || brandSettingsRaw;
                 if (localBrandRaw) {
                     try {
@@ -381,8 +381,8 @@ window.syncFromCloud = async () => {
             }
 
             // Preservar marca
-            const trainerBrandRaw = localStorage.getItem('_trainerBrand');
-            const brandSettingsRaw = localStorage.getItem('brand_settings');
+            const trainerBrandRaw = localStorage.getItem(`_trainerBrand_${currentId}`) || localStorage.getItem('_trainerBrand');
+            const brandSettingsRaw = localStorage.getItem(`brand_settings_${currentId}`) || localStorage.getItem('brand_settings');
             const localBrandRaw = trainerBrandRaw || brandSettingsRaw;
             if (localBrandRaw) {
                 try {
