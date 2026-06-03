@@ -49,6 +49,59 @@ const SupabaseService = {
     async saveTrainerData(trainerId, fullData) {
         if (!this.client) this.init();
         try {
+            // 🛡️ BLINDAJE SUPABASE: Nunca guardar datos vacíos que destruirían datos reales en la nube
+            const dataIsEmpty = (
+                (!fullData.clients || fullData.clients.length === 0) &&
+                (!fullData.routines || fullData.routines.length === 0) &&
+                (!fullData.trainingBlocks || fullData.trainingBlocks.length === 0)
+            );
+            
+            if (dataIsEmpty) {
+                // Verificar si la nube tiene datos reales antes de sobrescribir
+                try {
+                    const { data: cloudProfile } = await this.client
+                        .from('trainer_profiles')
+                        .select('full_data')
+                        .eq('trainer_id', trainerId)
+                        .single();
+                    
+                    if (cloudProfile && cloudProfile.full_data) {
+                        const cloudHasData = (
+                            (cloudProfile.full_data.clients && cloudProfile.full_data.clients.length > 0) ||
+                            (cloudProfile.full_data.routines && cloudProfile.full_data.routines.length > 0) ||
+                            (cloudProfile.full_data.trainingBlocks && cloudProfile.full_data.trainingBlocks.length > 0)
+                        );
+                        if (cloudHasData) {
+                            console.error('🚨 [BLINDAJE SUPABASE] BLOQUEADO: Intento de sobrescribir datos reales en la nube con datos vacíos. Operación cancelada para proteger los datos.');
+                            return false;
+                        }
+                    }
+                } catch (cloudCheckErr) {
+                    // Si no podemos verificar, mejor no guardar datos vacíos
+                    console.warn('[BLINDAJE SUPABASE] No se pudo verificar la nube. Guardado de datos vacíos cancelado por precaución.', cloudCheckErr);
+                    return false;
+                }
+            }
+
+            // Si el que guarda es un cliente, preservar la configuración de marca del entrenador de la nube
+            const isTrainer = typeof localStorage !== 'undefined' && localStorage.getItem('_trainerAuthed') === '1';
+            if (!isTrainer && trainerId !== 'default') {
+                try {
+                    const { data: cloudProfile } = await this.client
+                        .from('trainer_profiles')
+                        .select('full_data')
+                        .eq('trainer_id', trainerId)
+                        .single();
+                    
+                    if (cloudProfile && cloudProfile.full_data && cloudProfile.full_data.brand) {
+                        console.log("💾 Sincronización de Cliente: Preservando configuración de marca de la nube.");
+                        fullData.brand = cloudProfile.full_data.brand;
+                    }
+                } catch (errFetch) {
+                    console.warn("No se pudo pre-cargar la marca de la nube para fusionar:", errFetch);
+                }
+            }
+
             const { error } = await this.client
                 .from('trainer_profiles')
                 .upsert({ 

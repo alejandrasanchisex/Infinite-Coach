@@ -4,6 +4,29 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+    <script>
+        // Force PWA cache bust / reload
+        (function() {
+            const CURRENT_VERSION = '349';
+            const savedVersion = localStorage.getItem('app_version');
+            if (savedVersion !== CURRENT_VERSION) {
+                localStorage.setItem('app_version', CURRENT_VERSION);
+                if ('serviceWorker' in navigator) {
+                    navigator.serviceWorker.getRegistrations().then(function(registrations) {
+                        for (let registration of registrations) {
+                            registration.unregister();
+                        }
+                    }).catch(function(err) {
+                        console.warn('SW unregister failed:', err);
+                    }).finally(function() {
+                        window.location.reload(true);
+                    });
+                } else {
+                    window.location.reload(true);
+                }
+            }
+        })();
+    </script>
     <meta name="apple-mobile-web-app-capable" content="yes">
     <title>Acceso Cliente</title>
     <link rel="manifest" href="manifest.json">
@@ -228,6 +251,9 @@
         </div>
 
         <p class="footer">¿No tienes código?<br>Contacta con tu entrenador personal.</p>
+        <p class="footer" style="margin-top: 15px; border-top: 1px solid rgba(255,255,255,0.05); padding-top: 15px;">
+            <a href="trainer-login.html?v=349" style="color: var(--gold-light); text-decoration: none; font-size: 0.8rem; font-weight: 600;">Acceso Entrenadores 🔐</a>
+        </p>
     </div>
 </div>
 
@@ -235,26 +261,18 @@
 
 <!-- ── Scripts ──────────────────────────────────────────────────── -->
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="js/supabase-service.js?v=330"></script>
-<script src="js/config.js?v=330"></script>
-<script src="js/data-models.js?v=330"></script>
-<script src="js/utils.js?v=330"></script>
+<script src="js/supabase-service.js?v=350"></script>
+<script src="js/config.js?v=350"></script>
+<script src="js/data-models.js?v=350"></script>
+<script src="js/utils.js?v=350"></script>
 <script>
-// ── Cache buster redirect ─────────────────────────────────────────
-(function() {
-    var params = new URLSearchParams(window.location.search);
-    if (params.get('v') !== '332') {
-        params.set('v', '332');
-        window.location.replace(window.location.pathname + '?' + params.toString());
-    }
-})();
 
 // ── Auto-Redirección (Mantener sesión activa) ─────────────────────
 (function() {
     var storedClientId = localStorage.getItem('clientId') || sessionStorage.getItem('clientId');
     var params = new URLSearchParams(window.location.search);
     if (storedClientId && params.get('logout') !== 'true') {
-        window.location.replace('client-dashboard.html?v=332');
+        window.location.replace('client-dashboard.html?v=349');
     }
 })();
 
@@ -287,15 +305,11 @@ document.getElementById('accessCode').addEventListener('keydown', function(e) {
     if (tid) {
         var lower = tid.toLowerCase().trim();
         if (lower === 'asteam' || lower === 'alejandra') {
-            tid = 'alejandra_asteam_gmail_com';
+            tid = 't-w0iybl7qb';
         }
     }
     if (!tid || tid === 'admin' || tid === 'default') {
-        if (window.location.hostname.includes('infinitecoach.es')) {
-            tid = 't-w0iybl7qb';
-        } else {
-            tid = 'admin';
-        }
+        tid = 'default';
     }
     localStorage.setItem('activeTrainerId', tid);
     window.activeTrainerId = tid;
@@ -364,6 +378,21 @@ async function doLogin() {
                     .select('trainer_id, full_data');
                 
                 if (!error && profiles) {
+                    // Sort profiles to prefer active trainer, deprioritize generics (admin, default), and prefer recently updated profiles
+                    profiles.sort(function(a, b) {
+                        var aIsActive = (a.trainer_id === window.activeTrainerId);
+                        var bIsActive = (b.trainer_id === window.activeTrainerId);
+                        if (aIsActive && !bIsActive) return -1;
+                        if (!aIsActive && bIsActive) return 1;
+
+                        var aIsGeneric = (a.trainer_id === 'admin' || a.trainer_id === 'default');
+                        var bIsGeneric = (b.trainer_id === 'admin' || b.trainer_id === 'default');
+                        if (aIsGeneric && !bIsGeneric) return 1;
+                        if (!aIsGeneric && bIsGeneric) return -1;
+
+                        return new Date(b.updated_at || 0) - new Date(a.updated_at || 0);
+                    });
+
                     for (var i = 0; i < profiles.length; i++) {
                         var p = profiles[i];
                         var clientsList = (p.full_data && p.full_data.clients) || [];
@@ -456,7 +485,7 @@ async function doLogin() {
             content.textContent = '✓';
             btn.style.background = 'linear-gradient(110deg,#22c55e,#4ade80)';
             setTimeout(function(){ 
-                window.location.replace('client-dashboard.html?t=' + foundTrainerId + '&v=332'); 
+                window.location.replace('client-dashboard.html?t=' + foundTrainerId + '&v=349'); 
             }, 400);
         } else {
             showMsg('Código de acceso incorrecto. Por favor, verifícalo.');
@@ -473,7 +502,7 @@ async function doLogin() {
     }
 }
 </script>
-<script src="js/custom-recipes.js?v=129"></script>
-<script src="js/pwa-install.js?v=330"></script>
+<script src="js/custom-recipes.js?v=349"></script>
+<script src="js/pwa-install.js?v=349"></script>
 </body>
 </html>

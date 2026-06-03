@@ -1,6 +1,29 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
+    <script>
+        // Force PWA cache bust / reload
+        (function() {
+            const CURRENT_VERSION = '349';
+            const savedVersion = localStorage.getItem('app_version');
+            if (savedVersion !== CURRENT_VERSION) {
+                localStorage.setItem('app_version', CURRENT_VERSION);
+                if ('serviceWorker' in navigator) {
+                    navigator.serviceWorker.getRegistrations().then(function(registrations) {
+                        for (let registration of registrations) {
+                            registration.unregister();
+                        }
+                    }).catch(function(err) {
+                        console.warn('SW unregister failed:', err);
+                    }).finally(function() {
+                        window.location.reload(true);
+                    });
+                } else {
+                    window.location.reload(true);
+                }
+            }
+        })();
+    </script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Cargando... - Infinite Coach</title>
@@ -43,13 +66,13 @@
         try {
             if (window.location.hostname.includes('licencias.ingeniaia.es')) {
                 window.location.replace('admin-login.html');
-            } else if (localStorage.getItem('clientId')) {
-                window.location.replace('client-dashboard.html?v=332');
             } else if (localStorage.getItem('_trainerAuthed') === '1') {
                 const activeTrainerId = localStorage.getItem('activeTrainerId') || 'default';
                 window.location.replace('trainer-dashboard.html?t=' + activeTrainerId);
+            } else if (localStorage.getItem('clientId')) {
+                window.location.replace('client-dashboard.html?v=349');
             } else if (window.location.hostname.includes('infinitecoach.es')) {
-                window.location.replace('client-login.html?v=332');
+                window.location.replace('client-login.html?v=349');
             } else {
                 window.location.replace('trainer-login.html');
             }

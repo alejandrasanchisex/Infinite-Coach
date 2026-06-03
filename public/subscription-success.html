@@ -1,11 +1,34 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
+    <script>
+        // Force PWA cache bust / reload
+        (function() {
+            const CURRENT_VERSION = '349';
+            const savedVersion = localStorage.getItem('app_version');
+            if (savedVersion !== CURRENT_VERSION) {
+                localStorage.setItem('app_version', CURRENT_VERSION);
+                if ('serviceWorker' in navigator) {
+                    navigator.serviceWorker.getRegistrations().then(function(registrations) {
+                        for (let registration of registrations) {
+                            registration.unregister();
+                        }
+                    }).catch(function(err) {
+                        console.warn('SW unregister failed:', err);
+                    }).finally(function() {
+                        window.location.reload(true);
+                    });
+                } else {
+                    window.location.reload(true);
+                }
+            }
+        })();
+    </script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Suscripción Activa - Fitness App</title>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="styles/theme.css?v=330">
+    <link rel="stylesheet" href="styles/theme.css?v=350">
     <link rel="stylesheet" href="styles/components.css">
     <style>
         body {
@@ -41,7 +64,11 @@
         </button>
     </div>
 
-    <script src="js/data-models.js?v=330"></script>
+    <!-- Supabase SDK & Service -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="js/supabase-service.js?v=350"></script>
+
+    <script src="js/data-models.js?v=350"></script>
     <script>
         document.addEventListener('DOMContentLoaded', async () => {
             const params = new URLSearchParams(window.location.search);
@@ -49,23 +76,50 @@
             
             if (trainerId) {
                 const PLATFORM_KEY = 'saasFitnessPlatform';
-                const platform = JSON.parse(localStorage.getItem(PLATFORM_KEY) || '{"trainers":[]}');
+                
+                // 1. Fetch fresh config directly from Supabase to guarantee no data loss or overwrite
+                let platform = null;
+                if (window.SupabaseService) {
+                    window.SupabaseService.init();
+                    platform = await window.SupabaseService.getGlobalConfig();
+                }
+
+                // Fallback to local storage if Supabase is offline
+                if (!platform) {
+                    platform = JSON.parse(localStorage.getItem(PLATFORM_KEY) || '{"trainers":[]}');
+                }
+
+                if (!platform.trainers) platform.trainers = [];
                 const idx = platform.trainers.findIndex(t => t.id === trainerId);
                 
                 if (idx !== -1) {
-                    // Actualizar estado y fecha de expiración (+30 días)
+                    // 2. Synchronize payment and renewal dates (+30 days)
                     const now = new Date();
-                    platform.trainers[idx].status = 'active';
-                    platform.trainers[idx].lastPaymentDate = now.toLocaleDateString('es-ES');
+                    
+                    // Format dates as DD/MM/AAAA to match our database pattern
+                    const lastPayStr = `${now.getDate()}/${now.getMonth() + 1}/${now.getFullYear()}`;
                     
                     const expiry = new Date();
-                    expiry.setMonth(expiry.getMonth() + 1);
-                    platform.trainers[idx].expiryDate = expiry.toLocaleDateString('es-ES');
+                    expiry.setDate(now.getDate() + 30);
+                    const expiryStr = `${expiry.getDate()}/${expiry.getMonth() + 1}/${expiry.getFullYear()}`;
                     
+                    platform.trainers[idx].status = 'active';
+                    platform.trainers[idx].lastPaymentDate = lastPayStr;
+                    platform.trainers[idx].expiryDate = expiryStr;
+                    
+                    // 3. Save to LocalStorage
                     localStorage.setItem(PLATFORM_KEY, JSON.stringify(platform));
-                    console.log("Subscription updated for:", trainerId);
+                    console.log("Subscription updated locally for:", trainerId);
 
-                    // Sincronizar con Firebase si está listo
+                    // 4. Save and sync directly with Supabase Cloud
+                    if (window.SupabaseService) {
+                        const success = await window.SupabaseService.saveGlobalConfig(platform);
+                        if (success) {
+                            console.log("Subscription synchronized with Supabase Cloud successfully! ✅");
+                        }
+                    }
+                    
+                    // Fallback legacy Firebase sync
                     if (window.FirebaseService && window.FirebaseService.isReady) {
                         await window.FirebaseService.saveData('saasPlatform', 'config', platform);
                     }
@@ -73,5 +127,5 @@
             }
         });
     </script>
-    <script src="js/custom-recipes.js?v=129"></script></body>
+    <script src="js/custom-recipes.js?v=349"></script></body>
 </html>

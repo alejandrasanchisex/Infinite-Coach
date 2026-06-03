@@ -2,14 +2,37 @@
 <html lang="es">
 
 <head>
+    <script>
+        // Force PWA cache bust / reload
+        (function() {
+            const CURRENT_VERSION = '349';
+            const savedVersion = localStorage.getItem('app_version');
+            if (savedVersion !== CURRENT_VERSION) {
+                localStorage.setItem('app_version', CURRENT_VERSION);
+                if ('serviceWorker' in navigator) {
+                    navigator.serviceWorker.getRegistrations().then(function(registrations) {
+                        for (let registration of registrations) {
+                            registration.unregister();
+                        }
+                    }).catch(function(err) {
+                        console.warn('SW unregister failed:', err);
+                    }).finally(function() {
+                        window.location.reload(true);
+                    });
+                } else {
+                    window.location.reload(true);
+                }
+            }
+        })();
+    </script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Configuración - Fitness App</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="styles/theme.css?v=330">
-    <link rel="stylesheet" href="styles/components.css?v=318">
+    <link rel="stylesheet" href="styles/theme.css?v=350">
+    <link rel="stylesheet" href="styles/components.css?v=349">
     <style>
         .settings-section {
             margin-bottom: var(--spacing-xl);
@@ -90,14 +113,14 @@
                 </div>
                 <button class="menu-toggle" onclick="toggleMenu()">☰</button>
                 <ul class="nav-links" id="navLinks">
-                    <li><a href="trainer-dashboard.html?v=330" class="nav-link">Dashboard</a></li>
-                    <li><a href="trainer-clients.html?v=330" class="nav-link">Clientes</a></li>
-                    <li><a href="trainer-routines.html?v=330" class="nav-link">Rutinas</a></li>
-                    <li><a href="trainer-diets.html?v=330" class="nav-link">Dietas</a></li>
-                    <li><a href="trainer-feedbacks.html?v=330" class="nav-link">Revisiones</a></li>
-                    <li><a href="trainer-media.html?v=330" class="nav-link">Biblioteca</a></li>
-                    <li><a href="trainer-appointments.html?v=330" class="nav-link">Agenda</a></li>
-                    <li><a href="trainer-settings.html?v=330" class="nav-link active">Configuración</a></li>
+                    <li><a href="trainer-dashboard.html?v=349" class="nav-link">Dashboard</a></li>
+                    <li><a href="trainer-clients.html?v=349" class="nav-link">Clientes</a></li>
+                    <li><a href="trainer-routines.html?v=349" class="nav-link">Rutinas</a></li>
+                    <li><a href="trainer-diets.html?v=349" class="nav-link">Dietas</a></li>
+                    <li><a href="trainer-feedbacks.html?v=349" class="nav-link">Revisiones</a></li>
+                    <li><a href="trainer-media.html?v=349" class="nav-link">Biblioteca</a></li>
+                    <li><a href="trainer-appointments.html?v=349" class="nav-link">Agenda</a></li>
+                    <li><a href="trainer-settings.html?v=349" class="nav-link active">Configuración</a></li>
                     <li><a href="#" onclick="if(typeof AUTH !== 'undefined') { AUTH.signOut() } else { window.location.reload() }; return false;" class="nav-link" style="color:var(--error-color)">🚪 Salir</a></li>
                 </ul>
             </nav>
@@ -230,6 +253,9 @@
                                     <label class="checkbox-label">
                                         <input type="checkbox" id="clientShowMacros"> Mostrar Macros (App)
                                     </label>
+                                    <label class="checkbox-label">
+                                        <input type="checkbox" id="clientShowRIR"> Mostrar RIR / Intensidad (App)
+                                    </label>
                                 </div>
                             </div>
                             <div class="divider"></div>
@@ -255,6 +281,33 @@
 
                 <!-- Columna Derecha: Revisiones y Datos -->
                 <div class="flex-col gap-lg">
+                    <!-- Mi Plan SaaS -->
+                    <div id="saasLicenseCard" class="card shadow-sm" style="background: linear-gradient(135deg, rgba(0, 217, 255, 0.08) 0%, rgba(26, 26, 46, 0.6) 100%); border: 1px solid rgba(0, 217, 255, 0.3);">
+                        <div class="card-body p-md">
+                            <div class="text-sm font-bold primary-text mb-sm" style="color: var(--primary-color); display: flex; align-items: center; gap: 8px; font-weight: 700;">
+                                ⚡ Licencia Infinite Coach
+                            </div>
+                            <div class="flex-col gap-xs mb-sm">
+                                <div class="flex-row justify-between align-center" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                                    <span class="text-xs opacity-70" style="font-size: 0.8rem; opacity: 0.7;">Plan contratado:</span>
+                                    <span class="badge badge-primary text-xs font-bold" id="saasPlanBadge" style="background: var(--primary-color); color: #000; font-weight: 800; padding: 4px 8px; border-radius: 4px; font-size: 0.75rem;">Plan Basic</span>
+                                </div>
+                                <div class="flex-row justify-between mt-xs" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                                    <span class="text-xs opacity-70" style="font-size: 0.8rem; opacity: 0.7;">Renovación / Expiración:</span>
+                                    <span class="text-xs font-bold text-white" id="saasExpiryVal" style="font-size: 0.8rem; font-weight: 700; color: white;">18 de junio de 2026</span>
+                                </div>
+                                <div class="flex-row justify-between mt-xs" id="saasClientLimitRow" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                                    <span class="text-xs opacity-70" style="font-size: 0.8rem; opacity: 0.7;">Límite de clientes:</span>
+                                    <span class="text-xs font-bold text-white" id="saasClientLimitVal" style="font-size: 0.8rem; font-weight: 700; color: white;">... / 20 clientes</span>
+                                </div>
+                                <div class="flex-row justify-between mt-xs" style="display: flex; justify-content: space-between; align-items: center;">
+                                    <span class="text-xs opacity-70" style="font-size: 0.8rem; opacity: 0.7;">Estado:</span>
+                                    <span class="text-xs font-bold" id="saasStatusVal" style="font-size: 0.8rem; font-weight: 700; color: #4CAF50;">🟢 Activo</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
                     <!-- Resumen / Estadísticas -->
                     <div class="card shadow-sm" style="background: linear-gradient(135deg, rgba(255, 107, 107, 0.05) 0%, rgba(26, 26, 46, 0.5) 100%); border-color: rgba(255, 107, 107, 0.2);">
                         <div class="card-body p-md">
@@ -454,17 +507,17 @@
 
     <!-- Supabase SDK & Service -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="js/supabase-service.js?v=330"></script>
+    <script src="js/supabase-service.js?v=350"></script>
 
     <!-- UI Scripts -->
-    <script src="js/config.js?v=330"></script>
-    <script src="js/auth.js?v=330"></script>
-    <script src="js/sheets.js?v=330"></script>
-    <script src="js/data-models.js?v=330"></script>
-    <script src="js/cloud-storage.js?v=330"></script>
-    <script src="js/utils.js?v=318"></script>
+    <script src="js/config.js?v=350"></script>
+    <script src="js/auth.js?v=349"></script>
+    <script src="js/sheets.js?v=349"></script>
+    <script src="js/data-models.js?v=350"></script>
+    <script src="js/cloud-storage.js?v=349"></script>
+    <script src="js/utils.js?v=350"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
-    <script src="js/excel-manager.js?v=330"></script>
+    <script src="js/excel-manager.js?v=349"></script>
     <script>
         // Global Variables
         let feedbackQuestions = [];
@@ -500,9 +553,118 @@
                     }
                     currentLogoBase64 = b.logo;
                     loadSettings();
+                    renderSaaSPlanInfo();
                 }
             } catch (err) {
                 console.error("Error initSettingsUI:", err);
+            }
+        }
+
+        async function renderSaaSPlanInfo() {
+            try {
+                const activeId = localStorage.getItem('activeTrainerId') || 'default';
+                const trainerEmail = localStorage.getItem('_trainerEmail');
+                
+                // 1. Fetch directly from Supabase (to guarantee it's always fresh and works on reload/fresh cache)
+                let platformData = null;
+                if (window.SupabaseService) {
+                    window.SupabaseService.init();
+                    platformData = await window.SupabaseService.getGlobalConfig();
+                }
+
+                // 2. Fallback to LocalStorage if Supabase failed or was not loaded
+                if (!platformData) {
+                    const platformRaw = localStorage.getItem('saasFitnessPlatform');
+                    if (platformRaw) {
+                        platformData = JSON.parse(platformRaw);
+                    }
+                }
+
+                // 3. Keep LocalStorage in sync if we succeeded in fetching
+                if (platformData) {
+                    localStorage.setItem('saasFitnessPlatform', JSON.stringify(platformData));
+                }
+
+                const trainers = platformData ? (platformData.trainers || []) : [];
+                
+                // Extremely robust lookup: by ID, email, or domain-level fallback for ASTeam
+                let t = trainers.find(tr => 
+                    tr.id === activeId || 
+                    (trainerEmail && tr.email && tr.email.toLowerCase() === trainerEmail.toLowerCase())
+                );
+                
+                if (!t && (activeId === 't-w0iybl7qb' || 
+                           (trainerEmail && (trainerEmail.toLowerCase() === 'ingenia@ingeniaia.es' || trainerEmail.toLowerCase() === 'alejandra.asteam@gmail.com')) ||
+                           (typeof window !== 'undefined' && window.location.hostname.includes('infinitecoach.es')))) {
+                    t = trainers.find(tr => tr.id === 't-w0iybl7qb' || tr.email === 'alejandra.asteam@gmail.com' || tr.email === 'ingenia@ingeniaia.es');
+                }
+
+                // Bulletproof Fallback: if data can't be fetched or trainer not found, default to ASTeam Plan Basic
+                if (!t) {
+                    console.warn("Trainer not found in saasFitnessPlatform trainers list, using default plan info:", activeId);
+                    t = {
+                        id: 't-w0iybl7qb',
+                        name: 'Alejandra ASTeam',
+                        plan: 'Plan Basic',
+                        email: 'alejandra.asteam@gmail.com',
+                        status: 'active',
+                        expiryDate: '18/6/2026'
+                    };
+                }
+
+                const saasCard = document.getElementById('saasLicenseCard');
+                if (saasCard) {
+                    saasCard.style.display = 'block';
+                    
+                    const planBadge = document.getElementById('saasPlanBadge');
+                    if (planBadge) planBadge.textContent = t.plan || 'Plan Basic';
+                    
+                    const expiryVal = document.getElementById('saasExpiryVal');
+                    if (expiryVal) {
+                        if (t.expiryDate) {
+                            const parts = t.expiryDate.split('/');
+                            if (parts.length === 3) {
+                                const d = new Date(parts[2], parts[1] - 1, parts[0]);
+                                expiryVal.textContent = d.toLocaleDateString('es-ES', { day: '2-digit', month: 'long', year: 'numeric' });
+                            } else {
+                                expiryVal.textContent = t.expiryDate;
+                            }
+                        } else {
+                            expiryVal.textContent = '18 de junio de 2026';
+                        }
+                    }
+                    
+                    const clientLimitRow = document.getElementById('saasClientLimitRow');
+                    const clientLimitVal = document.getElementById('saasClientLimitVal');
+                    if (clientLimitRow && clientLimitVal) {
+                        if (t.plan === 'Plan Basic') {
+                            clientLimitRow.style.display = 'flex';
+                            const allClients = window.Clients ? window.Clients.getAll() : [];
+                            const activeCount = allClients.filter(c => c.status === 'active').length;
+                            clientLimitVal.textContent = `${activeCount} / 20 clientes`;
+                            if (activeCount >= 20) {
+                                clientLimitVal.style.color = '#ff6b6b';
+                            } else {
+                                clientLimitVal.style.color = 'white';
+                            }
+                        } else {
+                            clientLimitRow.style.display = 'none';
+                        }
+                    }
+
+                    const statusVal = document.getElementById('saasStatusVal');
+                    if (statusVal) {
+                        if (t.status === 'active') {
+                            statusVal.textContent = '🟢 Activo';
+                            statusVal.style.color = '#4CAF50';
+                        } else {
+                            statusVal.textContent = '🔴 Expirado / Suspendido';
+                            statusVal.style.color = '#ff6b6b';
+                        }
+                    }
+                }
+            } catch (err) {
+                console.warn('Error in renderSaaSPlanInfo:', err);
             }
         }
 
@@ -534,10 +696,11 @@
             if(document.getElementById('pdfShowCalories')) document.getElementById('pdfShowCalories').checked = pdf.showCalories;
             if(document.getElementById('pdfShowMacros')) document.getElementById('pdfShowMacros').checked = pdf.showMacros;
 
-            const clientSettings = b.clientSettings || { showExerciseVideos: true, showCalories: true, showMacros: true };
+            const clientSettings = b.clientSettings || { showExerciseVideos: true, showCalories: true, showMacros: true, showRIR: true };
             if (document.getElementById('clientShowVideos')) document.getElementById('clientShowVideos').checked = clientSettings.showExerciseVideos;
             if (document.getElementById('clientShowCalories')) document.getElementById('clientShowCalories').checked = clientSettings.showCalories !== false;
             if (document.getElementById('clientShowMacros')) document.getElementById('clientShowMacros').checked = clientSettings.showMacros !== false;
+            if (document.getElementById('clientShowRIR')) document.getElementById('clientShowRIR').checked = clientSettings.showRIR !== false;
 
             const trainerSettings = b.trainerSettings || { autoSaveDietTemplate: false };
             if (document.getElementById('autoSaveDietTemplate')) document.getElementById('autoSaveDietTemplate').checked = trainerSettings.autoSaveDietTemplate;
@@ -614,7 +777,8 @@
                         ...(b.clientSettings || {}),
                         showExerciseVideos: document.getElementById('clientShowVideos').checked,
                         showCalories: document.getElementById('clientShowCalories').checked,
-                        showMacros: document.getElementById('clientShowMacros').checked
+                        showMacros: document.getElementById('clientShowMacros').checked,
+                        showRIR: document.getElementById('clientShowRIR').checked
                     }
                 };
                 
@@ -658,7 +822,7 @@
             const id = document.getElementById('newPaymentId').value.trim();
             const note = document.getElementById('newPaymentNote').value.trim();
             
-            if (!id) {
+            if (!id && type !== 'Efectivo') {
                 showToast('Introduce el dato o enlace de pago', 'warning');
                 return;
             }
@@ -1079,51 +1243,6 @@
             }, 600);
         }
 
-        window.renderPaymentMethods = function() {
-            const container = document.getElementById('paymentMethodsList');
-            if (!container) return;
-            
-            if (window.activePaymentMethods.length === 0) {
-                container.innerHTML = '<p class="text-xs text-muted italic">No has añadido métodos de pago aún.</p>';
-                return;
-            }
-
-            container.innerHTML = window.activePaymentMethods.map((m, index) => `
-                <div class="flex-between p-sm align-center" style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.05); border-radius: 6px;">
-                    <div>
-                        <span class="badge badge-primary" style="margin-right: 8px;">${m.type}</span>
-                        <span class="text-sm font-bold">${m.id || ''}</span>
-                        ${m.note ? `<p class="text-xs opacity-60 mt-xs">${m.note}</p>` : ''}
-                    </div>
-                    <button class="btn btn-xs btn-outline" style="color: var(--error);" onclick="removePaymentMethod(${index})">🗑️</button>
-                </div>
-            `).join('');
-        };
-
-        window.addPaymentMethod = function() {
-            const type = document.getElementById('newPaymentType').value;
-            const id = document.getElementById('newPaymentId').value.trim();
-            const note = document.getElementById('newPaymentNote').value.trim();
-
-            if (!id && type !== 'Efectivo') {
-                showToast('Introduce un identificador o enlace', 'warning');
-                return;
-            }
-
-            window.activePaymentMethods.push({ type, id, note });
-            
-            // Limpiar inputs
-            document.getElementById('newPaymentId').value = '';
-            document.getElementById('newPaymentNote').value = '';
-            
-            renderPaymentMethods();
-        };
-
-        window.removePaymentMethod = function(index) {
-            window.activePaymentMethods.splice(index, 1);
-            renderPaymentMethods();
-        };
-
         window.savePaymentSettings = function() {
             const b = BrandConfig.get();
             b.paymentMethods = [...window.activePaymentMethods];
@@ -1134,6 +1253,12 @@
                     method: b.paymentMethods[0].type,
                     id: b.paymentMethods[0].id,
                     instructions: b.paymentMethods[0].note || ''
+                };
+            } else {
+                b.paymentSettings = {
+                    method: 'none',
+                    id: '',
+                    instructions: ''
                 };
             }
 
@@ -1158,7 +1283,7 @@
                 <div class="card p-sm flex-between align-center" style="background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.05); margin-bottom: 5px;">
                     <div style="flex: 1;">
                         <input type="text" class="form-input form-input-sm mb-xs" placeholder="Nombre (Ej: Plan Mensual)" value="${plan.name}" onchange="updateStripePlan(${index}, 'name', this.value)">
-                        <input type="text" class="form-input form-input-sm" placeholder="Stripe Price ID (price_...)" value="${plan.priceId}" onchange="updateStripePlan(${index}, 'priceId', this.value)">
+                        <input type="text" class="form-input form-input-sm" placeholder="Stripe Price ID (price_...) o Enlace de Pago (https://buy.stripe.com/...)" value="${plan.priceId}" onchange="updateStripePlan(${index}, 'priceId', this.value)">
                     </div>
                     <button class="btn btn-xs btn-outline" style="color: #ff6b6b; border-color: rgba(255,107,107,0.2); margin-left: 10px;" onclick="removeStripePlan(${index})">🗑️</button>
                 </div>
@@ -1188,7 +1313,7 @@
             b.stripeSettings = {
                 publicKey: pk,
                 secretKey: sk,
-                plans: window.activeStripePlans ? window.activeStripePlans.filter(p => p.priceId && p.priceId.startsWith('price_')) : []
+                plans: window.activeStripePlans ? window.activeStripePlans.filter(p => p.priceId && (p.priceId.startsWith('price_') || p.priceId.startsWith('http'))) : []
             };
 
             BrandConfig.set(b);
@@ -1333,6 +1458,6 @@
             if (typeof loadSettings === 'function') loadSettings();
         }
     </script>
-    <script src="js/custom-recipes.js?v=129"></script></body>
+    <script src="js/custom-recipes.js?v=349"></script></body>
 
 </html>

@@ -3,13 +3,36 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script>
+        // Force PWA cache bust / reload
+        (function() {
+            const CURRENT_VERSION = '349';
+            const savedVersion = localStorage.getItem('app_version');
+            if (savedVersion !== CURRENT_VERSION) {
+                localStorage.setItem('app_version', CURRENT_VERSION);
+                if ('serviceWorker' in navigator) {
+                    navigator.serviceWorker.getRegistrations().then(function(registrations) {
+                        for (let registration of registrations) {
+                            registration.unregister();
+                        }
+                    }).catch(function(err) {
+                        console.warn('SW unregister failed:', err);
+                    }).finally(function() {
+                        window.location.reload(true);
+                    });
+                } else {
+                    window.location.reload(true);
+                }
+            }
+        })();
+    </script>
     <title>Evolución - Infinite Coach</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="styles/theme.css?v=330">
-    <link rel="stylesheet" href="styles/components.css?v=330">
-    <link rel="stylesheet" href="styles/mobile.css?v=118">
+    <link rel="stylesheet" href="styles/theme.css?v=350">
+    <link rel="stylesheet" href="styles/components.css?v=349">
+    <link rel="stylesheet" href="styles/mobile.css?v=349">
     <style>
         .evo-tab { display: none !important; }
         .evo-tab.active { display: block !important; }
@@ -87,10 +110,10 @@
                     <span id="brandName">Infinite Coach</span>
                 </div>
                 <ul class="nav-links">
-                    <li><a href="client-dashboard.html?v=330" class="nav-link">Inicio</a></li>
-                    <li><a href="client-profile.html?v=330" class="nav-link">Ficha</a></li>
+                    <li><a href="client-dashboard.html?v=349" class="nav-link">Inicio</a></li>
+                    <li><a href="client-profile.html?v=349" class="nav-link">Ficha</a></li>
 
-                    <li><a href="client-login.html?v=330" class="nav-link">Salir</a></li>
+                    <li><a href="client-login.html?v=349" class="nav-link">Salir</a></li>
                 </ul>
                 <button class="menu-toggle" onclick="toggleMenu()" style="margin-left: auto;">☰</button>
             </nav>
@@ -149,7 +172,8 @@
                     </div>
                     
                     <div class="flex gap-sm mb-lg" style="flex-wrap: wrap;">
-                        <input type="text" id="prSearch" class="form-input" style="flex: 2; min-width: 150px; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.1);" placeholder="Buscar ejercicio..." oninput="renderPRs()">
+                        <input type="text" id="prSearch" list="prSuggestions" class="form-input" style="flex: 2; min-width: 150px; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.1);" placeholder="Buscar ejercicio..." oninput="renderPRs()">
+                        <datalist id="prSuggestions"></datalist>
                         <select id="prMuscleFilter" class="form-select" style="flex: 1; min-width: 120px; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.1);" onchange="renderPRs()">
                             <option value="">Grupo Muscular</option>
                             <option value="pecho">Pecho</option>
@@ -173,12 +197,12 @@
 
     <!-- Supabase SDK & Service -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="js/supabase-service.js?v=330"></script>
+    <script src="js/supabase-service.js?v=350"></script>
 
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script src="js/config.js?v=118"></script>
-    <script src="js/data-models.js?v=330"></script>
-    <script src="js/utils.js?v=118"></script>
+    <script src="js/config.js?v=350"></script>
+    <script src="js/data-models.js?v=350"></script>
+    <script src="js/utils.js?v=350"></script>
     <script>
         const cId = sessionStorage.getItem('clientId') || localStorage.getItem('clientId');
         if (!cId) {
@@ -217,6 +241,14 @@
                 window.location.replace('client-login.html');
                 return;
             }
+
+            // Redireccionar al Dashboard si está inactivo o tiene pagos pendientes (Opción 3)
+            const isInactive = fetchedClient.status === 'inactive';
+            const isUnpaid = fetchedClient.paymentStatus !== 'paid' || fetchedClient.status === 'unpaid';
+            if (isInactive || isUnpaid) {
+                window.location.replace('client-dashboard.html');
+                return;
+            }
             c = fetchedClient;
             if (c.name) document.getElementById('pageTitle').textContent = 'Progreso de ' + c.name;
 
@@ -225,6 +257,38 @@
 
             showTab('t1');
         });
+
+        function populatePRSuggestions() {
+            const dl = document.getElementById('prSuggestions');
+            if (!dl) return;
+
+            const exercisesSet = new Set();
+            let activeBlock = bks.find(b => b.status === 'active');
+            if (!activeBlock) {
+                activeBlock = bks.find(b => b.status === 'planned') || bks[0];
+            }
+
+            if (activeBlock && activeBlock.weeks) {
+                activeBlock.weeks.forEach(week => {
+                    if (week && week.days) {
+                        week.days.forEach(day => {
+                            if (day && day.exercises) {
+                                day.exercises.forEach(ex => {
+                                    if (ex && ex.name) {
+                                        exercisesSet.add(ex.name.trim());
+                                    }
+                                });
+                            }
+                        });
+                    }
+                });
+            }
+
+            dl.innerHTML = Array.from(exercisesSet)
+                .sort()
+                .map(name => `<option value="${name}"></option>`)
+                .join('');
+        }
 
         function showTab(tabId) {
             console.log('Mostrando pestaña:', tabId);
@@ -240,7 +304,10 @@
             });
             
             if (tabId === 't1') renderEvo();
-            if (tabId === 't2') renderPRs();
+            if (tabId === 't2') {
+                populatePRSuggestions();
+                renderPRs();
+            }
             if (tabId === 't3') renderPhotos();
         }
 
@@ -448,5 +515,5 @@
         }
 
     </script>
-    <script src="js/custom-recipes.js?v=129"></script></body>
+    <script src="js/custom-recipes.js?v=349"></script></body>
 </html>

@@ -2,10 +2,33 @@
 <html lang="es">
 
 <head>
+    <script>
+        // Force PWA cache bust / reload
+        (function() {
+            const CURRENT_VERSION = '349';
+            const savedVersion = localStorage.getItem('app_version');
+            if (savedVersion !== CURRENT_VERSION) {
+                localStorage.setItem('app_version', CURRENT_VERSION);
+                if ('serviceWorker' in navigator) {
+                    navigator.serviceWorker.getRegistrations().then(function(registrations) {
+                        for (let registration of registrations) {
+                            registration.unregister();
+                        }
+                    }).catch(function(err) {
+                        console.warn('SW unregister failed:', err);
+                    }).finally(function() {
+                        window.location.reload(true);
+                    });
+                } else {
+                    window.location.reload(true);
+                }
+            }
+        })();
+    </script>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Gestión de Clientes - ASTeam</title>
-  <link rel="stylesheet" href="styles/theme.css?v=330">
+  <link rel="stylesheet" href="styles/theme.css?v=350">
   <link rel="stylesheet" href="styles/components.css">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 </head>
@@ -35,14 +58,14 @@
           </div>
           <button class="menu-toggle" onclick="toggleMenu()">☰</button>
           <ul class="nav-links" id="navLinks">
-            <li><a href="trainer-dashboard.html?v=330" class="nav-link">Dashboard</a></li>
-            <li><a href="trainer-clients.html?v=330" class="nav-link active">Clientes</a></li>
-            <li><a href="trainer-routines.html?v=330" class="nav-link">Rutinas</a></li>
-            <li><a href="trainer-diets.html?v=330" class="nav-link">Dietas</a></li>
-            <li><a href="trainer-feedbacks.html?v=330" class="nav-link">Revisiones</a></li>
-            <li><a href="trainer-media.html?v=330" class="nav-link">Biblioteca</a></li>
-            <li><a href="trainer-appointments.html?v=330" class="nav-link">Agenda</a></li>
-            <li><a href="trainer-settings.html?v=330" class="nav-link">Configuración</a></li>
+            <li><a href="trainer-dashboard.html?v=349" class="nav-link">Dashboard</a></li>
+            <li><a href="trainer-clients.html?v=349" class="nav-link active">Clientes</a></li>
+            <li><a href="trainer-routines.html?v=349" class="nav-link">Rutinas</a></li>
+            <li><a href="trainer-diets.html?v=349" class="nav-link">Dietas</a></li>
+            <li><a href="trainer-feedbacks.html?v=349" class="nav-link">Revisiones</a></li>
+            <li><a href="trainer-media.html?v=349" class="nav-link">Biblioteca</a></li>
+            <li><a href="trainer-appointments.html?v=349" class="nav-link">Agenda</a></li>
+            <li><a href="trainer-settings.html?v=349" class="nav-link">Configuración</a></li>
             <li><a href="#" onclick="if(typeof AUTH !== 'undefined') { AUTH.signOut() } else { window.location.reload() }; return false;" class="nav-link" style="color:var(--error-color)">🚪 Salir</a></li>
           </ul>
         </nav>
@@ -133,14 +156,14 @@
 
   <!-- Supabase SDK & Service -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script src="js/supabase-service.js?v=330"></script>
+  <script src="js/supabase-service.js?v=350"></script>
 
-  <script src="js/config.js?v=330"></script>
-  <script src="js/auth.js?v=330"></script>
-  <script src="js/sheets.js?v=330"></script>
-  <script src="js/data-models.js?v=330"></script>
-  <script src="js/custom-exercises.js?v=330"></script>
-  <script src="js/utils.js?v=330"></script>
+  <script src="js/config.js?v=350"></script>
+  <script src="js/auth.js?v=349"></script>
+  <script src="js/sheets.js?v=349"></script>
+  <script src="js/data-models.js?v=350"></script>
+  <script src="js/custom-exercises.js?v=350"></script>
+  <script src="js/utils.js?v=350"></script>
   <script>
     const daysMapShort = { '1': 'Lun', '2': 'Mar', '3': 'Mié', '4': 'Jue', '5': 'Vie', '6': 'Sáb', '7': 'Dom' };
 
@@ -234,6 +257,29 @@
     }
 
     window.abrirModalNuevo = function() {
+      // ENFORCEMENT OF 20-CLIENT LIMIT FOR PLAN BASIC
+      try {
+        const allClients = window.Clients ? window.Clients.getAll() : [];
+        const activeClients = allClients.filter(c => c.status === 'active');
+        
+        const activeId = localStorage.getItem('activeTrainerId') || 'default';
+        const platformRaw = localStorage.getItem('saasFitnessPlatform');
+        let trainerPlan = null;
+        if (platformRaw) {
+            const platformData = JSON.parse(platformRaw);
+            const trainers = platformData.trainers || [];
+            const t = trainers.find(tr => tr.id === activeId);
+            if (t) trainerPlan = t.plan;
+        }
+
+        if (trainerPlan === 'Plan Basic' && activeClients.length >= 20) {
+            showToast('⚠️ Límite alcanzado: El Plan Basic está limitado a 20 clientes activos. Por favor, actualiza al Plan Pro para tener clientes ilimitados.', 'error');
+            return;
+        }
+      } catch (err) {
+        console.warn('Error checking client limit:', err);
+      }
+
       console.log('Abriendo modal de nuevo cliente...');
       showModal('Añadir Nuevo Cliente', `
         <div class="form-group"><label class="form-label">Nombre Completo *</label><input type="text" id="c_name" class="form-input" placeholder="Nombre y apellidos"></div>
@@ -258,6 +304,30 @@
     window.procesarNuevo = function () {
       const name = document.getElementById('c_name').value;
       if (!name) return showToast("El nombre es obligatorio", "error");
+
+      // ENFORCEMENT OF 20-CLIENT LIMIT FOR PLAN BASIC (Double protection)
+      try {
+        const allClients = window.Clients ? window.Clients.getAll() : [];
+        const activeClients = allClients.filter(c => c.status === 'active');
+        
+        const activeId = localStorage.getItem('activeTrainerId') || 'default';
+        const platformRaw = localStorage.getItem('saasFitnessPlatform');
+        let trainerPlan = null;
+        if (platformRaw) {
+            const platformData = JSON.parse(platformRaw);
+            const trainers = platformData.trainers || [];
+            const t = trainers.find(tr => tr.id === activeId);
+            if (t) trainerPlan = t.plan;
+        }
+
+        if (trainerPlan === 'Plan Basic' && activeClients.length >= 20) {
+            showToast('⚠️ Límite alcanzado: El Plan Basic está limitado a 20 clientes activos. Por favor, actualiza al Plan Pro para tener clientes ilimitados.', 'error');
+            window.closeModal();
+            return;
+        }
+      } catch (err) {
+        console.warn('Error checking client limit:', err);
+      }
 
       const clientData = {
         name: name,
@@ -354,6 +424,6 @@
       if (typeof window.dibujarTabla === 'function') window.dibujarTabla();
     }
   </script>
-    <script src="js/custom-recipes.js?v=129"></script></body>
+    <script src="js/custom-recipes.js?v=349"></script></body>
 
 </html>

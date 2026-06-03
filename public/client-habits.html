@@ -4,13 +4,36 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script>
+        // Force PWA cache bust / reload
+        (function() {
+            const CURRENT_VERSION = '349';
+            const savedVersion = localStorage.getItem('app_version');
+            if (savedVersion !== CURRENT_VERSION) {
+                localStorage.setItem('app_version', CURRENT_VERSION);
+                if ('serviceWorker' in navigator) {
+                    navigator.serviceWorker.getRegistrations().then(function(registrations) {
+                        for (let registration of registrations) {
+                            registration.unregister();
+                        }
+                    }).catch(function(err) {
+                        console.warn('SW unregister failed:', err);
+                    }).finally(function() {
+                        window.location.reload(true);
+                    });
+                } else {
+                    window.location.reload(true);
+                }
+            }
+        })();
+    </script>
     <title>Mis Hábitos - Infinite Coach</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="styles/theme.css?v=330">
-    <link rel="stylesheet" href="styles/components.css">
-    <link rel="stylesheet" href="styles/mobile.css">
+    <link rel="stylesheet" href="styles/theme.css?v=350">
+    <link rel="stylesheet" href="styles/components.css?v=349">
+    <link rel="stylesheet" href="styles/mobile.css?v=349">
     <link rel="manifest" href="manifest.json">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -90,10 +113,10 @@
                     <span id="brandName">Infinite Coach</span>
                 </div>
                 <ul class="nav-links" id="navLinks">
-                    <li><a href="client-dashboard.html?v=330" class="nav-link">Inicio</a></li>
-                    <li><a href="client-profile.html?v=330" class="nav-link">Ficha Técnica</a></li>
+                    <li><a href="client-dashboard.html?v=349" class="nav-link">Inicio</a></li>
+                    <li><a href="client-profile.html?v=349" class="nav-link">Ficha Técnica</a></li>
 
-                    <li><a href="client-login.html?v=330" class="nav-link">Salir</a></li>
+                    <li><a href="client-login.html?v=349" class="nav-link">Salir</a></li>
                 </ul>
                 <button class="menu-toggle" onclick="toggleMenu()" style="margin-left: auto;">☰</button>
             </nav>
@@ -104,7 +127,7 @@
     <main class="main-content">
         <div class="container">
             <div class="flex-between align-center mb-lg">
-                <a href="client-dashboard.html?v=330" class="btn btn-sm btn-secondary" style="border-radius: 50px; padding: 8px 15px;">
+                <a href="client-dashboard.html?v=349" class="btn btn-sm btn-secondary" style="border-radius: 50px; padding: 8px 15px;">
                     ← Volver
                 </a>
                 <h1 style="margin: 0; font-size: 1.5rem;">Hábitos Diarios</h1>
@@ -189,11 +212,11 @@
 
     <!-- Supabase SDK & Service -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="js/supabase-service.js?v=330"></script>
+    <script src="js/supabase-service.js?v=350"></script>
 
-    <script src="js/config.js?v=330"></script>
-    <script src="js/data-models.js?v=330"></script>
-    <script src="js/utils.js?v=330"></script>
+    <script src="js/config.js?v=350"></script>
+    <script src="js/data-models.js?v=350"></script>
+    <script src="js/utils.js?v=350"></script>
     <script>
         const clientId = sessionStorage.getItem('clientId') || localStorage.getItem('clientId');
         if (!clientId) { 
@@ -223,6 +246,14 @@
                 localStorage.removeItem('clientId');
                 sessionStorage.removeItem('clientId');
                 window.location.replace('client-login.html');
+                return;
+            }
+
+            // Redireccionar al Dashboard si está inactivo o tiene pagos pendientes (Opción 3)
+            const isInactive = client.status === 'inactive';
+            const isUnpaid = client.paymentStatus !== 'paid' || client.status === 'unpaid';
+            if (isInactive || isUnpaid) {
+                window.location.replace('client-dashboard.html');
                 return;
             }
 
@@ -261,6 +292,14 @@
                     Habits.save(clientId, todayHabits);
                     loadHabits();
                     
+                    // Sincronizar pasos con Supabase
+                    const _tid = window.activeTrainerId || localStorage.getItem('activeTrainerId');
+                    if (window.SupabaseService && _tid && _tid !== 'default' && _tid !== 'admin') {
+                        window.SupabaseService.init();
+                        window.SupabaseService.saveTrainerData(_tid, window.getData())
+                            .catch(e => console.warn('Supabase sync error (steps):', e));
+                    }
+
                     // Si se está mostrando el historial, recargarlo
                     if (typeof loadHistory === 'function') loadHistory();
                     
@@ -480,17 +519,28 @@
             ]);
         }
 
-        window.saveHabit = function(type) {
+        window.saveHabit = async function(type) {
             const val = parseFloat(document.getElementById('habitInput').value) || 0;
             const h = Habits.getToday(clientId) || { water: 0, steps: 0, sleep: 0 };
             h[type] = val;
             Habits.save(clientId, h);
             loadHabits();
             window.closeModal();
+
+            // Sincronizar con Supabase garantizado
+            const _tid = window.activeTrainerId || localStorage.getItem('activeTrainerId');
+            if (window.SupabaseService && _tid && _tid !== 'default' && _tid !== 'admin') {
+                try {
+                    window.SupabaseService.init();
+                    await window.SupabaseService.saveTrainerData(_tid, window.getData());
+                    console.log('✅ Hábito sincronizado con Supabase');
+                } catch(e) { console.warn('Supabase sync error (habit):', e); }
+            }
+
             showToast('¡Registro guardado!', 'success');
         }
 
         
     </script>
-    <script src="js/custom-recipes.js?v=129"></script></body>
+    <script src="js/custom-recipes.js?v=349"></script></body>
 </html>

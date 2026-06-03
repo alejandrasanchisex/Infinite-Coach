@@ -4,13 +4,36 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script>
+        // Force PWA cache bust / reload
+        (function() {
+            const CURRENT_VERSION = '349';
+            const savedVersion = localStorage.getItem('app_version');
+            if (savedVersion !== CURRENT_VERSION) {
+                localStorage.setItem('app_version', CURRENT_VERSION);
+                if ('serviceWorker' in navigator) {
+                    navigator.serviceWorker.getRegistrations().then(function(registrations) {
+                        for (let registration of registrations) {
+                            registration.unregister();
+                        }
+                    }).catch(function(err) {
+                        console.warn('SW unregister failed:', err);
+                    }).finally(function() {
+                        window.location.reload(true);
+                    });
+                } else {
+                    window.location.reload(true);
+                }
+            }
+        })();
+    </script>
     <title>Revisión Semanal - Infinite Coach</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="styles/theme.css?v=330">
-    <link rel="stylesheet" href="styles/components.css?v=318">
-    <link rel="stylesheet" href="styles/mobile.css?v=318">
+    <link rel="stylesheet" href="styles/theme.css?v=350">
+    <link rel="stylesheet" href="styles/components.css?v=349">
+    <link rel="stylesheet" href="styles/mobile.css?v=349">
     <link rel="manifest" href="manifest.json">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -77,10 +100,10 @@
                     <span id="brandName">Infinite Coach</span>
                 </div>
                 <ul class="nav-links" id="navLinks">
-                    <li><a href="client-dashboard.html?v=330" class="nav-link">Inicio</a></li>
-                    <li><a href="client-profile.html?v=330" class="nav-link">Ficha Técnica</a></li>
+                    <li><a href="client-dashboard.html?v=349" class="nav-link">Inicio</a></li>
+                    <li><a href="client-profile.html?v=349" class="nav-link">Ficha Técnica</a></li>
 
-                    <li><a href="client-login.html?v=330" class="nav-link">Salir</a></li>
+                    <li><a href="client-login.html?v=349" class="nav-link">Salir</a></li>
                 </ul>
                 <button class="menu-toggle" onclick="toggleMenu()" style="margin-left: auto;">☰</button>
             </nav>
@@ -264,11 +287,11 @@
 
     <!-- Supabase SDK & Service -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="js/supabase-service.js?v=330"></script>
+    <script src="js/supabase-service.js?v=350"></script>
 
-    <script src="js/data-models.js?v=330"></script>
-    <script src="js/cloud-storage.js?v=2"></script>
-    <script src="js/utils.js?v=318"></script>
+    <script src="js/data-models.js?v=350"></script>
+    <script src="js/cloud-storage.js?v=349"></script>
+    <script src="js/utils.js?v=350"></script>
     <script>
         const clientId = sessionStorage.getItem('clientId') || localStorage.getItem('clientId');
         if (!clientId) {
@@ -310,6 +333,14 @@
                 return;
             }
 
+            // Redireccionar al Dashboard si está inactivo o tiene pagos pendientes (Opción 3)
+            const isInactive = client.status === 'inactive';
+            const isUnpaid = client.paymentStatus !== 'paid' || client.status === 'unpaid';
+            if (isInactive || isUnpaid) {
+                window.location.replace('client-dashboard.html');
+                return;
+            }
+
             if (client) {
                 const avatar = document.getElementById('clientProfileAvatar');
                 if (avatar) {
@@ -327,8 +358,13 @@
             const fab = document.getElementById('whatsappFab');
             if (fab && brand && client) {
                 const message = `Hola ${brand.name}, soy ${client.name}. Tengo una consulta.`;
-                fab.href = generateWhatsAppLink(brand.whatsapp, message);
-                fab.target = '_blank';
+                const link = generateWhatsAppLink(brand.whatsapp, message);
+                fab.href = link;
+                fab.removeAttribute('target');
+                fab.onclick = function(e) {
+                    e.preventDefault();
+                    window.location.href = link;
+                };
             }
 
             // Initialize Form
@@ -499,6 +535,27 @@
                     }
                 }
 
+                // ── SINCRONIZACIÓN GARANTIZADA CON SUPABASE ──────────────────
+                // Esperamos a que los datos lleguen a la nube ANTES de mostrar éxito.
+                // Así el entrenador los verá en tiempo real en su panel de Revisiones.
+                const currentTrainerId = window.activeTrainerId || localStorage.getItem('activeTrainerId');
+                console.log('📤 Subiendo revisión a Supabase para trainerId:', currentTrainerId);
+
+                if (window.SupabaseService && currentTrainerId && currentTrainerId !== 'default' && currentTrainerId !== 'admin') {
+                    try {
+                        window.SupabaseService.init();
+                        const latestData = window.getData();
+                        const ok = await window.SupabaseService.saveTrainerData(currentTrainerId, latestData);
+                        if (ok) {
+                            console.log('✅ Revisión sincronizada con Supabase correctamente.');
+                        } else {
+                            console.warn('⚠️ La revisión se guardó localmente pero no pudo subir a la nube.');
+                        }
+                    } catch (syncErr) {
+                        console.error('❌ Error sincronizando con Supabase:', syncErr);
+                    }
+                }
+
                 showToast('Revisión enviada correctamente', 'success');
                 renderSuccessState();
 
@@ -525,6 +582,11 @@
                 const lastDate = new Date(lastFb.date);
                 const diffDays = (today - lastDate) / (1000 * 60 * 60 * 24);
                 if (diffDays < 6) alreadySent = true; // Block for 6 days after successful send
+            }
+
+            // Master Bypass for re-submission
+            if (sessionStorage.getItem('bypassFeedbackBlock') === 'true') {
+                alreadySent = false;
             }
 
             // Move subtitle logic BEFORE early returns to ensure it always updates
@@ -577,21 +639,111 @@
 
         function renderSuccessState() {
             const formCard = document.querySelector('#feedbackForm').closest('.card');
-            formCard.innerHTML = `
-                <div class="empty-state" style="padding: 50px 20px; text-align: center;">
-                    <div class="empty-state-icon" style="font-size: 4rem; margin-bottom: 20px; animation: bounce 2s infinite;">✅</div>
-                    <div class="empty-state-title" style="font-size: 1.5rem; color: var(--primary-color); margin-bottom: 15px; font-weight: 700;">
-                        REVISIÓN ENVIADA CON ÉXITO
+            
+            // Buscar el último feedback enviado por el cliente
+            const feedbacks = Feedbacks.getByClientId(clientId);
+            const lastFb = feedbacks.length > 0 ? feedbacks.sort((a,b) => new Date(b.date) - new Date(a.date))[0] : null;
+            const hasResponse = lastFb && lastFb.trainerResponse && lastFb.trainerResponse.trim() !== '';
+
+            if (hasResponse) {
+                // Marcar como leído para quitar el badge en el dashboard
+                localStorage.setItem('read_response_' + lastFb.id, 'true');
+
+                const brandName = brand.name || 'Tu Entrenador';
+                const defaultLogo = 'img/logo-infinite-marble.png';
+                const currentLogo = (brand && brand.logo && brand.logo.length > 5) ? brand.logo : defaultLogo;
+
+                formCard.innerHTML = `
+                    <div class="feedback-response-container" style="padding: 20px 10px;">
+                        <div style="text-align: center; margin-bottom: 25px;">
+                            <div class="empty-state-icon" style="font-size: 3.5rem; margin-bottom: 10px; filter: drop-shadow(0 0 10px rgba(var(--primary-color-rgb), 0.3));">💬</div>
+                            <h3 style="font-size: 1.55rem; color: var(--primary-color); margin-bottom: 5px; font-weight: 700; letter-spacing: -0.5px;">REVISIÓN COMPLETADA</h3>
+                            <p class="text-muted" style="font-size: 0.85rem;">Tu entrenador ha revisado tu reporte semanal</p>
+                        </div>
+
+                        <!-- Tarjeta de Respuesta del Entrenador -->
+                        <div class="card shadow-lg" style="background: linear-gradient(135deg, rgba(255,255,255,0.03) 0%, rgba(255,255,255,0.01) 100%); border: 1.5px solid rgba(var(--primary-color-rgb), 0.35); border-radius: 16px; margin-bottom: 25px; box-shadow: 0 8px 32px rgba(0,0,0,0.5); backdrop-filter: blur(10px); overflow: hidden; position: relative;">
+                            <!-- Resplandor sutil de fondo -->
+                            <div style="position: absolute; bottom: -20px; right: -20px; width: 80px; height: 80px; background: var(--primary-color); filter: blur(40px); opacity: 0.1; z-index: 1;"></div>
+                            
+                            <div style="position: relative; z-index: 2;">
+                                <div style="padding: 12px 20px; border-bottom: 1px solid rgba(255,255,255,0.05); background: rgba(var(--primary-color-rgb), 0.08); display: flex; align-items: center; gap: 12px;">
+                                    <img src="${currentLogo}" alt="${brandName}" style="width: 32px; height: 32px; object-fit: contain; border-radius: 50%; border: 1px solid rgba(255,255,255,0.1); background: rgba(0,0,0,0.3);">
+                                    <div>
+                                        <div style="font-weight: 700; font-size: 0.85rem; color: var(--primary-color); letter-spacing: 0.5px;">${brandName.toUpperCase()}</div>
+                                        <div class="text-muted" style="font-size: 0.65rem;">${formatDateTime(lastFb.date)}</div>
+                                    </div>
+                                </div>
+                                <div style="padding: 20px; line-height: 1.6; color: rgba(255,255,255,0.9); font-size: 0.95rem; font-style: italic; white-space: pre-line;">
+                                    "${lastFb.trainerResponse}"
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Resumen del Reporte Enviado -->
+                        <div style="background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.05); border-radius: 12px; padding: 15px; margin-bottom: 25px;">
+                            <h4 style="font-size: 0.75rem; font-weight: 700; text-transform: uppercase; color: var(--text-muted); margin-bottom: 12px; letter-spacing: 1px; display: flex; align-items: center; gap: 6px;">
+                                📝 Reporte Enviado (Revisión Nº ${lastFb.week})
+                            </h4>
+                            <div class="grid grid-3 gap-xs text-center" style="margin-bottom: 15px;">
+                                <div style="background: rgba(0,0,0,0.25); padding: 8px; border-radius: 6px; border: 1px solid rgba(255,255,255,0.02);">
+                                    <div class="text-muted" style="font-size: 0.6rem;">PESO</div>
+                                    <div style="font-weight: 700; font-size: 0.95rem; color: white; margin-top: 2px;">${lastFb.weight || '---'} kg</div>
+                                </div>
+                                <div style="background: rgba(0,0,0,0.25); padding: 8px; border-radius: 6px; border: 1px solid rgba(255,255,255,0.02);">
+                                    <div class="text-muted" style="font-size: 0.6rem;">ENERGÍA</div>
+                                    <div style="font-weight: 700; font-size: 0.95rem; color: white; margin-top: 2px;">${lastFb.energy || 3}/5</div>
+                                </div>
+                                <div style="background: rgba(0,0,0,0.25); padding: 8px; border-radius: 6px; border: 1px solid rgba(255,255,255,0.02);">
+                                    <div class="text-muted" style="font-size: 0.6rem;">ADHERENCIA</div>
+                                    <div style="font-weight: 700; font-size: 0.95rem; color: white; margin-top: 2px;">${lastFb.adherence || 3}/5</div>
+                                </div>
+                            </div>
+
+                            ${lastFb.answers && lastFb.answers.length > 0 ? `
+                                <div style="font-size: 0.85rem; display: flex; flex-direction: column; gap: 8px; max-height: 200px; overflow-y: auto; padding-right: 5px;">
+                                    ${lastFb.answers.map(ans => `
+                                        <div style="border-bottom: 1px solid rgba(255,255,255,0.03); padding-bottom: 6px;">
+                                            <div class="text-muted" style="font-size: 0.7rem; font-weight: 600;">${ans.question}</div>
+                                            <div style="color: rgba(255,255,255,0.85); margin-top: 2px; font-size: 0.8rem;">${ans.answer}</div>
+                                        </div>
+                                    `).join('')}
+                                </div>
+                            ` : ''}
+                        </div>
+
+                        <div style="text-align: center;">
+                            <button class="btn btn-primary" onclick="window.location.href='client-dashboard.html'" style="min-width: 180px; padding: 14px; border-radius: 12px; font-weight: 700;">
+                                Volver al Inicio
+                            </button>
+                            <p class="text-xs" style="margin-top: 25px; opacity: 0.6;">
+                                ¿Necesitas enviar otro reporte? 
+                                <a href="#" onclick="sessionStorage.setItem('bypassFeedbackBlock', 'true'); window.location.reload(); return false;" style="color: var(--primary-color); text-decoration: underline; font-weight: 600;">Hacer otra revisión</a>
+                            </p>
+                        </div>
                     </div>
-                    <div class="empty-state-text" style="color: var(--text-muted); max-width: 400px; margin: 0 auto; line-height: 1.6;">
-                        Tu entrenador recibirá tus datos y sensaciones de esta semana. <br><br>
-                        ¡Buen trabajo! Nos vemos en tu próxima revisión programada.
+                `;
+            } else {
+                formCard.innerHTML = `
+                    <div class="empty-state" style="padding: 50px 20px; text-align: center;">
+                        <div class="empty-state-icon" style="font-size: 4rem; margin-bottom: 20px; animation: bounce 2s infinite;">✅</div>
+                        <div class="empty-state-title" style="font-size: 1.5rem; color: var(--primary-color); margin-bottom: 15px; font-weight: 700;">
+                            REVISIÓN ENVIADA CON ÉXITO
+                        </div>
+                        <div class="empty-state-text" style="color: var(--text-muted); max-width: 400px; margin: 0 auto; line-height: 1.6;">
+                            Tu entrenador recibirá tus datos y sensaciones de esta semana. <br><br>
+                            ¡Buen trabajo! Nos vemos en tu próxima revisión programada.
+                        </div>
+                        <button class="btn btn-primary mt-lg" onclick="window.location.href='client-dashboard.html'">
+                            Volver al Inicio
+                        </button>
+                        <p class="text-xs" style="margin-top: 20px; opacity: 0.6;">
+                            ¿Necesitas corregir algo o volver a enviar tu reporte? 
+                            <a href="#" onclick="sessionStorage.setItem('bypassFeedbackBlock', 'true'); window.location.reload(); return false;" style="color: var(--primary-color); text-decoration: underline; font-weight: 600;">Hacer otra revisión</a>
+                        </p>
                     </div>
-                    <button class="btn btn-primary mt-lg" onclick="window.location.href='client-dashboard.html'">
-                        Volver al Inicio
-                    </button>
-                </div>
-            `;
+                `;
+            }
         }
 
         // Add bounce animation
@@ -605,6 +757,6 @@
         `;
         document.head.appendChild(style);
     </script>
-    <script src="js/custom-recipes.js?v=129"></script></body>
+    <script src="js/custom-recipes.js?v=349"></script></body>
 
 </html>

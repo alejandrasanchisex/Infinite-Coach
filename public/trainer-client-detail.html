@@ -2,14 +2,37 @@
 <html lang="es">
 
 <head>
+    <script>
+        // Force PWA cache bust / reload
+        (function() {
+            const CURRENT_VERSION = '349';
+            const savedVersion = localStorage.getItem('app_version');
+            if (savedVersion !== CURRENT_VERSION) {
+                localStorage.setItem('app_version', CURRENT_VERSION);
+                if ('serviceWorker' in navigator) {
+                    navigator.serviceWorker.getRegistrations().then(function(registrations) {
+                        for (let registration of registrations) {
+                            registration.unregister();
+                        }
+                    }).catch(function(err) {
+                        console.warn('SW unregister failed:', err);
+                    }).finally(function() {
+                        window.location.reload(true);
+                    });
+                } else {
+                    window.location.reload(true);
+                }
+            }
+        })();
+    </script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Detalle del Cliente (v2) - ASTeam</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="styles/theme.css?v=330">
-    <link rel="stylesheet" href="styles/components.css?v=330">
+    <link rel="stylesheet" href="styles/theme.css?v=350">
+    <link rel="stylesheet" href="styles/components.css?v=349">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <style>
         /* Bulletproof sizing override for routine editor and xl modals */
@@ -185,14 +208,14 @@
                     </div>
                     <button class="menu-toggle" onclick="toggleMenu()">☰</button>
                     <ul class="nav-links" id="navLinks">
-                        <li><a href="trainer-dashboard.html?v=330" class="nav-link">Dashboard</a></li>
-                        <li><a href="trainer-clients.html?v=330" class="nav-link active">Clientes</a></li>
-                        <li><a href="trainer-routines.html?v=330" class="nav-link">Rutinas</a></li>
-                        <li><a href="trainer-diets.html?v=330" class="nav-link">Dietas</a></li>
-                        <li><a href="trainer-feedbacks.html?v=330" class="nav-link">Revisiones</a></li>
-                        <li><a href="trainer-media.html?v=330" class="nav-link">Biblioteca</a></li>
-                        <li><a href="trainer-appointments.html?v=330" class="nav-link">Agenda</a></li>
-                        <li><a href="trainer-settings.html?v=330" class="nav-link">Configuración</a></li>
+                        <li><a href="trainer-dashboard.html?v=349" class="nav-link">Dashboard</a></li>
+                        <li><a href="trainer-clients.html?v=349" class="nav-link active">Clientes</a></li>
+                        <li><a href="trainer-routines.html?v=349" class="nav-link">Rutinas</a></li>
+                        <li><a href="trainer-diets.html?v=349" class="nav-link">Dietas</a></li>
+                        <li><a href="trainer-feedbacks.html?v=349" class="nav-link">Revisiones</a></li>
+                        <li><a href="trainer-media.html?v=349" class="nav-link">Biblioteca</a></li>
+                        <li><a href="trainer-appointments.html?v=349" class="nav-link">Agenda</a></li>
+                        <li><a href="trainer-settings.html?v=349" class="nav-link">Configuración</a></li>
                         <li><a href="#" onclick="if(typeof AUTH !== 'undefined') { AUTH.signOut() } else { window.location.reload() }; return false;" class="nav-link" style="color:var(--error-color)">🚪 Salir</a></li>
                     </ul>
                 </nav>
@@ -462,7 +485,8 @@
                                 <div class="card-header flex-between">
                                     <h3 class="card-title" style="color: #FFD700;">🏆 Mejores Marcas Personales</h3>
                                     <div class="flex gap-sm">
-                                        <input type="text" id="prSearch" class="form-input form-input-sm" style="width: 150px;" placeholder="Buscar ej..." oninput="renderPersonalRecords()">
+                                        <input type="text" id="prSearch" list="prSuggestions" class="form-input form-input-sm" style="width: 150px;" placeholder="Buscar ej..." oninput="renderPersonalRecords()">
+                                        <datalist id="prSuggestions"></datalist>
                                         <select id="prMuscleFilter" class="form-select form-select-sm" style="width: 130px;" onchange="renderPersonalRecords()">
                                             <option value="">Todos</option>
                                             <option value="pecho">Pecho</option>
@@ -801,7 +825,7 @@
                                     </div>
                                     <div class="card-body">
                                         <div id="stripeNotConfigured" style="display: none;">
-                                            <p class="text-xs text-muted mb-md">Configura tus claves de Stripe en los <a href="trainer-settings.html?v=330" style="color: var(--primary-color);">Ajustes</a> para habilitar cobros automáticos.</p>
+                                            <p class="text-xs text-muted mb-md">Configura tus claves de Stripe en los <a href="trainer-settings.html?v=349" style="color: var(--primary-color);">Ajustes</a> para habilitar cobros automáticos.</p>
                                         </div>
                                         <div id="stripeActiveConfig">
                                             <p class="text-xs text-muted mb-md">Genera un enlace de pago recurrente para este cliente usando tus planes configurados.</p>
@@ -858,19 +882,19 @@
 
     <!-- Supabase SDK & Service -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="js/supabase-service.js?v=330"></script>
+    <script src="js/supabase-service.js?v=350"></script>
 
-    <script src="js/config.js?v=330"></script>
-    <script src="js/auth.js?v=330"></script>
-    <script src="js/sheets.js?v=330"></script>
-    <script src="js/data-models.js?v=330"></script>
-    <script src="js/utils.js?v=330"></script>
-    <script src="js/custom-recipes.js?v=330"></script>
-    <script src="js/custom-exercises.js?v=330"></script>
-    <script src="js/diet-editor-v3.js?v=324"></script>
+    <script src="js/config.js?v=350"></script>
+    <script src="js/auth.js?v=349"></script>
+    <script src="js/sheets.js?v=349"></script>
+    <script src="js/data-models.js?v=350"></script>
+    <script src="js/utils.js?v=350"></script>
+    <script src="js/custom-recipes.js?v=349"></script>
+    <script src="js/custom-exercises.js?v=350"></script>
+    <script src="js/diet-editor-v3.js?v=349"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.29/jspdf.plugin.autotable.min.js"></script>
-    <script src="js/export-utils.js?v=330"></script>
+    <script src="js/export-utils.js?v=350"></script>
     <script>
         const pageUrlParams = new URLSearchParams(window.location.search);
         const clientId = pageUrlParams.get('id');
@@ -1903,12 +1927,46 @@
             } else if (view === 'records') {
                 if (btnRecords) btnRecords.className = 'btn btn-sm btn-primary';
                 recordsView.style.display = 'block';
+                populatePersonalRecordsSuggestions();
                 renderPersonalRecords();
             } else if (view === 'habits') {
                 if (btnHabits) btnHabits.className = 'btn btn-sm btn-primary';
                 habitsView.style.display = 'block';
                 renderDailyHabits();
             }
+        }
+
+        function populatePersonalRecordsSuggestions() {
+            const dl = document.getElementById('prSuggestions');
+            if (!dl) return;
+
+            const exercisesSet = new Set();
+            const blocks = TrainingBlocks.getByClientId(clientId) || [];
+            let activeBlock = blocks.find(b => b.status === 'active');
+            if (!activeBlock) {
+                activeBlock = blocks.find(b => b.status === 'planned') || blocks[0];
+            }
+
+            if (activeBlock && activeBlock.weeks) {
+                activeBlock.weeks.forEach(week => {
+                    if (week && week.days) {
+                        week.days.forEach(day => {
+                            if (day && day.exercises) {
+                                day.exercises.forEach(ex => {
+                                    if (ex && ex.name) {
+                                        exercisesSet.add(ex.name.trim());
+                                    }
+                                });
+                            }
+                        });
+                    }
+                });
+            }
+
+            dl.innerHTML = Array.from(exercisesSet)
+                .sort()
+                .map(name => `<option value="${name}"></option>`)
+                .join('');
         }
 
         function renderPersonalRecords() {
@@ -2404,7 +2462,10 @@
                                                                     </tbody>
                                                                 </table>
                                                             </div>
-                                                            <button class="btn btn-xs btn-outline mt-sm" onclick="addInlineExercise(${dIdx})" style="border-style: dashed; width: 100%; border-color: rgba(0, 217, 255, 0.3); color: var(--primary-color);">➕ Añadir Ejercicio</button>
+                                                            <div style="display: flex; gap: 8px; margin-top: 8px;">
+                                                                <button class="btn btn-xs btn-outline" onclick="addInlineExercise(${dIdx})" style="border-style: dashed; flex: 1.5; border-color: rgba(0, 217, 255, 0.3); color: var(--primary-color);">➕ Añadir Ejercicio</button>
+                                                                <button class="btn btn-xs btn-primary" onclick="showAnatomicalMapModalForInlineDay(${dIdx})" style="flex: 1; font-size: 0.75rem; padding: 4px 8px; display: flex; align-items: center; justify-content: center; gap: 4px;">🗺️ Mapa Muscular</button>
+                                                            </div>
                                                         </div>
                                                     `).join('')}
                                                 </div>
@@ -2901,6 +2962,15 @@
             }
         };
 
+        window.showAnatomicalMapModalForInlineDay = function (dIdx) {
+            window.activeInlineDayIndex = dIdx;
+            if (typeof showAnatomicalMapModal === 'function') {
+                showAnatomicalMapModal();
+            } else {
+                console.error("showAnatomicalMapModal not found!");
+            }
+        };
+
         window.deleteInlineExercise = function (dIdx, exIdx) {
             if (editingRoutine && editingRoutine.days[dIdx] && editingRoutine.days[dIdx].exercises) {
                 editingRoutine.days[dIdx].exercises.splice(exIdx, 1);
@@ -3139,7 +3209,10 @@
                             </div>
                         `).join('')}
                     </div>
-                    <button class="btn btn-sm btn-full btn-outline mt-sm" onclick="addRoutineExercise()" style="font-size: 0.85rem; padding: 8px;">+ Añadir Ejercicio</button>
+                    <div style="display: flex; gap: 8px; margin-top: 10px;">
+                        <button class="btn btn-sm btn-outline" onclick="addRoutineExercise()" style="flex: 1; font-size: 0.85rem; padding: 8px; border-style: dashed; opacity: 0.7;">+ Añadir Ejercicio</button>
+                        <button class="btn btn-sm btn-primary" onclick="window.activeInlineDayIndex = null; showAnatomicalMapModal()" style="font-size: 0.85rem; padding: 8px; display: flex; align-items: center; justify-content: center; gap: 6px;">🗺️ Mapa Muscular</button>
+                    </div>
                 </div>
             `;
         }
@@ -3642,7 +3715,7 @@
             const qrImgUrl = `https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${encodeURIComponent(qrUrl)}`;
 
             showModal('Detalle de Factura Certificada', `
-                <div id="invoiceDetailPrint" style="color: #333; background: white; padding: 30px; border-radius: 8px; font-family: 'Inter', sans-serif;">
+                <div id="invoiceDetailPrint" style="color: #336; background: white; padding: 30px; border-radius: 8px; font-family: 'Inter', sans-serif;">
                     <div class="flex-between align-center mb-lg" style="margin-bottom: 30px; display: flex; justify-content: space-between; align-items: center;">
                         <div style="text-align: left;">
                             <h2 style="margin: 0; color: #1a1a2e; font-size: 2rem;">FACTURA</h2>
@@ -3665,7 +3738,7 @@
                     <div style="border-top: 1px solid #eee; border-bottom: 1px solid #eee; padding: 20px 0; margin-bottom: 30px;">
                         <table style="width: 100%; border-collapse: collapse;">
                             <thead>
-                                <tr style="text-align: left; border-bottom: 2px solid #333;">
+                                <tr style="text-align: left; border-bottom: 2px solid #336;">
                                     <th style="padding: 12px 0; color: #1a1a2e;">Concepto / Descripción</th>
                                     <th style="padding: 12px 0; text-align: right; color: #1a1a2e;">Total</th>
                                 </tr>
@@ -3767,7 +3840,7 @@
                         <div style="max-width: 800px; margin: 0 auto; border: 1px solid #eee; padding: 30px; border-radius: 8px;">
                             ${content}
                         </div>
-                        <script src="js/custom-recipes.js?v=129"><\/script></body>
+                        <script src="js/custom-recipes.js?v=349"><\/script></body>
                 </html>
             `);
             printWindow.document.close();
@@ -4941,18 +5014,10 @@
 
         window.copyClientAccessLink = function () {
             if (!clientId) return;
-            // Get the current path but point to the client login view
-            let path = window.location.pathname;
-            if (path.includes('trainer-client-detail')) {
-                path = path.replace('trainer-client-detail', 'client-login');
-            } else {
-                path = '/client-login.html';
-            }
-            const baseUrl = window.location.origin + path;
-            
-            // Append only the trainer ID and cache-buster so the client lands on the fresh login page
-            const cleanTrainerId = activeTrainerId === 'alejandra_asteam_gmail_com' ? 'asteam' : activeTrainerId;
-            const fullUrl = `${baseUrl}?t=${cleanTrainerId}&v=332`;
+            // Usar siempre el ID real del entrenador para garantizar sincronización con Supabase
+            const realTrainerId = window.activeTrainerId || localStorage.getItem('activeTrainerId') || 't-w0iybl7qb';
+            const baseUrl = window.location.origin + '/client-login.html';
+            const fullUrl = `${baseUrl}?t=${realTrainerId}&v=349`;
             copyToClipboard(fullUrl);
             showToast('¡Link copiado! Envíalo a tu cliente.', 'success');
         };
@@ -5027,8 +5092,14 @@
             const resultDiv = document.getElementById('stripeLinkResult');
             const urlText = document.getElementById('generatedUrlText');
 
-            // Construir link de pago simulado/preparado
-            const simulatedUrl = `https://checkout.stripe.com/pay/${priceId}?client_id=${clientId}&success_url=${window.location.origin}/client-dashboard.html?payment=success`;
+            // Construir link de pago simulado o procesar enlace directo (Payment Link)
+            let simulatedUrl = priceId;
+            if (priceId.startsWith('http')) {
+                const separator = priceId.includes('?') ? '&' : '?';
+                simulatedUrl = `${priceId}${separator}client_id=${clientId}`;
+            } else {
+                simulatedUrl = `https://checkout.stripe.com/pay/${priceId}?client_id=${clientId}&success_url=${window.location.origin}/client-dashboard.html?payment=success`;
+            }
             
             if (resultDiv) resultDiv.style.display = 'block';
             if (urlText) urlText.textContent = simulatedUrl;
@@ -5091,6 +5162,6 @@
             if (typeof loadClientData === 'function') loadClientData();
         });
     </script>
-    <script src="js/custom-recipes.js?v=131"></script></body>
+    <script src="js/custom-recipes.js?v=349"></script></body>
 
 </html>

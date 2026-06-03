@@ -1,24 +1,27 @@
 // ============================================
-// DATA MODELS & STORAGE MANAGEMENT - v310 STABLE
+// DATA MODELS & STORAGE MANAGEMENT - v311 BLINDAJE TOTAL
 // ============================================
 
 const DB_VERSION = '1.0.1';
 let activeTrainerId = localStorage.getItem('activeTrainerId');
+if (activeTrainerId === 'alejandra_asteam_gmail_com') {
+    activeTrainerId = 't-w0iybl7qb';
+    localStorage.setItem('activeTrainerId', 't-w0iybl7qb');
+}
 if (!activeTrainerId || activeTrainerId === 'default' || activeTrainerId === 'admin') {
-    if (typeof window !== 'undefined' && window.location.hostname.includes('infinitecoach.es')) {
-        activeTrainerId = 't-w0iybl7qb';
-        localStorage.setItem('activeTrainerId', 't-w0iybl7qb');
-    } else {
-        activeTrainerId = 'default';
-    }
+    activeTrainerId = 'default';
 }
 window.activeTrainerId = activeTrainerId;
 const getStorageKey = () => `fitnessAppData_${window.activeTrainerId || 'default'}`;
 
 const updateActiveTrainerId = (newId) => {
-    window.activeTrainerId = newId;
-    localStorage.setItem('activeTrainerId', newId);
-    console.log("Storage Key actualizada para:", newId);
+    let targetId = newId;
+    if (targetId === 'alejandra_asteam_gmail_com') {
+        targetId = 't-w0iybl7qb';
+    }
+    window.activeTrainerId = targetId;
+    localStorage.setItem('activeTrainerId', targetId);
+    console.log("Storage Key actualizada para:", targetId);
 };
 window.updateActiveTrainerId = updateActiveTrainerId;
 
@@ -28,7 +31,7 @@ let trainerFromUrl = urlParams.get('t');
 if (trainerFromUrl) {
     const lower = trainerFromUrl.toLowerCase().trim();
     if (lower === 'asteam' || lower === 'alejandra') {
-        trainerFromUrl = 'alejandra_asteam_gmail_com';
+        trainerFromUrl = 't-w0iybl7qb';
     }
     updateActiveTrainerId(trainerFromUrl);
 }
@@ -58,6 +61,7 @@ const getData = () => {
     if (!data.feedbacks) data.feedbacks = [];
     if (!data.appointments) data.appointments = [];
     if (!data.invoices) data.invoices = [];
+    if (!data.trainingLogs) data.trainingLogs = [];
 
     // 🔥 MIGRACIÓN ÚNICA: Restaurar recetas ocultas a activas
     if (!localStorage.getItem('v310_unhide_recipes_done')) {
@@ -225,6 +229,141 @@ const getData = () => {
             try { localStorage.setItem(sKey, JSON.stringify(data)); } catch(e){}
         }
     }
+
+    // 🔥 AUTO-MIGRACIÓN DE GRUPOS MUSCULARES & ISQUIOTIBIALES/GEMELOS (v93 MIGRATION)
+    let needsMigrationSave = false;
+    const targetGroups = ['Pectorales', 'Dorsales', 'Lumbares', 'Hombros', 'Biceps', 'Triceps', 'Antebrazo', 'Abdominales', 'Cuadriceps', 'Isquiotibiales', 'Gemelos', 'Glúteos', 'Cuello'];
+    
+    // 1. Migrar data.media (Biblioteca Multimedia)
+    if (data.media && Array.isArray(data.media)) {
+        data.media.forEach(m => {
+            if (m.category === 'exercise' && m.muscleGroup) {
+                const oldGroup = m.muscleGroup;
+                const g = m.muscleGroup.toLowerCase().trim();
+                
+                // Mapear hamstring/calves basándonos en el título primero
+                const titleLower = (m.title || '').toLowerCase();
+                if (titleLower.includes('femoral') || titleLower.includes('isquio') || titleLower.includes('rumano')) {
+                    m.muscleGroup = 'Isquiotibiales';
+                } else if (titleLower.includes('gemelo')) {
+                    m.muscleGroup = 'Gemelos';
+                } else if (g === 'pecho') {
+                    m.muscleGroup = 'Pectorales';
+                } else if (g === 'espalda') {
+                    m.muscleGroup = 'Dorsales';
+                } else if (g === 'bíceps' || g === 'biceps') {
+                    m.muscleGroup = 'Biceps';
+                } else if (g === 'tríceps' || g === 'triceps') {
+                    m.muscleGroup = 'Triceps';
+                } else if (g === 'core') {
+                    m.muscleGroup = 'Abdominales';
+                } else if (g === 'piernas' || g === 'pierna' || g === 'cuadriceps') {
+                    m.muscleGroup = 'Cuadriceps';
+                } else if (g === 'glúteos' || g === 'gluteos' || g === 'glúteo' || g === 'gluteo') {
+                    m.muscleGroup = 'Glúteos';
+                }
+                
+                if (m.muscleGroup !== oldGroup) {
+                    needsMigrationSave = true;
+                }
+            }
+        });
+    }
+
+    // 2. Migrar data.muscleGroupsConfig (Configuración del Entrenador)
+    if (data.muscleGroupsConfig) {
+        const mgConfig = data.muscleGroupsConfig;
+        
+        // Sincronizar grupos
+        const oldGroupsStr = JSON.stringify(mgConfig.groups || []);
+        mgConfig.groups = targetGroups;
+        if (JSON.stringify(mgConfig.groups) !== oldGroupsStr) {
+            needsMigrationSave = true;
+        }
+
+        // Migrar exercises map
+        if (mgConfig.exercises) {
+            const oldExercises = mgConfig.exercises;
+            const newExercises = {};
+            targetGroups.forEach(g => {
+                newExercises[g] = [];
+            });
+
+            let oldKeysFound = false;
+            Object.keys(oldExercises).forEach(key => {
+                const exList = oldExercises[key] || [];
+                if (!Array.isArray(exList)) return;
+
+                if (!targetGroups.includes(key)) {
+                    oldKeysFound = true;
+                }
+
+                exList.forEach(ex => {
+                    const exName = typeof ex === 'string' ? ex : (ex.name || '');
+                    const exUrl = typeof ex === 'string' ? '' : (ex.videoUrl || '');
+                    if (!exName) return;
+
+                    // Determinar destino
+                    let destGroup = key;
+                    const nameLower = exName.toLowerCase();
+                    
+                    if (nameLower.includes('femoral') || nameLower.includes('isquio') || nameLower.includes('rumano')) {
+                        destGroup = 'Isquiotibiales';
+                    } else if (nameLower.includes('gemelo')) {
+                        destGroup = 'Gemelos';
+                    } else {
+                        const lowKey = key.toLowerCase().trim();
+                        if (lowKey === 'pecho') destGroup = 'Pectorales';
+                        else if (lowKey === 'espalda') destGroup = 'Dorsales';
+                        else if (lowKey === 'bíceps' || lowKey === 'biceps') destGroup = 'Biceps';
+                        else if (lowKey === 'tríceps' || lowKey === 'triceps') destGroup = 'Triceps';
+                        else if (lowKey === 'core') destGroup = 'Abdominales';
+                        else if (lowKey === 'piernas' || lowKey === 'pierna' || lowKey === 'cuadriceps') destGroup = 'Cuadriceps';
+                        else if (lowKey === 'glúteos' || lowKey === 'gluteos' || lowKey === 'glúteo' || lowKey === 'gluteo') destGroup = 'Glúteos';
+                        else if (targetGroups.includes(key)) destGroup = key;
+                        else destGroup = 'Cuadriceps'; // Fallback
+                    }
+
+                    // Push a la nueva lista si no existe ya
+                    const alreadyExists = newExercises[destGroup].some(existing => {
+                        const existingName = typeof existing === 'string' ? existing : (existing.name || '');
+                        return existingName.toLowerCase().trim() === exName.toLowerCase().trim();
+                    });
+
+                    if (!alreadyExists) {
+                        newExercises[destGroup].push(typeof ex === 'string' ? { name: exName, videoUrl: exUrl } : ex);
+                    }
+                });
+            });
+
+            // Verificar si el nuevo mapa de ejercicios difiere del anterior para guardar
+            const oldExercisesStr = JSON.stringify(oldExercises);
+            const newExercisesStr = JSON.stringify(newExercises);
+            if (oldExercisesStr !== newExercisesStr || oldKeysFound) {
+                mgConfig.exercises = newExercises;
+                needsMigrationSave = true;
+            }
+        }
+    }
+
+    if (needsMigrationSave) {
+        console.log("🔥 [MIGRACIÓN v93] Cambios de grupos musculares detectados localmente. Guardando y sincronizando con Supabase...");
+        try {
+            localStorage.setItem(sKey, JSON.stringify(data));
+            // Sincronizar inmediatamente si existe SupabaseService
+            if (window.SupabaseService) {
+                const currentId = window.activeTrainerId || localStorage.getItem('activeTrainerId') || 'default';
+                if (currentId !== 'default') {
+                    window.SupabaseService.saveTrainerData(currentId, data)
+                        .then(() => console.log("🔥 [MIGRACIÓN v93] Sincronización exitosa con Supabase."))
+                        .catch(err => console.warn("Supabase Sync Error during migration:", err));
+                }
+            }
+        } catch(e) {
+            console.error("Error saving migrated data:", e);
+        }
+    }
+
     return data;
 
   } catch (e) { return defaults; }
@@ -232,13 +371,83 @@ const getData = () => {
 window.getData = getData;
 
 const saveData = (data) => {
-  data.lastModified = new Date().toISOString();
+  // 🛡️ BLINDAJE TOTAL: Nunca guardar datos vacíos que destruirían datos reales
+  const isDataDangerous = (
+    (!data.clients || data.clients.length === 0) &&
+    (!data.routines || data.routines.length === 0) &&
+    (!data.trainingBlocks || data.trainingBlocks.length === 0)
+  );
+  
+  // Comprobar si hay datos reales en el local storage que no debemos perder
+  const currentRaw = localStorage.getItem(getStorageKey());
+  if (isDataDangerous && currentRaw) {
+    try {
+      const currentSaved = JSON.parse(currentRaw);
+      const savedHasData = (
+        (currentSaved.clients && currentSaved.clients.length > 0) ||
+        (currentSaved.routines && currentSaved.routines.length > 0) ||
+        (currentSaved.trainingBlocks && currentSaved.trainingBlocks.length > 0)
+      );
+      if (savedHasData) {
+        console.error('🚨 [BLINDAJE] BLOQUEADO: Intento de guardar datos vacíos cuando ya existen datos reales. Protegiendo datos del usuario.');
+        return; // Bloquear guardado destructivo
+      }
+    } catch(e) {}
+  }
+
+  const saveTime = new Date().toISOString();
+  data.lastModified = saveTime;
+  
+  // 💾 Crear backup automático antes de guardar
+  try {
+    const backupKey = getStorageKey() + '_backup';
+    const prevData = localStorage.getItem(getStorageKey());
+    if (prevData) {
+      const prevParsed = JSON.parse(prevData);
+      const hasRealData = (
+        (prevParsed.clients && prevParsed.clients.length > 0) ||
+        (prevParsed.routines && prevParsed.routines.length > 0) ||
+        (prevParsed.trainingBlocks && prevParsed.trainingBlocks.length > 0)
+      );
+      if (hasRealData) {
+        localStorage.setItem(backupKey, prevData);
+        localStorage.setItem(backupKey + '_ts', new Date().toISOString());
+      }
+    }
+  } catch(e) {}
+
   localStorage.setItem(getStorageKey(), JSON.stringify(data));
   if (window.SupabaseService) {
     const currentId = window.activeTrainerId || localStorage.getItem('activeTrainerId') || 'default';
     if (currentId !== 'default') {
-      window.SupabaseService.saveTrainerData(currentId, data)
-          .catch(e => console.warn('Supabase DB Sync Error:', e));
+      // Evitar sobrescrituras accidentales por pestañas abiertas con caché local obsoleta.
+      // Verificamos si la nube tiene datos más nuevos antes de subir.
+      (async () => {
+          try {
+              const cloudData = await window.SupabaseService.getTrainerData(currentId);
+              if (cloudData && cloudData.lastModified) {
+                  const cloudTime = new Date(cloudData.lastModified).getTime();
+                  const localPrevTime = new Date(saveTime).getTime() - 2500; // Margen de holgura
+                  
+                  if (cloudTime > localPrevTime) {
+                      console.log("🔄 Se detectaron cambios externos más nuevos en la nube. Fusionando antes de subir...");
+                      const freshData = await window.syncFromCloud();
+                      if (freshData) {
+                          // Obtenemos los datos recién fusionados en local storage
+                          const mergedLocal = JSON.parse(localStorage.getItem(getStorageKey()) || '{}');
+                          mergedLocal.lastModified = new Date().toISOString();
+                          localStorage.setItem(getStorageKey(), JSON.stringify(mergedLocal));
+                          await window.SupabaseService.saveTrainerData(currentId, mergedLocal);
+                          return;
+                      }
+                  }
+              }
+              await window.SupabaseService.saveTrainerData(currentId, data);
+          } catch (e) {
+              console.warn('Supabase DB Sync Error (Safe Merge failed, fallback directly):', e);
+              window.SupabaseService.saveTrainerData(currentId, data).catch(() => {});
+          }
+      })();
     }
   }
 };
@@ -259,7 +468,7 @@ window.syncFromCloud = async () => {
 
         if (cloudData) {
             // Garantizar que todos los arrays existen en la nube
-            const collections = ['clients', 'routines', 'diets', 'foods', 'media', 'feedbacks', 'appointments', 'invoices', 'trainingBlocks'];
+            const collections = ['clients', 'routines', 'diets', 'foods', 'media', 'feedbacks', 'appointments', 'invoices', 'trainingBlocks', 'trainingLogs', 'habits'];
             collections.forEach(col => {
                 if (!cloudData[col]) cloudData[col] = [];
             });
@@ -287,28 +496,45 @@ window.syncFromCloud = async () => {
                 const cloudHasTrainerData = cloudHasClients || cloudHasRoutines || cloudHasDiets || cloudHasBlocks;
                 const isNewInstall = localStorage.getItem('isNewInstall_' + currentId) === 'true';
 
-                if ((isNewInstall || isLocalFreshlyInitialized) && cloudHasTrainerData) {
-                    console.log("📥 El almacenamiento local estaba vacío o es nuevo, pero la nube tiene datos. Descargando de la nube...");
-                    localStorage.removeItem('isNewInstall_' + currentId);
-                    // Preservar marca (trainer-specific)
-                    const trainerBrandRaw = localStorage.getItem(`_trainerBrand_${currentId}`) || localStorage.getItem('_trainerBrand');
-                    const brandSettingsRaw = localStorage.getItem(`brand_settings_${currentId}`) || localStorage.getItem('brand_settings');
-                    const localBrandRaw = trainerBrandRaw || brandSettingsRaw;
-                    if (localBrandRaw) {
-                        try {
-                            const localBrand = JSON.parse(localBrandRaw);
-                            if (!cloudData.brand) cloudData.brand = {};
-                            cloudData.brand = { ...cloudData.brand, ...localBrand };
-                        } catch(e) {}
-                    }
-                    localStorage.setItem(getStorageKey(), JSON.stringify(cloudData));
-                    return cloudData;
+                // 🛡️ BLINDAJE: Sólo tratar como "nueva instalación" si además NO hay un backup local válido
+                const backupKey = getStorageKey() + '_backup';
+                const localBackupRaw = localStorage.getItem(backupKey);
+                let localBackupHasData = false;
+                if (localBackupRaw) {
+                    try {
+                        const bk = JSON.parse(localBackupRaw);
+                        localBackupHasData = (bk.clients && bk.clients.length > 0) || (bk.routines && bk.routines.length > 0) || (bk.trainingBlocks && bk.trainingBlocks.length > 0);
+                    } catch(e) {}
                 }
 
-                // 2. FUSIÓN INTELIGENTE BIDIRECCIONAL POR ID Y TIMESTAMP
+                if ((isNewInstall || isLocalFreshlyInitialized) && cloudHasTrainerData && !localBackupHasData) {
+                    console.log("📥 El almacenamiento local estaba vacío o es nuevo, pero la nube tiene datos. Descargando de la nube...");
+                    localStorage.removeItem('isNewInstall_' + currentId);
+                    // No local brand merge needed. Clean up old local keys to prevent conflicts.
+                    localStorage.removeItem(`_trainerBrand_${currentId}`);
+                    localStorage.removeItem('_trainerBrand');
+                    localStorage.removeItem(`brand_settings_${currentId}`);
+                    localStorage.removeItem('brand_settings');
+                    localStorage.setItem(getStorageKey(), JSON.stringify(cloudData));
+                    return cloudData;
+                } else if ((isNewInstall || isLocalFreshlyInitialized) && cloudHasTrainerData && localBackupHasData) {
+                    // Hay backup local válido - restaurarlo en vez de tratar como nueva instalación
+                    console.log("🔄 [BLINDAJE] Se detectó backup local válido. Restaurando desde backup antes de fusionar...");
+                    localData = JSON.parse(localBackupRaw);
+                    localStorage.setItem(getStorageKey(), localBackupRaw);
+                    localStorage.removeItem('isNewInstall_' + currentId);
+                }
+
+                // 2. FUSIÓN INTELIGENTE BIDIRECCIONAL POR ROL (ENTRENADOR VS CLIENTE) Y TIMESTAMP
                 const localTime = localData.lastModified ? new Date(localData.lastModified).getTime() : 0;
                 const cloudTime = cloudData.lastModified ? new Date(cloudData.lastModified).getTime() : 0;
                 
+                const isTrainer = typeof localStorage !== 'undefined' && localStorage.getItem('_trainerAuthed') === '1';
+                
+                // Categorizar colecciones según autoría
+                const trainerCollections = ['routines', 'diets', 'foods', 'media', 'trainingBlocks']; // clients se maneja aparte
+                const clientCollections = ['feedbacks', 'appointments', 'invoices', 'trainingLogs', 'habits'];
+
                 let dataChanged = false;
                 const mergedData = { ...cloudData }; // Empezamos con copia de cloud
 
@@ -327,34 +553,212 @@ window.syncFromCloud = async () => {
                         const localItem = localMap.get(id);
                         const cloudItem = cloudMap.get(id);
 
-                        if (localItem && cloudItem) {
-                            // Existe en ambos: decidir por timestamp
-                            if (localTime > cloudTime) {
-                                mergedItems.push(localItem);
-                                // Si son diferentes, marcamos cambio
-                                if (JSON.stringify(localItem) !== JSON.stringify(cloudItem)) {
+                        if (col === 'clients') {
+                            // COLECCIÓN HÍBRIDA 'clients': Fusión a nivel de campos para evitar pérdida de datos
+                            if (localItem && cloudItem) {
+                                const isDifferent = JSON.stringify(localItem) !== JSON.stringify(cloudItem);
+                                if (isDifferent) {
                                     dataChanged = true;
+                                    
+                                    // Campos del cliente controlados por el entrenador
+                                    const trainerFields = [
+                                        'email', 'phone', 'gender', 'status', 'reviewDay', 'monthlyFee', 
+                                        'assignedDiet', 'dietPublished', 'assignedRoutine', 'cardio', 'cardioUrl', 'cardioPublished', 
+                                        'supplementation', 'supplementationPublished', 'supplementationUrl', 'supplementationUrlVisible', 
+                                        'paymentStatus', 'paymentExpiry', 'subscriptionType', 'subscriptionAmount', 
+                                        'reviewFrequency', 'reviewDaysOfMonth', 'specificReviewDate'
+                                    ];
+                                    
+                                    // Campos controlados por el cliente
+                                    const clientFields = ['profilePhoto', 'weightHistory', 'feedbacks'];
+
+                                    const mergedClient = { ...cloudItem }; // Empezar con copia de nube
+
+                                    if (isTrainer) {
+                                        // Entrenador es el máster:
+                                        // - Para campos de Entrenador: si local es más nuevo, usarlos. Si no, usar nube (por si editó en otro dispositivo).
+                                        // - Para campos de Cliente: usar siempre nube (el cliente es el que actualiza).
+                                        trainerFields.forEach(f => {
+                                            if (localTime > cloudTime && localItem[f] !== undefined) {
+                                                mergedClient[f] = localItem[f];
+                                            }
+                                        });
+                                        clientFields.forEach(f => {
+                                            if (cloudItem[f] !== undefined) {
+                                                mergedClient[f] = cloudItem[f];
+                                            }
+                                        });
+                                        
+                                        // Combinar technicalData
+                                        const localTech = localItem.technicalData || {};
+                                        const cloudTech = cloudItem.technicalData || {};
+                                        const mergedTech = { ...cloudTech };
+                                        
+                                        // macros y otros que ponga el entrenador
+                                        const trainerTechFields = ['targetMacros', 'skinfoldsEnabled', 'skinfolds'];
+                                        trainerTechFields.forEach(f => {
+                                            if (localTime > cloudTime && localTech[f] !== undefined) {
+                                                mergedTech[f] = localTech[f];
+                                            }
+                                        });
+                                        
+                                        // campos de ficha del cliente (edad, altura, objetivos)
+                                        const clientTechFields = ['age', 'height', 'goals', 'injuries', 'allergies', 'notes'];
+                                        clientTechFields.forEach(f => {
+                                            if (cloudTech[f] !== undefined) {
+                                                mergedTech[f] = cloudTech[f];
+                                            }
+                                        });
+                                        mergedClient.technicalData = mergedTech;
+
+                                    } else {
+                                        // Cliente es el máster:
+                                        // - Para campos de Entrenador: usar siempre la nube.
+                                        // - Para campos de Cliente: si local es más nuevo, usar local. Si no, usar nube.
+                                        trainerFields.forEach(f => {
+                                            if (cloudItem[f] !== undefined) {
+                                                mergedClient[f] = cloudItem[f];
+                                            }
+                                        });
+                                        clientFields.forEach(f => {
+                                            if (localTime > cloudTime && localItem[f] !== undefined) {
+                                                mergedClient[f] = localItem[f];
+                                            }
+                                        });
+
+                                        // Combinar technicalData
+                                        const localTech = localItem.technicalData || {};
+                                        const cloudTech = cloudItem.technicalData || {};
+                                        const mergedTech = { ...cloudTech };
+                                        
+                                        // macros y otros que ponga el entrenador
+                                        const trainerTechFields = ['targetMacros', 'skinfoldsEnabled', 'skinfolds'];
+                                        trainerTechFields.forEach(f => {
+                                            if (cloudTech[f] !== undefined) {
+                                                mergedTech[f] = cloudTech[f];
+                                            }
+                                        });
+                                        
+                                        // campos de ficha del cliente (edad, altura, objetivos)
+                                        const clientTechFields = ['age', 'height', 'goals', 'injuries', 'allergies', 'notes'];
+                                        clientTechFields.forEach(f => {
+                                            if (localTime > cloudTime && localTech[f] !== undefined) {
+                                                mergedTech[f] = localTech[f];
+                                            }
+                                        });
+                                        mergedClient.technicalData = mergedTech;
+                                    }
+                                    
+                                    // Mantener el nombre (ambos pueden actualizarlo de forma segura)
+                                    if (localTime > cloudTime && localItem.name) {
+                                        mergedClient.name = localItem.name;
+                                    } else if (cloudItem.name) {
+                                        mergedClient.name = cloudItem.name;
+                                    }
+
+                                    mergedItems.push(mergedClient);
+                                } else {
+                                    mergedItems.push(cloudItem);
                                 }
-                            } else {
-                                mergedItems.push(cloudItem);
-                                if (JSON.stringify(localItem) !== JSON.stringify(cloudItem)) {
+                            } else if (localItem) {
+                                mergedItems.push(localItem);
+                            } else if (cloudItem) {
+                                const isExplicitlyDeleted = localData.deletedIds && localData.deletedIds.includes(cloudItem.id);
+                                if (!isExplicitlyDeleted) {
+                                    mergedItems.push(cloudItem);
+                                } else {
                                     dataChanged = true;
                                 }
                             }
-                        } else if (localItem) {
-                            // Solo existe localmente (nuevo item local o eliminado en la nube)
-                            // Si local es más nuevo o si queremos conservar todo para evitar pérdidas, lo añadimos
-                            mergedItems.push(localItem);
-                            dataChanged = true;
-                        } else if (cloudItem) {
-                            // Solo existe en la nube (nuevo item de otro dispositivo o eliminado localmente)
-                            // Si el usuario eliminó localmente, y local es más nuevo (localTime > cloudTime), respetamos la eliminación.
-                            // De lo contrario, lo añadimos.
-                            if (localTime > cloudTime) {
-                                // Eliminado localmente, no lo añadimos a mergedItems, marcamos cambio
+                        } else if (localItem && cloudItem) {
+                            const isDifferent = JSON.stringify(localItem) !== JSON.stringify(cloudItem);
+                            
+                            if (isDifferent) {
                                 dataChanged = true;
+                                
+                                if (isTrainer) {
+                                    // Si es Entrenador: manda él para sus colecciones. Para colecciones del Cliente manda la Nube.
+                                    if (trainerCollections.includes(col)) {
+                                        if (localTime > cloudTime) {
+                                            mergedItems.push(localItem);
+                                        } else {
+                                            mergedItems.push(cloudItem);
+                                        }
+                                    } else {
+                                        mergedItems.push(cloudItem); // Datos de cliente: siempre preferir la Nube (que tiene el envío del cliente)
+                                    }
+                                } else {
+                                    // Si es Cliente: manda el Entrenador (la Nube) para sus colecciones. Para las del Cliente manda local.
+                                    if (trainerCollections.includes(col)) {
+                                        mergedItems.push(cloudItem); // Rutinas/bloques del entrenador: siempre preferir la Nube
+                                    } else {
+                                        if (localTime > cloudTime) {
+                                            mergedItems.push(localItem);
+                                        } else {
+                                            mergedItems.push(cloudItem);
+                                        }
+                                    }
+                                }
                             } else {
-                                mergedItems.push(cloudItem);
+                                mergedItems.push(cloudItem); // Idénticos, conservamos cualquiera
+                            }
+                        } else if (localItem) {
+                            // Solo existe localmente
+                            if (isTrainer) {
+                                // Si es Entrenador y fue creado localmente más recientemente que el último sync en la nube: conservarlo
+                                if (trainerCollections.includes(col)) {
+                                    if (localTime > cloudTime) {
+                                        mergedItems.push(localItem);
+                                        dataChanged = true;
+                                    }
+                                } else {
+                                    // Si es del cliente, la nube manda (si no está en nube, el cliente lo borró)
+                                    dataChanged = true;
+                                }
+                            } else {
+                                // Si es Cliente y fue creado localmente (como sus logs, hábitos, feedbacks): conservarlo
+                                if (clientCollections.includes(col)) {
+                                    mergedItems.push(localItem);
+                                    dataChanged = true;
+                                } else {
+                                    // Si es del Entrenador (como rutinas, bloques, etc.), la nube manda (si no está en nube, el coach lo borró)
+                                    dataChanged = true;
+                                }
+                            }
+                        } else if (cloudItem) {
+                            // Solo existe en la nube
+                            if (isTrainer) {
+                                // Si es del Entrenador y no está localmente:
+                                // Solo lo borramos de la nube si el ID del cloudItem está explícitamente en la lista local de deletedIds.
+                                // De lo contrario (por ejemplo, si se restauró en nube o es un nuevo dispositivo), lo importamos.
+                                if (trainerCollections.includes(col)) {
+                                    const isExplicitlyDeleted = localData.deletedIds && localData.deletedIds.includes(cloudItem.id);
+                                    if (!isExplicitlyDeleted) {
+                                        mergedItems.push(cloudItem);
+                                        dataChanged = true;
+                                    } else {
+                                        dataChanged = true;
+                                    }
+                                } else {
+                                    // Si es del cliente (logs, hábitos, feedbacks), siempre importarlo (el cliente lo subió)
+                                    mergedItems.push(cloudItem);
+                                    dataChanged = true;
+                                }
+                            } else {
+                                // Si es Cliente y no está localmente:
+                                // Solo lo borramos si está en deletedIds del cliente (nunca ocurre en la práctica, pero mantenemos simetría).
+                                if (trainerCollections.includes(col)) {
+                                    mergedItems.push(cloudItem);
+                                    dataChanged = true;
+                                } else {
+                                    const isExplicitlyDeleted = localData.deletedIds && localData.deletedIds.includes(cloudItem.id);
+                                    if (!isExplicitlyDeleted) {
+                                        mergedItems.push(cloudItem);
+                                        dataChanged = true;
+                                    } else {
+                                        dataChanged = true;
+                                    }
+                                }
                             }
                         }
                     });
@@ -362,39 +766,50 @@ window.syncFromCloud = async () => {
                     mergedData[col] = mergedItems;
                 });
 
-                // Preservar marca
-                const trainerBrandRaw = localStorage.getItem(`_trainerBrand_${currentId}`) || localStorage.getItem('_trainerBrand');
-                const brandSettingsRaw = localStorage.getItem(`brand_settings_${currentId}`) || localStorage.getItem('brand_settings');
-                const localBrandRaw = trainerBrandRaw || brandSettingsRaw;
-                if (localBrandRaw) {
-                    try {
-                        const localBrand = JSON.parse(localBrandRaw);
-                        if (!mergedData.brand) mergedData.brand = {};
-                        mergedData.brand = { ...mergedData.brand, ...localBrand };
-                    } catch(e) {}
-                }
+                // Clean up old local keys to prevent conflicts.
+                localStorage.removeItem(`_trainerBrand_${currentId}`);
+                localStorage.removeItem('_trainerBrand');
+                localStorage.removeItem(`brand_settings_${currentId}`);
+                localStorage.removeItem('brand_settings');
 
                 if (localTime > cloudTime || dataChanged) {
-                    console.log("📤 Sincronizando cambios locales fusionados a la nube...");
-                    mergedData.lastModified = new Date().toISOString();
-                    await window.SupabaseService.saveTrainerData(currentId, mergedData);
+                    // 🛡️ BLINDAJE TOTAL: NUNCA subir datos vacíos a la nube si la nube tenía datos reales
+                    const mergedHasData = (
+                        (mergedData.clients && mergedData.clients.length > 0) ||
+                        (mergedData.routines && mergedData.routines.length > 0) ||
+                        (mergedData.trainingBlocks && mergedData.trainingBlocks.length > 0)
+                    );
+                    const cloudWasEmpty = !cloudHasClients && !cloudHasRoutines && !cloudHasBlocks;
+                    
+                    if (!mergedHasData && !cloudWasEmpty) {
+                        console.error('🚨 [BLINDAJE SYNC] BLOQUEADO: El resultado de la fusión tiene 0 datos pero la nube tenía datos. Abortando subida a la nube para proteger datos.');
+                    } else {
+                        console.log("📤 Sincronizando cambios locales fusionados a la nube...");
+                        mergedData.lastModified = new Date().toISOString();
+                        await window.SupabaseService.saveTrainerData(currentId, mergedData);
+                    }
                 }
 
+                mergedData.deletedIds = [];
                 localStorage.setItem(getStorageKey(), JSON.stringify(mergedData));
+                
+                // 💾 Actualizar backup con datos frescos
+                const mergedHasRealData = (
+                    (mergedData.clients && mergedData.clients.length > 0) ||
+                    (mergedData.routines && mergedData.routines.length > 0) ||
+                    (mergedData.trainingBlocks && mergedData.trainingBlocks.length > 0)
+                );
+                if (mergedHasRealData) {
+                    try { localStorage.setItem(getStorageKey() + '_backup', JSON.stringify(mergedData)); } catch(e) {}
+                }
                 return mergedData;
             }
 
-            // Preservar marca
-            const trainerBrandRaw = localStorage.getItem(`_trainerBrand_${currentId}`) || localStorage.getItem('_trainerBrand');
-            const brandSettingsRaw = localStorage.getItem(`brand_settings_${currentId}`) || localStorage.getItem('brand_settings');
-            const localBrandRaw = trainerBrandRaw || brandSettingsRaw;
-            if (localBrandRaw) {
-                try {
-                    const localBrand = JSON.parse(localBrandRaw);
-                    if (!cloudData.brand) cloudData.brand = {};
-                    cloudData.brand = { ...cloudData.brand, ...localBrand };
-                } catch(e) {}
-            }
+            // Clean up old local keys to prevent conflicts.
+            localStorage.removeItem(`_trainerBrand_${currentId}`);
+            localStorage.removeItem('_trainerBrand');
+            localStorage.removeItem(`brand_settings_${currentId}`);
+            localStorage.removeItem('brand_settings');
             localStorage.setItem(getStorageKey(), JSON.stringify(cloudData));
             return cloudData;
         } else if (localData) {
@@ -1786,7 +2201,32 @@ window.Media = {
         
         mediaMap.set(String(m.id), finalItem);
     });
-    return Array.from(mediaMap.values());
+    return Array.from(mediaMap.values()).map(item => {
+        if (item.category === 'exercise' && item.muscleGroup) {
+            const titleLower = (item.title || '').toLowerCase();
+            const g = item.muscleGroup.toLowerCase().trim();
+            if (titleLower.includes('femoral') || titleLower.includes('isquio') || titleLower.includes('rumano')) {
+                item.muscleGroup = 'Isquiotibiales';
+            } else if (titleLower.includes('gemelo')) {
+                item.muscleGroup = 'Gemelos';
+            } else if (g === 'pecho') {
+                item.muscleGroup = 'Pectorales';
+            } else if (g === 'espalda') {
+                item.muscleGroup = 'Dorsales';
+            } else if (g === 'bíceps' || g === 'biceps') {
+                item.muscleGroup = 'Biceps';
+            } else if (g === 'tríceps' || g === 'triceps') {
+                item.muscleGroup = 'Triceps';
+            } else if (g === 'core') {
+                item.muscleGroup = 'Abdominales';
+            } else if (g === 'piernas' || g === 'pierna' || g === 'cuadriceps') {
+                item.muscleGroup = 'Cuadriceps';
+            } else if (g === 'glúteos' || g === 'gluteos' || g === 'glúteo' || g === 'gluteo') {
+                item.muscleGroup = 'Glúteos';
+            }
+        }
+        return item;
+    });
   },
   create: (mediaData) => {
     const data = getData();
@@ -1852,6 +2292,8 @@ window.Media = {
         data.hidden_system_media.push(id);
     } else {
         data.media = data.media.filter(m => m.id != id);
+        if (!data.deletedIds) data.deletedIds = [];
+        data.deletedIds.push(id);
     }
     saveData(data);
     return true;
@@ -2112,6 +2554,8 @@ const Clients = {
     const finalCount = data.clients.length;
 
     if (initialCount !== finalCount) {
+      if (!data.deletedIds) data.deletedIds = [];
+      data.deletedIds.push(id);
       saveData(data);
       console.log('DataModels: Cliente eliminado con éxito.');
       return true;
@@ -2179,6 +2623,8 @@ const Routines = {
   delete: (id) => {
     const data = getData();
     data.routines = data.routines.filter(r => r.id !== id);
+    if (!data.deletedIds) data.deletedIds = [];
+    data.deletedIds.push(id);
     saveData(data);
   }
 };
@@ -2231,6 +2677,8 @@ const Diets = {
   delete: (id) => {
     const data = getData();
     data.diets = data.diets.filter(d => d.id !== id);
+    if (!data.deletedIds) data.deletedIds = [];
+    data.deletedIds.push(id);
     saveData(data);
   }
 };
@@ -2319,7 +2767,14 @@ const SYSTEM_FOODS = [
   { name: "Arepa de Maíz (Masa)", calories: 165, protein: 3, carbs: 35, fat: 1 },
   { name: "Granola Casera", calories: 460, protein: 10, carbs: 60, fat: 20 },
   { name: "Dátiles (1 ud Medjool)", calories: 66, protein: 0.4, carbs: 16, fat: 0, type: 'unit' },
-  { name: "Miel / Sirope Ágave (1 cda)", calories: 60, protein: 0, carbs: 15, fat: 0, type: 'unit' }
+  { name: "Miel / Sirope Ágave (1 cda)", calories: 60, protein: 0, carbs: 15, fat: 0, type: 'unit' },
+  { name: "Crema de arroz", calories: 365, protein: 7, carbs: 82, fat: 1 },
+  { name: "Corn flakes/Crema arroz/Cereales 0%", calories: 370, protein: 7, carbs: 84, fat: 1 },
+  { name: "Leche vegetal", calories: 35, protein: 1, carbs: 3, fat: 1.5 },
+  { name: "Chocolate Negro  85% o Coco rallado", calories: 600, protein: 8, carbs: 20, fat: 50 },
+  { name: "Salmorejo", calories: 70, protein: 1, carbs: 6, fat: 4.5 },
+  { name: "Tostadas tipo Ortiz", calories: 380, protein: 11, carbs: 72, fat: 4 },
+  { name: "Salmón ahumado o Jamón serrano", calories: 200, protein: 25, carbs: 0.5, fat: 10 }
 ];
 
 const Foods = {
@@ -2472,6 +2927,8 @@ const Foods = {
     const data = getData();
     if (!data.foods) return;
     data.foods = data.foods.filter(f => f.id != id);
+    if (!data.deletedIds) data.deletedIds = [];
+    data.deletedIds.push(id);
     saveData(data);
   }
 };
@@ -2585,6 +3042,8 @@ const Appointments = {
   delete: (id) => {
     const data = getData();
     data.appointments = data.appointments.filter(a => a.id != id);
+    if (!data.deletedIds) data.deletedIds = [];
+    data.deletedIds.push(id);
     saveData(data);
   }
 };
@@ -2822,6 +3281,8 @@ const TrainingBlocks = {
     const data = getData();
     if (!data.trainingBlocks) return;
     data.trainingBlocks = data.trainingBlocks.filter(b => b.id != id);
+    if (!data.deletedIds) data.deletedIds = [];
+    data.deletedIds.push(id);
     saveData(data);
   }
 };
@@ -2935,16 +3396,15 @@ const BrandConfig = {
 
     // Instant corporate brand override for ASTeam custom domain / active trainer
     if (typeof window !== 'undefined' && 
-        (window.location.hostname.includes('infinitecoach.es') || 
-         window.activeTrainerId === 't-w0iybl7qb' || 
+        (window.activeTrainerId === 't-w0iybl7qb' || 
          window.activeTrainerId === 'alejandra_asteam_gmail_com' || 
          localStorage.getItem('activeTrainerId') === 't-w0iybl7qb' ||
          localStorage.getItem('activeTrainerId') === 'alejandra_asteam_gmail_com')) {
         defaultBrand = {
             name: 'ASTeam',
-            logo: 'img/logo-infinite-marble.png',
+            logo: 'https://bieeydhacavxymoosasx.supabase.co/storage/v1/object/public/Media/1779724548154_Gemini_Generated_Image_vse84nvse84nvse8.png',
             configured: true,
-            colors: { primary: '#00d9ff', secondary: '#1a1a2e', accent: '#ff6b6b' },
+            colors: { primary: '#fdbfec', secondary: '#1a1a2e', accent: '#ff6b6b' },
             whatsapp: '615760338',
             fiscalData: { invoiceSeries: 'FAST' + new Date().getFullYear() }
         };
@@ -2955,7 +3415,51 @@ const BrandConfig = {
     if (res && (res.name === 'MyFitness' || res.name === 'Fitness App' || (res.name === 'Infinite Coach' && defaultBrand.name === 'ASTeam'))) {
         res.name = defaultBrand.name;
         res.colors = defaultBrand.colors;
+        res.logo = defaultBrand.logo;
         if (defaultBrand.whatsapp) res.whatsapp = defaultBrand.whatsapp;
+    }
+
+    // Auto-correct stale or corrupted ASTeam settings in local cache (forcing correct pink logo, colors, questions, and perimeters)
+    if (res && (res.name === 'ASTeam' || defaultBrand.name === 'ASTeam')) {
+        let changed = false;
+        res.name = 'ASTeam';
+        if (!res.colors || res.colors.primary === '#00d9ff' || res.colors.primary === '#00D9FF') {
+            res.colors = defaultBrand.colors;
+            changed = true;
+        }
+        if (!res.logo || res.logo === 'img/logo-infinite-marble.png') {
+            res.logo = defaultBrand.logo;
+            changed = true;
+        }
+        if (!res.whatsapp || res.whatsapp === '+34000000000') {
+            res.whatsapp = defaultBrand.whatsapp;
+            changed = true;
+        }
+        const expectedQuestions = [
+            "¿Qué tal te ves fisicamente?",
+            "Sensaciones sobre la dieta (mucha/poca comida, ansiedad, poco apetito...)",
+            "Comida/alimento que no te haya gustado y/o quieras cambiar de la dieta actual",
+            "Comida/alimento que quieras tener en tu próxima dieta a ser posible",
+            "¿Has realizado algún salto de dieta para tener en cuenta?",
+            "¿Qué tal han ido los entrenos? Cuéntame tus sensaciones",
+            "¿Has podido entrenar los días estipulados?",
+            "¿Te recuperas correctamente de los entrenos entre sesiones?",
+            "Del 1 al 10, ¿Cuál ha sido tu implicación en los entrenamientos? (Intensidad, realización de todas las series...)"
+        ];
+        if (!res.feedbackQuestions || res.feedbackQuestions.length < 5) {
+            res.feedbackQuestions = expectedQuestions;
+            changed = true;
+        }
+        const expectedPerimeters = ["Cintura", "Cadera", "Pecho", "Brazo", "Muslo"];
+        if (!res.trainerPerimeters || res.trainerPerimeters.length < 3) {
+            res.trainerPerimeters = expectedPerimeters;
+            changed = true;
+        }
+
+        if (changed && typeof saveData === 'function') {
+            data.brand = res;
+            saveData(data);
+        }
     }
     if (res && (!res.logo || res.logo.length < 5)) {
         res.logo = 'img/logo-infinite-marble.png';
@@ -3012,6 +3516,13 @@ const BrandConfig = {
           '0, 217, 255';
       };
       document.documentElement.style.setProperty('--primary-color-rgb', hexToRgb(brand.colors.primary));
+      
+      // Dynamic Theme Light/Dark Class
+      const isLight = brand.colors.themeMode === 'light';
+      document.documentElement.classList.toggle('theme-light', isLight);
+      if (document.body) {
+          document.body.classList.toggle('theme-light', isLight);
+      }
     }
 
     // Dynamic Header (Logo & Name)
@@ -3059,7 +3570,6 @@ const BrandConfig = {
         
         if (nameSpan) {
             nameSpan.textContent = brand.name || 'Infinite Coach';
-            // Aplicar color principal al nombre para mayor visibilidad
             nameSpan.style.color = brand.colors?.primary || '#00D9FF';
             nameSpan.style.fontWeight = '800';
         }
@@ -3068,9 +3578,177 @@ const BrandConfig = {
         if (brand.name) {
             document.title = `${baseTitle} - ${brand.name}`;
         }
+        
+        // Favicon PWA
+        try {
+            const defaultLogo = 'img/logo-infinite-marble.png';
+            const currentLogo = (brand && brand.logo && brand.logo.length > 5) ? brand.logo : defaultLogo;
+            const absoluteLogo = currentLogo.startsWith('http') || currentLogo.startsWith('data:')
+                ? currentLogo
+                : new URL(currentLogo, window.location.origin).href;
+            
+            const finalLogoUrl = absoluteLogo.startsWith('data:') 
+                ? absoluteLogo 
+                : absoluteLogo + (absoluteLogo.includes('?') ? '&' : '?') + 'v=' + new Date().getTime();
+
+            document.querySelectorAll('link[rel*="icon"]').forEach(el => el.remove());
+
+            const shortcut = document.createElement('link');
+            shortcut.rel = 'shortcut icon';
+            shortcut.type = 'image/png';
+            shortcut.href = finalLogoUrl;
+            document.head.appendChild(shortcut);
+
+            const icon = document.createElement('link');
+            icon.rel = 'icon';
+            icon.type = 'image/png';
+            icon.href = finalLogoUrl;
+            document.head.appendChild(icon);
+
+            let appleIcon = document.querySelector('link[rel="apple-touch-icon"]');
+            if (!appleIcon) {
+                appleIcon = document.createElement('link');
+                appleIcon.rel = 'apple-touch-icon';
+                document.head.appendChild(appleIcon);
+            }
+            appleIcon.href = absoluteLogo;
+        } catch(e) {}
     }
   }
 };
 
 window.BrandConfig = BrandConfig;
-console.log("🏁 v310 STABLE: Sistema Cargado con CRUD.");
+console.log("🏁 v311 BLINDAJE TOTAL: Sistema Cargado con protección máxima de datos.");
+
+// ============================================
+// 🛡️ RECUPERACIÓN DE EMERGENCIA
+// Si los datos locales están vacíos pero existe un backup, restaurar automáticamente
+// ============================================
+(async () => {
+    try {
+        const currentId = window.activeTrainerId || localStorage.getItem('activeTrainerId') || 'default';
+        if (currentId === 'default') return;
+        
+        const mainKey = getStorageKey();
+        const backupKey = mainKey + '_backup';
+        
+        const mainRaw = localStorage.getItem(mainKey);
+        const backupRaw = localStorage.getItem(backupKey);
+        
+        if (!backupRaw) return;
+        
+        let mainHasData = false;
+        if (mainRaw) {
+            try {
+                const m = JSON.parse(mainRaw);
+                mainHasData = (m.clients && m.clients.length > 0) || (m.routines && m.routines.length > 0) || (m.trainingBlocks && m.trainingBlocks.length > 0);
+            } catch(e) {}
+        }
+        
+        if (!mainHasData) {
+            try {
+                const bk = JSON.parse(backupRaw);
+                const backupHasData = (bk.clients && bk.clients.length > 0) || (bk.routines && bk.routines.length > 0) || (bk.trainingBlocks && bk.trainingBlocks.length > 0);
+                
+                if (backupHasData) {
+                    console.log('🔄 [RECUPERACIÓN] Se detectaron datos vacíos pero existe un backup válido. Restaurando...');
+                    localStorage.setItem(mainKey, backupRaw);
+                    console.log('✅ [RECUPERACIÓN] Datos restaurados desde backup local.');
+                    // También intentar recuperar desde la nube para tener los más recientes
+                    if (window.SupabaseService) {
+                        window.syncFromCloud && window.syncFromCloud().catch(() => {});
+                    }
+                }
+            } catch(e) {}
+        }
+    } catch(e) {}
+})();
+
+// ============================================
+// AUTOMATIC CLOUD SYNC & AUTO-REFRESH UTILITY
+// ============================================
+(() => {
+    if (typeof window === 'undefined' || typeof document === 'undefined') return;
+
+    let isSyncing = false;
+    let lastSyncTime = Date.now();
+
+    async function triggerAutomaticSync() {
+        if (isSyncing) return;
+        
+        // Prevent syncing too frequently (debounce to max once every 10 seconds)
+        if (Date.now() - lastSyncTime < 10000) return;
+        
+        const currentId = window.activeTrainerId || localStorage.getItem('activeTrainerId') || 'default';
+        if (currentId === 'default' || !window.SupabaseService || !window.syncFromCloud) return;
+
+        isSyncing = true;
+        try {
+            console.log("🔄 [AutoSync] Iniciando sincronización automática en segundo plano...");
+            const prevDataStr = localStorage.getItem(getStorageKey());
+            
+            const freshData = await window.syncFromCloud();
+            lastSyncTime = Date.now();
+
+            if (freshData) {
+                const freshDataStr = localStorage.getItem(getStorageKey());
+                // Si la cadena de datos en local storage ha cambiado, significa que la nube trajo novedades
+                if (prevDataStr !== freshDataStr) {
+                    console.log("🔔 [AutoSync] Se detectaron nuevos datos desde la nube. Actualizando interfaz...");
+
+                    // Comprobar si el usuario está escribiendo para no interrumpir su flujo
+                    const activeElement = document.activeElement;
+                    const isUserTyping = activeElement && (
+                        activeElement.tagName === 'INPUT' || 
+                        activeElement.tagName === 'TEXTAREA' || 
+                        activeElement.isContentEditable
+                    );
+
+                    if (!isUserTyping) {
+                        // Si existe un inicializador global de página, lo llamamos para actualizar la UI suavemente
+                        if (typeof window.initializeApp === 'function') {
+                            console.log("⚡ [AutoSync] Re-ejecutando initializeApp() para refrescar la UI sin recargar la página.");
+                            try {
+                                await window.initializeApp();
+                                return; // Éxito en recarga suave
+                            } catch (err) {
+                                console.warn("Error re-running initializeApp:", err);
+                            }
+                        }
+                        // Fallback: recarga limpia si no hay re-renderizador suave o falló
+                        console.log("⚡ [AutoSync] Recargando página para aplicar cambios frescos.");
+                        window.location.reload();
+                    } else {
+                        console.log("✍️ [AutoSync] El usuario está escribiendo. Sincronización guardada en caché local, se actualizará al terminar o cambiar de vista.");
+                    }
+                } else {
+                    console.log("➡️ [AutoSync] Sincronización completada. No hay cambios nuevos en la nube.");
+                }
+            }
+        } catch (e) {
+            console.warn("[AutoSync] Error en sincronización de fondo:", e);
+        } finally {
+            isSyncing = false;
+        }
+    }
+
+    // 1. Escuchar cuando el usuario regresa a la app (cambio de pestaña, desbloqueo de móvil)
+    document.addEventListener('visibilitychange', () => {
+        if (document.visibilityState === 'visible') {
+            console.log("📱 [AutoSync] App visible de nuevo. Ejecutando sincronización...");
+            triggerAutomaticSync();
+        }
+    });
+
+    window.addEventListener('focus', () => {
+        console.log("🖥️ [AutoSync] Foco recuperado en la ventana. Ejecutando sincronización...");
+        triggerAutomaticSync();
+    });
+
+    // 2. Ejecutar de forma periódica cada 30 segundos mientras la app esté activa y en primer plano
+    setInterval(() => {
+        if (document.visibilityState === 'visible') {
+            triggerAutomaticSync();
+        }
+    }, 30000);
+})();

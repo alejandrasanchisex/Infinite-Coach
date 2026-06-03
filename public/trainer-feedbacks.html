@@ -2,13 +2,36 @@
 <html lang="es">
 
 <head>
+    <script>
+        // Force PWA cache bust / reload
+        (function() {
+            const CURRENT_VERSION = '349';
+            const savedVersion = localStorage.getItem('app_version');
+            if (savedVersion !== CURRENT_VERSION) {
+                localStorage.setItem('app_version', CURRENT_VERSION);
+                if ('serviceWorker' in navigator) {
+                    navigator.serviceWorker.getRegistrations().then(function(registrations) {
+                        for (let registration of registrations) {
+                            registration.unregister();
+                        }
+                    }).catch(function(err) {
+                        console.warn('SW unregister failed:', err);
+                    }).finally(function() {
+                        window.location.reload(true);
+                    });
+                } else {
+                    window.location.reload(true);
+                }
+            }
+        })();
+    </script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Revisiones - Fitness App</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="styles/theme.css?v=330">
+    <link rel="stylesheet" href="styles/theme.css?v=350">
     <link rel="stylesheet" href="styles/components.css">
     <style>
         .feedback-grid {
@@ -80,14 +103,14 @@
                 </div>
                 <button class="menu-toggle" onclick="toggleMenu()">☰</button>
                 <ul class="nav-links" id="navLinks">
-                    <li><a href="trainer-dashboard.html?v=330" class="nav-link">Dashboard</a></li>
-                    <li><a href="trainer-clients.html?v=330" class="nav-link">Clientes</a></li>
-                    <li><a href="trainer-routines.html?v=330" class="nav-link">Rutinas</a></li>
-                    <li><a href="trainer-diets.html?v=330" class="nav-link">Dietas</a></li>
-                    <li><a href="trainer-feedbacks.html?v=330" class="nav-link active">Revisiones</a></li>
-                    <li><a href="trainer-media.html?v=330" class="nav-link">Biblioteca</a></li>
-                    <li><a href="trainer-appointments.html?v=330" class="nav-link">Agenda</a></li>
-                    <li><a href="trainer-settings.html?v=330" class="nav-link">Configuración</a></li>
+                    <li><a href="trainer-dashboard.html?v=349" class="nav-link">Dashboard</a></li>
+                    <li><a href="trainer-clients.html?v=349" class="nav-link">Clientes</a></li>
+                    <li><a href="trainer-routines.html?v=349" class="nav-link">Rutinas</a></li>
+                    <li><a href="trainer-diets.html?v=349" class="nav-link">Dietas</a></li>
+                    <li><a href="trainer-feedbacks.html?v=349" class="nav-link active">Revisiones</a></li>
+                    <li><a href="trainer-media.html?v=349" class="nav-link">Biblioteca</a></li>
+                    <li><a href="trainer-appointments.html?v=349" class="nav-link">Agenda</a></li>
+                    <li><a href="trainer-settings.html?v=349" class="nav-link">Configuración</a></li>
                     <li><a href="#" onclick="if(typeof AUTH !== 'undefined') { AUTH.signOut() } else { window.location.reload() }; return false;" class="nav-link" style="color:var(--error-color)">🚪 Salir</a></li>
                 </ul>
             </nav>
@@ -133,13 +156,13 @@
     <!-- Scripts -->
     <!-- Supabase SDK & Service -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="js/supabase-service.js?v=330"></script>
+    <script src="js/supabase-service.js?v=350"></script>
 
-    <script src="js/config.js?v=330"></script>
-    <script src="js/auth.js?v=330"></script>
-    <script src="js/sheets.js?v=330"></script>
-    <script src="js/data-models.js?v=330"></script>
-    <script src="js/utils.js?v=330"></script>
+    <script src="js/config.js?v=350"></script>
+    <script src="js/auth.js?v=349"></script>
+    <script src="js/sheets.js?v=349"></script>
+    <script src="js/data-models.js?v=350"></script>
+    <script src="js/utils.js?v=350"></script>
     <script>
         BrandConfig.applyTheme();
         const brand = BrandConfig.get();
@@ -334,49 +357,6 @@
             window.open(link, '_blank');
         }
 
-        (function createDemoData() {
-            const feedbacks = Feedbacks.getAll();
-            const hasPending = feedbacks.some(f => !f.trainerResponse);
-
-            if (!hasPending) {
-                let demoClient = Clients.getAll().find(c => c.name === 'Ana García');
-                if (!demoClient) {
-                    demoClient = Clients.create({
-                        name: 'Ana García',
-                        email: 'ana.garcia@gmail.com',
-                        phone: '600123456',
-                        monthlyFee: 60,
-                        reviewDay: '5',
-                        age: 28,
-                        weight: 65,
-                        height: 165
-                    });
-                }
-
-                setTimeout(() => {
-                    Feedbacks.create({
-                        clientId: demoClient.id,
-                        week: 1,
-                        energy: 4,
-                        adherence: 5,
-                        satisfaction: 5,
-                        weight: 64.5,
-                        sleep: 4,
-                        stress: 2,
-                        answers: [
-                            { question: '¿Cómo te has sentido esta semana?', answer: 'Muy bien, con mucha energía.' },
-                            { question: '¿Has tenido alguna dificultad con la dieta?', answer: 'Ninguna, es muy variada.' }
-                        ],
-                        comments: 'Me gustaría subir un poco las intensidades en pierna.',
-                        trainerResponse: ''
-                    });
-                    loadFeedbacks();
-                }, 100);
-            }
-        })();
-
-        loadFeedbacks();
-
         async function onGoogleAuthSuccess() {
             // Sincronizar con la nube (Supabase es ahora el primario)
             if (window.SupabaseService) {
@@ -397,6 +377,6 @@
             loadFeedbacks();
         }
     </script>
-    <script src="js/custom-recipes.js?v=129"></script></body>
+    <script src="js/custom-recipes.js?v=349"></script></body>
 
 </html>

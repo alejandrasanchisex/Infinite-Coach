@@ -4,13 +4,36 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script>
+        // Force PWA cache bust / reload
+        (function() {
+            const CURRENT_VERSION = '349';
+            const savedVersion = localStorage.getItem('app_version');
+            if (savedVersion !== CURRENT_VERSION) {
+                localStorage.setItem('app_version', CURRENT_VERSION);
+                if ('serviceWorker' in navigator) {
+                    navigator.serviceWorker.getRegistrations().then(function(registrations) {
+                        for (let registration of registrations) {
+                            registration.unregister();
+                        }
+                    }).catch(function(err) {
+                        console.warn('SW unregister failed:', err);
+                    }).finally(function() {
+                        window.location.reload(true);
+                    });
+                } else {
+                    window.location.reload(true);
+                }
+            }
+        })();
+    </script>
     <title>Mi Ficha Técnica - Infinite Coach</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="styles/theme.css?v=330">
-    <link rel="stylesheet" href="styles/components.css">
-    <link rel="stylesheet" href="styles/mobile.css">
+    <link rel="stylesheet" href="styles/theme.css?v=350">
+    <link rel="stylesheet" href="styles/components.css?v=349">
+    <link rel="stylesheet" href="styles/mobile.css?v=349">
     <link rel="manifest" href="manifest.json">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -26,10 +49,10 @@
                     <span id="brandName">Infinite Coach</span>
                 </div>
                 <ul class="nav-links" id="navLinks">
-                    <li><a href="client-dashboard.html?v=330" class="nav-link">Inicio</a></li>
-                    <li><a href="client-profile.html?v=330" class="nav-link active">Ficha Técnica</a></li>
+                    <li><a href="client-dashboard.html?v=349" class="nav-link">Inicio</a></li>
+                    <li><a href="client-profile.html?v=349" class="nav-link active">Ficha Técnica</a></li>
 
-                    <li><a href="client-login.html?v=330" class="nav-link">Salir</a></li>
+                    <li><a href="client-login.html?v=349" class="nav-link">Salir</a></li>
                 </ul>
                 <button class="menu-toggle" onclick="toggleMenu()" style="margin-left: auto;">☰</button>
             </nav>
@@ -139,10 +162,11 @@
 
             <div class="card mt-lg" id="paymentInfoCard" style="display: none; max-width: 800px; margin: 20px auto 0;">
                 <div class="card-header pb-sm">
-                    <h3 class="card-title">Información de Pago</h3>
+                    <h3 class="card-title">💳 Cómo Pagar</h3>
                 </div>
                 <div class="card-body">
-                    <div id="paymentDetails" style="background: rgba(255,255,255,0.03); padding: 20px; border-radius: 12px; text-align: center;">
+                    <p class="text-xs text-muted mb-md">Usa cualquiera de estos métodos para abonar tu cuota mensual.</p>
+                    <div id="paymentDetails" style="display: flex; flex-direction: column; gap: 12px;">
                         <!-- Payment details will be loaded here -->
                     </div>
                 </div>
@@ -166,12 +190,12 @@
 
     <!-- Supabase SDK & Service -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="js/supabase-service.js?v=330"></script>
+    <script src="js/supabase-service.js?v=350"></script>
 
-    <script src="js/config.js?v=100"></script>
-    <script src="js/data-models.js?v=330"></script>
-    <script src="js/cloud-storage.js?v=20"></script>
-    <script src="js/utils.js?v=20"></script>
+    <script src="js/config.js?v=350"></script>
+    <script src="js/data-models.js?v=350"></script>
+    <script src="js/cloud-storage.js?v=349"></script>
+    <script src="js/utils.js?v=350"></script>
     <script>
         const clientId = sessionStorage.getItem('clientId') || localStorage.getItem('clientId');
         if (!clientId) {
@@ -182,6 +206,7 @@
         }
 
         let client = null;
+        let brand = {};
 
         document.addEventListener('DOMContentLoaded', async () => {
             if (!clientId) return;
@@ -204,10 +229,18 @@
                 return;
             }
 
+            // Redireccionar al Dashboard si está inactivo o tiene pagos pendientes (Opción 3)
+            const isInactive = client.status === 'inactive';
+            const isUnpaid = client.paymentStatus !== 'paid' || client.status === 'unpaid';
+            if (isInactive || isUnpaid) {
+                window.location.replace('client-dashboard.html');
+                return;
+            }
+
             // Aplicar branding y logo
             if (typeof BrandConfig !== 'undefined') {
                 BrandConfig.applyTheme();
-                const brand = BrandConfig.get();
+                brand = BrandConfig.get();
                 if (document.getElementById('brandName')) document.getElementById('brandName').textContent = brand.name;
                 if (brand.logo && document.getElementById('brandLogo')) {
                     document.getElementById('brandLogo').src = brand.logo;
@@ -314,16 +347,23 @@
         }
 
         function loadPaymentInfo() {
-            const methods = brand.paymentMethods || [];
+            // Ensure brand is fresh from BrandConfig
+            if (typeof BrandConfig !== 'undefined') {
+                brand = BrandConfig.get() || brand;
+            }
+
+            const methods = (brand.paymentMethods || []).slice();
             
             // Legacy fallback if array is empty
-            if (methods.length === 0 && brand.paymentSettings && brand.paymentSettings.method !== 'none') {
-                methods.push({ type: brand.paymentSettings.method, id: brand.paymentSettings.id });
+            if (methods.length === 0 && brand.paymentSettings && brand.paymentSettings.method && brand.paymentSettings.method !== 'none') {
+                methods.push({ type: brand.paymentSettings.method, id: brand.paymentSettings.id, note: brand.paymentSettings.instructions || '' });
             }
 
             const card = document.getElementById('paymentInfoCard');
             const details = document.getElementById('paymentDetails');
             
+            if (!card || !details) return;
+
             if (methods.length === 0) {
                 card.style.display = 'none';
                 return;
@@ -333,14 +373,21 @@
             let html = '<div style="display: flex; flex-direction: column; gap: 15px;">';
             
             methods.forEach(m => {
-                const type = m.type.toLowerCase();
-                const id = m.id;
+                const type = (m.type || '').toLowerCase();
+                const id = m.id || '';
+                const isAutomatic = type.includes('stripe') || id.startsWith('http');
+                const renewalBadge = isAutomatic
+                    ? `<span style="display:inline-flex; align-items:center; gap:4px; background: rgba(16,185,129,0.12); color:#10B981; border:1px solid rgba(16,185,129,0.25); border-radius:20px; font-size:0.65rem; font-weight:700; padding:3px 9px; letter-spacing:0.5px;">🔄 RENOVACIÓN AUTOMÁTICA</span>`
+                    : `<span style="display:inline-flex; align-items:center; gap:4px; background: rgba(251,191,36,0.1); color:#FBBF24; border:1px solid rgba(251,191,36,0.25); border-radius:20px; font-size:0.65rem; font-weight:700; padding:3px 9px; letter-spacing:0.5px;">✋ PAGO MANUAL</span>`;
                 
                 html += `
                     <div style="background: rgba(255,255,255,0.02); padding: 15px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.05); text-align: left;">
                         <div class="flex-between align-center mb-sm">
                             <span class="font-bold" style="color: var(--primary-color); text-transform: uppercase; font-size: 0.8rem;">${m.type}</span>
                             <span style="font-size: 1.2rem;">${getPaymentIcon(type)}</span>
+                        </div>
+                        <div style="margin-bottom: 10px;">
+                            ${renewalBadge}
                         </div>
                         <div style="margin-bottom: 12px;">
                             ${formatPaymentId(type, id)}
@@ -356,14 +403,17 @@
         }
 
         function getPaymentIcon(type) {
+            if (type.includes('stripe')) return '💳';
             if (type.includes('bizum')) return '📲';
             if (type.includes('paypal')) return '💳';
             if (type.includes('transfer')) return '🏦';
             if (type.includes('revolut')) return '💎';
+            if (type.includes('efectivo')) return '💵';
             return '💰';
         }
 
         function formatPaymentId(type, id) {
+            if (!id || id === 'Activo') return '';
             if (type.includes('transfer')) {
                 return `<code style="display: block; background: rgba(0,0,0,0.3); padding: 8px; border-radius: 4px; font-size: 0.85rem; word-break: break-all;">${id}</code>`;
             }
@@ -371,6 +421,12 @@
         }
 
         function getPaymentButton(type, id) {
+            if (type.includes('stripe') && id.startsWith('http')) {
+                return `<a href="${id}" target="_blank" class="btn btn-sm btn-primary w-100">💳 Gestionar Suscripción Stripe</a>`;
+            }
+            if (type.includes('stripe')) {
+                return `<p class="text-xs" style="color: #10B981;">Tu cuota se renueva automáticamente cada mes. No necesitas hacer nada.</p>`;
+            }
             if (type.includes('paypal')) {
                 const url = id.startsWith('http') ? id : `https://paypal.me/${id}/${client.monthlyFee || ''}`;
                 return `<a href="${url}" target="_blank" class="btn btn-sm btn-primary w-100">Pagar con PayPal</a>`;
@@ -388,9 +444,16 @@
 
         function setupWhatsAppFab() {
             const fab = document.getElementById('whatsappFab');
-            const message = `Hola ${brand.name}, soy ${client.name}. Tengo una consulta sobre mis datos.`;
-            fab.href = generateWhatsAppLink(brand.whatsapp, message);
-            fab.target = '_blank';
+            if (fab && brand && client) {
+                const message = `Hola ${brand.name}, soy ${client.name}. Tengo una consulta sobre mis datos.`;
+                const link = generateWhatsAppLink(brand.whatsapp, message);
+                fab.href = link;
+                fab.removeAttribute('target');
+                fab.onclick = function(e) {
+                    e.preventDefault();
+                    window.location.href = link;
+                };
+            }
         }
 
         
@@ -502,6 +565,6 @@
 
         // Load data on start
     </script>
-    <script src="js/custom-recipes.js?v=129"></script></body>
+    <script src="js/custom-recipes.js?v=349"></script></body>
 
 </html>

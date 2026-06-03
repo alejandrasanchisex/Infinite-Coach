@@ -4,13 +4,36 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script>
+      // Force PWA cache bust / reload
+      (function() {
+          const CURRENT_VERSION = '349';
+          const savedVersion = localStorage.getItem('app_version');
+          if (savedVersion !== CURRENT_VERSION) {
+              localStorage.setItem('app_version', CURRENT_VERSION);
+              if ('serviceWorker' in navigator) {
+                  navigator.serviceWorker.getRegistrations().then(function(registrations) {
+                      for (let registration of registrations) {
+                          registration.unregister();
+                      }
+                  }).catch(function(err) {
+                      console.warn('SW unregister failed:', err);
+                  }).finally(function() {
+                      window.location.reload(true);
+                  });
+              } else {
+                  window.location.reload(true);
+              }
+          }
+      })();
+  </script>
   <title>Mi Dieta - Infinite Coach</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="styles/theme.css?v=330">
-  <link rel="stylesheet" href="styles/components.css?v=330">
-  <link rel="stylesheet" href="styles/mobile.css">
+  <link rel="stylesheet" href="styles/theme.css?v=350">
+  <link rel="stylesheet" href="styles/components.css?v=349">
+  <link rel="stylesheet" href="styles/mobile.css?v=349">
   <link rel="manifest" href="manifest.json">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -484,10 +507,10 @@
           <span id="brandName">Infinite Coach</span>
         </div>
         <ul class="nav-links" id="navLinks">
-          <li><a href="client-dashboard.html?v=330" class="nav-link">Inicio</a></li>
-          <li><a href="client-profile.html?v=330" class="nav-link">Ficha Técnica</a></li>
+          <li><a href="client-dashboard.html?v=349" class="nav-link">Inicio</a></li>
+          <li><a href="client-profile.html?v=349" class="nav-link">Ficha Técnica</a></li>
 
-          <li><a href="client-login.html?v=330" class="nav-link">Salir</a></li>
+          <li><a href="client-login.html?v=349" class="nav-link">Salir</a></li>
         </ul>
         <button class="menu-toggle" onclick="toggleMenu()" style="margin-left: auto;">☰</button>
       </nav>
@@ -565,13 +588,28 @@
 
   <!-- Supabase SDK & Service -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script src="js/supabase-service.js?v=330"></script>
+  <script src="js/supabase-service.js?v=350"></script>
 
-  <script src="js/config.js?v=330"></script>
-  <script src="js/data-models.js?v=330"></script>
-  <script src="js/utils.js?v=330"></script>
-  <script src="js/custom-recipes.js?v=330"></script>
+  <script src="js/config.js?v=350"></script>
+  <script src="js/data-models.js?v=350"></script>
+  <script src="js/utils.js?v=350"></script>
+  <script src="js/custom-recipes.js?v=349"></script>
   <script>
+    // --- RESOLUCIÓN DE TRAINER ID (FALLBACK SEGURO) ---
+    (function() {
+        var tParam = new URLSearchParams(window.location.search).get('t');
+        if (tParam) {
+            localStorage.setItem('activeTrainerId', tParam);
+            window.activeTrainerId = tParam;
+        } else {
+            var activeId = localStorage.getItem('activeTrainerId') || window.activeTrainerId;
+            if (!activeId || activeId === 'admin') {
+                localStorage.setItem('activeTrainerId', 'default');
+                window.activeTrainerId = 'default';
+            }
+        }
+    })();
+
     let clientId = new URLSearchParams(window.location.search).get('id') || sessionStorage.getItem('clientId') || localStorage.getItem('clientId');
     if (!clientId) {
       window.location.replace('client-login.html');
@@ -616,6 +654,14 @@
           return;
       }
 
+      // Redireccionar al Dashboard si está inactivo o tiene pagos pendientes (Opción 3)
+      const isInactive = client.status === 'inactive';
+      const isUnpaid = client.paymentStatus !== 'paid' || client.status === 'unpaid';
+      if (isInactive || isUnpaid) {
+          window.location.replace('client-dashboard.html');
+          return;
+      }
+
       if (client) {
           const avatar = document.getElementById('clientProfileAvatar');
           if (avatar) {
@@ -651,8 +697,13 @@
       const fab = document.getElementById('whatsappFab');
       if (fab && brand && client) {
           const message = `Hola ${brand.name}, soy ${client.name}. Tengo una consulta.`;
-          fab.href = generateWhatsAppLink(brand.whatsapp, message);
-          fab.target = '_blank';
+          const link = generateWhatsAppLink(brand.whatsapp, message);
+          fab.href = link;
+          fab.removeAttribute('target');
+          fab.onclick = function(e) {
+              e.preventDefault();
+              window.location.href = link;
+          };
       }
     }
 
@@ -883,6 +934,6 @@
 
     // Load on page load
   </script>
-    <script src="js/custom-recipes.js?v=129"></script></body>
+    <script src="js/custom-recipes.js?v=349"></script></body>
 
 </html>
