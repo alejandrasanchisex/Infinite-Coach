@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Agenda y Reservas - Planio</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/theme.css">
+    <style>
+        .dashboard-container {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        .main-workspace {
+            flex: 1;
+            padding: var(--spacing-xl);
+            overflow-y: auto;
+            position: relative;
+            z-index: 1;
+        }
+    </style>
+</head>
+<body>
+    <div class="bg-glow"></div>
+    <div class="bg-glow-left"></div>
+
+    <div class="dashboard-container">
+        <!-- Left Sidebar Menu -->
+        <aside class="sidebar">
+            <div class="flex-col gap-md">
+                <div class="sidebar-brand">
+                    <div class="logo">
+                        <img id="brandLogo" class="logo-img" alt="Logo" src="https://posingtheheels.com/dashboard/img/logo.png">
+                        <span id="brandName" style="font-size: 1.15rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px;">Planio</span>
+                    </div>
+                    <div style="font-size: 0.7rem; text-transform: uppercase; font-weight: 800; color: var(--text-muted); margin-top: 4px; padding-left: 2px;">
+                        ADMIN PANEL
+                    </div>
+                </div>
+
+                <ul class="sidebar-menu">
+                    <li class="sidebar-item" id="nav-panel"><a href="dashboard.html">Panel</a></li>
+                    <li class="sidebar-item" id="nav-clients"><a href="clients.html">Alumnas</a></li>
+                    <li class="sidebar-item active" id="nav-agenda"><a href="appointments.html">Agenda</a></li>
+                    <li class="sidebar-item" id="nav-calendar"><a href="calendar.html">Calendario</a></li>
+                    <li class="sidebar-item" id="nav-availability"><a href="availability.html">Disponibilidad</a></li>
+                    <li class="sidebar-item" id="nav-pricing"><a href="pricing.html">Tarifas</a></li>
+                    <li class="sidebar-item" id="nav-feedbacks"><a href="feedbacks.html">Feedbacks</a></li>
+                    <li class="sidebar-item" id="nav-stripe"><a href="billing.html">Facturación y Stripe</a></li>
+                    <li class="sidebar-item" id="nav-settings"><a href="settings.html">Configuración</a></li>
+                    <li class="sidebar-item" id="nav-clientview"><a href="client-view.html" target="_blank" style="color: var(--accent-color);">Vista alumno</a></li>
+                </ul>
+            </div>
+
+            <!-- Sidebar profile footer -->
+            <div class="sidebar-profile">
+                <div class="sidebar-profile-card">
+                    <div style="width: 38px; height: 38px; border-radius: 50%; background: var(--primary-color); display: flex; align-items: center; justify-content: center; font-weight: 700; color: white; font-size: 0.9rem;" id="userProfileLetter">A</div>
+                    <div>
+                        <strong style="font-size: 0.85rem; display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 140px;" id="userProfileEmail">Admin</strong>
+                        <span style="font-size: 0.7rem; color: var(--text-muted); font-weight: 700; display: block; text-transform: uppercase;">Administrador</span>
+                    </div>
+                </div>
+                <div class="sidebar-item mt-md" style="list-style: none;">
+                    <a href="#" onclick="signOut(); return false;" style="color: var(--error); font-weight:700; font-size:0.85rem; display:flex; align-items:center; gap: 8px; padding: 10px;">
+                        Cerrar sesión
+                    </a>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Right Workspace Main Content -->
+        <main class="main-workspace">
+            <div class="mb-lg">
+                <h1 style="margin: 0; font-size: 2.2rem; font-weight: 700;">Agenda de Clases y Citas</h1>
+                <p class="text-muted" style="margin-top: 4px;">Programa y controla el calendario de reservas de la academia.</p>
+            </div>
+
+            <div class="grid grid-3">
+                <!-- Left: Form Card -->
+                <div class="flex-col gap-lg" style="grid-column: span 1;">
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title">📅 Agendar Nueva Cita</h3>
+                        </div>
+                        <form id="appointmentForm" style="margin-top: 15px;">
+                            <div class="form-group">
+                                <label class="form-label">Seleccionar Alumna</label>
+                                <select id="aptClientSelect" class="form-select" required>
+                                    <option value="">-- Elige una alumna --</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Seleccionar Servicio</label>
+                                <select id="aptServiceSelect" class="form-select" onchange="onServiceSelectorChange()" required>
+                                    <option value="">-- Elige un servicio --</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Fecha y Hora</label>
+                                <input type="datetime-local" id="aptDate" class="form-input" required>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Duración (min)</label>
+                                <input type="number" id="aptDuration" class="form-input" value="60" required>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Notas de la Cita</label>
+                                <textarea id="aptNotes" class="form-textarea" placeholder="Observaciones adicionales, enlace de videollamada, etc."></textarea>
+                            </div>
+                            <button type="submit" class="btn btn-primary w-full mt-sm">Agendar Cita en Agenda 📅</button>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Right: Chronological visualizer (Upcoming vs Past) -->
+                <div class="flex-col gap-lg" style="grid-column: span 2;">
+                    <div class="card" style="min-height: 500px;">
+                        <div class="card-header">
+                            <h3 class="card-title">📅 Listado Cronológico de Citas</h3>
+                            <div class="flex gap-sm">
+                                <button class="btn btn-sm btn-primary active" id="tabUpcomingBtn" onclick="toggleAgendaTabs('upcoming')">Próximas</button>
+                                <button class="btn btn-sm btn-secondary" id="tabPastBtn" onclick="toggleAgendaTabs('past')">Historial</button>
+                            </div>
+                        </div>
+
+                        <!-- List Panel -->
+                        <div id="agendaList" class="mt-md">
+                            <!-- Se llena dinámicamente -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </main>
+    </div>
+
+    <!-- SDKs -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="js/supabase-service.js"></script>
+    <script src="js/data-models.js"></script>
+    <script src="js/utils.js"></script>
+
+    <script>
+        let currentTab = 'upcoming';
+
+        function initAgenda() {
+            if (window.BrandConfig) {
+                window.BrandConfig.applyTheme();
+            }
+
+            // Hydrate profiles
+            const trainerEmail = localStorage.getItem('_trainerEmail') || 'admin@posingtheheels.com';
+            document.getElementById('userProfileEmail').textContent = trainerEmail;
+            document.getElementById('userProfileLetter').textContent = trainerEmail[0].toUpperCase();
+
+            loadDropdowns();
+            renderAppointments();
+        }
+
+        function loadDropdowns() {
+            // Clientes
+            const clientsSelect = document.getElementById('aptClientSelect');
+            const clients = Clients.getAll();
+            clients.sort((a,b) => a.name.localeCompare(b.name));
+            clientsSelect.innerHTML = '<option value="">-- Elige una alumna --</option>' +
+                clients.map(c => `<option value="${c.id}">${c.name} (${c.email})</option>`).join('');
+
+            // Servicios
+            const servicesSelect = document.getElementById('aptServiceSelect');
+            const services = Services.getAll();
+            servicesSelect.innerHTML = '<option value="">-- Elige un servicio --</option>' +
+                services.map(s => `<option value="${s.id}">${s.name} (${formatCurrency(s.price)})</option>`).join('');
+        }
+
+        function onServiceSelectorChange() {
+            const srvId = document.getElementById('aptServiceSelect').value;
+            if (srvId) {
+                const srv = Services.getById(srvId);
+                if (srv) {
+                    document.getElementById('aptDuration').value = srv.duration;
+                }
+            }
+        }
+
+        function toggleAgendaTabs(tab) {
+            currentTab = tab;
+            const upBtn = document.getElementById('tabUpcomingBtn');
+            const pastBtn = document.getElementById('tabPastBtn');
+
+            if (tab === 'upcoming') {
+                upBtn.className = 'btn btn-sm btn-primary';
+                pastBtn.className = 'btn btn-sm btn-secondary';
+            } else {
+                upBtn.className = 'btn btn-sm btn-secondary';
+                pastBtn.className = 'btn btn-sm btn-primary';
+            }
+            renderAppointments();
+        }
+
+        function renderAppointments() {
+            const appointments = Appointments.getAll();
+            const now = new Date().toISOString();
+            const container = document.getElementById('agendaList');
+
+            let filtered = [];
+            if (currentTab === 'upcoming') {
+                filtered = appointments.filter(a => a.date >= now);
+                filtered.sort((a,b) => a.date.localeCompare(b.date));
+            } else {
+                filtered = appointments.filter(a => a.date < now);
+                filtered.sort((a,b) => b.date.localeCompare(a.date));
+            }
+
+            if (filtered.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-state-icon">📅</div>
+                        <div class="empty-state-title">No hay citas en esta pestaña</div>
+                        <div class="empty-state-text">Empieza a programar reservas desde el formulario.</div>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = `
+                <div class="table-wrapper">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Alumna</th>
+                                <th>Clase / Servicio</th>
+                                <th>Fecha y Hora</th>
+                                <th>Duración</th>
+                                <th>Notas</th>
+                                <th style="text-align: right;">Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${filtered.map(apt => `
+                                <tr>
+                                    <td><strong>${apt.clientName}</strong></td>
+                                    <td><span class="badge badge-info">${apt.serviceType}</span></td>
+                                    <td class="font-bold">${formatDateTime(apt.date)}</td>
+                                    <td>${apt.duration} min</td>
+                                    <td style="max-width: 140px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;" title="${apt.notes || ''}">
+                                        ${apt.notes || '-'}
+                                    </td>
+                                    <td style="text-align: right;">
+                                        <div class="flex gap-sm" style="justify-content: flex-end;">
+                                            <button class="btn btn-xs btn-outline" onclick="syncWithGoogleCalendar('${apt.id}')">📅 Sincronizar</button>
+                                            <button class="btn btn-xs btn-danger" onclick="deleteAppointment('${apt.id}')">Eliminar</button>
+                                        </div>
+                                    </td>
+                                </tr>
+                            `).join('')}
+                        </tbody>
+                    </table>
+                </div>
+            `;
+        }
+
+        // Crear Reserva
+        document.getElementById('appointmentForm').addEventListener('submit', (e) => {
+            e.preventDefault();
+            const clientId = document.getElementById('aptClientSelect').value;
+            const srvId = document.getElementById('aptServiceSelect').value;
+            const dateVal = document.getElementById('aptDate').value;
+            const duration = document.getElementById('aptDuration').value;
+            const notes = document.getElementById('aptNotes').value.trim();
+
+            const client = Clients.getById(clientId);
+            const service = Services.getById(srvId);
+
+            if (!client || !service) {
+                showToast('Por favor, selecciona opciones válidas.', 'warning');
+                return;
+            }
+
+            try {
+                const isoDate = new Date(dateVal).toISOString();
+
+                Appointments.create({
+                    clientId: clientId,
+                    clientName: client.name,
+                    serviceType: service.name,
+                    date: isoDate,
+                    duration: duration,
+                    notes: notes
+                });
+
+                if (window.Activity) {
+                    window.Activity.add('success', `${client.name} ha reservado una clase`);
+                }
+
+                showToast('Cita agendada correctamente', 'success');
+                document.getElementById('appointmentForm').reset();
+                renderAppointments();
+            } catch(err) {
+                showToast('Error al agendar cita', 'error');
+            }
+        });
+
+        function deleteAppointment(id) {
+            const apt = Appointments.getById(id);
+            if (!apt) return;
+
+            if (confirm('¿Seguro que deseas eliminar esta cita de la agenda?')) {
+                try {
+                    Appointments.delete(id);
+                    if (window.Activity) {
+                        window.Activity.add('error', `${apt.clientName} ha cancelado una clase`);
+                    }
+                    showToast('Cita eliminada correctamente', 'success');
+                    renderAppointments();
+                } catch(err) {
+                    showToast('Error al borrar la cita', 'error');
+                }
+            }
+        }
+
+        function syncWithGoogleCalendar(aptId) {
+            const apt = Appointments.getById(aptId);
+            if (!apt) return;
+
+            const startDate = new Date(apt.date);
+            const endDate = new Date(startDate.getTime() + apt.duration * 60 * 1000);
+
+            const formatGoogleDate = (date) => {
+                return date.toISOString().replace(/[-:]/g, '').split('.')[0] + 'Z';
+            };
+
+            const gCalUrl = `https://calendar.google.com/calendar/render?action=TEMPLATE` +
+                `&text=${encodeURIComponent('Reserva Planio: ' + apt.serviceType + ' - ' + apt.clientName)}` +
+                `&dates=${formatGoogleDate(startDate)}/${formatGoogleDate(endDate)}` +
+                `&details=${encodeURIComponent(apt.notes || 'Confirmado con Planio.')}` +
+                `&sf=true&output=xml`;
+
+            window.open(gCalUrl, '_blank');
+            showToast('Google Calendar sincronizado 📅', 'success');
+        }
+
+        document.addEventListener('DOMContentLoaded', initAgenda);
+    </script>
+</body>
+</html>

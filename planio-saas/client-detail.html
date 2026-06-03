@@ -1,0 +1,1154 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ficha de Alumna - Planio</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/theme.css">
+    <style>
+        .dashboard-container {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        .main-workspace {
+            flex: 1;
+            padding: var(--spacing-xl);
+            overflow-y: auto;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Heels style layouts */
+        .ficha-grid {
+            display: grid;
+            grid-template-columns: 280px 1fr;
+            gap: var(--spacing-lg);
+            margin-top: var(--spacing-md);
+        }
+
+        @media (max-width: 900px) {
+            .ficha-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Profile card left side styling */
+        .profile-side-card {
+            background: rgba(255, 255, 255, 0.01);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-xl);
+            padding: var(--spacing-lg);
+            text-align: center;
+        }
+
+        .profile-side-avatar {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            background: rgba(236, 72, 153, 0.08); /* Pink opacity */
+            color: var(--accent-color);
+            border: 2px solid rgba(236, 72, 153, 0.2);
+            font-size: 2.25rem;
+            font-weight: 800;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto var(--spacing-md);
+            box-shadow: 0 4px 15px rgba(236, 72, 153, 0.1);
+        }
+
+        .profile-side-name {
+            font-size: 1.4rem;
+            font-weight: 800;
+            color: white;
+            margin-bottom: 4px;
+        }
+
+        .profile-side-badge {
+            display: inline-block;
+            font-size: 0.68rem;
+            font-weight: 800;
+            color: var(--accent-color);
+            border: 1px solid rgba(236, 72, 153, 0.3);
+            border-radius: 20px;
+            padding: 2px 10px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: var(--spacing-lg);
+        }
+
+        .profile-side-details {
+            text-align: left;
+            border-top: 1px solid var(--border-color);
+            padding-top: var(--spacing-md);
+            margin-bottom: var(--spacing-lg);
+            display: flex;
+            flex-col: column;
+            gap: 12px;
+        }
+
+        .profile-detail-row {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-sm);
+            font-size: 0.82rem;
+            color: var(--text-secondary);
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .profile-detail-row span {
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .profile-detail-row strong {
+            color: white;
+        }
+
+        .profile-action-btn-pink {
+            background: #F472B6; /* Brand pink */
+            color: white;
+            border-radius: 50px;
+            font-weight: 700;
+            padding: 10px 20px;
+            font-size: 0.85rem;
+            border: none;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(244, 114, 182, 0.2);
+            transition: all var(--transition-fast);
+        }
+
+        .profile-action-btn-pink:hover {
+            background: #EC4899;
+            box-shadow: 0 6px 16px rgba(236, 72, 153, 0.3);
+        }
+
+        .profile-action-btn-circle {
+            width: 38px;
+            height: 38px;
+            border-radius: 50%;
+            background: #1F2937;
+            color: white;
+            border: 1px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: all var(--transition-fast);
+        }
+
+        .profile-action-btn-circle:hover {
+            background: #374151;
+            border-color: var(--accent-color);
+        }
+
+        /* Activity summary card */
+        .resumen-actividad-card {
+            background: #111122;
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-xl);
+            padding: var(--spacing-md) var(--spacing-lg);
+            margin-top: var(--spacing-md);
+        }
+
+        /* Voucher and bookings card headers styling */
+        .ficha-card {
+            background: rgba(255, 255, 255, 0.01);
+            backdrop-filter: blur(12px);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-xl);
+            padding: var(--spacing-lg);
+            margin-bottom: var(--spacing-lg);
+        }
+
+        .ficha-card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px dashed var(--border-color);
+            padding-bottom: 12px;
+            margin-bottom: 16px;
+        }
+
+        .ficha-card-title {
+            font-size: 1.05rem;
+            font-weight: 700;
+            color: white;
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-xs);
+        }
+
+        .ficha-card-action-btn {
+            background: none;
+            border: none;
+            color: #EC4899;
+            font-weight: 700;
+            font-size: 0.78rem;
+            text-transform: uppercase;
+            cursor: pointer;
+            transition: color var(--transition-fast);
+        }
+
+        .ficha-card-action-btn:hover {
+            color: #F472B6;
+        }
+
+        /* Voucher card styles */
+        .bono-row {
+            border: 1px solid var(--border-color);
+            border-left: 4px solid var(--success);
+            border-radius: var(--radius-md);
+            padding: 14px 16px;
+            display: grid;
+            grid-template-columns: 2fr 1.2fr 1.2fr 1fr;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: var(--spacing-sm);
+            background: rgba(0,0,0,0.15);
+        }
+
+        @media (max-width: 580px) {
+            .bono-row {
+                grid-template-columns: 1fr;
+                gap: 8px;
+            }
+        }
+
+        .bono-title {
+            font-size: 0.98rem;
+            font-weight: 800;
+            color: white;
+        }
+
+        .bono-meta {
+            font-size: 0.78rem;
+            color: var(--text-muted);
+            margin-top: 4px;
+        }
+
+        .bono-stat {
+            text-align: center;
+        }
+
+        .bono-stat-val {
+            font-size: 1.15rem;
+            font-weight: 800;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 4px;
+        }
+
+        .bono-stat-lbl {
+            font-size: 0.65rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            font-weight: 700;
+        }
+
+        .pencil-btn {
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            cursor: pointer;
+            font-size: 0.75rem;
+            transition: color var(--transition-fast);
+        }
+
+        .pencil-btn:hover {
+            color: var(--accent-color);
+        }
+
+        /* Bookings row styles */
+        .reserva-item-row {
+            background: rgba(255, 255, 255, 0.01);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-md);
+            padding: 12px 16px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: var(--spacing-sm);
+        }
+
+        .reserva-status-icon {
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.8rem;
+        }
+
+        .reserva-status-icon.success {
+            background: rgba(16, 185, 129, 0.08);
+            color: var(--success);
+            border: 1px solid rgba(16, 185, 129, 0.15);
+        }
+
+        .reserva-status-icon.error {
+            background: rgba(239, 68, 68, 0.08);
+            color: var(--error);
+            border: 1px solid rgba(239, 68, 68, 0.15);
+        }
+
+        .reserva-info {
+            flex: 1;
+            padding-left: var(--spacing-md);
+        }
+
+        .reserva-info strong {
+            font-size: 0.95rem;
+            color: white;
+        }
+
+        .reserva-info p {
+            font-size: 0.78rem;
+            color: var(--text-muted);
+            margin: 2px 0 0;
+        }
+
+        .reserva-actions {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-md);
+            font-size: 0.78rem;
+            font-weight: 700;
+        }
+
+        .reserva-action-link {
+            color: var(--accent-color);
+            cursor: pointer;
+            transition: color var(--transition-fast);
+        }
+        .reserva-action-link:hover {
+            color: #F472B6;
+            text-decoration: underline;
+        }
+
+        .reserva-action-link.cancel {
+            color: var(--error);
+        }
+        .reserva-action-link.cancel:hover {
+            color: #F87171;
+        }
+
+        /* Evolution list */
+        .evolucion-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .evolucion-table th {
+            text-align: left;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            color: var(--text-muted);
+            padding: 8px 12px;
+            border-bottom: 1.5px solid var(--border-color);
+        }
+
+        .evolucion-table td {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            padding: 12px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        /* Back Arrow circle button */
+        .btn-back-circle {
+            width: 38px;
+            height: 38px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.03);
+            border: 1px solid var(--border-color);
+            color: var(--text-secondary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all var(--transition-fast);
+        }
+
+        .btn-back-circle:hover {
+            background: #1F2937;
+            color: white;
+            border-color: var(--accent-color);
+        }
+    </style>
+</head>
+<body>
+    <div class="bg-glow"></div>
+    <div class="bg-glow-left"></div>
+
+    <div class="dashboard-container">
+        <!-- Left Sidebar Menu -->
+        <aside class="sidebar">
+            <div class="flex-col gap-md">
+                <div class="sidebar-brand">
+                    <div class="logo">
+                        <img id="brandLogo" class="logo-img" alt="Logo" src="https://posingtheheels.com/dashboard/img/logo.png">
+                        <span id="brandName" style="font-size: 1.15rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px;">Planio</span>
+                    </div>
+                    <div style="font-size: 0.7rem; text-transform: uppercase; font-weight: 800; color: var(--text-muted); margin-top: 4px; padding-left: 2px;">
+                        ADMIN PANEL
+                    </div>
+                </div>
+
+                <ul class="sidebar-menu">
+                    <li class="sidebar-item" id="nav-panel"><a href="dashboard.html">Panel</a></li>
+                    <li class="sidebar-item active" id="nav-clients"><a href="clients.html">Alumnas</a></li>
+                    <li class="sidebar-item" id="nav-agenda"><a href="appointments.html">Agenda</a></li>
+                    <li class="sidebar-item" id="nav-calendar"><a href="calendar.html">Calendario</a></li>
+                    <li class="sidebar-item" id="nav-availability"><a href="availability.html">Disponibilidad</a></li>
+                    <li class="sidebar-item" id="nav-pricing"><a href="pricing.html">Tarifas</a></li>
+                    <li class="sidebar-item" id="nav-feedbacks"><a href="feedbacks.html">Feedbacks</a></li>
+                    <li class="sidebar-item" id="nav-stripe"><a href="billing.html">Facturación y Stripe</a></li>
+                    <li class="sidebar-item" id="nav-settings"><a href="settings.html">Configuración</a></li>
+                    <li class="sidebar-item" id="nav-clientview"><a href="client-view.html" target="_blank" style="color: var(--accent-color);">Vista alumno</a></li>
+                </ul>
+            </div>
+
+            <!-- Sidebar profile footer -->
+            <div class="sidebar-profile">
+                <div class="sidebar-profile-card">
+                    <div style="width: 38px; height: 38px; border-radius: 50%; background: var(--primary-color); display: flex; align-items: center; justify-content: center; font-weight: 700; color: white; font-size: 0.9rem;" id="userProfileLetter">A</div>
+                    <div>
+                        <strong style="font-size: 0.85rem; display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 140px;" id="userProfileEmail">Admin</strong>
+                        <span style="font-size: 0.7rem; color: var(--text-muted); font-weight: 700; display: block; text-transform: uppercase;">Administrador</span>
+                    </div>
+                </div>
+                <div class="sidebar-item mt-md" style="list-style: none;">
+                    <a href="#" onclick="signOut(); return false;" style="color: var(--error); font-weight:700; font-size:0.85rem; display:flex; align-items:center; gap: 8px; padding: 10px;">
+                        Cerrar sesión
+                    </a>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Right Workspace Main Content -->
+        <main class="main-workspace">
+            <div class="mb-lg flex items-center gap-md">
+                <button class="btn-back-circle" onclick="location.href='clients.html'" title="Volver al Listado">
+                    ←
+                </button>
+                <div>
+                    <h1 style="margin: 0; font-size: 2.2rem; font-weight: 700;">Ficha de Alumna</h1>
+                    <p class="text-muted" style="margin-top: 4px;">GESTIÓN INDIVIDUALIZADA Y SEGUIMIENTO</p>
+                </div>
+            </div>
+
+            <!-- Main Ficha Grid Layout -->
+            <div class="ficha-grid">
+                
+                <!-- Left Side: Profile Details & Activity -->
+                <div class="flex-col">
+                    <div class="profile-side-card">
+                        <div class="profile-side-avatar" id="avatarInitial">S</div>
+                        <div class="profile-side-name" id="clientName">Sandra</div>
+                        <div class="profile-side-badge">ALUMNA</div>
+
+                        <div class="profile-side-details">
+                            <div class="profile-detail-row">
+                                <span>📧</span>
+                                <span id="clientEmail">cargando...</span>
+                            </div>
+                            <div class="profile-detail-row">
+                                <span>📞</span>
+                                <span id="clientPhone">cargando...</span>
+                            </div>
+                            <div class="profile-detail-row">
+                                <span>📅</span>
+                                <span>Alta: <strong id="clientCreatedAt">...</strong></span>
+                            </div>
+                            <div class="profile-detail-row">
+                                <span>🏆</span>
+                                <span>Categoría: <strong id="clientCategory">...</strong></span>
+                            </div>
+                            <div class="profile-detail-row">
+                                <span>👥</span>
+                                <span>Federación: <strong id="clientFederation">...</strong></span>
+                            </div>
+                        </div>
+
+                        <div class="flex justify-center items-center gap-sm mt-md">
+                            <button class="profile-action-btn-pink w-full" onclick="openEditDetailsModal()">
+                                EDITAR PERFIL
+                            </button>
+                            <button class="profile-action-btn-circle" onclick="showAccessCode()" title="Ver código de acceso PWA">
+                                🔑
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Resumen Actividad dark card -->
+                    <div class="resumen-actividad-card">
+                        <div style="font-size: 0.72rem; text-transform: uppercase; font-weight: 800; color: var(--text-muted); letter-spacing: 0.5px; margin-bottom: 8px;">
+                            📊 RESUMEN ACTIVIDAD
+                        </div>
+                        <div class="flex-col gap-sm" style="font-size: 0.85rem; color: var(--text-secondary);">
+                            <div class="flex-between">
+                                <span>Clases reservadas:</span>
+                                <strong id="sumBookingsCount" style="color: white;">0</strong>
+                            </div>
+                            <div class="flex-between">
+                                <span>Mensualidad base:</span>
+                                <strong id="sumMonthlyFee" style="color: white;">0,00 €</strong>
+                            </div>
+                            <div class="flex-between">
+                                <span>Método de pago:</span>
+                                <strong id="sumPayMethod" style="color: white;">Stripe</strong>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right Side: Vouchers, Bookings, Evolution Dossier -->
+                <div class="flex-col">
+                    <!-- Historial de Bonos (Vouchers) -->
+                    <div class="ficha-card">
+                        <div class="ficha-card-header">
+                            <div class="ficha-card-title">
+                                📦 Historial de Bonos
+                            </div>
+                            <button class="ficha-card-action-btn" onclick="openAssignBonoModal()">
+                                + ASIGNAR BONO
+                            </button>
+                        </div>
+                        <div id="vouchersListContainer">
+                            <!-- Dynamically loaded Vouchers -->
+                        </div>
+                    </div>
+
+                    <!-- Historial de Reservas (Bookings) -->
+                    <div class="ficha-card">
+                        <div class="ficha-card-header">
+                            <div class="ficha-card-title">
+                                🕒 Historial de Reservas
+                            </div>
+                            <button class="ficha-card-action-btn" onclick="openAddReservaModal()">
+                                + AÑADIR RESERVA
+                            </button>
+                        </div>
+                        <div id="bookingsListContainer">
+                            <!-- Dynamically loaded Appointments -->
+                        </div>
+                    </div>
+
+                    <!-- Dossier de Evolución -->
+                    <div class="ficha-card">
+                        <div class="ficha-card-header">
+                            <div class="ficha-card-title">
+                                ✨ Dossier de Evolución
+                            </div>
+                            <button class="ficha-card-action-btn" onclick="openAddEvolutionModal()">
+                                + NUEVO REGISTRO
+                            </button>
+                        </div>
+                        <div id="evolutionListContainer">
+                            <!-- Dynamically loaded Evolution Records -->
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+        </main>
+    </div>
+
+    <!-- SDKs -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="js/supabase-service.js"></script>
+    <script src="js/data-models.js"></script>
+    <script src="js/utils.js"></script>
+
+    <script>
+        let clientId = null;
+        let currentClientObj = null;
+
+        function initClientDetail() {
+            if (window.BrandConfig) {
+                window.BrandConfig.applyTheme();
+            }
+
+            // Hydrate profiles
+            const trainerEmail = localStorage.getItem('_trainerEmail') || 'admin@posingtheheels.com';
+            document.getElementById('userProfileEmail').textContent = trainerEmail;
+            document.getElementById('userProfileLetter').textContent = trainerEmail[0].toUpperCase();
+
+            // Leer id de la URL
+            const params = new URLSearchParams(window.location.search);
+            clientId = params.get('id');
+
+            if (!clientId) {
+                location.href = 'clients.html';
+                return;
+            }
+
+            loadClientData();
+        }
+
+        function loadClientData() {
+            currentClientObj = Clients.getById(clientId);
+            if (!currentClientObj) {
+                location.href = 'clients.html';
+                return;
+            }
+
+            // Inyectar datos en Ficha
+            document.getElementById('avatarInitial').textContent = currentClientObj.name[0].toUpperCase();
+            document.getElementById('clientName').textContent = currentClientObj.name;
+            document.getElementById('clientEmail').textContent = currentClientObj.email || 'Sin email';
+            document.getElementById('clientPhone').textContent = currentClientObj.phone || 'Sin teléfono';
+            
+            const rawDate = currentClientObj.createdAt ? new Date(currentClientObj.createdAt) : new Date();
+            document.getElementById('clientCreatedAt').textContent = rawDate.toLocaleDateString('es-ES');
+
+            document.getElementById('clientCategory').textContent = currentClientObj.category || 'Ninguna';
+            document.getElementById('clientFederation').textContent = currentClientObj.federation || 'Ninguna';
+
+            // Actividad Resumen
+            const appointments = Appointments.getByClientId(clientId);
+            document.getElementById('sumBookingsCount').textContent = appointments.length;
+            document.getElementById('sumMonthlyFee').textContent = formatCurrency(currentClientObj.monthlyFee);
+            document.getElementById('sumPayMethod').textContent = currentClientObj.paymentMethod || 'Stripe';
+
+            renderVouchers();
+            renderBookings();
+            renderEvolution();
+        }
+
+        // ============================================
+        // VOUCHERS (BONOS) RENDER & ACTIONS
+        // ============================================
+        function renderVouchers() {
+            const container = document.getElementById('vouchersListContainer');
+            const list = currentClientObj.vouchers || [];
+
+            if (list.length === 0) {
+                container.innerHTML = `<div class="text-muted text-center" style="font-size: 0.85rem; padding: 15px; font-style: italic;">No hay bonos activos asignados a esta alumna.</div>`;
+                return;
+            }
+
+            container.innerHTML = list.map(v => `
+                <div class="bono-row">
+                    <div>
+                        <div class="bono-title">${v.name}</div>
+                        <div class="bono-meta">Comprado: ${new Date(v.date).toLocaleDateString('es-ES')} • ID: ${v.code}</div>
+                    </div>
+                    <div class="bono-stat">
+                        <div class="bono-stat-val">
+                            ${v.used}
+                            <button class="pencil-btn" onclick="editBonoUsed('${v.id}', ${v.used}, ${v.total})" title="Editar usadas">✏️</button>
+                        </div>
+                        <div class="bono-stat-lbl">Usadas</div>
+                    </div>
+                    <div class="bono-stat">
+                        <div class="bono-stat-val">
+                            ${v.total - v.used}
+                            <button class="pencil-btn" onclick="editBonoTotal('${v.id}', ${v.used}, ${v.total})" title="Editar total">✏️</button>
+                        </div>
+                        <div class="bono-stat-lbl">Disp.</div>
+                    </div>
+                    <div style="text-align: right;">
+                        <button class="pencil-btn" onclick="deleteBono('${v.id}')" style="font-size:1rem;" title="Eliminar Bono">🗑️</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function openAssignBonoModal() {
+            const content = `
+                <div class="form-group">
+                    <label class="form-label">Nombre del Bono</label>
+                    <select id="bonoNameSelect" class="form-select">
+                        <option value="Bono 5 Clases Online" selected>Bono 5 Clases Online</option>
+                        <option value="Bono 10 Clases Presenciales">Bono 10 Clases Presenciales</option>
+                        <option value="Bono Asesorías VIP">Bono Asesorías VIP</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Número Total de Clases</label>
+                    <input type="number" id="bonoTotal" class="form-input" value="5" min="1" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Código del Bono</label>
+                    <input type="text" id="bonoCode" class="form-input" value="${Math.random().toString(36).substring(2, 8).toUpperCase()}" style="font-family: monospace;" required>
+                </div>
+            `;
+
+            showModal('Asignar Bono a Alumna', content, [
+                { text: 'Cancelar', class: 'btn-secondary', onclick: 'window.closeModal()' },
+                { text: 'Asignar Bono 📦', class: 'btn-primary', onclick: 'submitAssignBono()' }
+            ]);
+        }
+
+        function submitAssignBono() {
+            const name = document.getElementById('bonoNameSelect').value;
+            const total = parseInt(document.getElementById('bonoTotal').value) || 5;
+            const code = document.getElementById('bonoCode').value.trim();
+
+            if (!code) {
+                showToast('Ingrese un código válido.', 'warning');
+                return;
+            }
+
+            try {
+                const list = currentClientObj.vouchers || [];
+                list.push({
+                    id: 'b-' + Date.now(),
+                    name: name,
+                    status: 'active',
+                    date: new Date().toISOString().substring(0, 10),
+                    code: code,
+                    used: 0,
+                    total: total
+                });
+
+                Clients.update(clientId, { vouchers: list });
+                showToast('Bono asignado con éxito', 'success');
+                window.closeModal();
+                loadClientData();
+            } catch(e) {
+                showToast('Error al asignar el bono.', 'error');
+            }
+        }
+
+        function editBonoUsed(bonoId, currentUsed, total) {
+            const newUsedVal = prompt(`Clases usadas (Actualmente ${currentUsed}):`, currentUsed);
+            if (newUsedVal === null) return;
+            const used = parseInt(newUsedVal);
+            if (isNaN(used) || used < 0 || used > total) {
+                showToast('Valor de clases usadas inválido.', 'warning');
+                return;
+            }
+
+            try {
+                const list = currentClientObj.vouchers.map(v => {
+                    if (v.id === bonoId) {
+                        v.used = used;
+                    }
+                    return v;
+                });
+                Clients.update(clientId, { vouchers: list });
+                showToast('Uso de bono actualizado', 'success');
+                loadClientData();
+            } catch(e) {
+                showToast('Error al actualizar.', 'error');
+            }
+        }
+
+        function editBonoTotal(bonoId, used, currentTotal) {
+            const newTotalVal = prompt(`Clases totales del bono (Actualmente ${currentTotal}):`, currentTotal);
+            if (newTotalVal === null) return;
+            const total = parseInt(newTotalVal);
+            if (isNaN(total) || total < used) {
+                showToast('Valor total del bono inválido o menor a las usadas.', 'warning');
+                return;
+            }
+
+            try {
+                const list = currentClientObj.vouchers.map(v => {
+                    if (v.id === bonoId) {
+                        v.total = total;
+                    }
+                    return v;
+                });
+                Clients.update(clientId, { vouchers: list });
+                showToast('Total de bono actualizado', 'success');
+                loadClientData();
+            } catch(e) {
+                showToast('Error al actualizar.', 'error');
+            }
+        }
+
+        function deleteBono(bonoId) {
+            if (confirm('¿Estás seguro de que deseas eliminar permanentemente este bono?')) {
+                try {
+                    const list = currentClientObj.vouchers.filter(v => v.id !== bonoId);
+                    Clients.update(clientId, { vouchers: list });
+                    showToast('Bono eliminado con éxito', 'success');
+                    loadClientData();
+                } catch(e) {
+                    showToast('Error al borrar bono.', 'error');
+                }
+            }
+        }
+
+        // ============================================
+        // RESERVAS (BOOKINGS) RENDER & ACTIONS
+        // ============================================
+        function renderBookings() {
+            const container = document.getElementById('bookingsListContainer');
+            const list = Appointments.getByClientId(clientId);
+
+            if (list.length === 0) {
+                container.innerHTML = `<div class="text-muted text-center" style="font-size: 0.85rem; padding: 15px; font-style: italic;">No hay reservas registradas para esta alumna.</div>`;
+                return;
+            }
+
+            // Ordenar por fecha decreciente
+            const sorted = list.slice().sort((a,b) => b.date.localeCompare(a.date));
+
+            container.innerHTML = sorted.map(a => {
+                const aptDate = new Date(a.date);
+                const formattedDate = aptDate.toLocaleDateString('es-ES', { day: 'numeric', month: 'long', hour: '2-digit', minute: '2-digit' });
+                const isPast = aptDate.getTime() < Date.now();
+
+                return `
+                    <div class="reserva-item-row">
+                        <div class="reserva-status-icon ${isPast ? 'success' : 'error'}">
+                            ${isPast ? '✓' : '✖'}
+                        </div>
+                        <div class="reserva-info">
+                            <strong>${formattedDate}</strong>
+                            <p>${a.serviceType} (${a.duration} min)</p>
+                        </div>
+                        <div class="reserva-actions">
+                            <span class="reserva-action-link" onclick="triggerGoogleCalendarSync('${a.id}')" title="Sincronizar con Google Calendar">🔄 SINC</span>
+                            ${isPast ? `
+                                <span class="text-success" style="opacity: 0.8;">Marcada Hecha</span>
+                            ` : `
+                                <span class="reserva-action-link" onclick="completeBookingNow('${a.id}')">MARCAR HECHA</span>
+                                <span class="reserva-action-link cancel" onclick="cancelBooking('${a.id}')">CANCELAR</span>
+                            `}
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function openAddReservaModal() {
+            const services = Services.getAll();
+            const servicesOptions = services.map(s => `<option value="${s.name}" data-duration="${s.duration}">${s.name} (${s.duration} min)</option>`).join('');
+
+            const content = `
+                <div class="form-group">
+                    <label class="form-label">Servicio o Clase</label>
+                    <select id="addResService" class="form-select">
+                        ${servicesOptions || '<option value="Asesoría de Poses Heels">Asesoría de Poses Heels (60 min)</option>'}
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Fecha y Hora de la Reserva</label>
+                    <input type="datetime-local" id="addResDate" class="form-input" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Notas Adicionales</label>
+                    <input type="text" id="addResNotes" class="form-input" placeholder="Detalles de poses de bikini, pasarela, etc.">
+                </div>
+            `;
+
+            showModal('Crear Reserva Manual', content, [
+                { text: 'Cancelar', class: 'btn-secondary', onclick: 'window.closeModal()' },
+                { text: 'Reservar ⚡', class: 'btn-primary', onclick: 'submitAddReserva()' }
+            ]);
+        }
+
+        function submitAddReserva() {
+            const selectEl = document.getElementById('addResService');
+            const serviceType = selectEl.value;
+            const selectedOpt = selectEl.options[selectEl.selectedIndex];
+            const duration = selectedOpt ? (parseInt(selectedOpt.getAttribute('data-duration')) || 60) : 60;
+            
+            const dateVal = document.getElementById('addResDate').value;
+            const notes = document.getElementById('addResNotes').value.trim();
+
+            if (!dateVal) {
+                showToast('Por favor, seleccione fecha y hora válidos.', 'warning');
+                return;
+            }
+
+            try {
+                const finalDateStr = new Date(dateVal).toISOString();
+
+                Appointments.create({
+                    clientId: clientId,
+                    clientName: currentClientObj.name,
+                    serviceType: serviceType,
+                    date: finalDateStr,
+                    duration: duration,
+                    notes: notes || 'Agendado manualmente'
+                });
+
+                Activity.add('success', `Cita manual agendada para ${currentClientObj.name}`);
+                showToast('Reserva agendada y registrada en CRM ⚡', 'success');
+                window.closeModal();
+                loadClientData();
+            } catch(e) {
+                showToast('Error al crear la reserva.', 'error');
+            }
+        }
+
+        function cancelBooking(aptId) {
+            if (confirm('¿Estás seguro de que deseas cancelar esta reserva?')) {
+                try {
+                    Appointments.delete(aptId);
+                    showToast('Reserva cancelada con éxito', 'success');
+                    loadClientData();
+                } catch(e) {
+                    showToast('Error al cancelar la cita.', 'error');
+                }
+            }
+        }
+
+        function completeBookingNow(aptId) {
+            try {
+                // Simular marcar hecha cambiando su fecha a pasada
+                const pastDate = new Date(Date.now() - 60 * 60 * 1000).toISOString();
+                Appointments.update(aptId, { date: pastDate });
+                showToast('Reserva completada con éxito ✅', 'success');
+                loadClientData();
+            } catch(e) {
+                showToast('Error al actualizar reserva', 'error');
+            }
+        }
+
+        function triggerGoogleCalendarSync(aptId) {
+            const a = Appointments.getById(aptId);
+            if (!a) return;
+            const title = encodeURIComponent(`Reunión Planio: ${a.serviceType}`);
+            const dateObj = new Date(a.date);
+            const dateEndObj = new Date(dateObj.getTime() + a.duration * 60 * 1000);
+            
+            const formatGCal = (d) => d.toISOString().replace(/-|:|\.\d\d\d/g, "");
+            const dates = `${formatGCal(dateObj)}/${formatGCal(dateEndObj)}`;
+            
+            const details = encodeURIComponent(a.notes || 'Reunión de marca blanca');
+            const gcalUrl = `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${title}&dates=${dates}&details=${details}&sf=true&output=xml`;
+            
+            window.open(gcalUrl, '_blank');
+            showToast('Redirigiendo a Google Calendar 🗓️', 'info');
+        }
+
+        // ============================================
+        // EVOLUTION DOSSIER RENDER & ACTIONS
+        // ============================================
+        function renderEvolution() {
+            const container = document.getElementById('evolutionListContainer');
+            const list = currentClientObj.evolution || [];
+
+            if (list.length === 0) {
+                container.innerHTML = `<div class="text-muted text-center" style="font-size: 0.85rem; padding: 15px; font-style: italic;">No hay registros de evolución en el dossier.</div>`;
+                return;
+            }
+
+            // Ordenar por fecha decreciente
+            const sorted = list.slice().sort((a,b) => b.date.localeCompare(a.date));
+
+            container.innerHTML = `
+                <table class="evolucion-table">
+                    <thead>
+                        <tr>
+                            <th>Fecha</th>
+                            <th>Peso (kg)</th>
+                            <th>Anotación Técnica / Observaciones</th>
+                            <th style="text-align: right;">Borrar</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${sorted.map(ev => `
+                            <tr>
+                                <td><strong>${new Date(ev.date).toLocaleDateString('es-ES')}</strong></td>
+                                <td class="font-bold" style="color:var(--accent-color);">${ev.weight} kg</td>
+                                <td>${ev.notes || 'Progresión adecuada.'}</td>
+                                <td style="text-align: right;">
+                                    <button class="pencil-btn" onclick="deleteEvolutionRecord('${ev.id}')" title="Borrar registro">🗑️</button>
+                                </td>
+                            </tr>
+                        `).join('')}
+                    </tbody>
+                </table>
+            `;
+        }
+
+        function openAddEvolutionModal() {
+            const content = `
+                <div class="form-group">
+                    <label class="form-label">Fecha del Registro</label>
+                    <input type="date" id="evDate" class="form-input" value="${new Date().toISOString().substring(0, 10)}" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Peso Corporal (kg)</label>
+                    <input type="number" id="evWeight" class="form-input" value="55.0" step="0.1" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Anotaciones y Observaciones Técnicas</label>
+                    <textarea id="evNotes" class="form-textarea" placeholder="Mejora en la postura, pasarela o poses obligatorias..."></textarea>
+                </div>
+            `;
+
+            showModal('Nuevo Registro de Evolución', content, [
+                { text: 'Cancelar', class: 'btn-secondary', onclick: 'window.closeModal()' },
+                { text: 'Añadir Registro ✨', class: 'btn-primary', onclick: 'submitAddEvolution()' }
+            ]);
+        }
+
+        function submitAddEvolution() {
+            const date = document.getElementById('evDate').value;
+            const weight = parseFloat(document.getElementById('evWeight').value) || 50;
+            const notes = document.getElementById('evNotes').value.trim();
+
+            if (!date) {
+                showToast('Seleccione una fecha válida.', 'warning');
+                return;
+            }
+
+            try {
+                const list = currentClientObj.evolution || [];
+                list.push({
+                    id: 'ev-' + Date.now(),
+                    date: date,
+                    weight: weight,
+                    notes: notes
+                });
+
+                Clients.update(clientId, { evolution: list });
+                showToast('Registro de evolución añadido', 'success');
+                window.closeModal();
+                loadClientData();
+            } catch(e) {
+                showToast('Error al añadir registro.', 'error');
+            }
+        }
+
+        function deleteEvolutionRecord(evId) {
+            if (confirm('¿Estás seguro de que deseas eliminar este registro de evolución?')) {
+                try {
+                    const list = currentClientObj.evolution.filter(e => e.id !== evId);
+                    Clients.update(clientId, { evolution: list });
+                    showToast('Registro eliminado con éxito', 'success');
+                    loadClientData();
+                } catch(e) {
+                    showToast('Error al borrar registro.', 'error');
+                }
+            }
+        }
+
+        // ============================================
+        // PROFILE EDIT DETAILS MODAL
+        // ============================================
+        function openEditDetailsModal() {
+            const content = `
+                <div class="form-group">
+                    <label class="form-label">Nombre Completo</label>
+                    <input type="text" id="editName" class="form-input" value="${currentClientObj.name}" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Email de Contacto</label>
+                    <input type="email" id="editEmail" class="form-input" value="${currentClientObj.email || ''}" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Teléfono</label>
+                    <input type="text" id="editPhone" class="form-input" value="${currentClientObj.phone || ''}" required>
+                </div>
+                <div class="grid grid-2">
+                    <div class="form-group">
+                        <label class="form-label">Mensualidad (€)</label>
+                        <input type="number" id="editFee" class="form-input" value="${currentClientObj.monthlyFee || 0}" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Estado de Cuenta</label>
+                        <select id="editStatus" class="form-select">
+                            <option value="active" ${currentClientObj.status === 'active' ? 'selected' : ''}>Activa</option>
+                            <option value="inactive" ${currentClientObj.status === 'inactive' ? 'selected' : ''}>Inactiva</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="grid grid-2">
+                    <div class="form-group">
+                        <label class="form-label">Estado de Pago</label>
+                        <select id="editPayStatus" class="form-select">
+                            <option value="paid" ${currentClientObj.paymentStatus === 'paid' ? 'selected' : ''}>Pagado</option>
+                            <option value="overdue" ${currentClientObj.paymentStatus === 'overdue' ? 'selected' : ''}>Pendiente / Moroso</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Método Facturación</label>
+                        <select id="editPayMethod" class="form-select">
+                            <option value="Stripe" ${currentClientObj.paymentMethod === 'Stripe' ? 'selected' : ''}>Stripe 🔄</option>
+                            <option value="Manual" ${currentClientObj.paymentMethod === 'Manual' ? 'selected' : ''}>Manual ✋</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="grid grid-2">
+                    <div class="form-group">
+                        <label class="form-label">Categoría Posing</label>
+                        <input type="text" id="editCategory" class="form-input" value="${currentClientObj.category || 'Ninguna'}" placeholder="Ej: Bikini">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Federación</label>
+                        <input type="text" id="editFederation" class="form-input" value="${currentClientObj.federation || 'Ninguna'}" placeholder="Ej: NPC">
+                    </div>
+                </div>
+            `;
+
+            showModal('Editar Detalles de Alumna', content, [
+                { text: 'Cancelar', class: 'btn-secondary', onclick: 'window.closeModal()' },
+                { text: 'Guardar Cambios 💾', class: 'btn-primary', onclick: 'submitEditDetails()' }
+            ]);
+        }
+
+        function submitEditDetails() {
+            const name = document.getElementById('editName').value.trim();
+            const email = document.getElementById('editEmail').value.trim();
+            const phone = document.getElementById('editPhone').value.trim();
+            const fee = parseFloat(document.getElementById('editFee').value) || 0;
+            const status = document.getElementById('editStatus').value;
+            const paymentStatus = document.getElementById('editPayStatus').value;
+            const paymentMethod = document.getElementById('editPayMethod').value;
+            const category = document.getElementById('editCategory').value.trim() || 'Ninguna';
+            const federation = document.getElementById('editFederation').value.trim() || 'Ninguna';
+
+            if (!name || !email || !phone) {
+                showToast('Complete todos los campos requeridos.', 'warning');
+                return;
+            }
+
+            try {
+                Clients.update(clientId, {
+                    name: name,
+                    email: email,
+                    phone: phone,
+                    monthlyFee: fee,
+                    status: status,
+                    paymentStatus: paymentStatus,
+                    paymentMethod: paymentMethod,
+                    category: category,
+                    federation: federation
+                });
+
+                showToast('Detalles actualizados con éxito 💾', 'success');
+                window.closeModal();
+                loadClientData();
+            } catch(e) {
+                showToast('Error al actualizar los datos.', 'error');
+            }
+        }
+
+        function showAccessCode() {
+            showModal('Código de Acceso', `
+                <div class="text-center p-md">
+                    <p class="text-muted" style="margin-bottom: var(--spacing-sm);">Código para el acceso del Alumno al Portal de Marca Blanca:</p>
+                    <h1 style="font-family: monospace; font-size: 2.5rem; letter-spacing: 2px; color: var(--accent-color); font-weight:800; margin: 15px 0;">${currentClientObj.accessCode}</h1>
+                    <button class="btn btn-sm btn-secondary" onclick="navigator.clipboard.writeText('${currentClientObj.accessCode}'); showToast('Código copiado', 'success')">Copiar al Portapapeles 📋</button>
+                </div>
+            `, [{ text: 'Entendido', class: 'btn-primary', onclick: 'window.closeModal()' }]);
+        }
+
+        document.addEventListener('DOMContentLoaded', initClientDetail);
+    </script>
+</body>
+</html>

@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tarifas y Servicios - Planio</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/theme.css">
+    <style>
+        .dashboard-container {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        .main-workspace {
+            flex: 1;
+            padding: var(--spacing-xl);
+            overflow-y: auto;
+            position: relative;
+            z-index: 1;
+        }
+
+        .posing-pricing-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: var(--spacing-lg);
+            margin-top: 15px;
+        }
+
+        @media (max-width: 900px) {
+            .posing-pricing-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+        @media (max-width: 600px) {
+            .posing-pricing-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .pricing-service-card {
+            background: rgba(255, 255, 255, 0.01);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-xl);
+            padding: var(--spacing-lg);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            transition: all var(--transition-fast);
+            min-height: 280px;
+        }
+
+        .pricing-service-card:hover {
+            border-color: rgba(var(--primary-color-rgb), 0.3);
+            box-shadow: var(--shadow-glow);
+        }
+
+        .service-price {
+            font-size: 2.2rem;
+            font-weight: 800;
+            color: var(--primary-color);
+            line-height: 1;
+            margin-top: var(--spacing-sm);
+        }
+    </style>
+</head>
+<body>
+    <div class="bg-glow"></div>
+    <div class="bg-glow-left"></div>
+
+    <div class="dashboard-container">
+        <!-- Left Sidebar Menu -->
+        <aside class="sidebar">
+            <div class="flex-col gap-md">
+                <div class="sidebar-brand">
+                    <div class="logo">
+                        <img id="brandLogo" class="logo-img" alt="Logo" src="https://posingtheheels.com/dashboard/img/logo.png">
+                        <span id="brandName" style="font-size: 1.15rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px;">Planio</span>
+                    </div>
+                    <div style="font-size: 0.7rem; text-transform: uppercase; font-weight: 800; color: var(--text-muted); margin-top: 4px; padding-left: 2px;">
+                        ADMIN PANEL
+                    </div>
+                </div>
+
+                <ul class="sidebar-menu">
+                    <li class="sidebar-item" id="nav-panel"><a href="dashboard.html">Panel</a></li>
+                    <li class="sidebar-item" id="nav-clients"><a href="clients.html">Alumnas</a></li>
+                    <li class="sidebar-item" id="nav-agenda"><a href="appointments.html">Agenda</a></li>
+                    <li class="sidebar-item" id="nav-calendar"><a href="calendar.html">Calendario</a></li>
+                    <li class="sidebar-item" id="nav-availability"><a href="availability.html">Disponibilidad</a></li>
+                    <li class="sidebar-item active" id="nav-pricing"><a href="pricing.html">Tarifas</a></li>
+                    <li class="sidebar-item" id="nav-feedbacks"><a href="feedbacks.html">Feedbacks</a></li>
+                    <li class="sidebar-item" id="nav-stripe"><a href="billing.html">Facturación y Stripe</a></li>
+                    <li class="sidebar-item" id="nav-settings"><a href="settings.html">Configuración</a></li>
+                    <li class="sidebar-item" id="nav-clientview"><a href="client-view.html" target="_blank" style="color: var(--accent-color);">Vista alumno</a></li>
+                </ul>
+            </div>
+
+            <!-- Sidebar profile footer -->
+            <div class="sidebar-profile">
+                <div class="sidebar-profile-card">
+                    <div style="width: 38px; height: 38px; border-radius: 50%; background: var(--primary-color); display: flex; align-items: center; justify-content: center; font-weight: 700; color: white; font-size: 0.9rem;" id="userProfileLetter">A</div>
+                    <div>
+                        <strong style="font-size: 0.85rem; display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 140px;" id="userProfileEmail">Admin</strong>
+                        <span style="font-size: 0.7rem; color: var(--text-muted); font-weight: 700; display: block; text-transform: uppercase;">Administrador</span>
+                    </div>
+                </div>
+                <div class="sidebar-item mt-md" style="list-style: none;">
+                    <a href="#" onclick="signOut(); return false;" style="color: var(--error); font-weight:700; font-size:0.85rem; display:flex; align-items:center; gap: 8px; padding: 10px;">
+                        Cerrar sesión
+                    </a>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Right Workspace Main Content -->
+        <main class="main-workspace">
+            <div class="mb-lg flex-between">
+                <div>
+                    <h1 style="margin: 0; font-size: 2.2rem; font-weight: 700;">Tarifas y Clases de la Academia</h1>
+                    <p class="text-muted" style="margin-top: 4px;">Configura los tipos de clase, mentorías o asesorías técnicas que comercializas.</p>
+                </div>
+                <button class="btn btn-primary" onclick="showAddServiceModal()">
+                    + Crear Nueva Tarifa 🏷️
+                </button>
+            </div>
+
+            <!-- Grid container for rates cards -->
+            <div class="posing-pricing-grid" id="servicesGridContainer">
+                <!-- Se llena dinámicamente -->
+            </div>
+
+        </main>
+    </div>
+
+    <!-- SDKs -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="js/supabase-service.js"></script>
+    <script src="js/data-models.js"></script>
+    <script src="js/utils.js"></script>
+
+    <script>
+        function initPricing() {
+            if (window.BrandConfig) {
+                window.BrandConfig.applyTheme();
+            }
+
+            // Hydrate profiles
+            const trainerEmail = localStorage.getItem('_trainerEmail') || 'admin@posingtheheels.com';
+            document.getElementById('userProfileEmail').textContent = trainerEmail;
+            document.getElementById('userProfileLetter').textContent = trainerEmail[0].toUpperCase();
+
+            renderServices();
+        }
+
+        function renderServices() {
+            const list = Services.getAll();
+            const container = document.getElementById('servicesGridContainer');
+
+            if (list.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state" style="grid-column: span 3; width: 100%;">
+                        <div class="empty-state-icon">🏷️</div>
+                        <div class="empty-state-title">No hay tarifas creadas</div>
+                        <div class="empty-state-text">Empieza a registrar tarifas de servicios para tus reservas.</div>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = list.map(s => `
+                <div class="pricing-service-card">
+                    <div>
+                        <div class="flex-between">
+                            <span class="badge badge-info" style="font-size: 0.65rem;">⏱️ ${s.duration} MINUTOS</span>
+                            <span style="font-size: 1.1rem; cursor:pointer;" onclick="deleteService('${s.id}')" title="Borrar Tarifa">🗑️</span>
+                        </div>
+                        <h3 style="margin-top: 15px; font-size: 1.25rem; font-weight:800; color: var(--text-primary);">${s.name}</h3>
+                        <p style="font-size: 0.85rem; color: var(--text-secondary); margin-top: 8px; line-height: 1.4; min-height: 48px;">
+                            ${s.description || 'Sin descripción detallada.'}
+                        </p>
+                    </div>
+                    
+                    <div style="margin-top: 20px; border-top: 1px solid var(--border-color); padding-top: 15px;" class="flex-between items-center">
+                        <div>
+                            <div style="font-size: 0.65rem; text-transform: uppercase; color: var(--text-muted); font-weight:700;">PRECIO FINAL</div>
+                            <div class="service-price">${formatCurrency(s.price)}</div>
+                        </div>
+                        <button class="btn btn-xs btn-secondary" onclick="editService('${s.id}')">Editar ⚙️</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function showAddServiceModal() {
+            const content = `
+                <div class="form-group">
+                    <label class="form-label">Nombre del Servicio / Clase</label>
+                    <input type="text" id="addSrvName" class="form-input" placeholder="Ej: Asesoría Técnica Express" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Precio Final (€, IVA Incl.)</label>
+                    <input type="number" id="addSrvPrice" class="form-input" placeholder="0.00" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Duración Predeterminada (minutos)</label>
+                    <select id="addSrvDuration" class="form-select">
+                        <option value="30">30 minutos</option>
+                        <option value="45">45 minutos</option>
+                        <option value="60" selected>60 minutos</option>
+                        <option value="90">90 minutos</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Descripción del Servicio</label>
+                    <textarea id="addSrvDesc" class="form-textarea" placeholder="Explique brevemente en qué consiste la clase o asesoría."></textarea>
+                </div>
+            `;
+
+            showModal('Crear Nueva Tarifa', content, [
+                { text: 'Cancelar', class: 'btn-secondary', onclick: 'window.closeModal()' },
+                { text: 'Guardar Tarifa 🏷️', class: 'btn-primary', onclick: 'submitAddService()' }
+            ]);
+        }
+
+        function submitAddService() {
+            const name = document.getElementById('addSrvName').value.trim();
+            const price = parseFloat(document.getElementById('addSrvPrice').value);
+            const duration = document.getElementById('addSrvDuration').value;
+            const desc = document.getElementById('addSrvDesc').value.trim();
+
+            if(!name || isNaN(price)) {
+                showToast('Complete los campos obligatorios.', 'warning');
+                return;
+            }
+
+            try {
+                Services.create({
+                    name: name,
+                    price: price,
+                    duration: duration,
+                    description: desc
+                });
+
+                showToast(`Tarifa "${name}" creada correctamente`, 'success');
+                window.closeModal();
+                renderServices();
+            } catch(e) {
+                showToast('Error al crear tarifa.', 'error');
+            }
+        }
+
+        function editService(id) {
+            const s = Services.getById(id);
+            if (!s) return;
+
+            const content = `
+                <input type="hidden" id="editSrvId" value="${s.id}">
+                <div class="form-group">
+                    <label class="form-label">Nombre del Servicio / Clase</label>
+                    <input type="text" id="editSrvName" class="form-input" value="${s.name}" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Precio Final (€)</label>
+                    <input type="number" id="editSrvPrice" class="form-input" value="${s.price || 0}" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Duración Predeterminada (minutos)</label>
+                    <select id="editSrvDuration" class="form-select">
+                        <option value="30" ${s.duration == 30 ? 'selected' : ''}>30 minutos</option>
+                        <option value="45" ${s.duration == 45 ? 'selected' : ''}>45 minutos</option>
+                        <option value="60" ${s.duration == 60 ? 'selected' : ''}>60 minutos</option>
+                        <option value="90" ${s.duration == 90 ? 'selected' : ''}>90 minutos</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Descripción del Servicio</label>
+                    <textarea id="editSrvDesc" class="form-textarea" required>${s.description || ''}</textarea>
+                </div>
+            `;
+
+            showModal('Editar Ficha de Tarifa', content, [
+                { text: 'Cancelar', class: 'btn-secondary', onclick: 'window.closeModal()' },
+                { text: 'Guardar Cambios 💾', class: 'btn-primary', onclick: 'submitEditService()' }
+            ]);
+        }
+
+        function submitEditService() {
+            const id = document.getElementById('editSrvId').value;
+            const name = document.getElementById('editSrvName').value.trim();
+            const price = parseFloat(document.getElementById('editSrvPrice').value);
+            const duration = document.getElementById('editSrvDuration').value;
+            const desc = document.getElementById('editSrvDesc').value.trim();
+
+            try {
+                Services.update(id, {
+                    name: name,
+                    price: price,
+                    duration: duration,
+                    description: desc
+                });
+
+                showToast('Tarifa actualizada con éxito', 'success');
+                window.closeModal();
+                renderServices();
+            } catch(e) {
+                showToast('Error al editar tarifa.', 'error');
+            }
+        }
+
+        function deleteService(id) {
+            const s = Services.getById(id);
+            if (!s) return;
+
+            if (confirm(`¿Estás seguro de que deseas eliminar permanentemente la tarifa "${s.name}"?`)) {
+                try {
+                    Services.delete(id);
+                    showToast('Tarifa borrada con éxito', 'success');
+                    renderServices();
+                } catch(e) {
+                    showToast('Error al eliminar tarifa.', 'error');
+                }
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', initPricing);
+    </script>
+</body>
+</html>

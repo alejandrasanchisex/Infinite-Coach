@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calendario Visual - Planio</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/theme.css">
+    <style>
+        .dashboard-container {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        .main-workspace {
+            flex: 1;
+            padding: var(--spacing-xl);
+            overflow-y: auto;
+            position: relative;
+            z-index: 1;
+        }
+
+        .calendar-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: var(--spacing-md);
+        }
+
+        .month-title {
+            font-size: 1.5rem;
+            font-weight: 800;
+            text-transform: capitalize;
+        }
+    </style>
+</head>
+<body>
+    <div class="bg-glow"></div>
+    <div class="bg-glow-left"></div>
+
+    <div class="dashboard-container">
+        <!-- Left Sidebar Menu -->
+        <aside class="sidebar">
+            <div class="flex-col gap-md">
+                <div class="sidebar-brand">
+                    <div class="logo">
+                        <img id="brandLogo" class="logo-img" alt="Logo" src="https://posingtheheels.com/dashboard/img/logo.png">
+                        <span id="brandName" style="font-size: 1.15rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px;">Planio</span>
+                    </div>
+                    <div style="font-size: 0.7rem; text-transform: uppercase; font-weight: 800; color: var(--text-muted); margin-top: 4px; padding-left: 2px;">
+                        ADMIN PANEL
+                    </div>
+                </div>
+
+                <ul class="sidebar-menu">
+                    <li class="sidebar-item" id="nav-panel"><a href="dashboard.html">Panel</a></li>
+                    <li class="sidebar-item" id="nav-clients"><a href="clients.html">Alumnas</a></li>
+                    <li class="sidebar-item" id="nav-agenda"><a href="appointments.html">Agenda</a></li>
+                    <li class="sidebar-item active" id="nav-calendar"><a href="calendar.html">Calendario</a></li>
+                    <li class="sidebar-item" id="nav-availability"><a href="availability.html">Disponibilidad</a></li>
+                    <li class="sidebar-item" id="nav-pricing"><a href="pricing.html">Tarifas</a></li>
+                    <li class="sidebar-item" id="nav-feedbacks"><a href="feedbacks.html">Feedbacks</a></li>
+                    <li class="sidebar-item" id="nav-stripe"><a href="billing.html">Facturación y Stripe</a></li>
+                    <li class="sidebar-item" id="nav-settings"><a href="settings.html">Configuración</a></li>
+                    <li class="sidebar-item" id="nav-clientview"><a href="client-view.html" target="_blank" style="color: var(--accent-color);">Vista alumno</a></li>
+                </ul>
+            </div>
+
+            <!-- Sidebar profile footer -->
+            <div class="sidebar-profile">
+                <div class="sidebar-profile-card">
+                    <div style="width: 38px; height: 38px; border-radius: 50%; background: var(--primary-color); display: flex; align-items: center; justify-content: center; font-weight: 700; color: white; font-size: 0.9rem;" id="userProfileLetter">A</div>
+                    <div>
+                        <strong style="font-size: 0.85rem; display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 140px;" id="userProfileEmail">Admin</strong>
+                        <span style="font-size: 0.7rem; color: var(--text-muted); font-weight: 700; display: block; text-transform: uppercase;">Administrador</span>
+                    </div>
+                </div>
+                <div class="sidebar-item mt-md" style="list-style: none;">
+                    <a href="#" onclick="signOut(); return false;" style="color: var(--error); font-weight:700; font-size:0.85rem; display:flex; align-items:center; gap: 8px; padding: 10px;">
+                        Cerrar sesión
+                    </a>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Right Workspace Main Content -->
+        <main class="main-workspace">
+            <div class="mb-lg flex-between">
+                <div>
+                    <h1 style="margin: 0; font-size: 2.2rem; font-weight: 700;">Calendario de Clases</h1>
+                    <p class="text-muted" style="margin-top: 4px;">Vista en cuadrícula interactiva mensual para tus asesorías y clases.</p>
+                </div>
+                <button class="btn btn-primary" onclick="quickAddApt()">
+                    + Agendar Cita 📅
+                </button>
+            </div>
+
+            <!-- Calendar Widget Card -->
+            <div class="card">
+                <div class="calendar-header">
+                    <div class="month-title" id="calendarMonthTitle">Mayo de 2026</div>
+                    <div class="flex gap-sm">
+                        <button class="btn btn-secondary btn-sm" onclick="navigateMonth(-1)">◀ Anterior</button>
+                        <button class="btn btn-secondary btn-sm" onclick="setTodayMonth()">Hoy</button>
+                        <button class="btn btn-secondary btn-sm" onclick="navigateMonth(1)">Siguiente ▶</button>
+                    </div>
+                </div>
+
+                <!-- Calendar month grid -->
+                <div class="calendar-grid">
+                    <div class="calendar-header-day">Lun</div>
+                    <div class="calendar-header-day">Mar</div>
+                    <div class="calendar-header-day">Mié</div>
+                    <div class="calendar-header-day">Jue</div>
+                    <div class="calendar-header-day">Vie</div>
+                    <div class="calendar-header-day">Sáb</div>
+                    <div class="calendar-header-day">Dom</div>
+                </div>
+                
+                <div class="calendar-grid" id="calendarDaysGrid">
+                    <!-- Se rellena dinámicamente -->
+                </div>
+            </div>
+
+        </main>
+    </div>
+
+    <!-- SDKs -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="js/supabase-service.js"></script>
+    <script src="js/data-models.js"></script>
+    <script src="js/utils.js"></script>
+
+    <script>
+        let currentDate = new Date();
+
+        function initCalendar() {
+            if (window.BrandConfig) {
+                window.BrandConfig.applyTheme();
+            }
+
+            // Hydrate profiles
+            const trainerEmail = localStorage.getItem('_trainerEmail') || 'admin@posingtheheels.com';
+            document.getElementById('userProfileEmail').textContent = trainerEmail;
+            document.getElementById('userProfileLetter').textContent = trainerEmail[0].toUpperCase();
+
+            renderCalendarGrid();
+        }
+
+        function setTodayMonth() {
+            currentDate = new Date();
+            renderCalendarGrid();
+        }
+
+        function navigateMonth(val) {
+            currentDate.setMonth(currentDate.getMonth() + val);
+            renderCalendarGrid();
+        }
+
+        function renderCalendarGrid() {
+            const year = currentDate.getFullYear();
+            const month = currentDate.getMonth();
+            
+            // Título de mes
+            const monthName = currentDate.toLocaleString('es-ES', { month: 'long', year: 'numeric' });
+            document.getElementById('calendarMonthTitle').textContent = monthName;
+
+            const grid = document.getElementById('calendarDaysGrid');
+            grid.innerHTML = '';
+
+            // Obtener citas del inquilino
+            const appointments = Appointments.getAll();
+
+            // Primer día del mes (1-indexado de lunes a domingo)
+            const firstDayIndex = (new Date(year, month, 1).getDay() || 7) - 1; 
+
+            // Número total de días en este mes y el anterior
+            const totalDays = new Date(year, month + 1, 0).getDate();
+            const prevMonthTotalDays = new Date(year, month, 0).getDate();
+
+            // Días del mes anterior para rellenar celdas vacías
+            for (let i = firstDayIndex; i > 0; i--) {
+                const dayNum = prevMonthTotalDays - i + 1;
+                const cell = document.createElement('div');
+                cell.className = 'calendar-cell other-month';
+                cell.innerHTML = `<div class="calendar-cell-num">${dayNum}</div>`;
+                grid.appendChild(cell);
+            }
+
+            // Días del mes actual
+            const todayStr = new Date().toISOString().substring(0, 10);
+            
+            for (let day = 1; day <= totalDays; day++) {
+                const cell = document.createElement('div');
+                cell.className = 'calendar-cell';
+                
+                // Formatear fecha para este día
+                const dayDateStr = `${year}-${(month + 1).toString().padStart(2, '0')}-${day.toString().padStart(2, '0')}`;
+                
+                if (dayDateStr === todayStr) {
+                    cell.classList.add('today');
+                }
+
+                cell.innerHTML = `<div class="calendar-cell-num">${day}</div>`;
+
+                // Filtrar citas asociadas a este día
+                const dayApts = appointments.filter(a => a.date.startsWith(dayDateStr));
+                
+                dayApts.forEach(apt => {
+                    const tag = document.createElement('div');
+                    
+                    // Determinar tipo de clase para estilo visual
+                    let tagClass = 'consultoria';
+                    const nameLower = apt.serviceType.toLowerCase();
+                    if (nameLower.includes('mentor')) tagClass = 'mentoria';
+                    else if (nameLower.includes('clase') || nameLower.includes('particular')) tagClass = 'clase';
+                    else if (nameLower.includes('poses') || nameLower.includes('heels')) tagClass = 'poses';
+
+                    tag.className = `calendar-event-tag ${tagClass}`;
+                    tag.textContent = `${new Date(apt.date).toLocaleTimeString('es-ES', {hour: '2-digit', minute:'2-digit'})} - ${apt.clientName}`;
+                    tag.title = `${apt.serviceType} para ${apt.clientName}\nNotas: ${apt.notes || '-'}`;
+                    tag.style.cursor = 'pointer';
+                    tag.onclick = (e) => {
+                        e.stopPropagation();
+                        viewAptDetail(apt.id);
+                    };
+                    cell.appendChild(tag);
+                });
+
+                // Clic en la celda para agendar rápido ese día
+                cell.style.cursor = 'pointer';
+                cell.onclick = () => {
+                    const dateObj = new Date(year, month, day, 10, 0, 0);
+                    // Formato input datetime-local: YYYY-MM-DDTHH:MM
+                    const dateFormatted = dateObj.toISOString().substring(0, 16);
+                    quickAddApt(dateFormatted);
+                };
+
+                grid.appendChild(cell);
+            }
+
+            // Rellenar celdas finales para completar la semana (múltiplo de 7)
+            const totalCells = firstDayIndex + totalDays;
+            const remaining = (7 - (totalCells % 7)) % 7;
+            for (let day = 1; day <= remaining; day++) {
+                const cell = document.createElement('div');
+                cell.className = 'calendar-cell other-month';
+                cell.innerHTML = `<div class="calendar-cell-num">${day}</div>`;
+                grid.appendChild(cell);
+            }
+        }
+
+        // Detalle de Cita
+        function viewAptDetail(aptId) {
+            const apt = Appointments.getById(aptId);
+            if (!apt) return;
+
+            const client = Clients.getById(apt.clientId);
+
+            const content = `
+                <div style="line-height: 1.6; text-align: left;">
+                    <div>Alumna: <strong style="color: var(--primary-color);">${apt.clientName}</strong></div>
+                    <div>Email: <strong>${client?.email || '-'}</strong></div>
+                    <div>Teléfono: <strong>${client?.phone || '-'}</strong></div>
+                    <div style="margin-top: 8px; border-top: 1px solid var(--border-color); padding-top: 8px;">
+                        Tipo de Servicio: <span class="badge badge-info">${apt.serviceType}</span>
+                    </div>
+                    <div>Fecha y Hora: <strong>${formatDateTime(apt.date)}</strong></div>
+                    <div>Duración: <strong>${apt.duration} minutos</strong></div>
+                    ${apt.notes ? `
+                        <div style="margin-top: 8px; background: rgba(255,255,255,0.02); padding: 10px; border-radius: 6px; border: 1px solid var(--border-color);">
+                            <strong>Notas de Cita:</strong>
+                            <p style="margin: 4px 0 0; font-size: 0.85rem; color: var(--text-secondary);">${apt.notes}</p>
+                        </div>
+                    ` : ''}
+                </div>
+            `;
+
+            showModal('Detalle de la Reserva', content, [
+                { text: 'Eliminar Cita 🗑️', class: 'btn-danger', onclick: `deleteAptFromCalendar('${apt.id}')` },
+                { text: 'Cerrar', class: 'btn-secondary', onclick: 'window.closeModal()' }
+            ]);
+        }
+
+        function deleteAptFromCalendar(id) {
+            const apt = Appointments.getById(id);
+            if (!apt) return;
+            if (confirm(`¿Seguro que deseas eliminar la cita de ${apt.clientName}?`)) {
+                try {
+                    Appointments.delete(id);
+                    if (window.Activity) {
+                        window.Activity.add('error', `${apt.clientName} ha cancelado una clase`);
+                    }
+                    showToast('Cita cancelada correctamente', 'success');
+                    window.closeModal();
+                    renderCalendarGrid();
+                } catch(e) {
+                    showToast('Error al borrar la cita', 'error');
+                }
+            }
+        }
+
+        // Formulario rápido
+        function quickAddApt(preDate = "") {
+            const clients = Clients.getAll();
+            const services = Services.getAll();
+
+            const content = `
+                <div class="form-group">
+                    <label class="form-label">Seleccionar Alumna</label>
+                    <select id="quickClientSelect" class="form-select" required>
+                        <option value="">-- Elige una alumna --</option>
+                        ${clients.map(c => `<option value="${c.id}">${c.name}</option>`).join('')}
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Seleccionar Tarifa / Clase</label>
+                    <select id="quickServiceSelect" class="form-select" onchange="onQuickServiceChange()" required>
+                        <option value="">-- Elige una clase --</option>
+                        ${services.map(s => `<option value="${s.id}">${s.name} (${formatCurrency(s.price)})</option>`).join('')}
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Fecha y Hora</label>
+                    <input type="datetime-local" id="quickDate" class="form-input" value="${preDate}" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Duración (minutos)</label>
+                    <input type="number" id="quickDuration" class="form-input" value="60" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Notas Adicionales</label>
+                    <textarea id="quickNotes" class="form-textarea" placeholder="Zoom link, objetivos..."></textarea>
+                </div>
+            `;
+
+            showModal('Programar Cita Rápida', content, [
+                { text: 'Cancelar', class: 'btn-secondary', onclick: 'window.closeModal()' },
+                { text: 'Agendar Cita 📅', class: 'btn-primary', onclick: 'submitQuickApt()' }
+            ]);
+        }
+
+        function onQuickServiceChange() {
+            const srvId = document.getElementById('quickServiceSelect').value;
+            if (srvId) {
+                const srv = Services.getById(srvId);
+                if (srv) {
+                    document.getElementById('quickDuration').value = srv.duration;
+                }
+            }
+        }
+
+        function submitQuickApt() {
+            const cId = document.getElementById('quickClientSelect').value;
+            const srvId = document.getElementById('quickServiceSelect').value;
+            const dateVal = document.getElementById('quickDate').value;
+            const duration = document.getElementById('quickDuration').value;
+            const notes = document.getElementById('quickNotes').value.trim();
+
+            const client = Clients.getById(cId);
+            const service = Services.getById(srvId);
+
+            if(!client || !service || !dateVal) {
+                showToast('Rellene todos los campos.', 'warning');
+                return;
+            }
+
+            try {
+                const isoDate = new Date(dateVal).toISOString();
+
+                Appointments.create({
+                    clientId: cId,
+                    clientName: client.name,
+                    serviceType: service.name,
+                    date: isoDate,
+                    duration: duration,
+                    notes: notes
+                });
+
+                if (window.Activity) {
+                    window.Activity.add('success', `${client.name} ha reservado una clase`);
+                }
+
+                showToast('Cita agendada correctamente', 'success');
+                window.closeModal();
+                renderCalendarGrid();
+            } catch(e) {
+                showToast('Error al agendar cita', 'error');
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', initCalendar);
+    </script>
+</body>
+</html>

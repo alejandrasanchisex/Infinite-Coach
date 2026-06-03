@@ -6,7 +6,7 @@
     <script>
         // Force PWA cache bust / reload
         (function() {
-            const CURRENT_VERSION = '349';
+            const CURRENT_VERSION = '363';
             const savedVersion = localStorage.getItem('app_version');
             if (savedVersion !== CURRENT_VERSION) {
                 localStorage.setItem('app_version', CURRENT_VERSION);
@@ -30,16 +30,16 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="styles/theme.css?v=350">
-    <link rel="stylesheet" href="styles/components.css?v=349">
-    <link rel="stylesheet" href="styles/mobile.css?v=349">
+    <link rel="stylesheet" href="styles/theme.css?v=363">
+    <link rel="stylesheet" href="styles/components.css?v=363">
+    <link rel="stylesheet" href="styles/mobile.css?v=363">
     <style>
         .evo-tab { display: none !important; }
         .evo-tab.active { display: block !important; }
         
-        .evo-section { background: rgba(255,255,255,0.05); padding: 20px; border-radius: 12px; margin-bottom: 24px; border: 1px solid rgba(255,255,255,0.1); }
-        .table-data { width: 100%; border-collapse: collapse; font-size: 0.8rem; }
-        .table-data th, .table-data td { padding: 10px; text-align: center; border-bottom: 1px solid rgba(255,255,255,0.05); }
+        .evo-section { background: rgba(255,255,255,0.05); padding: 20px; border-radius: 12px; margin-bottom: 24px; border: 1px solid rgba(255,255,255,0.1); max-width: 100%; box-sizing: border-box; overflow: hidden; }
+        .table-data { width: 100%; border-collapse: collapse; font-size: 0.8rem; table-layout: auto; }
+        .table-data th, .table-data td { padding: 10px; text-align: center; border-bottom: 1px solid rgba(255,255,255,0.05); white-space: nowrap; }
         .table-data th { background: rgba(255,255,255,0.03); color: var(--primary-color); text-transform: uppercase; font-size: 0.7rem; }
         
         /* Fix select options visibility in dark mode */
@@ -47,7 +47,7 @@
             background-color: #1A1A2E;
             color: white;
         }
-        .chart-box { height: 250px; position: relative; }
+        .chart-box { height: 250px; position: relative; width: 100%; max-width: 100%; overflow: hidden; }
         .badge-s { background: var(--primary-color); color: white; padding: 2px 6px; border-radius: 4px; font-weight: bold; font-size: 0.7rem; }
         .pr-card { background: rgba(255,255,255,0.02); border-radius: 10px; padding: 15px; display: flex; justify-content: space-between; align-items: center; border: 1px solid rgba(255,255,255,0.05); margin-bottom: 10px; }
         .grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); }
@@ -110,10 +110,10 @@
                     <span id="brandName">Infinite Coach</span>
                 </div>
                 <ul class="nav-links">
-                    <li><a href="client-dashboard.html?v=349" class="nav-link">Inicio</a></li>
-                    <li><a href="client-profile.html?v=349" class="nav-link">Ficha</a></li>
+                    <li><a href="client-dashboard.html?v=363" class="nav-link">Inicio</a></li>
+                    <li><a href="client-profile.html?v=363" class="nav-link">Ficha</a></li>
 
-                    <li><a href="client-login.html?v=349" class="nav-link">Salir</a></li>
+                    <li><a href="client-login.html?v=363" class="nav-link">Salir</a></li>
                 </ul>
                 <button class="menu-toggle" onclick="toggleMenu()" style="margin-left: auto;">☰</button>
             </nav>
@@ -136,8 +136,8 @@
                 <div class="grid grid-2 gap-lg">
                     <div class="evo-section">
                         <h3 style="margin-top:0;">Historial de Medidas</h3>
-                        <div style="max-height: 300px; overflow-x: auto; overflow-y: auto; -webkit-overflow-scrolling: touch;">
-                            <table class="table-data">
+                        <div style="max-height: 300px; overflow-x: auto; overflow-y: auto; -webkit-overflow-scrolling: touch; width: 100%; max-width: 100%;">
+                            <table class="table-data" style="width: 100%;">
                                 <thead id="hTableHead"></thead>
                                 <tbody id="hTableBody"></tbody>
                             </table>
@@ -197,12 +197,12 @@
 
     <!-- Supabase SDK & Service -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="js/supabase-service.js?v=350"></script>
+    <script src="js/supabase-service.js?v=363"></script>
 
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script src="js/config.js?v=350"></script>
-    <script src="js/data-models.js?v=350"></script>
-    <script src="js/utils.js?v=350"></script>
+    <script src="js/config.js?v=363"></script>
+    <script src="js/data-models.js?v=363"></script>
+    <script src="js/utils.js?v=363"></script>
     <script>
         const cId = sessionStorage.getItem('clientId') || localStorage.getItem('clientId');
         if (!cId) {
@@ -485,11 +485,11 @@
                 c.style.left = Math.random() * 100 + 'vw';
                 c.style.top = Math.random() * 100 + 'vh';
                 c.style.background = ['#FFD700', '#FFFFFF', '#FF8C00'][Math.floor(Math.random()*3)];
-                c.style.transform = `rotate(${Math.random()*360}deg)`;
+                c.style.transform = `rotate(${Math.random()*362}deg)`;
                 overlay.appendChild(c);
                 c.animate([
                     { transform: `translate(0,0) rotate(0deg)`, opacity: 1 },
-                    { transform: `translate(${(Math.random()-0.5)*200}px, 500px) rotate(360deg)`, opacity: 0 }
+                    { transform: `translate(${(Math.random()-0.5)*200}px, 500px) rotate(362deg)`, opacity: 0 }
                 ], { duration: 1000 + Math.random()*2000, iterations: 1 });
             }
         }
@@ -515,5 +515,5 @@
         }
 
     </script>
-    <script src="js/custom-recipes.js?v=349"></script></body>
+    <script src="js/custom-recipes.js?v=363"></script></body>
 </html>

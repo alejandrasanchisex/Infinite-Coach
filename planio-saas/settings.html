@@ -1,0 +1,491 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Configuración de Marca y Copias - Planio</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/theme.css">
+    <style>
+        .dashboard-container {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        .main-workspace {
+            flex: 1;
+            padding: var(--spacing-xl);
+            overflow-y: auto;
+            position: relative;
+            z-index: 1;
+        }
+
+        .color-preview-box {
+            width: 100%;
+            height: 45px;
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+            margin-top: 8px;
+            transition: all var(--transition-fast);
+        }
+        
+        .file-upload-preview {
+            max-width: 120px;
+            max-height: 120px;
+            border-radius: 12px;
+            border: 1px solid var(--border-color);
+            background: white;
+            padding: 8px;
+            object-fit: contain;
+            display: block;
+            margin: 0 auto 15px;
+        }
+    </style>
+</head>
+<body>
+    <div class="bg-glow"></div>
+    <div class="bg-glow-left"></div>
+
+    <div class="dashboard-container">
+        <!-- Left Sidebar Menu -->
+        <aside class="sidebar">
+            <div class="flex-col gap-md">
+                <div class="sidebar-brand">
+                    <div class="logo">
+                        <img id="brandLogo" class="logo-img" alt="Logo" src="https://posingtheheels.com/dashboard/img/logo.png">
+                        <span id="brandName" style="font-size: 1.15rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px;">Planio</span>
+                    </div>
+                    <div style="font-size: 0.7rem; text-transform: uppercase; font-weight: 800; color: var(--text-muted); margin-top: 4px; padding-left: 2px;">
+                        ADMIN PANEL
+                    </div>
+                </div>
+
+                <ul class="sidebar-menu">
+                    <li class="sidebar-item" id="nav-panel"><a href="dashboard.html">Panel</a></li>
+                    <li class="sidebar-item" id="nav-clients"><a href="clients.html">Alumnas</a></li>
+                    <li class="sidebar-item" id="nav-agenda"><a href="appointments.html">Agenda</a></li>
+                    <li class="sidebar-item" id="nav-calendar"><a href="calendar.html">Calendario</a></li>
+                    <li class="sidebar-item" id="nav-availability"><a href="availability.html">Disponibilidad</a></li>
+                    <li class="sidebar-item" id="nav-pricing"><a href="pricing.html">Tarifas</a></li>
+                    <li class="sidebar-item" id="nav-feedbacks"><a href="feedbacks.html">Feedbacks</a></li>
+                    <li class="sidebar-item" id="nav-stripe"><a href="billing.html">Facturación y Stripe</a></li>
+                    <li class="sidebar-item active" id="nav-settings"><a href="settings.html">Configuración</a></li>
+                    <li class="sidebar-item" id="nav-clientview"><a href="client-view.html" target="_blank" style="color: var(--accent-color);">Vista alumno</a></li>
+                </ul>
+            </div>
+
+            <!-- Sidebar profile footer -->
+            <div class="sidebar-profile">
+                <div class="sidebar-profile-card">
+                    <div style="width: 38px; height: 38px; border-radius: 50%; background: var(--primary-color); display: flex; align-items: center; justify-content: center; font-weight: 700; color: white; font-size: 0.9rem;" id="userProfileLetter">A</div>
+                    <div>
+                        <strong style="font-size: 0.85rem; display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 140px;" id="userProfileEmail">Admin</strong>
+                        <span style="font-size: 0.7rem; color: var(--text-muted); font-weight: 700; display: block; text-transform: uppercase;">Administrador</span>
+                    </div>
+                </div>
+                <div class="sidebar-item mt-md" style="list-style: none;">
+                    <a href="#" onclick="signOut(); return false;" style="color: var(--error); font-weight:700; font-size:0.85rem; display:flex; align-items:center; gap: 8px; padding: 10px;">
+                        Cerrar sesión
+                    </a>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Right Workspace Main Content -->
+        <main class="main-workspace">
+            <div class="mb-lg">
+                <h1 style="margin: 0; font-size: 2.2rem; font-weight: 700;">Configuración del Portal SaaS</h1>
+                <p class="text-muted" style="margin-top: 4px;">Personaliza la marca blanca, logos y descarga respaldos de seguridad.</p>
+            </div>
+
+            <div class="grid grid-3">
+                <!-- Left: Colors & Logo -->
+                <div class="card" style="grid-column: span 1;">
+                    <div class="card-header">
+                        <h3 class="card-title">🎨 Identidad de Marca y Logo</h3>
+                    </div>
+                    
+                    <div class="text-center mb-md" style="margin-top: 15px;">
+                        <img id="logoPreview" class="file-upload-preview" src="https://posingtheheels.com/dashboard/img/logo.png" alt="Logo preview">
+                        <label class="btn btn-sm btn-secondary" style="position: relative; overflow: hidden; display: inline-flex; cursor: pointer;">
+                            Subir Logotipo 📤
+                            <input type="file" id="logoUploadInput" accept="image/*" onchange="handleLogoUpload(event)" style="position: absolute; top:0; left:0; width:100%; height:100%; opacity:0; cursor:pointer;">
+                        </label>
+                        <div class="form-hint mt-sm">Compresión Canvas activa a 200x200px JPEG.</div>
+                    </div>
+
+                    <form id="brandForm">
+                        <div class="form-group">
+                            <label class="form-label">Nombre Comercial de la App</label>
+                            <input type="text" id="brandNameInput" class="form-input" placeholder="Planio Reservas" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">WhatsApp Soporte / Contacto</label>
+                            <input type="text" id="brandWhatsappInput" class="form-input" placeholder="+34 600 000 000" required>
+                        </div>
+
+                        <!-- Color Pickers -->
+                        <div class="form-group">
+                            <label class="form-label">Color Primario (Hex)</label>
+                            <div class="flex gap-sm">
+                                <input type="color" id="primaryColorInput" class="form-input" style="width: 60px; height:45px; padding:2px; cursor:pointer;" onchange="updateHexPreview('primary')">
+                                <input type="text" id="primaryColorText" class="form-input" placeholder="#6366F1" style="font-family: monospace;" onchange="updateHexText('primary')" required>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Color Secundario (Hex)</label>
+                            <div class="flex gap-sm">
+                                <input type="color" id="secondaryColorInput" class="form-input" style="width: 60px; height:45px; padding:2px; cursor:pointer;" onchange="updateHexPreview('secondary')">
+                                <input type="text" id="secondaryColorText" class="form-input" placeholder="#4F46E5" style="font-family: monospace;" onchange="updateHexText('secondary')" required>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Color de Acento (Hex)</label>
+                            <div class="flex gap-sm">
+                                <input type="color" id="accentColorInput" class="form-input" style="width: 60px; height:45px; padding:2px; cursor:pointer;" onchange="updateHexPreview('accent')">
+                                <input type="text" id="accentColorText" class="form-input" placeholder="#EC4899" style="font-family: monospace;" onchange="updateHexText('accent')" required>
+                            </div>
+                        </div>
+
+                        <!-- Dark/Light theme mode selector -->
+                        <div class="form-group">
+                            <label class="form-label">Modo Visual Base</label>
+                            <select id="themeModeSelect" class="form-select">
+                                <option value="dark">Tema Oscuro Premium 🌙</option>
+                                <option value="light">Tema Claro Profesional ☀️</option>
+                            </select>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary w-full mt-md">Guardar y Aplicar Marca 🎨</button>
+                    </form>
+                </div>
+
+                <!-- Right: Fiscal Data & Backups -->
+                <div class="flex-col gap-lg" style="grid-column: span 2;">
+                    <!-- Fiscal Details (VeriFactu Compliance) -->
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title">🏢 Registro de Datos Fiscales</h3>
+                        </div>
+                        <form id="fiscalForm" style="margin-top: 15px;">
+                            <div class="grid grid-2">
+                                <div class="form-group">
+                                    <label class="form-label">Razón Social / Autónomo</label>
+                                    <input type="text" id="fiscalName" class="form-input" placeholder="Planio Reservas S.L." required>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">NIF / CIF</label>
+                                    <input type="text" id="fiscalNif" class="form-input" placeholder="B12345678" required>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Domicilio Social</label>
+                                <input type="text" id="fiscalAddress" class="form-input" placeholder="Calle Mayor 12, Piso 1" required>
+                            </div>
+                            <div class="grid grid-3">
+                                <div class="form-group">
+                                    <label class="form-label">Código Postal</label>
+                                    <input type="text" id="fiscalZip" class="form-input" placeholder="28001" required>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Ciudad</label>
+                                    <input type="text" id="fiscalCity" class="form-input" placeholder="Madrid" required>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Serie de Factura</label>
+                                    <input type="text" id="fiscalSeries" class="form-input" placeholder="PL-2026" required>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">IVA por Defecto (%)</label>
+                                <input type="number" id="fiscalIva" class="form-input" value="21" required>
+                            </div>
+                            <button type="submit" class="btn btn-primary w-full mt-sm">Guardar Datos Fiscales 🏢</button>
+                        </form>
+                    </div>
+
+                    <!-- SheetJS Backup System -->
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title">📦 Copia de Seguridad Excel (SheetJS)</h3>
+                        </div>
+                        <p class="text-muted" style="margin-top: 15px; font-size: 0.9rem;">
+                            Descarga una copia de seguridad local completa de todas las tablas de tu base de datos multi-tenant directamente en formato de libro Excel multi-pestaña:
+                        </p>
+                        <div style="background: rgba(255, 255, 255, 0.02); padding: 15px; border-radius: 12px; border: 1px solid var(--border-color); margin: 15px 0;">
+                            <ul style="padding-left: 20px; font-size: 0.85rem; color: var(--text-secondary); line-height: 1.6;">
+                                <li>Pestaña 1: Clientes (Lista CRM completa)</li>
+                                <li>Pestaña 2: Citas y Agenda (Histórico de reservas)</li>
+                                <li>Pestaña 3: Facturas Homologadas (Cadena de VeriFactu)</li>
+                                <li>Pestaña 4: Configuración Visual y Logotipos</li>
+                            </ul>
+                        </div>
+                        <button class="btn btn-success w-full" onclick="downloadExcelBackup()">
+                            Descargar Libro Maestro de Datos (.xlsx) 📥
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+        </main>
+    </div>
+
+    <!-- SheetJS Library -->
+    <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+
+    <!-- SDKs -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="js/supabase-service.js"></script>
+    <script src="js/data-models.js"></script>
+    <script src="js/utils.js"></script>
+
+    <script>
+        let currentLogoBase64 = "";
+
+        function initSettings() {
+            if (window.BrandConfig) {
+                window.BrandConfig.applyTheme();
+            }
+
+            // Hydrate profiles
+            const trainerEmail = localStorage.getItem('_trainerEmail') || 'admin@posingtheheels.com';
+            document.getElementById('userProfileEmail').textContent = trainerEmail;
+            document.getElementById('userProfileLetter').textContent = trainerEmail[0].toUpperCase();
+
+            // Rellenar visuales
+            const brand = BrandConfig.get();
+            if (brand) {
+                document.getElementById('brandNameInput').value = brand.name || 'Planio';
+                document.getElementById('brandWhatsappInput').value = brand.whatsapp || '+34 000 000 000';
+                
+                const c = brand.colors || {};
+                document.getElementById('primaryColorText').value = c.primary || '#6366F1';
+                document.getElementById('primaryColorInput').value = c.primary || '#6366F1';
+                document.getElementById('secondaryColorText').value = c.secondary || '#4F46E5';
+                document.getElementById('secondaryColorInput').value = c.secondary || '#4F46E5';
+                document.getElementById('accentColorText').value = c.accent || '#EC4899';
+                document.getElementById('accentColorInput').value = c.accent || '#EC4899';
+
+                document.getElementById('themeModeSelect').value = c.themeMode || 'dark';
+
+                if (brand.logo && brand.logo.length > 5) {
+                    document.getElementById('logoPreview').src = brand.logo;
+                    currentLogoBase64 = brand.logo;
+                }
+
+                // Datos Fiscales
+                const f = brand.fiscalData || {};
+                document.getElementById('fiscalName').value = f.companyName || 'Planio Reservas S.L.';
+                document.getElementById('fiscalNif').value = f.nif || 'B12345678';
+                document.getElementById('fiscalAddress').value = f.address || 'Calle Mayor 12';
+                document.getElementById('fiscalZip').value = f.zip || '28001';
+                document.getElementById('fiscalCity').value = f.city || 'Madrid';
+                document.getElementById('fiscalSeries').value = f.invoiceSeries || 'PL-' + new Date().getFullYear();
+                document.getElementById('fiscalIva').value = f.defaultIva || 21;
+            }
+        }
+
+        function updateHexPreview(type) {
+            const hex = document.getElementById(`${type}ColorInput`).value;
+            document.getElementById(`${type}ColorText`).value = hex.toUpperCase();
+        }
+
+        function updateHexText(type) {
+            let hex = document.getElementById(`${type}ColorText`).value.trim();
+            if (!hex.startsWith('#')) hex = '#' + hex;
+            if (/^#[0-9A-F]{6}$/i.test(hex)) {
+                document.getElementById(`${type}ColorInput`).value = hex;
+            }
+        }
+
+        async function handleLogoUpload(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            showToast("Procesando y comprimiendo logotipo...", "info");
+
+            try {
+                const compressedDataUrl = await resizeLogoCanvas(file, 200, 200);
+                document.getElementById('logoPreview').src = compressedDataUrl;
+                currentLogoBase64 = compressedDataUrl;
+                showToast("Logotipo optimizado con éxito ✅", "success");
+            } catch (err) {
+                console.error(err);
+                showToast("Error al comprimir logotipo", "error");
+            }
+        }
+
+        function resizeLogoCanvas(file, maxWidth, maxHeight) {
+            return new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    const img = new Image();
+                    img.onload = () => {
+                        const canvas = document.createElement('canvas');
+                        let width = img.width;
+                        let height = img.height;
+
+                        if (width > height) {
+                            if (width > maxWidth) {
+                                height *= maxWidth / width;
+                                width = maxWidth;
+                            }
+                        } else {
+                            if (height > maxHeight) {
+                                width *= maxHeight / height;
+                                height = maxHeight;
+                            }
+                        }
+
+                        canvas.width = width;
+                        canvas.height = height;
+                        const ctx = canvas.getContext('2d');
+                        ctx.drawImage(img, 0, 0, width, height);
+
+                        resolve(canvas.toDataURL('image/jpeg', 0.8));
+                    };
+                    img.onerror = reject;
+                    img.src = e.target.result;
+                };
+                reader.onerror = reject;
+                reader.readAsDataURL(file);
+            });
+        }
+
+        document.getElementById('brandForm').addEventListener('submit', (e) => {
+            e.preventDefault();
+            const name = document.getElementById('brandNameInput').value.trim();
+            const whatsapp = document.getElementById('brandWhatsappInput').value.trim();
+            
+            const colors = {
+                primary: document.getElementById('primaryColorText').value.trim(),
+                secondary: document.getElementById('secondaryColorText').value.trim(),
+                accent: document.getElementById('accentColorText').value.trim(),
+                themeMode: document.getElementById('themeModeSelect').value
+            };
+
+            try {
+                const brand = BrandConfig.get();
+                const updated = {
+                    ...brand,
+                    name: name,
+                    whatsapp: whatsapp,
+                    logo: currentLogoBase64 || brand.logo,
+                    colors: colors
+                };
+
+                BrandConfig.set(updated);
+                BrandConfig.applyTheme();
+                showToast("Identidad visual guardada y cargada en caliente 🎨", "success");
+            } catch(err) {
+                showToast("Error al guardar marca", "error");
+            }
+        });
+
+        document.getElementById('fiscalForm').addEventListener('submit', (e) => {
+            e.preventDefault();
+            const fiscal = {
+                companyName: document.getElementById('fiscalName').value.trim(),
+                nif: document.getElementById('fiscalNif').value.trim(),
+                address: document.getElementById('fiscalAddress').value.trim(),
+                zip: document.getElementById('fiscalZip').value.trim(),
+                city: document.getElementById('fiscalCity').value.trim(),
+                defaultIva: parseInt(document.getElementById('fiscalIva').value) || 21,
+                invoiceSeries: document.getElementById('fiscalSeries').value.trim()
+            };
+
+            try {
+                const brand = BrandConfig.get();
+                const updated = {
+                    ...brand,
+                    fiscalData: fiscal
+                };
+                BrandConfig.set(updated);
+                showToast("Datos fiscales guardados con éxito", "success");
+            } catch(err) {
+                showToast("Error al guardar datos fiscales", "error");
+            }
+        });
+
+        function downloadExcelBackup() {
+            if (typeof XLSX === 'undefined') {
+                showToast("Cargando motor de Excel SheetJS...", "info");
+                return;
+            }
+
+            try {
+                const db = getData();
+                const wb = XLSX.utils.book_new();
+
+                const clientsData = db.clients.map(c => ({
+                    ID: c.id,
+                    Nombre: c.name,
+                    Email: c.email,
+                    Telefono: c.phone,
+                    Mensualidad: c.monthlyFee,
+                    Estado: c.status === 'active' ? 'Activo' : 'Inactivo',
+                    Pago: c.paymentStatus === 'paid' ? 'Pagado' : 'Pendiente',
+                    Metodo: c.paymentMethod,
+                    Tarj_Stripe: c.cardDetails ? `${c.cardDetails.brand} **** ${c.cardDetails.last4}` : 'No',
+                    Codigo_PWA: c.accessCode,
+                    Alta: c.createdAt
+                }));
+                const wsClients = XLSX.utils.json_to_sheet(clientsData);
+                XLSX.utils.book_append_sheet(wb, wsClients, "Clientes");
+
+                const aptsData = db.appointments.map(a => ({
+                    ID: a.id,
+                    Cliente: a.clientName,
+                    Servicio: a.serviceType,
+                    Fecha: formatDateTime(a.date),
+                    Duracion: `${a.duration} min`,
+                    Notas: a.notes,
+                    Creada: a.createdAt
+                }));
+                const wsApts = XLSX.utils.json_to_sheet(aptsData);
+                XLSX.utils.book_append_sheet(wb, wsApts, "Citas");
+
+                const invoicesData = db.invoices.map(i => ({
+                    Numero: i.number,
+                    Cliente: i.clientName,
+                    Fecha: new Date(i.date).toLocaleDateString(),
+                    Base: i.base,
+                    IVA_Pct: i.ivaRate,
+                    IVA_Importe: i.ivaAmount,
+                    Total: i.amount,
+                    Hash_Actual: i.hash,
+                    Hash_Anterior: i.previousHash
+                }));
+                const wsInvoices = XLSX.utils.json_to_sheet(invoicesData);
+                XLSX.utils.book_append_sheet(wb, wsInvoices, "Facturas");
+
+                const b = db.brand || {};
+                const brandData = [
+                    { Parametro: "Nombre Comercial", Valor: b.name },
+                    { Parametro: "WhatsApp", Valor: b.whatsapp },
+                    { Parametro: "Color Primario", Valor: b.colors?.primary },
+                    { Parametro: "Color Secundario", Valor: b.colors?.secondary },
+                    { Parametro: "Color Acento", Valor: b.colors?.accent },
+                    { Parametro: "Modo Tema", Valor: b.colors?.themeMode },
+                    { Parametro: "Razón Social", Valor: b.fiscalData?.companyName },
+                    { Parametro: "NIF/CIF", Valor: b.fiscalData?.nif },
+                    { Parametro: "Serie Facturación", Valor: b.fiscalData?.invoiceSeries }
+                ];
+                const wsBrand = XLSX.utils.json_to_sheet(brandData);
+                XLSX.utils.book_append_sheet(wb, wsBrand, "Config_Marca");
+
+                const fileName = `PLANIO_RESPALDO_${new Date().toISOString().substring(0,10)}.xlsx`;
+                XLSX.writeFile(wb, fileName);
+                showToast("¡Respaldo Maestro Excel Descargado! 📥", "success");
+            } catch(e) {
+                console.error(e);
+                showToast("Error al compilar respaldo Excel", "error");
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', initSettings);
+    </script>
+</body>
+</html>

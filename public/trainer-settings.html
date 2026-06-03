@@ -5,7 +5,7 @@
     <script>
         // Force PWA cache bust / reload
         (function() {
-            const CURRENT_VERSION = '349';
+            const CURRENT_VERSION = '363';
             const savedVersion = localStorage.getItem('app_version');
             if (savedVersion !== CURRENT_VERSION) {
                 localStorage.setItem('app_version', CURRENT_VERSION);
@@ -31,8 +31,8 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="styles/theme.css?v=350">
-    <link rel="stylesheet" href="styles/components.css?v=349">
+    <link rel="stylesheet" href="styles/theme.css?v=363">
+    <link rel="stylesheet" href="styles/components.css?v=363">
     <style>
         .settings-section {
             margin-bottom: var(--spacing-xl);
@@ -113,14 +113,14 @@
                 </div>
                 <button class="menu-toggle" onclick="toggleMenu()">☰</button>
                 <ul class="nav-links" id="navLinks">
-                    <li><a href="trainer-dashboard.html?v=349" class="nav-link">Dashboard</a></li>
-                    <li><a href="trainer-clients.html?v=349" class="nav-link">Clientes</a></li>
-                    <li><a href="trainer-routines.html?v=349" class="nav-link">Rutinas</a></li>
-                    <li><a href="trainer-diets.html?v=349" class="nav-link">Dietas</a></li>
-                    <li><a href="trainer-feedbacks.html?v=349" class="nav-link">Revisiones</a></li>
-                    <li><a href="trainer-media.html?v=349" class="nav-link">Biblioteca</a></li>
-                    <li><a href="trainer-appointments.html?v=349" class="nav-link">Agenda</a></li>
-                    <li><a href="trainer-settings.html?v=349" class="nav-link active">Configuración</a></li>
+                    <li><a href="trainer-dashboard.html?v=363" class="nav-link">Dashboard</a></li>
+                    <li><a href="trainer-clients.html?v=363" class="nav-link">Clientes</a></li>
+                    <li><a href="trainer-routines.html?v=363" class="nav-link">Rutinas</a></li>
+                    <li><a href="trainer-diets.html?v=363" class="nav-link">Dietas</a></li>
+                    <li><a href="trainer-feedbacks.html?v=363" class="nav-link">Revisiones</a></li>
+                    <li><a href="trainer-media.html?v=363" class="nav-link">Biblioteca</a></li>
+                    <li><a href="trainer-appointments.html?v=363" class="nav-link">Agenda</a></li>
+                    <li><a href="trainer-settings.html?v=363" class="nav-link active">Configuración</a></li>
                     <li><a href="#" onclick="if(typeof AUTH !== 'undefined') { AUTH.signOut() } else { window.location.reload() }; return false;" class="nav-link" style="color:var(--error-color)">🚪 Salir</a></li>
                 </ul>
             </nav>
@@ -507,17 +507,17 @@
 
     <!-- Supabase SDK & Service -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="js/supabase-service.js?v=350"></script>
+    <script src="js/supabase-service.js?v=363"></script>
 
     <!-- UI Scripts -->
-    <script src="js/config.js?v=350"></script>
-    <script src="js/auth.js?v=349"></script>
-    <script src="js/sheets.js?v=349"></script>
-    <script src="js/data-models.js?v=350"></script>
-    <script src="js/cloud-storage.js?v=349"></script>
-    <script src="js/utils.js?v=350"></script>
+    <script src="js/config.js?v=363"></script>
+    <script src="js/auth.js?v=363"></script>
+    <script src="js/sheets.js?v=363"></script>
+    <script src="js/data-models.js?v=363"></script>
+    <script src="js/cloud-storage.js?v=363"></script>
+    <script src="js/utils.js?v=363"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
-    <script src="js/excel-manager.js?v=349"></script>
+    <script src="js/excel-manager.js?v=363"></script>
     <script>
         // Global Variables
         let feedbackQuestions = [];
@@ -593,22 +593,23 @@
                     (trainerEmail && tr.email && tr.email.toLowerCase() === trainerEmail.toLowerCase())
                 );
                 
-                if (!t && (activeId === 't-w0iybl7qb' || 
-                           (trainerEmail && (trainerEmail.toLowerCase() === 'ingenia@ingeniaia.es' || trainerEmail.toLowerCase() === 'alejandra.asteam@gmail.com')) ||
-                           (typeof window !== 'undefined' && window.location.hostname.includes('infinitecoach.es')))) {
+                const isAlejandra = (activeId === 't-w0iybl7qb' || 
+                                     (trainerEmail && (trainerEmail.toLowerCase() === 'ingenia@ingeniaia.es' || trainerEmail.toLowerCase() === 'alejandra.asteam@gmail.com')));
+
+                if (!t && isAlejandra) {
                     t = trainers.find(tr => tr.id === 't-w0iybl7qb' || tr.email === 'alejandra.asteam@gmail.com' || tr.email === 'ingenia@ingeniaia.es');
                 }
 
-                // Bulletproof Fallback: if data can't be fetched or trainer not found, default to ASTeam Plan Basic
+                // Bulletproof Fallback: if data can't be fetched or trainer not found, default to a standard Plan Basic
                 if (!t) {
                     console.warn("Trainer not found in saasFitnessPlatform trainers list, using default plan info:", activeId);
                     t = {
-                        id: 't-w0iybl7qb',
-                        name: 'Alejandra ASTeam',
+                        id: activeId || 'default',
+                        name: isAlejandra ? 'Alejandra ASTeam' : (activeId === 'demo' ? 'DEMO Trainer' : (activeId === 'victor' ? 'Victor' : 'Entrenador Infinite Coach')),
                         plan: 'Plan Basic',
-                        email: 'alejandra.asteam@gmail.com',
+                        email: trainerEmail || (isAlejandra ? 'alejandra.asteam@gmail.com' : 'trainer@infinitecoach.es'),
                         status: 'active',
-                        expiryDate: '18/6/2026'
+                        expiryDate: '18/06/2026'
                     };
                 }
 
@@ -1458,6 +1459,6 @@
             if (typeof loadSettings === 'function') loadSettings();
         }
     </script>
-    <script src="js/custom-recipes.js?v=349"></script></body>
+    <script src="js/custom-recipes.js?v=363"></script></body>
 
 </html>

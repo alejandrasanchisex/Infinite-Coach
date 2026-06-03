@@ -2920,6 +2920,16 @@ const BrandConfig = {
     }
     const data = getData();
     
+    // Check if the active trainer is Alejandra
+    let isAlejandra = false;
+    if (typeof window !== 'undefined' && 
+        (window.activeTrainerId === 't-w0iybl7qb' || 
+         window.activeTrainerId === 'alejandra_asteam_gmail_com' || 
+         localStorage.getItem('activeTrainerId') === 't-w0iybl7qb' ||
+         localStorage.getItem('activeTrainerId') === 'alejandra_asteam_gmail_com')) {
+        isAlejandra = true;
+    }
+
     // Default brand settings
     let defaultBrand = {
         name: 'Infinite Coach',
@@ -2930,15 +2940,12 @@ const BrandConfig = {
     };
 
     // Instant corporate brand override for ASTeam custom domain / active trainer
-    if (typeof window !== 'undefined' && 
-        (window.location.hostname.includes('infinitecoach.es') || 
-         window.activeTrainerId === 't-w0iybl7qb' || 
-         localStorage.getItem('activeTrainerId') === 't-w0iybl7qb')) {
+    if (isAlejandra) {
         defaultBrand = {
             name: 'ASTeam',
-            logo: 'img/logo-infinite-marble.png',
+            logo: 'https://bieeydhacavxymoosasx.supabase.co/storage/v1/object/public/Media/1779724548154_Gemini_Generated_Image_vse84nvse84nvse8.png',
             configured: true,
-            colors: { primary: '#00d9ff', secondary: '#1a1a2e', accent: '#ff6b6b' },
+            colors: { primary: '#fdbfec', secondary: '#1a1a2e', accent: '#ff6b6b' },
             whatsapp: '615760338',
             fiscalData: { invoiceSeries: 'FAST' + new Date().getFullYear() }
         };
@@ -2946,10 +2953,71 @@ const BrandConfig = {
 
     let res = data.brand || defaultBrand;
     
+    // If not Alejandra, ensure ASTeam config is cleared and default Infinite Coach is returned/configured
+    if (!isAlejandra) {
+        if (res && (res.name === 'ASTeam' || res.logo === 'https://bieeydhacavxymoosasx.supabase.co/storage/v1/object/public/Media/1779724548154_Gemini_Generated_Image_vse84nvse84nvse8.png' || (res.colors && res.colors.primary === '#fdbfec'))) {
+            res = {
+                name: 'Infinite Coach',
+                logo: 'img/logo-infinite-marble.png',
+                configured: true,
+                colors: { primary: '#00D9FF', secondary: '#1A1A2E', accent: '#FF6B6B' },
+                fiscalData: { invoiceSeries: 'F' + new Date().getFullYear() }
+            };
+            if (typeof saveData === 'function') {
+                data.brand = res;
+                saveData(data);
+            }
+        }
+    }
+
     if (res && (res.name === 'MyFitness' || res.name === 'Fitness App' || (res.name === 'Infinite Coach' && defaultBrand.name === 'ASTeam'))) {
         res.name = defaultBrand.name;
         res.colors = defaultBrand.colors;
+        res.logo = defaultBrand.logo;
         if (defaultBrand.whatsapp) res.whatsapp = defaultBrand.whatsapp;
+    }
+
+    // Auto-correct stale or corrupted ASTeam settings in local cache (forcing correct pink logo, colors, questions, and perimeters)
+    if (isAlejandra && res && (res.name === 'ASTeam' || defaultBrand.name === 'ASTeam')) {
+        let changed = false;
+        res.name = 'ASTeam';
+        if (!res.colors || res.colors.primary === '#00d9ff' || res.colors.primary === '#00D9FF') {
+            res.colors = defaultBrand.colors;
+            changed = true;
+        }
+        if (!res.logo || res.logo === 'img/logo-infinite-marble.png') {
+            res.logo = defaultBrand.logo;
+            changed = true;
+        }
+        if (!res.whatsapp || res.whatsapp === '+34000000000') {
+            res.whatsapp = defaultBrand.whatsapp;
+            changed = true;
+        }
+        const expectedQuestions = [
+            "¿Qué tal te ves fisicamente?",
+            "Sensaciones sobre la dieta (mucha/poca comida, ansiedad, poco apetito...)",
+            "Comida/alimento que no te haya gustado y/o quieras cambiar de la dieta actual",
+            "Comida/alimento que quieras tener en tu próxima dieta a ser posible",
+            "¿Has realizado algún salto de dieta para tener en cuenta?",
+            "¿Qué tal han ido los entrenos? Cuéntame tus sensaciones",
+            "¿Has podido entrenar los días estipulados?",
+            "¿Te recuperas correctamente de los entrenos entre sesiones?",
+            "Del 1 al 10, ¿Cuál ha sido tu implicación en los entrenamientos? (Intensidad, realización de todas las series...)"
+        ];
+        if (!res.feedbackQuestions || res.feedbackQuestions.length < 5) {
+            res.feedbackQuestions = expectedQuestions;
+            changed = true;
+        }
+        const expectedPerimeters = ["Cintura", "Cadera", "Pecho", "Brazo", "Muslo"];
+        if (!res.trainerPerimeters || res.trainerPerimeters.length < 3) {
+            res.trainerPerimeters = expectedPerimeters;
+            changed = true;
+        }
+
+        if (changed && typeof saveData === 'function') {
+            data.brand = res;
+            saveData(data);
+        }
     }
     if (res && (!res.logo || res.logo.length < 5)) {
         res.logo = 'img/logo-infinite-marble.png';

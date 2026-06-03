@@ -1,0 +1,583 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - Planio</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/theme.css">
+    <style>
+        .dashboard-container {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        .main-workspace {
+            flex: 1;
+            padding: var(--spacing-xl);
+            overflow-y: auto;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Stats Cards matching image */
+        .posing-stats-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: var(--spacing-lg);
+            margin-bottom: var(--spacing-xl);
+        }
+
+        .posing-stat-card {
+            background: rgba(255, 255, 255, 0.01);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-lg);
+            padding: var(--spacing-lg);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: relative;
+            transition: all var(--transition-fast);
+        }
+
+        .posing-stat-card:hover {
+            border-color: rgba(var(--primary-color-rgb), 0.3);
+            box-shadow: var(--shadow-glow);
+        }
+
+        .posing-stat-icon-wrapper {
+            width: 48px;
+            height: 48px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.35rem;
+            background: rgba(var(--primary-color-rgb), 0.08);
+            color: var(--primary-color);
+        }
+
+        .posing-stat-value {
+            font-size: 2.25rem;
+            font-weight: 800;
+            line-height: 1;
+            margin-top: 4px;
+        }
+
+        .posing-stat-label {
+            font-size: 0.72rem;
+            text-transform: uppercase;
+            font-weight: 800;
+            color: var(--text-muted);
+            letter-spacing: 0.5px;
+        }
+
+        .posing-stat-link {
+            font-size: 0.7rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            color: var(--success);
+            cursor: pointer;
+            margin-top: 2px;
+            display: inline-block;
+        }
+
+        /* Activity Items matching image exactly */
+        .activity-item-box {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 16px;
+            border-bottom: 1px solid var(--border-color);
+            transition: background var(--transition-fast);
+        }
+
+        .activity-item-box:hover {
+            background: rgba(255, 255, 255, 0.01);
+        }
+
+        .activity-item-box:last-child {
+            border-bottom: none;
+        }
+
+        .activity-indicator {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.95rem;
+            flex-shrink: 0;
+        }
+
+        .activity-indicator.success { background: rgba(16, 185, 129, 0.08); color: var(--success); }
+        .activity-indicator.error { background: rgba(239, 68, 68, 0.08); color: var(--error); }
+
+        .system-status-box {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-xl);
+            padding: var(--spacing-lg);
+            min-height: 250px;
+        }
+
+        .system-indicator-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 12px 0;
+            border-bottom: 1px solid var(--border-color);
+            font-size: 0.85rem;
+        }
+
+        .system-indicator-row:last-child {
+            border-bottom: none;
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--success);
+            display: inline-block;
+            box-shadow: 0 0 6px var(--success);
+        }
+    </style>
+</head>
+<body>
+    <div class="bg-glow"></div>
+    <div class="bg-glow-left"></div>
+
+    <div class="dashboard-container">
+        <!-- Left Sidebar Menu (Posing The Heels style but fully dynamic!) -->
+        <aside class="sidebar">
+            <div class="flex-col gap-md">
+                <div class="sidebar-brand">
+                    <div class="logo">
+                        <img id="brandLogo" class="logo-img" alt="Logo" src="https://posingtheheels.com/dashboard/img/logo.png">
+                        <span id="brandName" style="font-size: 1.15rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px;">Planio</span>
+                    </div>
+                    <div style="font-size: 0.7rem; text-transform: uppercase; font-weight: 800; color: var(--text-muted); margin-top: 4px; padding-left: 2px;">
+                        ADMIN PANEL
+                    </div>
+                </div>
+
+                <ul class="sidebar-menu">
+                    <li class="sidebar-item active" id="nav-panel"><a href="dashboard.html">Panel</a></li>
+                    <li class="sidebar-item" id="nav-clients"><a href="clients.html">Alumnas</a></li>
+                    <li class="sidebar-item" id="nav-agenda"><a href="appointments.html">Agenda</a></li>
+                    <li class="sidebar-item" id="nav-calendar"><a href="calendar.html">Calendario</a></li>
+                    <li class="sidebar-item" id="nav-availability"><a href="availability.html">Disponibilidad</a></li>
+                    <li class="sidebar-item" id="nav-pricing"><a href="pricing.html">Tarifas</a></li>
+                    <li class="sidebar-item" id="nav-feedbacks"><a href="feedbacks.html">Feedbacks</a></li>
+                    <li class="sidebar-item" id="nav-stripe"><a href="billing.html">Facturación y Stripe</a></li>
+                    <li class="sidebar-item" id="nav-settings"><a href="settings.html">Configuración</a></li>
+                    <li class="sidebar-item" id="nav-clientview"><a href="client-view.html" target="_blank" style="color: var(--accent-color);">Vista alumno</a></li>
+                </ul>
+            </div>
+
+            <!-- Sidebar profile footer -->
+            <div class="sidebar-profile">
+                <div class="sidebar-profile-card">
+                    <div style="width: 38px; height: 38px; border-radius: 50%; background: var(--primary-color); display: flex; align-items: center; justify-content: center; font-weight: 700; color: white; font-size: 0.9rem;" id="userProfileLetter">A</div>
+                    <div>
+                        <strong style="font-size: 0.85rem; display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 140px;" id="userProfileEmail">Admin</strong>
+                        <span style="font-size: 0.7rem; color: var(--text-muted); font-weight: 700; display: block; text-transform: uppercase;">Administrador</span>
+                    </div>
+                </div>
+                <div class="sidebar-item mt-md" style="list-style: none;">
+                    <a href="#" onclick="signOut(); return false;" style="color: var(--error); font-weight:700; font-size:0.85rem; display:flex; align-items:center; gap: 8px; padding: 10px;">
+                        Cerrar sesión
+                    </a>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Right Workspace Main Content -->
+        <main class="main-workspace">
+            <div class="mb-lg flex-between">
+                <div>
+                    <h1 style="margin: 0; font-size: 2.2rem; font-weight: 700;">Panel de administración</h1>
+                    <p class="text-muted" style="margin-top: 4px;">Resumen general de la academia</p>
+                </div>
+                <button class="btn btn-secondary btn-sm" onclick="runDiagnostic()">
+                    🔍 Diagnóstico Nube
+                </button>
+            </div>
+
+            <!-- Posing Stats Grid matching image -->
+            <div class="posing-stats-grid">
+                <div class="posing-stat-card" onclick="showActiveClientsModal()" style="cursor: pointer;">
+                    <div>
+                        <div class="posing-stat-label">Alumnas</div>
+                        <div class="posing-stat-value" id="statAlumnas">0</div>
+                    </div>
+                    <div class="posing-stat-icon-wrapper">👥</div>
+                </div>
+                <div class="posing-stat-card" onclick="window.location.href='appointments.html'" style="cursor: pointer;">
+                    <div>
+                        <div class="posing-stat-label">Reservas Hoy</div>
+                        <div class="posing-stat-value" id="statReservas">0</div>
+                        <div class="posing-stat-link" onclick="event.stopPropagation(); window.location.href='appointments.html'">VER LISTA</div>
+                    </div>
+                    <div class="posing-stat-icon-wrapper">📅</div>
+                </div>
+                <div class="posing-stat-card" onclick="showRevenueModal()" style="cursor: pointer;">
+                    <div>
+                        <div class="posing-stat-label">Ingresos Mes</div>
+                        <div class="posing-stat-value" id="statIngresos">0 €</div>
+                    </div>
+                    <div class="posing-stat-icon-wrapper">💳</div>
+                </div>
+                <div class="posing-stat-card" onclick="showPendingPaymentsModal()" style="cursor: pointer;">
+                    <div>
+                        <div class="posing-stat-label">Pagos Pendientes</div>
+                        <div class="posing-stat-value" id="statPendientes" style="color: var(--error);">0</div>
+                        <div class="posing-stat-link" style="color: var(--error);" onclick="event.stopPropagation(); showPendingPaymentsModal()">VER LISTA</div>
+                    </div>
+                    <div class="posing-stat-icon-wrapper" style="background: rgba(239, 68, 68, 0.08); color: var(--error);">⚠️</div>
+                </div>
+            </div>
+
+            <!-- Core grid section -->
+            <div class="grid grid-3">
+                <!-- Left column: Recent Activity (Spans 2) -->
+                <div class="card" style="grid-column: span 2; padding: var(--spacing-lg);">
+                    <div class="card-header">
+                        <h3 class="card-title" style="margin: 0; font-size: 1.3rem;">Actividad reciente</h3>
+                    </div>
+                    <div id="recentActivityList">
+                        <!-- Se llena dinámicamente -->
+                    </div>
+                </div>
+
+                <!-- Right column: Academy Status Card (Spans 1) -->
+                <div class="flex-col gap-lg" style="grid-column: span 1;">
+                    <div class="system-status-box flex-col justify-center" style="display: flex; flex-direction: column; justify-content: space-between;">
+                        <div>
+                            <div class="flex items-center gap-sm mb-sm text-muted" style="font-size: 0.75rem; text-transform: uppercase; font-weight:800; letter-spacing: 0.5px;">
+                                📈 ESTADO ACADEMIA
+                            </div>
+                            <h2 style="font-size: 1.8rem; font-weight: 700; margin-bottom: 6px; color: var(--text-primary);">En marcha</h2>
+                            <p class="text-muted" style="font-size: 0.85rem; line-height: 1.4; margin-bottom: 20px;">
+                                El sistema está funcionando correctamente sin errores detectados.
+                            </p>
+                        </div>
+                        <div>
+                            <div class="system-indicator-row">
+                                <span class="text-secondary">Server status</span>
+                                <div class="flex items-center gap-xs">
+                                    <span class="status-dot"></span>
+                                    <span style="font-weight: 700; color: var(--text-primary);">Online</span>
+                                </div>
+                            </div>
+                            <div class="system-indicator-row">
+                                <span class="text-secondary">Stripe sync</span>
+                                <div class="flex items-center gap-xs">
+                                    <span class="status-dot"></span>
+                                    <span style="font-weight: 700; color: var(--text-primary);">Active</span>
+                                </div>
+                            </div>
+                            <div class="system-indicator-row">
+                                <span class="text-secondary">Google Calendar</span>
+                                <div class="flex items-center gap-xs">
+                                    <span class="status-dot"></span>
+                                    <span style="font-weight: 700; color: var(--text-primary);">Active</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </main>
+    </div>
+
+    <!-- Live Cloud Sync Diagnostic Modal -->
+    <div id="diagnosticModal" class="modal-overlay" style="display: none;">
+        <div class="modal" style="max-width: 500px;">
+            <div class="modal-header">
+                <h3>🔍 Diagnóstico Cloud en Vivo</h3>
+                <button class="modal-close" onclick="document.getElementById('diagnosticModal').style.display='none'">×</button>
+            </div>
+            <div class="modal-body" style="text-align: left; line-height: 1.6;">
+                <p class="text-muted">Estado de sincronización multi-tenant de Planio:</p>
+                <div style="background: rgba(0,0,0,0.2); padding: 15px; border-radius: 12px; border: 1px solid var(--border-color); font-family: monospace; font-size: 0.85rem; margin-top: 10px;">
+                    <div>📍 Host local: <span id="diagHost" style="color: var(--info);">-</span></div>
+                    <div>👤 Inquilino ID: <span id="diagTrainerId" style="color: var(--info);">-</span></div>
+                    <div>🔑 Licencia Verificada: <span id="diagAuthed" style="color: var(--success);">-</span></div>
+                    <div>☁️ Cloud SDK Supabase: <span id="diagSupa" style="color: var(--success);">-</span></div>
+                    <div>📡 Registros en Nube: <span id="diagCloudData" style="color: var(--success);">-</span></div>
+                    <div style="margin-top: 10px; border-top: 1px solid var(--border-color); padding-top: 10px; font-weight: bold;">
+                        📢 Estado de Red: <span id="diagStatus" style="color: var(--primary-color);">Analizando...</span>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="document.getElementById('diagnosticModal').style.display='none'">Cerrar</button>
+                <button class="btn btn-primary" onclick="runManualDiagnosticSync()">Forzar Descarga 🔄</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- SDKs -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="js/supabase-service.js"></script>
+    <script src="js/data-models.js"></script>
+    <script src="js/utils.js"></script>
+
+    <script>
+        // Carga y renderizado del Dashboard
+        function initDashboard() {
+            if (window.BrandConfig) {
+                window.BrandConfig.applyTheme();
+            }
+
+            // Cargar datos de perfil de usuario en el footer del sidebar
+            const trainerEmail = localStorage.getItem('_trainerEmail') || 'admin@posingtheheels.com';
+            document.getElementById('userProfileEmail').textContent = trainerEmail;
+            document.getElementById('userProfileLetter').textContent = trainerEmail[0].toUpperCase();
+
+            // Obtener datos
+            const clients = Clients.getAll();
+            const appointments = Appointments.getAll();
+            const invoices = Invoices.getAll();
+            const activities = Activity.getAll();
+
+            // Stats
+            const active = clients.filter(c => c.status === 'active');
+            const totalRevenue = Clients.getTotalRevenue();
+            const pendingCount = Clients.getPendingPayments().length;
+
+            // Reservas de hoy
+            const todayStr = new Date().toISOString().substring(0, 10);
+            const bookingsTodayCount = appointments.filter(a => a.date.startsWith(todayStr)).length;
+
+            // Inyectar Stats en UI
+            document.getElementById('statAlumnas').textContent = active.length;
+            document.getElementById('statReservas').textContent = bookingsTodayCount;
+            document.getElementById('statIngresos').textContent = formatCurrency(totalRevenue);
+            document.getElementById('statPendientes').textContent = pendingCount;
+
+            if (pendingCount > 0) {
+                document.getElementById('statPendientes').style.color = 'var(--error)';
+            } else {
+                document.getElementById('statPendientes').style.color = '';
+            }
+
+            // Inyectar Actividad Reciente matching image exactly
+            const activityContainer = document.getElementById('recentActivityList');
+            if (activities.length > 0) {
+                activityContainer.innerHTML = activities.map(act => {
+                    const isSuccess = act.type === 'success';
+                    const icon = isSuccess ? '✓' : '✗';
+                    const indicatorClass = isSuccess ? 'success' : 'error';
+                    
+                    // Highlight de color para el nombre del cliente
+                    const formattedText = act.text.replace(
+                        /([A-Z][a-z]+(\s[A-Z][a-z]+)+)/g, 
+                        '<span style="color: var(--accent-color); font-weight:700;">$1</span>'
+                    );
+
+                    return `
+                        <div class="activity-item-box">
+                            <div class="flex items-center gap-md">
+                                <div class="activity-indicator ${indicatorClass}">${icon}</div>
+                                <div>
+                                    <div style="font-size: 0.95rem; color: var(--text-secondary);">${formattedText}</div>
+                                    <div class="text-xs text-muted" style="margin-top: 2px;">${act.date}</div>
+                                </div>
+                            </div>
+                            <div class="text-xs text-muted font-bold" style="letter-spacing: 0.5px;">${act.timeAgo}</div>
+                        </div>
+                    `;
+                }).join('');
+            } else {
+                activityContainer.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-state-icon">🔔</div>
+                        <div class="empty-state-text">No hay actividad reciente en la academia.</div>
+                    </div>
+                `;
+            }
+        }
+
+        // Diagnóstico Cloud & Sync
+        async function runDiagnostic() {
+            const modal = document.getElementById('diagnosticModal');
+            modal.style.display = 'flex';
+
+            const activeId = localStorage.getItem('activeTrainerId') || 'default';
+            document.getElementById('diagHost').textContent = window.location.hostname;
+            document.getElementById('diagTrainerId').textContent = activeId;
+            document.getElementById('diagAuthed').textContent = localStorage.getItem('_planioAuthed') === '1' ? 'Sí (Activo)' : 'No';
+            
+            const isSupa = typeof window.SupabaseService !== 'undefined';
+            document.getElementById('diagSupa').textContent = isSupa ? 'Sí (Supabase SDK Listo)' : 'No cargado';
+
+            const statusText = document.getElementById('diagStatus');
+            statusText.textContent = 'Verificando conector en la nube...';
+
+            if (isSupa) {
+                try {
+                    window.SupabaseService.init();
+                    const cloudData = await window.SupabaseService.getTrainerData(activeId);
+                    if (cloudData) {
+                        const count = cloudData.clients ? cloudData.clients.length : 0;
+                        document.getElementById('diagCloudData').textContent = `Sí (${count} clientes en Supabase)`;
+                        statusText.textContent = '¡Conexión y datos en la nube al día! Sincronizado.';
+                        statusText.style.color = 'var(--success)';
+                    } else {
+                        document.getElementById('diagCloudData').textContent = 'No (Perfil vacío)';
+                        statusText.textContent = 'No hay datos en la nube para este inquilino. Se creará copia en el próximo guardado.';
+                        statusText.style.color = 'var(--warning)';
+                    }
+                } catch(e) {
+                    document.getElementById('diagCloudData').textContent = 'Error de conexión';
+                    statusText.textContent = 'Error: ' + e.message;
+                    statusText.style.color = 'var(--error)';
+                }
+            }
+        }
+
+        async function runManualDiagnosticSync() {
+            const statusText = document.getElementById('diagStatus');
+            statusText.textContent = 'Forzando descarga de Supabase...';
+            try {
+                const activeId = localStorage.getItem('activeTrainerId');
+                if (window.SupabaseService && activeId) {
+                    window.SupabaseService.init();
+                    const data = await window.SupabaseService.getTrainerData(activeId);
+                    if (data) {
+                        localStorage.setItem(`planioAppData_${activeId}`, JSON.stringify(data));
+                        statusText.textContent = 'Base de datos local actualizada. Recargando...';
+                        setTimeout(() => window.location.reload(), 1200);
+                    } else {
+                        statusText.textContent = 'No se encontraron datos en Supabase para sobrescribir.';
+                    }
+                }
+            } catch(e) {
+                statusText.textContent = 'Error: ' + e.message;
+            }
+        }
+
+        // Modales de desglose de KPIs
+        function showActiveClientsModal() {
+            const clients = Clients.getAll().filter(c => c.status === 'active');
+            if (clients.length === 0) {
+                showToast('No hay alumnas activas en este momento.', 'info');
+                return;
+            }
+            const content = `
+                <div class="table-wrapper">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Nombre</th>
+                                <th>Email</th>
+                                <th>Teléfono</th>
+                                <th>Cuota Mensual</th>
+                                <th>Estado de Pago</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${clients.map(c => `
+                                <tr>
+                                    <td><strong>${c.name}</strong></td>
+                                    <td>${c.email || '-'}</td>
+                                    <td>${c.phone || '-'}</td>
+                                    <td>${formatCurrency(c.monthlyFee)}</td>
+                                    <td><span class="badge ${c.paymentStatus === 'paid' ? 'badge-success' : 'badge-warning'}">${c.paymentStatus === 'paid' ? 'Pagado' : 'Pendiente'}</span></td>
+                                </tr>
+                            `).join('')}
+                        </tbody>
+                    </table>
+                </div>
+            `;
+            showModal('Alumnas Activas', content, [{ text: 'Cerrar', class: 'btn-secondary', onclick: 'window.closeModal()' }], 'modal-large');
+        }
+
+        function showRevenueModal() {
+            const clients = Clients.getAll().filter(c => c.status === 'active' && c.paymentStatus === 'paid');
+            const totalRev = Clients.getTotalRevenue();
+            const content = `
+                <div class="text-center mb-lg">
+                    <h1 style="color: var(--primary-color); font-size: 3rem;">${formatCurrency(totalRev)}</h1>
+                    <p class="text-muted">Total facturado de cuotas al mes</p>
+                </div>
+                <h4>Desglose por Alumna:</h4>
+                <div class="table-wrapper mt-md">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Cliente</th>
+                                <th>Cuota Mensual</th>
+                                <th>Método de Pago</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${clients.map(c => `
+                                <tr>
+                                    <td><strong>${c.name}</strong></td>
+                                    <td>${formatCurrency(c.monthlyFee)}</td>
+                                    <td><span class="badge badge-outline">${c.paymentMethod}</span></td>
+                                </tr>
+                            `).join('')}
+                        </tbody>
+                    </table>
+                </div>
+            `;
+            showModal('Desglose de Ingresos', content, [{ text: 'Cerrar', class: 'btn-secondary', onclick: 'window.closeModal()' }]);
+        }
+
+        function showPendingPaymentsModal() {
+            const pending = Clients.getPendingPayments();
+            if (pending.length === 0) {
+                showToast('¡Enhorabuena! Todos los pagos están al día.', 'success');
+                return;
+            }
+            const content = `
+                <div class="table-wrapper">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Cliente</th>
+                                <th>Teléfono</th>
+                                <th>Importe Pendiente</th>
+                                <th>Acción</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${pending.map(c => `
+                                <tr>
+                                    <td><strong>${c.name}</strong></td>
+                                    <td>${c.phone || '-'}</td>
+                                    <td style="color: var(--error); font-weight:700;">${formatCurrency(c.monthlyFee)}</td>
+                                    <td>
+                                        <button class="btn btn-xs btn-primary" onclick="whatsappRecordatorio('${c.id}')">📲 WhatsApp</button>
+                                    </td>
+                                </tr>
+                            `).join('')}
+                        </tbody>
+                    </table>
+                </div>
+            `;
+            showModal('Reclamación de Pagos', content, [{ text: 'Cerrar', class: 'btn-secondary', onclick: 'window.closeModal()' }]);
+        }
+
+        function whatsappRecordatorio(clientId) {
+            const c = Clients.getById(clientId);
+            if (!c) return;
+            const message = `Hola ${c.name}, te recordamos que tienes pendiente el abono de tu reserva o mensualidad en Planio por importe de ${formatCurrency(c.monthlyFee)}. ¿Podríamos gestionarlo hoy? Muchas gracias.`;
+            const link = generateWhatsAppLink(c.phone || '+34000000000', message);
+            window.open(link, '_blank');
+        }
+
+        document.addEventListener('DOMContentLoaded', initDashboard);
+    </script>
+</body>
+</html>

@@ -5,7 +5,7 @@
     <script>
         // Force PWA cache bust / reload
         (function() {
-            const CURRENT_VERSION = '349';
+            const CURRENT_VERSION = '363';
             const savedVersion = localStorage.getItem('app_version');
             if (savedVersion !== CURRENT_VERSION) {
                 localStorage.setItem('app_version', CURRENT_VERSION);
@@ -31,8 +31,8 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="styles/theme.css?v=350">
-    <link rel="stylesheet" href="styles/components.css?v=349">
+    <link rel="stylesheet" href="styles/theme.css?v=363">
+    <link rel="stylesheet" href="styles/components.css?v=363">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <style>
         /* Bulletproof sizing override for routine editor and xl modals */
@@ -190,6 +190,51 @@
             padding-top: 10px;
             margin-top: 10px;
         }
+
+        /* Mobile optimizations for feedback/revision cards */
+        @media (max-width: 768px) {
+            .badge-info {
+                white-space: normal !important;
+                display: inline-block !important;
+                text-align: center;
+                margin-bottom: 4px;
+            }
+            .mb-md[style*="display: flex; gap: 8px; flex-wrap: wrap;"] {
+                display: grid !important;
+                grid-template-columns: repeat(2, 1fr) !important;
+                gap: 8px !important;
+            }
+            .mb-md[style*="display: flex; gap: 8px; flex-wrap: wrap;"] span {
+                margin: 0 !important;
+                width: 100% !important;
+                box-sizing: border-box;
+            }
+            .mb-md[style*="background: rgba(var(--primary-color-rgb)"] div[style*="display: flex; flex-wrap: wrap; gap: 15px;"] {
+                display: grid !important;
+                grid-template-columns: repeat(3, 1fr) !important;
+                gap: 12px 8px !important;
+                text-align: center;
+            }
+            .mb-md[style*="background: rgba(var(--primary-color-rgb)"] div[style*="display: flex; flex-wrap: wrap; gap: 15px;"] > div {
+                border-bottom: 1px solid rgba(255,255,255,0.03);
+                padding-bottom: 6px;
+            }
+            .mb-md[style*="background: rgba(var(--primary-color-rgb)"] div[style*="display: flex; flex-wrap: wrap; gap: 15px;"] > div:last-child {
+                border-bottom: none;
+            }
+            .progress-photo-item {
+                flex: 1 1 calc(50% - 10px) !important;
+                max-width: calc(50% - 10px) !important;
+                margin-bottom: 10px;
+            }
+            .progress-photo-thumb {
+                width: 100% !important;
+                height: 140px !important;
+            }
+            div[style*="display: flex; flex-wrap: wrap; gap: 15px;"] {
+                justify-content: space-between !important;
+            }
+        }
     </style>
 </head>
 
@@ -208,14 +253,14 @@
                     </div>
                     <button class="menu-toggle" onclick="toggleMenu()">☰</button>
                     <ul class="nav-links" id="navLinks">
-                        <li><a href="trainer-dashboard.html?v=349" class="nav-link">Dashboard</a></li>
-                        <li><a href="trainer-clients.html?v=349" class="nav-link active">Clientes</a></li>
-                        <li><a href="trainer-routines.html?v=349" class="nav-link">Rutinas</a></li>
-                        <li><a href="trainer-diets.html?v=349" class="nav-link">Dietas</a></li>
-                        <li><a href="trainer-feedbacks.html?v=349" class="nav-link">Revisiones</a></li>
-                        <li><a href="trainer-media.html?v=349" class="nav-link">Biblioteca</a></li>
-                        <li><a href="trainer-appointments.html?v=349" class="nav-link">Agenda</a></li>
-                        <li><a href="trainer-settings.html?v=349" class="nav-link">Configuración</a></li>
+                        <li><a href="trainer-dashboard.html?v=363" class="nav-link">Dashboard</a></li>
+                        <li><a href="trainer-clients.html?v=363" class="nav-link active">Clientes</a></li>
+                        <li><a href="trainer-routines.html?v=363" class="nav-link">Rutinas</a></li>
+                        <li><a href="trainer-diets.html?v=363" class="nav-link">Dietas</a></li>
+                        <li><a href="trainer-feedbacks.html?v=363" class="nav-link">Revisiones</a></li>
+                        <li><a href="trainer-media.html?v=363" class="nav-link">Biblioteca</a></li>
+                        <li><a href="trainer-appointments.html?v=363" class="nav-link">Agenda</a></li>
+                        <li><a href="trainer-settings.html?v=363" class="nav-link">Configuración</a></li>
                         <li><a href="#" onclick="if(typeof AUTH !== 'undefined') { AUTH.signOut() } else { window.location.reload() }; return false;" class="nav-link" style="color:var(--error-color)">🚪 Salir</a></li>
                     </ul>
                 </nav>
@@ -825,7 +870,7 @@
                                     </div>
                                     <div class="card-body">
                                         <div id="stripeNotConfigured" style="display: none;">
-                                            <p class="text-xs text-muted mb-md">Configura tus claves de Stripe en los <a href="trainer-settings.html?v=349" style="color: var(--primary-color);">Ajustes</a> para habilitar cobros automáticos.</p>
+                                            <p class="text-xs text-muted mb-md">Configura tus claves de Stripe en los <a href="trainer-settings.html?v=363" style="color: var(--primary-color);">Ajustes</a> para habilitar cobros automáticos.</p>
                                         </div>
                                         <div id="stripeActiveConfig">
                                             <p class="text-xs text-muted mb-md">Genera un enlace de pago recurrente para este cliente usando tus planes configurados.</p>
@@ -882,19 +927,19 @@
 
     <!-- Supabase SDK & Service -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="js/supabase-service.js?v=350"></script>
+    <script src="js/supabase-service.js?v=363"></script>
 
-    <script src="js/config.js?v=350"></script>
-    <script src="js/auth.js?v=349"></script>
-    <script src="js/sheets.js?v=349"></script>
-    <script src="js/data-models.js?v=350"></script>
-    <script src="js/utils.js?v=350"></script>
-    <script src="js/custom-recipes.js?v=349"></script>
-    <script src="js/custom-exercises.js?v=350"></script>
-    <script src="js/diet-editor-v3.js?v=349"></script>
+    <script src="js/config.js?v=363"></script>
+    <script src="js/auth.js?v=363"></script>
+    <script src="js/sheets.js?v=363"></script>
+    <script src="js/data-models.js?v=363"></script>
+    <script src="js/utils.js?v=363"></script>
+    <script src="js/custom-recipes.js?v=363"></script>
+    <script src="js/custom-exercises.js?v=363"></script>
+    <script src="js/diet-editor-v3.js?v=363"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.29/jspdf.plugin.autotable.min.js"></script>
-    <script src="js/export-utils.js?v=350"></script>
+    <script src="js/export-utils.js?v=363"></script>
     <script>
         const pageUrlParams = new URLSearchParams(window.location.search);
         const clientId = pageUrlParams.get('id');
@@ -1781,13 +1826,16 @@
         function renderProgressCharts() {
             // Merge manual weight history with submitted feedbacks
             let history = (currentClient.weightHistory || []).map(h => ({ ...h }));
-            
             const clientFeedbacks = Feedbacks.getAll().filter(f => f.clientId === clientId);
             clientFeedbacks.forEach(fb => {
                 if (fb.weight || (fb.perimeters && Object.keys(fb.perimeters).length > 0)) {
                     // Avoid duplicates if a feedback was already synced to weightHistory
-                    const exists = history.some(h => Math.abs(new Date(h.date) - new Date(fb.date)) < 1000 * 60 * 5); // 5 min margin
-                    if (!exists) {
+                    const matchingItem = history.find(h => Math.abs(new Date(h.date) - new Date(fb.date)) < 1000 * 60 * 5); // 5 min margin
+                    if (matchingItem) {
+                        if (fb.week && !matchingItem.week) {
+                            matchingItem.week = fb.week;
+                        }
+                    } else {
                         history.push({
                             date: fb.date,
                             weight: fb.weight,
@@ -2716,7 +2764,7 @@
 
             showModal('Importar Plantilla', content, [
                 { text: 'Cancelar', class: 'btn-secondary', onclick: 'this.closest(".modal-overlay").remove()' },
-                { text: 'Importar', class: 'btn-primary', onclick: `doImportTemplate('${block.id}')` }
+                { text: 'Importar', class: 'btn-primary', onclick: `doImportTemplate('${blockId}')` }
             ]);
         }
 
@@ -3840,7 +3888,7 @@
                         <div style="max-width: 800px; margin: 0 auto; border: 1px solid #eee; padding: 30px; border-radius: 8px;">
                             ${content}
                         </div>
-                        <script src="js/custom-recipes.js?v=349"><\/script></body>
+                        <script src="js/custom-recipes.js?v=363"><\/script></body>
                 </html>
             `);
             printWindow.document.close();
@@ -4803,6 +4851,8 @@
                 btnHist.classList.remove('btn-outline');
                 loadTrainingLogs();
             }
+            // Persist sub-tab so auto-sync can restore it
+            try { sessionStorage.setItem('clientDetail_subTab_' + clientId, view); } catch(e) {}
         }
 
         async function saveCardio() {
@@ -4857,6 +4907,9 @@
                 content.style.display = 'block';
             }
 
+            // Persist active tab so auto-sync can restore it
+            try { sessionStorage.setItem('clientDetail_tab_' + clientId, tabId); } catch(e) {}
+
             // Lógica de carga específica por pestaña
             if (tabId === 'overview') {
                 loadClientData();
@@ -4864,7 +4917,9 @@
                 if (typeof setProgressView === 'function') setProgressView('charts');
                 renderProgressCharts();
             } else if (tabId === 'routine') {
-                if (typeof switchSubTab === 'function') switchSubTab('planning');
+                // Restore sub-tab if there's a saved one, otherwise default to 'planning'
+                const savedSubTab = (() => { try { return sessionStorage.getItem('clientDetail_subTab_' + clientId); } catch(e) { return null; } })();
+                if (typeof switchSubTab === 'function') switchSubTab(savedSubTab || 'planning');
                 updateAssignedRoutineView();
             } else if (tabId === 'diet') {
                 updateAssignedDietView();
@@ -4879,6 +4934,19 @@
                 }
             }
         }
+
+        // Expose initializeApp so the auto-sync can refresh data in-place instead of reloading the page
+        window.initializeApp = async function() {
+            loadClientData();
+            // Restore the tab the user was on
+            try {
+                const savedTab = sessionStorage.getItem('clientDetail_tab_' + clientId);
+                if (savedTab && savedTab !== 'overview') {
+                    // Small delay to let the DOM settle before switching
+                    setTimeout(() => switchTab(savedTab), 50);
+                }
+            } catch(e) {}
+        };
         window.createAndAssignDiet = function () {
             let defaultCals = 0;
             let defaultP = 0; let defaultC = 0; let defaultF = 0;
@@ -5017,7 +5085,7 @@
             // Usar siempre el ID real del entrenador para garantizar sincronización con Supabase
             const realTrainerId = window.activeTrainerId || localStorage.getItem('activeTrainerId') || 't-w0iybl7qb';
             const baseUrl = window.location.origin + '/client-login.html';
-            const fullUrl = `${baseUrl}?t=${realTrainerId}&v=349`;
+            const fullUrl = `${baseUrl}?t=${realTrainerId}&v=363`;
             copyToClipboard(fullUrl);
             showToast('¡Link copiado! Envíalo a tu cliente.', 'success');
         };
@@ -5162,6 +5230,6 @@
             if (typeof loadClientData === 'function') loadClientData();
         });
     </script>
-    <script src="js/custom-recipes.js?v=349"></script></body>
+    <script src="js/custom-recipes.js?v=363"></script></body>
 
 </html>

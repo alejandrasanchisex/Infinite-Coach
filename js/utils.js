@@ -2,6 +2,22 @@
 // UTILITY FUNCTIONS
 // ============================================
 
+// Clean up version parameter 'v' from URL address bar immediately after load for elegant presentation
+(function cleanUrlVersion() {
+    try {
+        if (typeof window !== 'undefined' && window.history && window.history.replaceState) {
+            const url = new URL(window.location.href);
+            if (url.searchParams.has('v')) {
+                url.searchParams.delete('v');
+                const cleanUrl = url.pathname + url.search + url.hash;
+                window.history.replaceState({}, document.title, cleanUrl);
+            }
+        }
+    } catch (e) {
+        console.warn("Could not clean URL version param:", e);
+    }
+})();
+
 // Format date to readable string
 const formatDate = (dateString) => {
     const date = new Date(dateString);

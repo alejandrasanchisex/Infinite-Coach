@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Alumnas (CRM) - Planio</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/theme.css">
+    <style>
+        .dashboard-container {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        .main-workspace {
+            flex: 1;
+            padding: var(--spacing-xl);
+            overflow-y: auto;
+            position: relative;
+            z-index: 1;
+        }
+    </style>
+</head>
+<body>
+    <div class="bg-glow"></div>
+    <div class="bg-glow-left"></div>
+
+    <div class="dashboard-container">
+        <!-- Left Sidebar Menu (Posing The Heels style but fully dynamic!) -->
+        <aside class="sidebar">
+            <div class="flex-col gap-md">
+                <div class="sidebar-brand">
+                    <div class="logo">
+                        <img id="brandLogo" class="logo-img" alt="Logo" src="https://posingtheheels.com/dashboard/img/logo.png">
+                        <span id="brandName" style="font-size: 1.15rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px;">Planio</span>
+                    </div>
+                    <div style="font-size: 0.7rem; text-transform: uppercase; font-weight: 800; color: var(--text-muted); margin-top: 4px; padding-left: 2px;">
+                        ADMIN PANEL
+                    </div>
+                </div>
+
+                <ul class="sidebar-menu">
+                    <li class="sidebar-item" id="nav-panel"><a href="dashboard.html">Panel</a></li>
+                    <li class="sidebar-item active" id="nav-clients"><a href="clients.html">Alumnas</a></li>
+                    <li class="sidebar-item" id="nav-agenda"><a href="appointments.html">Agenda</a></li>
+                    <li class="sidebar-item" id="nav-calendar"><a href="calendar.html">Calendario</a></li>
+                    <li class="sidebar-item" id="nav-availability"><a href="availability.html">Disponibilidad</a></li>
+                    <li class="sidebar-item" id="nav-pricing"><a href="pricing.html">Tarifas</a></li>
+                    <li class="sidebar-item" id="nav-feedbacks"><a href="feedbacks.html">Feedbacks</a></li>
+                    <li class="sidebar-item" id="nav-stripe"><a href="billing.html">Facturación y Stripe</a></li>
+                    <li class="sidebar-item" id="nav-settings"><a href="settings.html">Configuración</a></li>
+                    <li class="sidebar-item" id="nav-clientview"><a href="client-view.html" target="_blank" style="color: var(--accent-color);">Vista alumno</a></li>
+                </ul>
+            </div>
+
+            <!-- Sidebar profile footer -->
+            <div class="sidebar-profile">
+                <div class="sidebar-profile-card">
+                    <div style="width: 38px; height: 38px; border-radius: 50%; background: var(--primary-color); display: flex; align-items: center; justify-content: center; font-weight: 700; color: white; font-size: 0.9rem;" id="userProfileLetter">A</div>
+                    <div>
+                        <strong style="font-size: 0.85rem; display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 140px;" id="userProfileEmail">Admin</strong>
+                        <span style="font-size: 0.7rem; color: var(--text-muted); font-weight: 700; display: block; text-transform: uppercase;">Administrador</span>
+                    </div>
+                </div>
+                <div class="sidebar-item mt-md" style="list-style: none;">
+                    <a href="#" onclick="signOut(); return false;" style="color: var(--error); font-weight:700; font-size:0.85rem; display:flex; align-items:center; gap: 8px; padding: 10px;">
+                        Cerrar sesión
+                    </a>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Right Workspace Main Content -->
+        <main class="main-workspace">
+            <div class="mb-lg flex-between">
+                <div>
+                    <h1 style="margin: 0; font-size: 2.2rem; font-weight: 700;">Base de datos de Alumnas</h1>
+                    <p class="text-muted" style="margin-top: 4px;">Fichas técnicas, CRM de clientes y avisos de cobro de marca blanca.</p>
+                </div>
+                <button class="btn btn-primary" onclick="showAddClientModal()">
+                    + Registrar Nueva Alumna 👥
+                </button>
+            </div>
+
+            <!-- Table Card -->
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">Listado de Alumnas en la Academia</h3>
+                    <div class="flex gap-sm">
+                        <button class="btn btn-sm btn-primary active" id="btnActiveTab" onclick="filterClientsTab('active')">Activas</button>
+                        <button class="btn btn-sm btn-secondary" id="btnInactiveTab" onclick="filterClientsTab('inactive')">Inactivas</button>
+                    </div>
+                </div>
+
+                <div id="clientsTableContainer" class="mt-md">
+                    <!-- Se llena dinámicamente -->
+                </div>
+            </div>
+
+        </main>
+    </div>
+
+    <!-- SDKs -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="js/supabase-service.js"></script>
+    <script src="js/data-models.js"></script>
+    <script src="js/utils.js"></script>
+
+    <script>
+        let currentFilter = 'active';
+
+        function initClientsPage() {
+            if (window.BrandConfig) {
+                window.BrandConfig.applyTheme();
+            }
+
+            // Hydrate profiles
+            const trainerEmail = localStorage.getItem('_trainerEmail') || 'admin@posingtheheels.com';
+            document.getElementById('userProfileEmail').textContent = trainerEmail;
+            document.getElementById('userProfileLetter').textContent = trainerEmail[0].toUpperCase();
+
+            renderClientsList();
+        }
+
+        function filterClientsTab(filter) {
+            currentFilter = filter;
+            const actBtn = document.getElementById('btnActiveTab');
+            const inactBtn = document.getElementById('btnInactiveTab');
+
+            if (filter === 'active') {
+                actBtn.className = 'btn btn-sm btn-primary';
+                inactBtn.className = 'btn btn-sm btn-secondary';
+            } else {
+                actBtn.className = 'btn btn-sm btn-secondary';
+                inactBtn.className = 'btn btn-sm btn-primary';
+            }
+
+            renderClientsList();
+        }
+
+        function renderClientsList() {
+            const list = Clients.getAll();
+            const container = document.getElementById('clientsTableContainer');
+
+            const filtered = list.filter(c => c.status === currentFilter);
+            filtered.sort((a,b) => a.name.localeCompare(b.name));
+
+            if (filtered.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-state-icon">👥</div>
+                        <div class="empty-state-title">No hay alumnas registradas</div>
+                        <div class="empty-state-text">Empieza a añadir fichas técnicas de alumnas para poblar tu CRM.</div>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = `
+                <div class="table-wrapper">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Nombre</th>
+                                <th>Email</th>
+                                <th>Teléfono</th>
+                                <th>Mensualidad</th>
+                                <th>Código PWA</th>
+                                <th>Estado de Pago</th>
+                                <th style="text-align: right;">Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${filtered.map(c => `
+                                <tr>
+                                    <td><strong>${c.name}</strong></td>
+                                    <td>${c.email || '-'}</td>
+                                    <td>${c.phone || '-'}</td>
+                                    <td class="font-bold">${formatCurrency(c.monthlyFee)}</td>
+                                    <td><code>${c.accessCode || '-'}</code></td>
+                                    <td>
+                                        <span class="badge ${c.paymentStatus === 'paid' ? 'badge-success' : 'badge-warning'}">
+                                            ${c.paymentStatus === 'paid' ? 'Pagado' : 'Pendiente'}
+                                        </span>
+                                    </td>
+                                    <td style="text-align: right;">
+                                        <div class="flex gap-sm" style="justify-content: flex-end;">
+                                            <button class="btn btn-xs btn-outline" onclick="editClient('${c.id}')">Editar</button>
+                                            <button class="btn btn-xs btn-primary" onclick="contactClient('${c.id}')">📲 WhatsApp</button>
+                                            <button class="btn btn-xs btn-danger" onclick="deleteClient('${c.id}')">Eliminar</button>
+                                        </div>
+                                    </td>
+                                </tr>
+                            `).join('')}
+                        </tbody>
+                    </table>
+                </div>
+            `;
+        }
+
+        function showAddClientModal() {
+            const content = `
+                <div class="form-group">
+                    <label class="form-label">Nombre Completo</label>
+                    <input type="text" id="addName" class="form-input" placeholder="Ej: Elena Ruiz" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Email de Contacto</label>
+                    <input type="email" id="addEmail" class="form-input" placeholder="elena@correo.com" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Teléfono (con prefijo)</label>
+                    <input type="tel" id="addPhone" class="form-input" placeholder="+34 600 000 000" required>
+                </div>
+                <div class="grid grid-2">
+                    <div class="form-group">
+                        <label class="form-label">Mensualidad / Cuota (€)</label>
+                        <input type="number" id="addFee" class="form-input" value="60" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Estado de Pago</label>
+                        <select id="addPayStatus" class="form-select">
+                            <option value="paid">Pagado</option>
+                            <option value="overdue">Pendiente / Moroso</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Método de Facturación</label>
+                    <select id="addMethod" class="form-select">
+                        <option value="Stripe">Stripe (Recurrencia Automática 🔄)</option>
+                        <option value="Manual">Manual (Bizum / Transferencia ✋)</option>
+                    </select>
+                </div>
+            `;
+
+            showModal('Registrar Nueva Alumna', content, [
+                { text: 'Cancelar', class: 'btn-secondary', onclick: 'window.closeModal()' },
+                { text: 'Guardar Alumna 👥', class: 'btn-primary', onclick: 'submitAddClient()' }
+            ]);
+        }
+
+        function submitAddClient() {
+            const name = document.getElementById('addName').value.trim();
+            const email = document.getElementById('addEmail').value.trim();
+            const phone = document.getElementById('addPhone').value.trim();
+            const fee = parseFloat(document.getElementById('addFee').value);
+            const payStatus = document.getElementById('addPayStatus').value;
+            const method = document.getElementById('addMethod').value;
+
+            if(!name || !email || !phone) {
+                showToast('Por favor rellenar campos obligatorios.', 'warning');
+                return;
+            }
+
+            try {
+                Clients.create({
+                    name: name,
+                    email: email,
+                    phone: phone,
+                    monthlyFee: fee,
+                    paymentStatus: payStatus,
+                    paymentMethod: method,
+                    status: 'active'
+                });
+
+                if (window.Activity) {
+                    window.Activity.add('success', `${name} se ha registrado como alumna`);
+                }
+
+                showToast(`Alumna ${name} guardada correctamente`, 'success');
+                window.closeModal();
+                renderClientsList();
+            } catch(e) {
+                showToast('Error al registrar alumna.', 'error');
+            }
+        }
+
+        function editClient(id) {
+            location.href = `client-detail.html?id=${id}`;
+        }
+
+        function deleteClient(id) {
+            const c = Clients.getById(id);
+            if (!c) return;
+
+            if (confirm(`¿Estás seguro de que deseas eliminar permanentemente la alumna ${c.name} y todo su historial de citas y facturas?`)) {
+                try {
+                    Clients.delete(id);
+                    if (window.Activity) {
+                        window.Activity.add('error', `${c.name} ha sido dada de baja de la academia`);
+                    }
+                    showToast('Alumna eliminada correctamente', 'success');
+                    renderClientsList();
+                } catch(e) {
+                    showToast('Error al borrar alumna.', 'error');
+                }
+            }
+        }
+
+        function contactClient(id) {
+            const c = Clients.getById(id);
+            if (!c) return;
+            const message = `Hola ${c.name}, te contacto desde la administración de la academia para coordinar tu próxima reserva y agenda de clases.`;
+            const link = generateWhatsAppLink(c.phone || '+34000000000', message);
+            window.open(link, '_blank');
+        }
+
+        document.addEventListener('DOMContentLoaded', initClientsPage);
+    </script>
+</body>
+</html>

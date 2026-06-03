@@ -1,0 +1,602 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Disponibilidad - Planio</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/theme.css">
+    <style>
+        .dashboard-container {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        .main-workspace {
+            flex: 1;
+            padding: var(--spacing-xl);
+            overflow-y: auto;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Slots List styling matching screenshot */
+        .posing-slot-card {
+            background: rgba(255, 255, 255, 0.01);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-xl);
+            padding: 16px var(--spacing-lg);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: var(--spacing-md);
+            transition: all var(--transition-fast);
+        }
+
+        .posing-slot-card:hover {
+            border-color: rgba(var(--primary-color-rgb), 0.3);
+            box-shadow: var(--shadow-glow);
+        }
+
+        .posing-slot-left {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-md);
+        }
+
+        .posing-slot-icon-box {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.15rem;
+            background: rgba(236, 72, 153, 0.08); /* Pink opacity */
+            color: var(--accent-color);
+            border: 1px solid rgba(236, 72, 153, 0.15);
+        }
+
+        .posing-slot-date {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            text-transform: lowercase;
+        }
+        .posing-slot-date::first-letter {
+            text-transform: uppercase;
+        }
+
+        .posing-slot-meta {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            margin-top: 4px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        /* Tiny Select styled badgewise */
+        .modality-badge-select {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-sm);
+            color: var(--accent-color);
+            font-family: inherit;
+            font-weight: 800;
+            font-size: 0.72rem;
+            padding: 2px 6px;
+            cursor: pointer;
+            outline: none;
+            transition: all var(--transition-fast);
+        }
+        .modality-badge-select:focus {
+            border-color: var(--accent-color);
+            background: rgba(236, 72, 153, 0.15);
+        }
+
+        .posing-slot-right {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-lg);
+        }
+
+        .slot-delete-btn {
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            cursor: pointer;
+            font-size: 1.15rem;
+            transition: color var(--transition-fast);
+        }
+
+        .slot-delete-btn:hover {
+            color: var(--error);
+        }
+
+        /* Advanced Panel Styling */
+        .advanced-panel {
+            background: rgba(255, 255, 255, 0.01);
+            backdrop-filter: blur(12px);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-xl);
+            padding: var(--spacing-xl);
+            max-width: 900px;
+            margin-top: 15px;
+            box-shadow: var(--shadow-lg);
+        }
+
+        .advanced-grid {
+            display: grid;
+            grid-template-columns: 1.2fr 1fr;
+            gap: var(--spacing-2xl);
+            margin-bottom: var(--spacing-xl);
+        }
+
+        @media (max-width: 800px) {
+            .advanced-grid {
+                grid-template-columns: 1fr;
+                gap: var(--spacing-lg);
+            }
+        }
+
+        /* Switch tabs DIA UNICO vs RANGO */
+        .advanced-tabs-selector {
+            display: inline-flex;
+            background: rgba(0,0,0,0.2);
+            border: 1px solid var(--border-color);
+            border-radius: 30px;
+            padding: 4px;
+            margin-bottom: 20px;
+        }
+
+        .advanced-tab-btn {
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            padding: 8px var(--spacing-lg);
+            border-radius: 20px;
+            font-weight: 700;
+            font-size: 0.78rem;
+            cursor: pointer;
+            transition: all var(--transition-fast);
+        }
+
+        .advanced-tab-btn.active {
+            background: #1F2937;
+            color: white;
+            box-shadow: var(--shadow-sm);
+        }
+
+        /* Added Times list container */
+        .added-times-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            min-height: 48px;
+            padding: 10px;
+            border-radius: var(--radius-md);
+            border: 1px solid var(--border-color);
+            background: rgba(0,0,0,0.15);
+            align-content: flex-start;
+        }
+
+        .time-tag {
+            background: rgba(var(--primary-color-rgb), 0.1);
+            color: var(--text-primary);
+            font-weight: 700;
+            font-size: 0.85rem;
+            padding: 6px 12px;
+            border-radius: 30px;
+            border: 1px solid var(--primary-color);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+            transition: all var(--transition-fast);
+        }
+
+        .time-tag:hover {
+            background: var(--error);
+            border-color: var(--error);
+        }
+
+        /* Recommendation box */
+        .recommendation-box {
+            background: rgba(255, 255, 255, 0.01);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-lg);
+            padding: var(--spacing-md);
+            font-size: 0.82rem;
+            color: var(--text-muted);
+            line-height: 1.4;
+        }
+
+        /* Pink brand styling for the advanced button */
+        .btn-gest-avanzada {
+            background: #F472B6; /* Brand pink */
+            color: white;
+            border-radius: 50px;
+            font-weight: 700;
+            padding: 12px 24px;
+            box-shadow: 0 4px 15px rgba(244, 114, 182, 0.2);
+        }
+        .btn-gest-avanzada:hover {
+            background: #EC4899;
+            box-shadow: 0 6px 20px rgba(236, 72, 153, 0.4);
+        }
+
+        .btn-generar-horarios {
+            background: #F472B6;
+            color: white;
+            font-weight: 700;
+            border-radius: 50px;
+            padding: 14px 28px;
+            box-shadow: 0 4px 15px rgba(244, 114, 182, 0.2);
+        }
+        .btn-generar-horarios:hover {
+            background: #EC4899;
+            box-shadow: 0 6px 20px rgba(236, 72, 153, 0.4);
+        }
+    </style>
+</head>
+<body>
+    <div class="bg-glow"></div>
+    <div class="bg-glow-left"></div>
+
+    <div class="dashboard-container">
+        <!-- Left Sidebar Menu -->
+        <aside class="sidebar">
+            <div class="flex-col gap-md">
+                <div class="sidebar-brand">
+                    <div class="logo">
+                        <img id="brandLogo" class="logo-img" alt="Logo" src="https://posingtheheels.com/dashboard/img/logo.png">
+                        <span id="brandName" style="font-size: 1.15rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px;">Planio</span>
+                    </div>
+                    <div style="font-size: 0.7rem; text-transform: uppercase; font-weight: 800; color: var(--text-muted); margin-top: 4px; padding-left: 2px;">
+                        ADMIN PANEL
+                    </div>
+                </div>
+
+                <ul class="sidebar-menu">
+                    <li class="sidebar-item" id="nav-panel"><a href="dashboard.html">Panel</a></li>
+                    <li class="sidebar-item" id="nav-clients"><a href="clients.html">Alumnas</a></li>
+                    <li class="sidebar-item" id="nav-agenda"><a href="appointments.html">Agenda</a></li>
+                    <li class="sidebar-item" id="nav-calendar"><a href="calendar.html">Calendario</a></li>
+                    <li class="sidebar-item active" id="nav-availability"><a href="availability.html">Disponibilidad</a></li>
+                    <li class="sidebar-item" id="nav-pricing"><a href="pricing.html">Tarifas</a></li>
+                    <li class="sidebar-item" id="nav-feedbacks"><a href="feedbacks.html">Feedbacks</a></li>
+                    <li class="sidebar-item" id="nav-stripe"><a href="billing.html">Facturación y Stripe</a></li>
+                    <li class="sidebar-item" id="nav-settings"><a href="settings.html">Configuración</a></li>
+                    <li class="sidebar-item" id="nav-clientview"><a href="client-view.html" target="_blank" style="color: var(--accent-color);">Vista alumno</a></li>
+                </ul>
+            </div>
+
+            <!-- Sidebar profile footer -->
+            <div class="sidebar-profile">
+                <div class="sidebar-profile-card">
+                    <div style="width: 38px; height: 38px; border-radius: 50%; background: var(--primary-color); display: flex; align-items: center; justify-content: center; font-weight: 700; color: white; font-size: 0.9rem;" id="userProfileLetter">A</div>
+                    <div>
+                        <strong style="font-size: 0.85rem; display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 140px;" id="userProfileEmail">Admin</strong>
+                        <span style="font-size: 0.7rem; color: var(--text-muted); font-weight: 700; display: block; text-transform: uppercase;">Administrador</span>
+                    </div>
+                </div>
+                <div class="sidebar-item mt-md" style="list-style: none;">
+                    <a href="#" onclick="signOut(); return false;" style="color: var(--error); font-weight:700; font-size:0.85rem; display:flex; align-items:center; gap: 8px; padding: 10px;">
+                        Cerrar sesión
+                    </a>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Right Workspace Main Content -->
+        <main class="main-workspace">
+            <div class="mb-lg flex-between">
+                <div>
+                    <h1 style="margin: 0; font-size: 2.2rem; font-weight: 700;">Disponibilidad</h1>
+                    <p class="text-muted" style="margin-top: 4px;">Gestiona los horarios disponibles para clases</p>
+                </div>
+                <button class="btn btn-gest-avanzada" id="toggleViewBtn" onclick="toggleAdvancedMode()">
+                    + GESTIÓN AVANZADA
+                </button>
+            </div>
+
+            <!-- VIEW 1: LIST OF GENERATED SLOTS -->
+            <div id="slotsListView">
+                <div id="slotsCardsContainer">
+                    <!-- Se llena dinámicamente -->
+                </div>
+            </div>
+
+            <!-- VIEW 2: GESTION AVANZADA FORM -->
+            <div id="advancedFormView" style="display: none;">
+                <div class="advanced-panel">
+                    <div class="flex-between items-center mb-md" style="border-bottom: 1px solid var(--border-color); padding-bottom: 15px;">
+                        <h4 style="margin:0; font-weight: 700;" class="flex items-center gap-xs">
+                            📅 Gestión avanzada de horarios
+                        </h4>
+                        
+                        <!-- Choice Tabs DIA UNICO vs RANGO -->
+                        <div class="advanced-tabs-selector">
+                            <button class="advanced-tab-btn active">DÍA ÚNICO</button>
+                            <button class="advanced-tab-btn" onclick="showToast('Modo recurrente simulado en base al estándar.', 'info')">RANGO / RECURRENTE</button>
+                        </div>
+                    </div>
+
+                    <div class="advanced-grid">
+                        <!-- Left column -->
+                        <div class="flex-col gap-md">
+                            <div class="form-group">
+                                <label class="form-label">Fecha específica</label>
+                                <input type="date" id="advDate" class="form-input" required>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label class="form-label">Añadir horas de clase</label>
+                                <div class="flex gap-sm">
+                                    <input type="time" id="advTimeInput" class="form-input" style="font-family: monospace; max-width: 140px;">
+                                    <button type="button" class="btn btn-secondary" onclick="addTimeToList()">AÑADIR</button>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label" style="font-size: 0.8rem; color: var(--text-muted);">Horarios a generar:</label>
+                                <div class="added-times-container" id="addedTimesContainer">
+                                    <div class="text-muted" style="font-size:0.85rem; font-style:italic; padding: 6px;">DEFINE EL HORARIO...</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Right column -->
+                        <div class="flex-col gap-lg" style="justify-content: space-between;">
+                            <div class="flex-col gap-md">
+                                <div class="form-group">
+                                    <label class="form-label">Duración de cada clase</label>
+                                    <select id="advDuration" class="form-select">
+                                        <option value="30">30 minutos</option>
+                                        <option value="45">45 minutos</option>
+                                        <option value="60" selected>60 minutos (Estándar)</option>
+                                        <option value="90">90 minutos</option>
+                                    </select>
+                                </div>
+
+                                <div class="form-group">
+                                    <label class="form-label">Modalidad (global)</label>
+                                    <select id="advModality" class="form-select">
+                                        <option value="AMBAS" selected>Cualquier modalidad (Online / Presencial)</option>
+                                        <option value="ONLINE">Solo Online</option>
+                                        <option value="PRESENCIAL">Solo Presencial</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="recommendation-box">
+                                💡 <strong>RECOMENDACIÓN:</strong><br>
+                                Crea bloques de horas consecutivas para una mejor organización de tu agenda
+                            </div>
+                        </div>
+                    </div>
+
+                    <div style="border-top: 1px solid var(--border-color); padding-top: 20px; display: flex; align-items: center; gap: var(--spacing-lg);">
+                        <button class="btn btn-generar-horarios" onclick="generateBulkSlots()">
+                            ✓ GENERAR TODOS LOS HORARIOS
+                        </button>
+                        <a href="#" onclick="toggleAdvancedMode(); return false;" class="text-muted font-bold" style="font-size:0.95rem; text-decoration: underline;">Cancelar y volver</a>
+                    </div>
+                </div>
+            </div>
+
+        </main>
+    </div>
+
+    <!-- SDKs -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="js/supabase-service.js"></script>
+    <script src="js/data-models.js"></script>
+    <script src="js/utils.js"></script>
+
+    <script>
+        let isAdvancedMode = false;
+        let addedTimes = [];
+
+        function initAvailability() {
+            if (window.BrandConfig) {
+                window.BrandConfig.applyTheme();
+            }
+
+            // Hydrate profiles
+            const trainerEmail = localStorage.getItem('_trainerEmail') || 'admin@posingtheheels.com';
+            document.getElementById('userProfileEmail').textContent = trainerEmail;
+            document.getElementById('userProfileLetter').textContent = trainerEmail[0].toUpperCase();
+
+            // Poner fecha predeterminada de hoy en gestión avanzada
+            const todayStr = new Date().toISOString().substring(0, 10);
+            document.getElementById('advDate').value = todayStr;
+
+            renderSlotsList();
+        }
+
+        function toggleAdvancedMode() {
+            isAdvancedMode = !isAdvancedMode;
+            const listView = document.getElementById('slotsListView');
+            const formView = document.getElementById('advancedFormView');
+            const toggleBtn = document.getElementById('toggleViewBtn');
+
+            if (isAdvancedMode) {
+                listView.style.display = 'none';
+                formView.style.display = 'block';
+                toggleBtn.textContent = 'CANCELAR';
+                toggleBtn.className = 'btn btn-secondary';
+                // Resetear valores de entrada
+                addedTimes = [];
+                renderAddedTimes();
+            } else {
+                listView.style.display = 'block';
+                formView.style.display = 'none';
+                toggleBtn.textContent = '+ GESTIÓN AVANZADA';
+                toggleBtn.className = 'btn btn-gest-avanzada';
+                renderSlotsList();
+            }
+        }
+
+        function renderSlotsList() {
+            const list = Availability.getCustomSlots();
+            const container = document.getElementById('slotsCardsContainer');
+
+            if (list.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-state-icon">📅</div>
+                        <div class="empty-state-title">No hay franjas de disponibilidad creadas</div>
+                        <div class="empty-state-text">Pulse el botón de Gestión Avanzada para habilitar bloques horarios de clases.</div>
+                    </div>
+                `;
+                return;
+            }
+
+            // Ordenar por fecha y luego por hora
+            const sorted = list.slice().sort((a, b) => {
+                const dateCompare = a.date.localeCompare(b.date);
+                if (dateCompare !== 0) return dateCompare;
+                return a.time.localeCompare(b.time);
+            });
+
+            const weekdayOptions = { weekday: 'long', day: 'numeric', month: 'long' };
+
+            container.innerHTML = sorted.map(s => {
+                // Formatear fecha legible
+                const dateObj = new Date(s.date + 'T00:00:00');
+                const formattedDate = dateObj.toLocaleDateString('es-ES', weekdayOptions);
+                const isOccupied = s.status === 'occupied';
+
+                return `
+                    <div class="posing-slot-card" id="slotCard-${s.id}">
+                        <div class="posing-slot-left">
+                            <div class="posing-slot-icon-box">📅</div>
+                            <div>
+                                <div class="posing-slot-date">${formattedDate}</div>
+                                <div class="posing-slot-meta">
+                                    <span>🕒 ${s.time}</span>
+                                    <span>•</span>
+                                    <span>${s.duration} min</span>
+                                    <span>•</span>
+                                    <select class="modality-badge-select" onchange="changeSlotModality('${s.id}', this.value)">
+                                        <option value="AMBAS" ${s.modality === 'AMBAS' ? 'selected' : ''}>AMBAS</option>
+                                        <option value="ONLINE" ${s.modality === 'ONLINE' ? 'selected' : ''}>ONLINE</option>
+                                        <option value="PRESENCIAL" ${s.modality === 'PRESENCIAL' ? 'selected' : ''}>PRESENCIAL</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="posing-slot-right">
+                            <span class="badge ${isOccupied ? 'badge-warning' : 'badge-success'}" style="font-size:0.75rem; border-radius:50px;">
+                                ${isOccupied ? 'OCUPADO' : 'DISPONIBLE'}
+                            </span>
+                            <button class="slot-delete-btn" onclick="deleteSlot('${s.id}')" title="Borrar este horario">🗑️</button>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function deleteSlot(id) {
+            if (confirm('¿Estás seguro de que deseas eliminar este horario de disponibilidad?')) {
+                try {
+                    Availability.deleteCustomSlot(id);
+                    showToast('Horario eliminado con éxito', 'success');
+                    renderSlotsList();
+                } catch(e) {
+                    showToast('Error al eliminar horario', 'error');
+                }
+            }
+        }
+
+        function changeSlotModality(id, value) {
+            try {
+                Availability.updateCustomSlot(id, { modality: value });
+                showToast('Modalidad de franja actualizada a ' + value, 'success');
+            } catch(e) {
+                showToast('Error al actualizar modalidad.', 'error');
+            }
+        }
+
+        // Gestión Avanzada: Añadir Hora a lista temporal
+        function addTimeToList() {
+            const timeVal = document.getElementById('advTimeInput').value;
+            if (!timeVal) {
+                showToast('Por favor seleccione una hora válida.', 'warning');
+                return;
+            }
+
+            if (addedTimes.includes(timeVal)) {
+                showToast('Esta hora ya está añadida en la lista.', 'warning');
+                return;
+            }
+
+            addedTimes.push(timeVal);
+            addedTimes.sort();
+            renderAddedTimes();
+            document.getElementById('advTimeInput').value = '';
+        }
+
+        function removeTimeFromList(time) {
+            addedTimes = addedTimes.filter(t => t !== time);
+            renderAddedTimes();
+        }
+
+        function renderAddedTimes() {
+            const container = document.getElementById('addedTimesContainer');
+            if (addedTimes.length === 0) {
+                container.innerHTML = `<div class="text-muted" style="font-size:0.85rem; font-style:italic; padding: 6px;">DEFINE EL HORARIO...</div>`;
+                return;
+            }
+
+            container.innerHTML = addedTimes.map(time => `
+                <div class="time-tag" onclick="removeTimeFromList('${time}')" title="Haz clic para eliminar">
+                    ${time} <span style="font-size: 0.7rem; opacity:0.8;">✖</span>
+                </div>
+            `).join('');
+        }
+
+        // bulk slots generation
+        function generateBulkSlots() {
+            const dateVal = document.getElementById('advDate').value;
+            const duration = parseInt(document.getElementById('advDuration').value);
+            const modality = document.getElementById('advModality').value;
+
+            if (!dateVal) {
+                showToast('Por favor, selecciona una fecha específica.', 'warning');
+                return;
+            }
+
+            if (addedTimes.length === 0) {
+                showToast('Debes añadir al menos una hora a la lista.', 'warning');
+                return;
+            }
+
+            try {
+                addedTimes.forEach(time => {
+                    Availability.createCustomSlot({
+                        date: dateVal,
+                        time: time,
+                        duration: duration,
+                        modality: modality,
+                        status: 'available'
+                    });
+                });
+
+                showToast(`¡Se han generado con éxito ${addedTimes.length} bloques horarios! ⚡`, 'success');
+                toggleAdvancedMode(); // Volver al listado
+            } catch(e) {
+                showToast('Error al generar la serie de horarios.', 'error');
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', initAvailability);
+    </script>
+</body>
+</html>

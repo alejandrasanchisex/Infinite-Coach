@@ -7,7 +7,7 @@
   <script>
       // Force PWA cache bust / reload
       (function() {
-          const CURRENT_VERSION = '349';
+          const CURRENT_VERSION = '363';
           const savedVersion = localStorage.getItem('app_version');
           if (savedVersion !== CURRENT_VERSION) {
               localStorage.setItem('app_version', CURRENT_VERSION);
@@ -31,9 +31,9 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="styles/theme.css?v=350">
-  <link rel="stylesheet" href="styles/components.css?v=349">
-  <link rel="stylesheet" href="styles/mobile.css?v=349">
+  <link rel="stylesheet" href="styles/theme.css?v=363">
+  <link rel="stylesheet" href="styles/components.css?v=363">
+  <link rel="stylesheet" href="styles/mobile.css?v=363">
   <link rel="manifest" href="manifest.json">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -90,10 +90,10 @@
           <span id="brandName">Infinite Coach</span>
         </div>
         <ul class="nav-links" id="navLinks">
-          <li><a href="client-dashboard.html?v=349" class="nav-link">Inicio</a></li>
-          <li><a href="client-profile.html?v=349" class="nav-link">Ficha Técnica</a></li>
+          <li><a href="client-dashboard.html?v=363" class="nav-link">Inicio</a></li>
+          <li><a href="client-profile.html?v=363" class="nav-link">Ficha Técnica</a></li>
 
-          <li><a href="client-login.html?v=349" class="nav-link">Salir</a></li>
+          <li><a href="client-login.html?v=363" class="nav-link">Salir</a></li>
         </ul>
         <button class="menu-toggle" onclick="toggleMenu()" style="margin-left: auto;">☰</button>
       </nav>
@@ -147,12 +147,12 @@
 
   <!-- Supabase SDK & Service -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script src="js/supabase-service.js?v=350"></script>
+  <script src="js/supabase-service.js?v=363"></script>
 
-  <script src="js/config.js?v=350"></script>
-  <script src="js/data-models.js?v=350"></script>
-  <script src="js/custom-exercises.js?v=350"></script>
-  <script src="js/utils.js?v=350"></script>
+  <script src="js/config.js?v=363"></script>
+  <script src="js/data-models.js?v=363"></script>
+  <script src="js/custom-exercises.js?v=363"></script>
+  <script src="js/utils.js?v=363"></script>
   <script>
     // --- RESOLUCIÓN DE TRAINER ID (FALLBACK SEGURO) ---
     (function() {
@@ -208,6 +208,38 @@
     // --- INITIALIZATION ---
     async function initializeApp() {
       try {
+        // Cleanup local storage for Amalia Delgado's incorrect Week 2 Day 5 log
+        try {
+            for (let i = 0; i < localStorage.length; i++) {
+                const key = localStorage.key(i);
+                if (key && key.startsWith("fitnessAppData_")) {
+                    const localRaw = localStorage.getItem(key);
+                    if (localRaw) {
+                        let localData = JSON.parse(localRaw);
+                        if (localData.trainingLogs) {
+                            const originalLen = localData.trainingLogs.length;
+                            localData.trainingLogs = localData.trainingLogs.filter(l => {
+                                if (l.clientId === '0db0ea7a-c413-44cb-b99e-dfd9790383eb' && l.dayNumber === 5) {
+                                    const logDate = new Date(l.date || l.createdAt);
+                                    if (logDate >= new Date('2026-05-25T00:00:00.000Z')) {
+                                        return false; // delete!
+                                    }
+                                }
+                                return true;
+                            });
+                            if (localData.trainingLogs.length !== originalLen) {
+                                localData.lastModified = new Date().toISOString();
+                                localStorage.setItem(key, JSON.stringify(localData));
+                                console.log(`Comprehensive local cleanup successful for key ${key}`);
+                            }
+                        }
+                    }
+                }
+            }
+        } catch(e) {
+            console.error("Local cleanup error:", e);
+        }
+
         // Sync with Cloud (Supabase es ahora el primario)
         if (window.SupabaseService) {
             window.SupabaseService.init();
@@ -502,7 +534,7 @@
         </div>
 
         ${dayExercises.map((exercise, index) => {
-        const numSets = parseInt(exercise.sets) || 1;
+        const numSets = Array.isArray(exercise.sets) ? exercise.sets.length : (parseInt(exercise.sets) || 1);
 
         // Determine Video URL
         let finalVideoUrl = null;
@@ -542,16 +574,36 @@
             <div style="display: grid; grid-template-columns: ${showRIR ? 'auto 1fr auto' : '1fr 1fr'}; gap: 8px; background: rgba(255, 255, 255, 0.03); border-radius: 12px; padding: 12px; margin: 12px 0;">
               <div style="text-align: center; ${showRIR ? 'border-right: 1px solid rgba(255, 255, 255, 0.08); padding-right: 12px; min-width: 65px;' : ''}">
                 <div style="font-size: 0.7rem; color: var(--text-muted); text-transform: uppercase; font-weight: 600; letter-spacing: 0.05em; margin-bottom: 2px;">Series</div>
-                <div style="font-size: 1.15rem; font-weight: 800; color: var(--primary-color);">${exercise.sets}</div>
+                <div style="font-size: 1.15rem; font-weight: 800; color: var(--primary-color);">${Array.isArray(exercise.sets) ? exercise.sets.length : exercise.sets}</div>
               </div>
               <div style="text-align: center; padding: 0 8px; display: flex; flex-direction: column; justify-content: center; align-items: center;">
                 <div style="font-size: 0.7rem; color: var(--text-muted); text-transform: uppercase; font-weight: 600; letter-spacing: 0.05em; margin-bottom: 2px;">Reps Objetivo</div>
-                <div style="font-size: 0.95rem; font-weight: 800; color: #fff; line-height: 1.3; overflow-wrap: break-word; word-break: break-word; white-space: normal;">${exercise.reps}</div>
+                <div style="font-size: 0.85rem; font-weight: 800; color: #fff; line-height: 1.3; overflow-wrap: break-word; word-break: break-word; white-space: normal;">
+                  ${(() => {
+                    if (Array.isArray(exercise.sets) && exercise.sets.length > 0) {
+                        const hasCustomReps = exercise.sets.some(s => s.reps !== undefined && s.reps !== null && s.reps !== '');
+                        if (hasCustomReps) {
+                            return exercise.sets.map((s, si) => `S${si+1}: ${s.reps}`).join(' | ');
+                        }
+                    }
+                    return exercise.reps || '-';
+                  })()}
+                </div>
               </div>
               ${showRIR ? `
-              <div style="text-align: center; border-left: 1px solid rgba(255, 255, 255, 0.08); padding-left: 12px; min-width: 65px;">
+              <div style="text-align: center; border-left: 1px solid rgba(255, 255, 255, 0.08); padding-left: 12px; min-width: 65px; display: flex; flex-direction: column; justify-content: center; align-items: center;">
                 <div style="font-size: 0.7rem; color: var(--text-muted); text-transform: uppercase; font-weight: 600; letter-spacing: 0.05em; margin-bottom: 2px;">RIR Obj</div>
-                <div style="font-size: 1.15rem; font-weight: 800; color: var(--primary-color);">${exercise.intensity || '-'}</div>
+                <div style="font-size: 0.85rem; font-weight: 800; color: var(--primary-color); line-height: 1.3; overflow-wrap: break-word; word-break: break-word; white-space: normal;">
+                  ${(() => {
+                    if (Array.isArray(exercise.sets) && exercise.sets.length > 0) {
+                        const hasCustomRir = exercise.sets.some(s => s.rir !== undefined && s.rir !== null && s.rir !== '');
+                        if (hasCustomRir) {
+                            return exercise.sets.map((s, si) => `S${si+1}: R${s.rir}`).join(' | ');
+                        }
+                    }
+                    return exercise.intensity || '-';
+                  })()}
+                </div>
               </div>
               ` : ''}
             </div>
@@ -563,7 +615,7 @@
               </h5>
               
               <!-- Encabezado de la tabla para mobile (siempre en columnas) -->
-              <div style="display: grid; grid-template-columns: ${showRIR ? '50px 1fr 1fr 1fr' : '50px 1fr 1fr'}; gap: 8px; align-items: center; margin-bottom: 8px; padding: 0 4px; font-size: 0.7rem; font-weight: 700; text-transform: uppercase; color: var(--text-muted); text-align: center;">
+              <div style="display: grid; grid-template-columns: ${showRIR ? '65px 1fr 1fr 1fr' : '65px 1fr 1fr'}; gap: 8px; align-items: center; margin-bottom: 8px; padding: 0 4px; font-size: 0.7rem; font-weight: 700; text-transform: uppercase; color: var(--text-muted); text-align: center;">
                 <div style="text-align: left;">Serie</div>
                 <div>Peso (Kg)</div>
                 <div>Reps</div>
@@ -583,10 +635,16 @@
                       loggedRir = sData.rir;
                   }
 
+                  const targetSetObj = Array.isArray(exercise.sets) ? exercise.sets[setIdx] : null;
+                  const targetReps = targetSetObj ? targetSetObj.reps : '';
+                  const targetRir = targetSetObj ? targetSetObj.rir : '';
+
                   if (sessionCompleted) {
                       return `
-                      <div style="display: grid; grid-template-columns: ${showRIR ? '50px 1fr 1fr 1fr' : '50px 1fr 1fr'}; gap: 8px; align-items: center; opacity: 0.85;">
-                        <div style="font-weight: 700; font-size: 0.85rem; color: var(--text-muted); padding-left: 4px;">Set ${setIdx + 1}</div>
+                      <div style="display: grid; grid-template-columns: ${showRIR ? '65px 1fr 1fr 1fr' : '65px 1fr 1fr'}; gap: 8px; align-items: center; opacity: 0.85;">
+                        <div style="text-align: left; padding-left: 4px;">
+                          <span style="font-weight: 700; font-size: 0.85rem; color: var(--text-muted);">Set ${setIdx + 1}</span>
+                        </div>
                         <div style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.05); border-radius: 8px; height: 38px; display: flex; align-items: center; justify-content: center; font-size: 0.9rem; font-weight: 700; color: #fff;">${loggedWeight || '-'} <span style="font-size: 0.65rem; color: var(--text-muted); margin-left: 2px;">kg</span></div>
                         <div style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.05); border-radius: 8px; height: 38px; display: flex; align-items: center; justify-content: center; font-size: 0.9rem; font-weight: 700; color: #fff;">${loggedReps || '-'} <span style="font-size: 0.65rem; color: var(--text-muted); margin-left: 2px;">reps</span></div>
                         ${showRIR ? `
@@ -596,12 +654,14 @@
                       `;
                   } else {
                       return `
-                      <div style="display: grid; grid-template-columns: ${showRIR ? '50px 1fr 1fr 1fr' : '50px 1fr 1fr'}; gap: 8px; align-items: center;">
-                        <div style="font-weight: 700; font-size: 0.85rem; color: var(--primary-color); padding-left: 4px;">Set ${setIdx + 1}</div>
+                      <div style="display: grid; grid-template-columns: ${showRIR ? '65px 1fr 1fr 1fr' : '65px 1fr 1fr'}; gap: 8px; align-items: center;">
+                        <div style="text-align: left; padding-left: 4px;">
+                          <span style="font-weight: 700; font-size: 0.85rem; color: var(--primary-color);">Set ${setIdx + 1}</span>
+                        </div>
                         <input type="number" inputmode="decimal" class="form-input form-input-sm text-center" placeholder="Kg" id="weight_${index}_${setIdx}" style="height: 38px; padding: 0; font-weight: 700; font-size: 0.95rem; background: rgba(255,255,255,0.05); border: 1.5px solid rgba(255,255,255,0.08); border-radius: 8px; color: #fff;" onfocus="this.style.borderColor='var(--primary-color)';" onblur="this.style.borderColor='transparent';">
                         <input type="number" inputmode="numeric" class="form-input form-input-sm text-center" placeholder="Reps" id="reps_${index}_${setIdx}" style="height: 38px; padding: 0; font-weight: 700; font-size: 0.95rem; background: rgba(255,255,255,0.05); border: 1.5px solid rgba(255,255,255,0.08); border-radius: 8px; color: #fff;" onfocus="this.style.borderColor='var(--primary-color)';" onblur="this.style.borderColor='transparent';">
                         ${showRIR ? `
-                        <input type="number" inputmode="numeric" class="form-input form-input-sm text-center" placeholder="RIR" id="rir_${index}_${setIdx}" min="0" max="10" style="height: 38px; padding: 0; font-weight: 700; font-size: 0.95rem; background: rgba(255,255,255,0.05); border: 1.5px solid rgba(255,255,255,0.08); border-radius: 8px; color: #fff;" onfocus="this.style.borderColor='var(--primary-color)';" onblur="this.style.borderColor='transparent';">
+                        <input type="number" inputmode="numeric" class="form-input form-input-sm text-center" placeholder="${targetRir !== undefined && targetRir !== '' ? targetRir : 'RIR'}" id="rir_${index}_${setIdx}" min="0" max="10" style="height: 38px; padding: 0; font-weight: 700; font-size: 0.95rem; background: rgba(255,255,255,0.05); border: 1.5px solid rgba(255,255,255,0.08); border-radius: 8px; color: #fff;" onfocus="this.style.borderColor='var(--primary-color)';" onblur="this.style.borderColor='transparent';">
                         ` : ''}
                       </div>
                       `;
@@ -732,6 +792,6 @@
     // Trigger App Initialization
     initializeApp();
   </script>
-    <script src="js/custom-recipes.js?v=349"></script></body>
+    <script src="js/custom-recipes.js?v=363"></script></body>
 
 </html>

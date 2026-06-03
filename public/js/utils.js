@@ -1,9 +1,22 @@
 // ============================================
 // UTILITY FUNCTIONS
 // ============================================
-// ============================================
-// UTILITY FUNCTIONS
-// ============================================
+
+// Clean up version parameter 'v' from URL address bar immediately after load for elegant presentation
+(function cleanUrlVersion() {
+    try {
+        if (typeof window !== 'undefined' && window.history && window.history.replaceState) {
+            const url = new URL(window.location.href);
+            if (url.searchParams.has('v')) {
+                url.searchParams.delete('v');
+                const cleanUrl = url.pathname + url.search + url.hash;
+                window.history.replaceState({}, document.title, cleanUrl);
+            }
+        }
+    } catch (e) {
+        console.warn("Could not clean URL version param:", e);
+    }
+})();
 
 // ============================================
 // MIGRACIÓN: Promover brand_settings → _trainerBrand
@@ -53,357 +66,60 @@
 // BRAND CONFIGURATION (Modo Real - Infinite Coach)
 // ============================================
 
-window.BrandConfig = {
-    isConfigured: function() {
-        const brand = this.get();
-        return brand && brand.configured;
-    },
-    get: function() {
-        // Buscar el logo parametrizado de la aplicación desde la configuración maestra de Ingenia Licencias
-        let defaultAppLogo = 'img/logo-infinite-marble.png';
-        try {
-            if (typeof localStorage !== 'undefined') {
-                const platformRaw = localStorage.getItem('saasFitnessPlatform');
-                if (platformRaw) {
-                    const platform = JSON.parse(platformRaw);
-                    const currentTrainerId = window.activeTrainerId || localStorage.getItem('activeTrainerId') || 'default';
-                    let appId = 'infinite-coach'; // app por defecto
-                    
-                    // 1. Obtener el appId asociado a este entrenador
-                    if (currentTrainerId !== 'default' && platform.trainers) {
-                        const trainerObj = platform.trainers.find(t => t.id === currentTrainerId || t.email === currentTrainerId);
-                        if (trainerObj && trainerObj.appId) {
-                            appId = trainerObj.appId;
-                        }
-                    }
-                    
-                    // 2. Extraer el logo parametrizado de la app
-                    if (platform.apps) {
-                        const appObj = platform.apps.find(a => a.id === appId);
-                        if (appObj && appObj.logo) {
-                            defaultAppLogo = appObj.logo;
-                        }
-                    }
-                }
-            }
-        } catch (e) {
-            console.warn('Error al recuperar el logo por defecto de la aplicación:', e);
-        }
-
-        const defaults = {
-            name: 'Infinite Coach',
-            logo: defaultAppLogo,
-            primaryColor: '#00D9FF',
-            secondaryColor: '#8B5CF6',
-            whatsapp: '+34000000000',
-            configured: true,
-            colors: { primary: '#00D9FF', secondary: '#8B5CF6', accent: '#FF6B6B' }
-        };
-
-        // Validar que un logo sea una URL de imagen real (no un nombre de página HTML)
-        const isValidLogo = (url) => {
-            if (!url || typeof url !== 'string' || url.length < 5) return false;
-            if (url.startsWith('data:image')) return true;
-            if (url.startsWith('blob:')) return true;
-            if (url.startsWith('img/') || url.startsWith('./img/')) return true;
-            if (url.startsWith('http://') || url.startsWith('https://')) return true;
+if (typeof window !== 'undefined' && !window.BrandConfig) {
+    window.BrandConfig = {
+        isConfigured: function() {
             return false;
-        };
-
-        // 1. PRIORIDAD MÁXIMA: clave dedicada que syncFromCloud NUNCA toca (trainer-specific)
-        const currentTrainerId = window.activeTrainerId || localStorage.getItem('activeTrainerId') || 'default';
-        const trainerBrandRaw = localStorage.getItem(`_trainerBrand_${currentTrainerId}`) || localStorage.getItem('_trainerBrand');
-        let trainerBrand = null;
-        if (trainerBrandRaw) {
-            try {
-                const parsed = JSON.parse(trainerBrandRaw);
-                trainerBrand = {
-                    ...parsed,
-                    logo: isValidLogo(parsed.logo) ? parsed.logo : defaults.logo,
-                    colors: parsed.colors || {
-                        primary: parsed.primaryColor || defaults.primaryColor,
-                        secondary: parsed.secondaryColor || defaults.secondaryColor,
-                        accent: (parsed.colors && parsed.colors.accent) || defaults.colors.accent
-                    },
-                    configured: true
-                };
-            } catch(e) { console.error('Error parsing _trainerBrand:', e); }
-        }
-
-        let result = defaults;
-        if (trainerBrand) {
-            result = trainerBrand;
-        } else {
-            // 2. Fallback: brand_settings (legacy - trainer-specific fallback, then global fallback)
-            const stored = localStorage.getItem(`brand_settings_${currentTrainerId}`) || localStorage.getItem('brand_settings');
-            if (stored) {
+        },
+        get: function() {
+            return {
+                name: 'Infinite Coach',
+                logo: 'img/logo-infinite-marble.png',
+                primaryColor: '#00D9FF',
+                secondaryColor: '#8B5CF6',
+                whatsapp: '+34000000000',
+                configured: true,
+                colors: { primary: '#00D9FF', secondary: '#8B5CF6', accent: '#FF6B6B' }
+            };
+        },
+        set: function(brandData) {
+            return brandData;
+        },
+        applyTheme: function() {
+            if (window.location.pathname.includes('admin-dashboard.html') || window.location.pathname.includes('admin-login.html') || window.location.hostname.includes('licencias.ingeniaia.es')) {
                 try {
-                    const parsed = JSON.parse(stored);
-                    result = {
-                        ...defaults,
-                        ...parsed,
-                        colors: parsed.colors || {
-                            primary: parsed.primaryColor || defaults.primaryColor,
-                            secondary: parsed.secondaryColor || defaults.secondaryColor,
-                            accent: (parsed.colors && parsed.colors.accent) || defaults.colors.accent
-                        },
-                        configured: true
-                    };
-                } catch(e) { console.error('Error parsing brand_settings:', e); }
-            } else if (window.getData) {
-                // 3. Fallback: DB local
-                const db = getData();
-                if (db && db.brand && db.brand.name) {
-                    result = { ...defaults, ...db.brand, configured: true };
-                }
-            }
-        }
-
-        // Auto-migrate legacy brand names (MyFitness or Fitness App) to the official Infinite Coach
-        if (result && (result.name === 'MyFitness' || result.name === 'Fitness App')) {
-            result.name = 'Infinite Coach';
-            try {
-                localStorage.setItem(`_trainerBrand_${currentTrainerId}`, JSON.stringify(result));
-                localStorage.setItem(`brand_settings_${currentTrainerId}`, JSON.stringify(result));
-                localStorage.setItem('_trainerBrand', JSON.stringify(result));
-                localStorage.setItem('brand_settings', JSON.stringify(result));
-                if (window.getData && window.saveData) {
-                    const db = getData();
-                    if (db && db.brand) {
-                        db.brand.name = 'Infinite Coach';
-                        saveData(db);
-                    }
-                }
-            } catch(e) {}
-        }
-
-        if (result) {
-            result.logo = isValidLogo(result.logo) ? result.logo : defaults.logo;
-        }
-
-        return result;
-    },
-    set: function(brandData) {
-        // SIEMPRE guardar en la clave dedicada que nada más toca
-        const currentTrainerId = window.activeTrainerId || localStorage.getItem('activeTrainerId') || 'default';
-        const current = this.get();
-        const updated = { ...current, ...brandData, configured: true };
-        localStorage.setItem(`_trainerBrand_${currentTrainerId}`, JSON.stringify(updated));
-        localStorage.setItem(`brand_settings_${currentTrainerId}`, JSON.stringify(updated));
-        localStorage.setItem('_trainerBrand', JSON.stringify(updated));
-        localStorage.setItem('brand_settings', JSON.stringify(updated)); // legacy
-
-        // Guardar también en la BD local y en Supabase
-        if (window.getData && window.saveData) {
-            try {
-                const db = getData();
-                if (!db.brand) db.brand = {};
-                db.brand = { ...db.brand, ...updated };
-                db.brand.configured = true;
-                saveData(db);
-                const currentId = window.activeTrainerId || localStorage.getItem('activeTrainerId');
-                if (window.SupabaseService && currentId && currentId !== 'default') {
-                    window.SupabaseService.saveTrainerData(currentId, db)
-
-                        .catch(e => console.warn('Supabase brand sync:', e));
-                }
-            } catch(e) { console.error('BrandConfig.set db error:', e); }
-        }
-        return updated;
-    },
-    applyTheme: function() {
-        // 0. Si estamos en páginas del Panel Maestro (Ingenia Licencias), usar el logo de la plataforma
-        if (window.location.pathname.includes('admin-dashboard.html') || window.location.pathname.includes('admin-login.html')) {
-            try {
-                if (typeof localStorage !== 'undefined') {
                     const platformRaw = localStorage.getItem('saasFitnessPlatform');
+                    let adminLogo = 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj48ZGVmcz48bGluZWFyR3JhZGllbnQgaWQ9ImciIHgxPSIwJSIgeTE9IjAlIiB4Mj0iMTAwJSIgeTI9IjEwMCUiPjxzdG9wIG9mZnNldD0iMCUiIHN0b3AtY29sb3I9IiM4QjVDRjYiIC8+PHN0b3Agb2Zmc2V0PSIxMDAlIiBzdG9wLWNvbG9yPSIjRDk0NkVGIiAvPjwvbGluZWFyR3JhZGllbnQ+PC9kZWZzPjxyZWN0IHdpZHRoPSIxMDAiIGhlaWdodD0iMTAwIiByeD0iMjAiIGZpbGw9IiMwNTA1MTAiIC8+PGNpcmNsZSBjeD0iNTAiIGN5PSI1MCIgcj0iMzUiIGZpbGw9Im5vbmUiIHN0cm9rZT0idXJsKCNnKSIgc3Ryb2tlLXdpZHRoPSI2IiAvPjxwYXRoIGQ9Ik00MyAzMCBoMTQgTTUwIDMwIHY0MCBNNDMgNzAgaDE0IiBmaWxsPSJub25lIiBzdHJva2U9InVybCgjZykiIHN0cm9rZS13aWR0aD0iOCIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIiAvPjwvc3ZnPg==';
+                    
                     if (platformRaw) {
                         const platform = JSON.parse(platformRaw);
                         if (platform.settings && platform.settings.platformLogo) {
-                            const adminLogo = platform.settings.platformLogo;
-                            const finalLogoUrl = adminLogo + (adminLogo.startsWith('data:') ? '' : (adminLogo.includes('?') ? '&' : '?') + 'v=' + new Date().getTime());
-                            
-                            document.querySelectorAll('link[rel*="icon"]').forEach(el => el.remove());
-                            
-                            const shortcut = document.createElement('link');
-                            shortcut.rel = 'shortcut icon';
-                            shortcut.type = 'image/png';
-                            shortcut.href = finalLogoUrl;
-                            document.head.appendChild(shortcut);
-                            
-                            const icon = document.createElement('link');
-                            icon.rel = 'icon';
-                            icon.type = 'image/png';
-                            icon.href = finalLogoUrl;
-                            document.head.appendChild(icon);
-                            
-                            const originalTitle = document.title;
-                            document.title = originalTitle + ' ';
-                            setTimeout(() => { document.title = originalTitle; }, 50);
+                            adminLogo = platform.settings.platformLogo;
                         }
                     }
-                }
-            } catch (e) {
-                console.warn('Error applying Master Admin favicon:', e);
-            }
-            return;
-        }
-
-        const brand = this.get();
-        if (brand) {
-            const colors = brand.colors || {
-                primary: brand.primaryColor || '#00D9FF',
-                secondary: brand.secondaryColor || '#8B5CF6',
-                accent: '#FF6B6B'
-            };
-            
-            // Determine active theme mode (prioritize client-specific selection over coach's default)
-            let activeThemeMode = colors.themeMode || 'dark';
-            if (typeof localStorage !== 'undefined') {
-                const clientPref = localStorage.getItem('clientThemeMode');
-                if (clientPref && clientPref !== 'default') {
-                    activeThemeMode = clientPref;
+                    
+                    const finalLogoUrl = adminLogo + (adminLogo.startsWith('data:') ? '' : (adminLogo.includes('?') ? '&' : '?') + 'v=' + new Date().getTime());
+                    
+                    document.querySelectorAll('link[rel*="icon"]').forEach(el => el.remove());
+                    
+                    const shortcut = document.createElement('link');
+                    shortcut.rel = 'shortcut icon';
+                    shortcut.type = adminLogo.startsWith('data:image/svg+xml') ? 'image/svg+xml' : 'image/png';
+                    shortcut.href = finalLogoUrl;
+                    document.head.appendChild(shortcut);
+                    
+                    const icon = document.createElement('link');
+                    icon.rel = 'icon';
+                    icon.type = adminLogo.startsWith('data:image/svg+xml') ? 'image/svg+xml' : 'image/png';
+                    icon.href = finalLogoUrl;
+                    document.head.appendChild(icon);
+                } catch (e) {
+                    console.warn('Error applying Master Admin favicon:', e);
                 }
             }
-
-            document.documentElement.style.setProperty('--primary-color', colors.primary);
-            document.documentElement.style.setProperty('--secondary-color', colors.secondary);
-            document.documentElement.style.setProperty('--accent-color', colors.accent || '#FF6B6B');
-
-            // Convert Primary to RGB for transparencies
-            const hexToRgb = (hex) => {
-                const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
-                return result ? 
-                    `${parseInt(result[1], 16)}, ${parseInt(result[2], 16)}, ${parseInt(result[3], 16)}` : 
-                    '0, 217, 255';
-            };
-            document.documentElement.style.setProperty('--primary-color-rgb', hexToRgb(colors.primary));
-
-            // Apply theme class (light/dark)
-            const isLight = activeThemeMode === 'light';
-            document.documentElement.classList.toggle('theme-light', isLight);
-            if (document.body) {
-                document.body.classList.toggle('theme-light', isLight);
-            }
-
-            // Dynamic Favicon, Apple Touch Icon, and Web Manifest
-            const defaultLogo = 'img/logo-infinite-marble.png';
-            const currentLogo = (brand && brand.logo && brand.logo.length > 5) ? brand.logo : defaultLogo;
-            const absoluteLogo = currentLogo.startsWith('http') || currentLogo.startsWith('data:')
-                ? currentLogo
-                : new URL(currentLogo, window.location.origin).href;
-
-            // 1. Update/Create Favicon link with cache-busting and shortcut icon override to force Chrome/Safari tab redrawing
-            const finalLogoUrl = absoluteLogo.startsWith('data:') 
-                ? absoluteLogo 
-                : absoluteLogo + (absoluteLogo.includes('?') ? '&' : '?') + 'v=' + new Date().getTime();
-
-            document.querySelectorAll('link[rel*="icon"]').forEach(el => el.remove());
-
-            const shortcut = document.createElement('link');
-            shortcut.rel = 'shortcut icon';
-            shortcut.type = 'image/png';
-            shortcut.href = finalLogoUrl;
-            document.head.appendChild(shortcut);
-
-            const icon = document.createElement('link');
-            icon.rel = 'icon';
-            icon.type = 'image/png';
-            icon.href = finalLogoUrl;
-            document.head.appendChild(icon);
-
-            // Trigger Title Redraw to force Chrome to refresh favicon rendering
-            const originalTitle = document.title;
-            document.title = originalTitle + ' ';
-            setTimeout(() => { document.title = originalTitle; }, 50);
-
-            // 2. Update/Create Apple Touch Icon link (for iOS PWAs)
-            let appleIcon = document.querySelector('link[rel="apple-touch-icon"]');
-            if (!appleIcon) {
-                appleIcon = document.createElement('link');
-                appleIcon.rel = 'apple-touch-icon';
-                document.head.appendChild(appleIcon);
-            }
-            appleIcon.href = absoluteLogo;
-
-            // 3. Update Web Manifest dynamically (for PWA homescreen installations)
-            const manifestLink = document.querySelector('link[rel="manifest"]');
-            if (manifestLink) {
-                const baseManifest = {
-                    "name": brand.name || "Infinite Coach",
-                    "short_name": brand.name || "Infinite Coach",
-                    "start_url": "client-login.html",
-                    "display": "standalone",
-                    "background_color": "#0F0F1E",
-                    "theme_color": colors.primary || "#00D9FF",
-                    "orientation": "portrait",
-                    "icons": [
-                        {
-                            "src": absoluteLogo,
-                            "sizes": "192x192",
-                            "type": "image/png"
-                        },
-                        {
-                            "src": absoluteLogo,
-                            "sizes": "512x512",
-                            "type": "image/png"
-                        }
-                    ]
-                };
-                const manifestStr = JSON.stringify(baseManifest);
-                const blob = new Blob([manifestStr], { type: 'application/json' });
-                const manifestURL = URL.createObjectURL(blob);
-                manifestLink.setAttribute('href', manifestURL);
-            }
         }
-
-        // Dynamic Header (Logo & Name)
-        const headerLogos = document.querySelectorAll('.logo-img, #brandLogo');
-        const previewLogos = document.querySelectorAll('#logoPreview');
-        const nameSpan = document.getElementById('brandName');
-        
-        // Titulo de la página dinámico si existe
-        const baseTitle = document.title.split(' - ')[0]; // Tomar parte antes del guion
-        
-        if (brand) {
-            headerLogos.forEach(logoImg => {
-                const defaultLogo = 'img/logo-infinite-marble.png';
-                const hasLogo = brand.logo && brand.logo.length > 5;
-                logoImg.src = hasLogo ? brand.logo : defaultLogo;
-                
-                const extraStyles = "background: white; padding: 2px; border-radius: 4px;";
-                logoImg.style.cssText = `display: block !important; opacity: 1 !important; visibility: visible !important; max-height: 40px !important; width: auto !important; object-fit: contain !important; ${extraStyles}`;
-                
-                logoImg.onerror = () => {
-                    if (logoImg.src !== defaultLogo && !logoImg.src.includes('blob:')) {
-                        console.warn("Logo failed to load, falling back to default:", logoImg.src);
-                        logoImg.src = defaultLogo;
-                    }
-                };
-            });
-
-            previewLogos.forEach(logoImg => {
-                if (brand.logo && brand.logo.length > 5) {
-                    logoImg.src = brand.logo;
-                    logoImg.style.cssText = `display: block !important; opacity: 1 !important; visibility: visible !important; max-width: 150px !important; max-height: 150px !important; object-fit: contain !important; background: white; padding: 10px; border-radius: 4px;`;
-                } else {
-                    logoImg.src = 'img/logo-infinite-marble.png';
-                    logoImg.style.cssText = `max-width: 150px !important; max-height: 150px !important; object-fit: contain !important; background: white; padding: 10px;`;
-                }
-            });
-            
-            if (nameSpan) {
-                nameSpan.textContent = brand.name || 'Infinite Coach';
-                nameSpan.style.color = (brand.colors && brand.colors.primary) || brand.primaryColor || '#00D9FF';
-                nameSpan.style.fontWeight = '800';
-            }
-            
-            if (brand.name) {
-                document.title = `${baseTitle} - ${brand.name}`;
-            }
-        }
-    }
-};
+    };
+}
 
 // Auto-apply on load
 if (typeof document !== 'undefined') {

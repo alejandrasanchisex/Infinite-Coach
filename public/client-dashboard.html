@@ -7,7 +7,7 @@
     <script>
         // Force PWA cache bust / reload
         (function() {
-            const CURRENT_VERSION = '349';
+            const CURRENT_VERSION = '363';
             const savedVersion = localStorage.getItem('app_version');
             if (savedVersion !== CURRENT_VERSION) {
                 localStorage.setItem('app_version', CURRENT_VERSION);
@@ -31,9 +31,9 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="styles/theme.css?v=350">
-    <link rel="stylesheet" href="styles/components.css?v=349">
-    <link rel="stylesheet" href="styles/mobile.css?v=349">
+    <link rel="stylesheet" href="styles/theme.css?v=363">
+    <link rel="stylesheet" href="styles/components.css?v=363">
+    <link rel="stylesheet" href="styles/mobile.css?v=363">
     <link rel="manifest" href="manifest.json">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -49,10 +49,10 @@
                     <span id="brandName">Infinite Coach</span>
                 </div>
                 <ul class="nav-links" id="navLinks">
-                    <li><a href="client-dashboard.html?v=349" class="nav-link active">Inicio</a></li>
-                    <li><a href="client-profile.html?v=349" class="nav-link">Ficha Técnica</a></li>
+                    <li><a href="client-dashboard.html?v=363" class="nav-link active">Inicio</a></li>
+                    <li><a href="client-profile.html?v=363" class="nav-link">Ficha Técnica</a></li>
 
-                    <li><a href="client-login.html?v=349" class="nav-link">Salir</a></li>
+                    <li><a href="client-login.html?v=363" class="nav-link">Salir</a></li>
                 </ul>
                 <button class="menu-toggle" onclick="toggleMenu()" style="margin-left: auto;">☰</button>
             </nav>
@@ -178,12 +178,12 @@
 
     <!-- Supabase SDK & Service -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="js/supabase-service.js?v=350"></script>
+    <script src="js/supabase-service.js?v=363"></script>
 
-    <script src="js/config.js?v=350"></script>
-    <script src="js/data-models.js?v=350"></script>
-    <script src="js/utils.js?v=350"></script>
-    <script src="js/custom-exercises.js?v=350"></script>
+    <script src="js/config.js?v=363"></script>
+    <script src="js/data-models.js?v=363"></script>
+    <script src="js/utils.js?v=363"></script>
+    <script src="js/custom-exercises.js?v=363"></script>
     <script>
         // CLIENT INITIALIZATION
         const urlParams = new URLSearchParams(window.location.search);
@@ -244,19 +244,87 @@
 
                         // Carga de objetivo de hoy (rutina)
                         try {
-                            const sessions = Routines.getAll().filter(r => r.clientId === clientId);
-                            const targetSec = document.getElementById('todayTargetSection');
-                            if (targetSec) {
+                            let routineToShow = null;
+                            let exercisesCount = 0;
+                            
+                            const blocks = typeof TrainingBlocks !== 'undefined' ? TrainingBlocks.getByClientId(clientId) : [];
+                            const publishedBlocks = blocks.filter(b => b.published == true || b.published == 'true' || b.published == 1);
+                            
+                            if (publishedBlocks.length > 0) {
+                                publishedBlocks.sort((a, b) => new Date(b.startDate || 0) - new Date(a.startDate || 0));
+                                const pBlock = publishedBlocks[0];
+                                if (pBlock.weeks && pBlock.weeks.length > 0) {
+                                    const userLogs = typeof TrainingLogs !== 'undefined' ? TrainingLogs.getByClientId(clientId) : [];
+                                    
+                                    function checkWeekComp(w, wIdx) {
+                                        if (!w) return false;
+                                        const days = w.days ? w.days.map((_, i) => i + 1) : [...new Set((w.exercises || []).map(e => e.day))];
+                                        const logicId = w.id || `block_${pBlock.id}_week_${wIdx}`;
+                                        const activeDays = days.filter(d => {
+                                            const ex = w.days ? w.days[d-1]?.exercises : (w.exercises || []).filter(e => e.day === d);
+                                            return ex && ex.length > 0;
+                                        });
+                                        if (activeDays.length === 0) return true;
+                                        return activeDays.every(d => {
+                                            return userLogs.some(l => (l.routineId === w.id || l.routineId === logicId) && l.dayNumber === d && l.completed);
+                                        });
+                                    }
+
+                                    let activeWeekIdx = pBlock.weeks.findIndex((w, idx) => {
+                                        return !checkWeekComp(w, idx) && w.days && w.days.some(d => d.exercises && d.exercises.length > 0);
+                                    });
+                                    if (activeWeekIdx === -1) activeWeekIdx = 0;
+                                    
+                                    const activeWeek = pBlock.weeks[activeWeekIdx];
+                                    if (activeWeek) {
+                                        const days = activeWeek.days ? activeWeek.days.map((_, i) => i + 1) : [...new Set((activeWeek.exercises || []).map(e => e.day))].sort((a,b)=>a-b);
+                                        const logicId = activeWeek.id || `block_${pBlock.id}_week_${activeWeekIdx}`;
+                                        let activeDay = null;
+                                        
+                                        for (const d of days) {
+                                            const isCompleted = userLogs.some(l => (l.routineId === activeWeek.id || l.routineId === logicId) && l.dayNumber === d && l.completed);
+                                            const dayEx = activeWeek.days ? (activeWeek.days[d-1]?.exercises || []) : (activeWeek.exercises || []).filter(e=>e.day===d);
+                                            if (dayEx.length > 0 && !isCompleted) {
+                                                activeDay = d;
+                                                break;
+                                            }
+                                        }
+                                        if (!activeDay && days.length > 0) activeDay = days[0];
+                                        
+                                        if (activeDay) {
+                                            const dayEx = activeWeek.days ? (activeWeek.days[activeDay-1]?.exercises || []) : (activeWeek.exercises || []).filter(e=>e.day===activeDay);
+                                            routineToShow = {
+                                                name: `${pBlock.name} - ${activeWeek.name || `Semana ${activeWeekIdx + 1}`} - Día ${activeDay}`,
+                                                description: activeWeek.description || ''
+                                            };
+                                            exercisesCount = dayEx.length;
+                                        }
+                                    }
+                                }
+                            }
+                            
+                            if (!routineToShow) {
+                                const sessions = Routines.getAll().filter(r => r.clientId === clientId);
                                 if (sessions.length > 0) {
                                     const routine = sessions[0];
-                                    const exercises = routine.exercises || [];
+                                    routineToShow = {
+                                        name: routine.name || 'Entrenamiento de Hoy',
+                                        description: routine.description || ''
+                                    };
+                                    exercisesCount = (routine.exercises || []).length;
+                                }
+                            }
+                            
+                            const targetSec = document.getElementById('todayTargetSection');
+                            if (targetSec) {
+                                if (routineToShow) {
                                     targetSec.style.display = 'block';
                                     const nextSessName = document.getElementById('nextSessionName');
-                                    if (nextSessName) nextSessName.textContent = routine.name || 'Entrenamiento de Hoy';
+                                    if (nextSessName) nextSessName.textContent = routineToShow.name;
                                     const sessEx = document.getElementById('sessionExercises');
-                                    if (sessEx) sessEx.textContent = exercises.length;
+                                    if (sessEx) sessEx.textContent = exercisesCount;
                                     
-                                    const name = (routine.name || '').toLowerCase();
+                                    const name = (routineToShow.name || '').toLowerCase();
                                     const cardEl = targetSec.querySelector('.card');
                                     if (cardEl) {
                                         if (name.includes('pecho')) cardEl.style.borderLeft = '4px solid #ff4757';
@@ -517,7 +585,7 @@
         }
     </style>
 
-    <script src="js/custom-recipes.js?v=349"></script>
-    <script src="js/pwa-install.js?v=349"></script>
+    <script src="js/custom-recipes.js?v=363"></script>
+    <script src="js/pwa-install.js?v=363"></script>
 </body>
 </html>

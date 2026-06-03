@@ -1,12 +1,231 @@
-/* Adjustments for Mobile View */
+/* ============================================
+   INFINITE COACH: MOBILE RESPONSIVE SYSTEM
+   ============================================ */
+
+@media (max-width: 1024px) {
+    .grid-5 {
+        grid-template-columns: repeat(3, 1fr) !important;
+    }
+}
+
 @media (max-width: 768px) {
-    .main-content {
-        padding-top: var(--spacing-lg);
-        padding-bottom: var(--spacing-lg);
+    /* 1. Base Containers & Layout */
+    .container, .container-fluid {
+        padding: 0 var(--spacing-md) !important;
     }
 
+    .main-content {
+        padding-top: var(--spacing-md) !important;
+        padding-bottom: var(--spacing-xl) !important;
+    }
+
+    /* 2. Typography Scaling */
+    h1 {
+        font-size: 1.85rem !important;
+    }
+    h2 {
+        font-size: 1.5rem !important;
+    }
+    h3 {
+        font-size: 1.25rem !important;
+    }
+    p {
+        font-size: 0.925rem !important;
+    }
+
+    /* 3. Grid Collapse Rules */
+    .grid {
+        gap: var(--spacing-md) !important;
+    }
+    .grid-2, .grid-3, .grid-4 {
+        grid-template-columns: 1fr !important;
+    }
+    .grid-5 {
+        grid-template-columns: repeat(2, 1fr) !important;
+    }
+
+    /* 4. Navigation & Premium Dropdown Menu */
+    .menu-toggle {
+        display: block !important;
+        font-size: 1.75rem !important;
+        color: var(--primary-color) !important;
+        background: transparent !important;
+        border: none !important;
+        outline: none !important;
+        padding: var(--spacing-xs) !important;
+        transition: transform var(--transition-fast) !important;
+    }
+
+    .menu-toggle:active {
+        transform: scale(0.9);
+    }
+
+    .nav-links {
+        position: absolute !important;
+        top: 100% !important;
+        left: 0 !important;
+        right: 0 !important;
+        background: rgba(26, 26, 46, 0.98) !important;
+        backdrop-filter: blur(20px) !important;
+        -webkit-backdrop-filter: blur(20px) !important;
+        border-bottom: 2px solid rgba(0, 217, 255, 0.25) !important;
+        flex-direction: column !important;
+        padding: var(--spacing-lg) !important;
+        gap: var(--spacing-sm) !important;
+        box-shadow: 0 15px 35px rgba(0, 0, 0, 0.6) !important;
+        transform: translateY(-20px) !important;
+        opacity: 0 !important;
+        pointer-events: none !important;
+        transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1) !important;
+        z-index: 9999 !important;
+    }
+
+    .nav-links.active {
+        transform: translateY(0) !important;
+        opacity: 1 !important;
+        pointer-events: all !important;
+    }
+
+    .nav-link {
+        display: block !important;
+        text-align: center !important;
+        padding: 12px 20px !important;
+        font-size: 1.05rem !important;
+        border-radius: var(--radius-md) !important;
+        border: 1px solid rgba(255, 255, 255, 0.03) !important;
+        background: rgba(255, 255, 255, 0.02) !important;
+        transition: all var(--transition-fast) !important;
+    }
+
+    .nav-link:hover, .nav-link.active {
+        background: rgba(0, 217, 255, 0.12) !important;
+        border-color: rgba(0, 217, 255, 0.3) !important;
+        color: var(--primary-color) !important;
+    }
+
+    /* 5. Header and Filters Layout Collapse */
+    /* Exclude elements with specific alignment preservation */
+    .flex-between:not(.card-header):not(.nav):not(.keep-flex-mobile) {
+        flex-direction: column !important;
+        align-items: stretch !important;
+        gap: var(--spacing-md) !important;
+    }
+
+    .flex-between:not(.card-header):not(.nav):not(.keep-flex-mobile) > * {
+        width: 100% !important;
+    }
+
+    .flex-between:not(.card-header):not(.nav):not(.keep-flex-mobile) .btn {
+        width: 100% !important;
+    }
+
+    /* Filters wrapping inside dashboard/management pages */
+    .filters-wrapper, .filters-container {
+        flex-direction: column !important;
+        gap: var(--spacing-sm) !important;
+    }
+    
+    .filters-wrapper > *, .filters-container > * {
+        width: 100% !important;
+    }
+
+    /* 6. Stats & Cards Optimization */
+    .stat-card {
+        padding: var(--spacing-md) !important;
+    }
+
+    .stat-value {
+        font-size: 1.85rem !important;
+    }
+
+    .stat-label {
+        font-size: 0.725rem !important;
+    }
+
+    /* 7. Scrollable Premium Tabs */
+    .tabs {
+        flex-wrap: nowrap !important;
+        overflow-x: auto !important;
+        -webkit-overflow-scrolling: touch !important;
+        padding-bottom: var(--spacing-sm) !important;
+        margin-bottom: var(--spacing-md) !important;
+        gap: var(--spacing-xs) !important;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.08) !important;
+    }
+
+    .tab {
+        white-space: nowrap !important;
+        padding: var(--spacing-sm) var(--spacing-md) !important;
+        font-size: 0.875rem !important;
+    }
+
+    /* 8. Tables and Horizontal Smooth Scroll */
+    .table-wrapper {
+        border-radius: var(--radius-md) !important;
+        -webkit-overflow-scrolling: touch !important;
+        margin: 0 -8px !important;
+        padding: 0 8px !important;
+    }
+
+    .table th, .table td {
+        padding: var(--spacing-sm) var(--spacing-md) !important;
+        font-size: 0.875rem !important;
+    }
+
+    /* Helper to hide less important columns on small screens */
+    .hide-on-mobile {
+        display: none !important;
+    }
+
+    /* 9. Premium Modals (Sheet-like layouts on mobile) */
+    .modal-overlay {
+        padding: 10px !important;
+    }
+
+    .modal {
+        max-width: 100% !important;
+        width: 100% !important;
+        max-height: 94vh !important;
+        border-radius: var(--radius-lg) !important;
+    }
+
+    .modal-body {
+        padding: var(--spacing-md) !important;
+    }
+
+    .modal-footer {
+        padding: var(--spacing-md) !important;
+        flex-direction: column-reverse !important;
+        gap: var(--spacing-sm) !important;
+    }
+
+    .modal-footer button, .modal-footer .btn {
+        width: 100% !important;
+        margin: 0 !important;
+        padding: 12px !important;
+    }
+
+    /* 10. Forms Adjustments */
+    .form-input, .form-select, .form-textarea {
+        padding: 12px !important;
+        font-size: 0.95rem !important;
+    }
+
+    /* 11. FAB & Navigation buttons */
     .fab {
-        bottom: 20px;
-        right: 20px;
+        bottom: 20px !important;
+        right: 20px !important;
+        width: 54px !important;
+        height: 54px !important;
+    }
+}
+
+@media (max-width: 480px) {
+    .grid-5 {
+        grid-template-columns: 1fr !important;
+    }
+    
+    .logo {
+        font-size: 1.05rem !important;
     }
 }

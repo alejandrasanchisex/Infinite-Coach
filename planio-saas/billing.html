@@ -1,0 +1,518 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Facturación y Pagos - Planio</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/theme.css">
+    <style>
+        .dashboard-container {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        .main-workspace {
+            flex: 1;
+            padding: var(--spacing-xl);
+            overflow-y: auto;
+            position: relative;
+            z-index: 1;
+        }
+
+        .invoice-print {
+            color: #1E293B !important;
+            background: #FFFFFF !important;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+        }
+    </style>
+</head>
+<body>
+    <div class="bg-glow"></div>
+    <div class="bg-glow-left"></div>
+
+    <div class="dashboard-container">
+        <!-- Left Sidebar Menu -->
+        <aside class="sidebar">
+            <div class="flex-col gap-md">
+                <div class="sidebar-brand">
+                    <div class="logo">
+                        <img id="brandLogo" class="logo-img" alt="Logo" src="https://posingtheheels.com/dashboard/img/logo.png">
+                        <span id="brandName" style="font-size: 1.15rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px;">Planio</span>
+                    </div>
+                    <div style="font-size: 0.7rem; text-transform: uppercase; font-weight: 800; color: var(--text-muted); margin-top: 4px; padding-left: 2px;">
+                        ADMIN PANEL
+                    </div>
+                </div>
+
+                <ul class="sidebar-menu">
+                    <li class="sidebar-item" id="nav-panel"><a href="dashboard.html">Panel</a></li>
+                    <li class="sidebar-item" id="nav-clients"><a href="clients.html">Alumnas</a></li>
+                    <li class="sidebar-item" id="nav-agenda"><a href="appointments.html">Agenda</a></li>
+                    <li class="sidebar-item" id="nav-calendar"><a href="calendar.html">Calendario</a></li>
+                    <li class="sidebar-item" id="nav-availability"><a href="availability.html">Disponibilidad</a></li>
+                    <li class="sidebar-item" id="nav-pricing"><a href="pricing.html">Tarifas</a></li>
+                    <li class="sidebar-item" id="nav-feedbacks"><a href="feedbacks.html">Feedbacks</a></li>
+                    <li class="sidebar-item active" id="nav-stripe"><a href="billing.html">Facturación y Stripe</a></li>
+                    <li class="sidebar-item" id="nav-settings"><a href="settings.html">Configuración</a></li>
+                    <li class="sidebar-item" id="nav-clientview"><a href="client-view.html" target="_blank" style="color: var(--accent-color);">Vista alumno</a></li>
+                </ul>
+            </div>
+
+            <!-- Sidebar profile footer -->
+            <div class="sidebar-profile">
+                <div class="sidebar-profile-card">
+                    <div style="width: 38px; height: 38px; border-radius: 50%; background: var(--primary-color); display: flex; align-items: center; justify-content: center; font-weight: 700; color: white; font-size: 0.9rem;" id="userProfileLetter">A</div>
+                    <div>
+                        <strong style="font-size: 0.85rem; display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 140px;" id="userProfileEmail">Admin</strong>
+                        <span style="font-size: 0.7rem; color: var(--text-muted); font-weight: 700; display: block; text-transform: uppercase;">Administrador</span>
+                    </div>
+                </div>
+                <div class="sidebar-item mt-md" style="list-style: none;">
+                    <a href="#" onclick="signOut(); return false;" style="color: var(--error); font-weight:700; font-size:0.85rem; display:flex; align-items:center; gap: 8px; padding: 10px;">
+                        Cerrar sesión
+                    </a>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Right Workspace Main Content -->
+        <main class="main-workspace">
+            <div class="mb-lg">
+                <h1 style="margin: 0; font-size: 2.2rem; font-weight: 700;">Pasarelas de Facturación Certificada</h1>
+                <p class="text-muted" style="margin-top: 4px;">Genera facturas reglamentarias españolas (VeriFactu) y administra cuotas en Stripe.</p>
+            </div>
+
+            <div class="grid grid-3">
+                <!-- Left Column -->
+                <div class="flex-col gap-lg" style="grid-column: span 1;">
+                    <!-- VeriFactu Invoice Generation -->
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title">📝 Emitir Factura Certificada</h3>
+                        </div>
+                        <form id="invoiceForm" style="margin-top: 15px;">
+                            <div class="form-group">
+                                <label class="form-label">Seleccionar Alumna</label>
+                                <select id="invClientSelect" class="form-select" onchange="onInvoiceClientChange()" required>
+                                    <option value="">-- Elige una alumna --</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Concepto de Facturación</label>
+                                <input type="text" id="invConcept" class="form-input" value="Mensualidad Academia" required>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Importe Total (€, IVA Incl.)</label>
+                                <input type="number" id="invAmount" class="form-input" placeholder="0.00" required>
+                            </div>
+                            <div class="alert alert-info" style="background: rgba(59, 130, 246, 0.1); border: 1px solid rgba(59, 130, 246, 0.2); padding: 12px; border-radius: 8px; font-size: 0.8rem;">
+                                ℹ️ Homologación <strong>VeriFactu</strong>: Esta factura se firmará y encadenará criptográficamente por hash al registro fiscal anterior.
+                            </div>
+                            <button type="submit" class="btn btn-primary w-full mt-md">Generar y Certificar Factura ⚡</button>
+                        </form>
+                    </div>
+
+                    <!-- Stored Cards and Secure Wiping -->
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title">🔒 Pasarela y Tarjetas de Crédito</h3>
+                        </div>
+                        <p class="text-muted" style="font-size: 0.85rem; margin-top: 15px;">Tarjetas bancarias seguras almacenadas en el procesador de Stripe:</p>
+                        <div id="cardsVault" class="flex-col gap-sm mt-md mb-md">
+                            <!-- Se rellena dinámicamente -->
+                        </div>
+                    </div>
+
+                    <!-- Stripe Settings Configuration Card -->
+                    <div class="card" style="margin-top: var(--spacing-lg);">
+                        <div class="card-header">
+                            <h3 class="card-title">⚙️ Conexión de Pasarela Stripe</h3>
+                        </div>
+                        <form id="stripeConfigForm" style="margin-top: 15px;">
+                            <div class="form-group">
+                                <label class="form-label">Modo de Operación</label>
+                                <select id="stripeModeSelect" class="form-select">
+                                    <option value="test">Simulación / Test 🧪</option>
+                                    <option value="live">Producción / En Vivo 🟢</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Clave Pública (Publishable Key)</label>
+                                <input type="text" id="stripePubKey" class="form-input" style="font-family: monospace; font-size: 0.8rem;" placeholder="pk_test_..." required>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Clave Secreta (Secret Key)</label>
+                                <input type="password" id="stripeSecKey" class="form-input" style="font-family: monospace; font-size: 0.8rem;" placeholder="sk_test_..." required>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Firma del Webhook (Webhook Secret)</label>
+                                <input type="text" id="stripeWebhookSecret" class="form-input" style="font-family: monospace; font-size: 0.8rem;" placeholder="whsec_..." required>
+                            </div>
+                            <button type="submit" class="btn btn-primary w-full mt-sm">Guardar Conexión Stripe 💳</button>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Right Column: Invoicing History -->
+                <div class="flex-col gap-lg" style="grid-column: span 2;">
+                    <div class="card" style="min-height: 500px;">
+                        <div class="card-header">
+                            <h3 class="card-title">📄 Historial de Facturas (Encadenamiento Fiscal)</h3>
+                            <button class="btn btn-sm btn-secondary" onclick="exportCsvInvoices()">Exportar CSV</button>
+                        </div>
+                        <div id="invoicesList" class="mt-md">
+                            <!-- Tabla de Facturas -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </main>
+    </div>
+
+    <!-- SDKs -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="js/supabase-service.js"></script>
+    <script src="js/data-models.js"></script>
+    <script src="js/utils.js"></script>
+
+    <script>
+        function initBilling() {
+            if (window.BrandConfig) {
+                window.BrandConfig.applyTheme();
+            }
+
+            // Hydrate profiles
+            const trainerEmail = localStorage.getItem('_trainerEmail') || 'admin@posingtheheels.com';
+            document.getElementById('userProfileEmail').textContent = trainerEmail;
+            document.getElementById('userProfileLetter').textContent = trainerEmail[0].toUpperCase();
+
+            loadClientsDropdown();
+            renderInvoices();
+            renderCardsVault();
+            hydrateStripeSettings();
+        }
+
+        function loadClientsDropdown() {
+            const select = document.getElementById('invClientSelect');
+            const clients = Clients.getAll();
+            clients.sort((a,b) => a.name.localeCompare(b.name));
+
+            select.innerHTML = '<option value="">-- Elige una alumna --</option>' +
+                clients.map(c => `<option value="${c.id}">${c.name} (${c.email})</option>`).join('');
+        }
+
+        function onInvoiceClientChange() {
+            const select = document.getElementById('invClientSelect');
+            const cId = select.value;
+            if (cId) {
+                const c = Clients.getById(cId);
+                if (c) {
+                    document.getElementById('invAmount').value = c.monthlyFee;
+                    document.getElementById('invConcept').value = `Reserva de Cita - ${c.name}`;
+                }
+            }
+        }
+
+        function renderInvoices() {
+            const invoices = Invoices.getAll();
+            const container = document.getElementById('invoicesList');
+
+            if (invoices.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-state-icon">📄</div>
+                        <div class="empty-state-title">No hay facturas registradas</div>
+                        <div class="empty-state-text">Comienza a certificar facturas para ver la cadena de bloques VeriFactu.</div>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = `
+                <div class="table-wrapper">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Número</th>
+                                <th>Alumna</th>
+                                <th>Fecha</th>
+                                <th>Total (IVA Incl.)</th>
+                                <th>Certificación AEAT</th>
+                                <th style="text-align: right;">Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${invoices.slice().reverse().map(inv => `
+                                <tr>
+                                    <td><strong>${inv.number}</strong></td>
+                                    <td>${inv.clientName}</td>
+                                    <td>${new Date(inv.date).toLocaleDateString()}</td>
+                                    <td class="font-bold">${formatCurrency(inv.amount)}</td>
+                                    <td>
+                                        <div class="flex items-center gap-sm">
+                                            <div title="Hash: ${inv.hash}" style="width: 10px; height: 10px; border-radius: 50%; background: var(--success); box-shadow: 0 0 8px var(--success);"></div>
+                                            <span class="text-xs text-muted" style="font-family: monospace;">${inv.hash.substring(0, 8)}...</span>
+                                        </div>
+                                    </td>
+                                    <td style="text-align: right;">
+                                        <button class="btn btn-xs btn-outline" onclick="viewInvoiceQR('${inv.id}')">Ver / AEAT QR 🔍</button>
+                                    </td>
+                                </tr>
+                            `).join('')}
+                        </tbody>
+                    </table>
+                </div>
+            `;
+        }
+
+        function renderCardsVault() {
+            const container = document.getElementById('cardsVault');
+            const clients = Clients.getAll().filter(c => c.status === 'active');
+
+            if (clients.length === 0) {
+                container.innerHTML = `<p class="text-muted" style="font-size: 0.8rem; text-align: center;">No hay tarjetas activas en pasarela.</p>`;
+                return;
+            }
+
+            container.innerHTML = clients.map(c => {
+                const isStripe = c.paymentMethod === 'Stripe';
+                const tagClass = isStripe ? 'badge-success' : 'badge-outline';
+                const tagLabel = isStripe ? '🔄 RENOVACIÓN AUTOMÁTICA' : '✋ PAGO MANUAL';
+                
+                return `
+                    <div class="p-sm rounded-md mb-xs flex-col gap-sm" style="background: rgba(255,255,255,0.02); border: 1px solid var(--border-color);">
+                        <div class="flex-between">
+                            <strong>${c.name}</strong>
+                            <span class="badge ${tagClass}" style="font-size: 0.65rem;">${tagLabel}</span>
+                        </div>
+                        ${isStripe && c.cardDetails ? `
+                            <div class="flex-between items-center p-sm rounded-sm" style="background: rgba(0,0,0,0.15); border: 1px dashed var(--border-color);">
+                                <span style="font-size: 0.85rem; font-family: monospace; letter-spacing: 1px;">💳 ${c.cardDetails.brand} **** ${c.cardDetails.last4} (Exp: ${c.cardDetails.expiry})</span>
+                                <button class="btn btn-xs btn-danger" onclick="wipeCreditCard('${c.id}')" style="font-size: 0.65rem; padding: 4px 8px;">Borrado Seguro 🗑️</button>
+                            </div>
+                        ` : `
+                            <div class="text-xs text-muted" style="font-style: italic; padding: 4px 0;">Pago manual (Bizum / Transferencia). Sin tarjeta.</div>
+                        `}
+                    </div>
+                `;
+            }).join('');
+        }
+
+        // Crear Factura Certificada
+        document.getElementById('invoiceForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const select = document.getElementById('invClientSelect');
+            const cId = select.value;
+            const concept = document.getElementById('invConcept').value.trim();
+            const amount = parseFloat(document.getElementById('invAmount').value);
+
+            const client = Clients.getById(cId);
+            if (!client) return;
+
+            if (isNaN(amount) || amount <= 0) {
+                showToast('Por favor, indica un importe de factura válido.', 'warning');
+                return;
+            }
+
+            try {
+                const newInv = await Invoices.create({
+                    clientId: cId,
+                    clientName: client.name,
+                    amount: amount,
+                    description: concept
+                });
+
+                showToast(`Factura ${newInv.number} generada y certificada legalmente`, 'success');
+                document.getElementById('invoiceForm').reset();
+                renderInvoices();
+            } catch(err) {
+                showToast('Error al generar factura', 'error');
+            }
+        });
+
+        // Wiping Seguro de Tarjeta
+        function wipeCreditCard(clientId) {
+            const c = Clients.getById(clientId);
+            if (!c) return;
+
+            if (confirm(`⚠️ ALERTA DE SEGURIDAD:\n¿Estás seguro de que deseas eliminar permanentemente los datos de la tarjeta bancaria de ${c.name} de la base de datos de Stripe? Esta acción es irreversible.`)) {
+                try {
+                    Clients.update(clientId, {
+                        cardDetails: null,
+                        paymentMethod: 'Manual'
+                    });
+
+                    showToast(`Borrado Seguro Completo. Tarjeta de ${c.name} destruida del servidor 🔐`, 'success');
+                    renderCardsVault();
+                } catch(err) {
+                    showToast('Error en el borrado de tarjeta', 'error');
+                }
+            }
+        }
+
+        // Mostrar Detalle de Factura con código QR de la Agencia Tributaria
+        function viewInvoiceQR(invoiceId) {
+            const inv = Invoices.getById(invoiceId);
+            if (!inv) return;
+
+            const brand = BrandConfig.get();
+            const fiscal = brand.fiscalData || {};
+
+            const aeatBaseUrl = "https://www2.agenciatributaria.gob.es/wlpl/YCON-VQR/index.xhtml";
+            const params = `?nif=${fiscal.nif || 'B00000000'}&numserie=${inv.number}&fecha=${new Date(inv.date).toLocaleDateString('es-ES')}&importe=${inv.amount.toFixed(2)}`;
+            const qrTargetUrl = aeatBaseUrl + params;
+
+            const qrImgUrl = `https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${encodeURIComponent(qrTargetUrl)}`;
+
+            const content = `
+                <div class="invoice-print">
+                    <!-- Header -->
+                    <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 25px; border-bottom: 2px solid #E2E8F0; padding-bottom: 20px;">
+                        <div>
+                            <h2 style="margin: 0; color: #1E293B; font-size: 1.8rem; font-weight:800;">FACTURA DE SERVICIOS</h2>
+                            <p style="margin: 4px 0; color: #64748B; font-weight:600;">Código: ${inv.number}</p>
+                            <p style="margin: 0; color: #64748B;">Fecha: ${new Date(inv.date).toLocaleDateString()}</p>
+                        </div>
+                        <div style="text-align: right; color: #1E293B;">
+                            <strong style="font-size: 1.1rem; color: var(--primary-color);">${fiscal.companyName || brand.name}</strong>
+                            <p style="margin: 4px 0; font-size: 0.85rem; color: #475569;">NIF/CIF: ${fiscal.nif || '-'}</p>
+                            <p style="margin: 0; font-size: 0.85rem; color: #475569;">${fiscal.address || ''}, ${fiscal.zip || ''} ${fiscal.city || ''}</p>
+                        </div>
+                    </div>
+
+                    <!-- Client Detail -->
+                    <div style="background: #F8FAFC; padding: 15px; border-radius: 8px; margin-bottom: 20px; border-left: 4px solid var(--primary-color);">
+                        <span style="font-size: 0.75rem; text-transform: uppercase; color: #64748B; font-weight: 700; letter-spacing: 0.5px;">Receptor Factura</span>
+                        <h4 style="margin: 4px 0 0; color: #0F172A; font-size: 1.1rem;">${inv.clientName}</h4>
+                    </div>
+
+                    <!-- Breakdown Table -->
+                    <table style="width:100%; border-collapse:collapse; margin-bottom: 25px;">
+                        <thead>
+                            <tr style="border-bottom: 2px solid #0F172A; text-align: left;">
+                                <th style="padding: 10px 0; color: #0F172A;">Descripción / Concepto</th>
+                                <th style="padding: 10px 0; text-align: right; color: #0F172A;">Importe</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr style="border-bottom: 1px solid #E2E8F0;">
+                                <td style="padding: 15px 0; color: #334155; font-weight: 500;">${inv.description}</td>
+                                <td style="padding: 15px 0; text-align: right; font-weight: 700; color: #0F172A;">${formatCurrency(inv.amount)}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <!-- Crypto hash chaining & AEAT QR code -->
+                    <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-top: 30px;">
+                        <div>
+                            <div style="background: white; padding: 6px; border: 1px solid #CBD5E1; border-radius: 6px; display: inline-block;">
+                                <img src="${qrImgUrl}" width="100" height="100" alt="Código QR AEAT" style="display: block;">
+                            </div>
+                            <p style="margin: 4px 0 0; font-size: 0.6rem; color: #64748B; font-weight: 700; letter-spacing: 0.5px;">ESCÁNER AEAT VERIFICACIÓN</p>
+                        </div>
+                        <div style="width: 240px; color: #334155;">
+                            <div style="display: flex; justify-content: space-between; padding: 4px 0; font-size: 0.85rem;">
+                                <span style="color: #64748B;">Base Imponible:</span>
+                                <span>${formatCurrency(inv.base)}</span>
+                            </div>
+                            <div style="display: flex; justify-content: space-between; padding: 4px 0; font-size: 0.85rem;">
+                                <span style="color: #64748B;">IVA (${inv.ivaRate}%):</span>
+                                <span>${formatCurrency(inv.ivaAmount)}</span>
+                            </div>
+                            <div style="display: flex; justify-content: space-between; padding: 10px 0; font-weight: 800; font-size: 1.25rem; color: var(--primary-color); border-top: 1.5px solid #0F172A; margin-top: 8px;">
+                                <span>TOTAL PAGADO</span>
+                                <span>${formatCurrency(inv.amount)}</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Foot Signature -->
+                    <div style="margin-top: 35px; padding-top: 15px; border-top: 1px dashed #CBD5E1; text-align: center;">
+                        <div style="display: inline-flex; align-items: center; gap: 8px; background: rgba(16, 185, 129, 0.05); padding: 8px 16px; border-radius: 20px; border: 1px solid rgba(16, 185, 129, 0.2);">
+                            <div style="width: 8px; height: 8px; background: var(--success); border-radius: 50%;"></div>
+                            <span style="font-size: 0.75rem; color: #065F46; font-weight: 800; text-transform: uppercase;">Homologado VeriFactu (AEAT-2026)</span>
+                        </div>
+                        <p style="margin: 12px 0 0; font-size: 0.55rem; color: #94A3B8; font-family: monospace; word-break: break-all;">Hash Cifrado: ${inv.hash}</p>
+                    </div>
+                </div>
+            `;
+
+            showModal('Detalle de Factura Oficial', content, [
+                { text: 'Cerrar', class: 'btn-secondary', onclick: 'window.closeModal()' },
+                { text: 'Imprimir Factura 📄', class: 'btn-primary', onclick: 'window.print()' }
+            ], 'modal-large');
+        }
+
+        // Exportar a CSV
+        function exportCsvInvoices() {
+            const invoices = Invoices.getAll();
+            if (invoices.length === 0) {
+                showToast('No hay facturas para exportar.', 'info');
+                return;
+            }
+
+            let csv = "data:text/csv;charset=utf-8,\uFEFF";
+            csv += "Numero,Cliente,Fecha,Base,IVA_Pct,IVA_Importe,Total,Hash\n";
+
+            invoices.forEach(i => {
+                csv += `"${i.number}","${i.clientName}","${new Date(i.date).toLocaleDateString()}",${i.base.toFixed(2)},${i.ivaRate},${i.ivaAmount.toFixed(2)},${i.amount.toFixed(2)},"${i.hash}"\n`;
+            });
+
+            const link = document.createElement("a");
+            link.setAttribute("href", encodeURI(csv));
+            link.setAttribute("download", `facturas_planio_${new Date().getFullYear()}.csv`);
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            showToast('Historial CSV descargado con éxito 📥', 'success');
+        }
+
+        function hydrateStripeSettings() {
+            const brand = BrandConfig.get();
+            const stripe = brand.stripe || {
+                enabled: true,
+                mode: 'test',
+                publishableKey: '',
+                secretKey: '',
+                webhookSecret: ''
+            };
+
+            document.getElementById('stripeModeSelect').value = stripe.mode || 'test';
+            document.getElementById('stripePubKey').value = stripe.publishableKey || '';
+            document.getElementById('stripeSecKey').value = stripe.secretKey || '';
+            document.getElementById('stripeWebhookSecret').value = stripe.webhookSecret || '';
+        }
+
+        document.getElementById('stripeConfigForm').addEventListener('submit', (e) => {
+            e.preventDefault();
+            const mode = document.getElementById('stripeModeSelect').value;
+            const pubKey = document.getElementById('stripePubKey').value.trim();
+            const secKey = document.getElementById('stripeSecKey').value.trim();
+            const whSecret = document.getElementById('stripeWebhookSecret').value.trim();
+
+            try {
+                const brand = BrandConfig.get();
+                brand.stripe = {
+                    enabled: true,
+                    mode: mode,
+                    publishableKey: pubKey,
+                    secretKey: secKey,
+                    webhookSecret: whSecret
+                };
+                BrandConfig.set(brand);
+                showToast('¡Configuración de Stripe guardada y conectada con éxito! 💳', 'success');
+            } catch (err) {
+                showToast('Error al guardar la configuración de Stripe', 'error');
+            }
+        });
+
+        document.addEventListener('DOMContentLoaded', initBilling);
+    </script>
+</body>
+</html>

@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Valoraciones y Feedbacks - Planio</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/theme.css">
+    <style>
+        .dashboard-container {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        .main-workspace {
+            flex: 1;
+            padding: var(--spacing-xl);
+            overflow-y: auto;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Testimonials Styles */
+        .feedback-summary-cards {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: var(--spacing-lg);
+            margin-bottom: var(--spacing-xl);
+        }
+
+        @media (max-width: 768px) {
+            .feedback-summary-cards {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .feedback-summary-box {
+            background: rgba(255, 255, 255, 0.01);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-xl);
+            padding: var(--spacing-lg);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            transition: all var(--transition-fast);
+        }
+
+        .feedback-summary-box:hover {
+            border-color: rgba(var(--primary-color-rgb), 0.3);
+            box-shadow: var(--shadow-glow);
+        }
+
+        .feedback-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: var(--spacing-lg);
+        }
+
+        @media (max-width: 900px) {
+            .feedback-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .feedback-card {
+            background: rgba(255, 255, 255, 0.01);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-xl);
+            padding: var(--spacing-lg);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            transition: all var(--transition-fast);
+            position: relative;
+        }
+
+        .feedback-card:hover {
+            border-color: rgba(var(--primary-color-rgb), 0.3);
+            box-shadow: var(--shadow-glow);
+        }
+
+        .feedback-stars {
+            color: #F59E0B; /* Gold stars */
+            font-size: 1.15rem;
+            margin-bottom: var(--spacing-xs);
+        }
+
+        .feedback-comment {
+            font-size: 0.92rem;
+            color: var(--text-secondary);
+            line-height: 1.5;
+            font-style: italic;
+            margin-top: 8px;
+            margin-bottom: 15px;
+            flex: 1;
+        }
+
+        .feedback-client-info {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-sm);
+            border-top: 1px solid var(--border-color);
+            padding-top: var(--spacing-sm);
+            margin-top: auto;
+        }
+
+        .feedback-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: rgba(var(--primary-color-rgb), 0.15);
+            color: var(--primary-color);
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+        }
+
+        .feedback-delete-btn {
+            position: absolute;
+            top: 16px;
+            right: 16px;
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            cursor: pointer;
+            font-size: 1rem;
+            transition: color var(--transition-fast);
+        }
+
+        .feedback-delete-btn:hover {
+            color: var(--error);
+        }
+    </style>
+</head>
+<body>
+    <div class="bg-glow"></div>
+    <div class="bg-glow-left"></div>
+
+    <div class="dashboard-container">
+        <!-- Left Sidebar Menu -->
+        <aside class="sidebar">
+            <div class="flex-col gap-md">
+                <div class="sidebar-brand">
+                    <div class="logo">
+                        <img id="brandLogo" class="logo-img" alt="Logo" src="https://posingtheheels.com/dashboard/img/logo.png">
+                        <span id="brandName" style="font-size: 1.15rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px;">Planio</span>
+                    </div>
+                    <div style="font-size: 0.7rem; text-transform: uppercase; font-weight: 800; color: var(--text-muted); margin-top: 4px; padding-left: 2px;">
+                        ADMIN PANEL
+                    </div>
+                </div>
+
+                <ul class="sidebar-menu">
+                    <li class="sidebar-item" id="nav-panel"><a href="dashboard.html">Panel</a></li>
+                    <li class="sidebar-item" id="nav-clients"><a href="clients.html">Alumnas</a></li>
+                    <li class="sidebar-item" id="nav-agenda"><a href="appointments.html">Agenda</a></li>
+                    <li class="sidebar-item" id="nav-calendar"><a href="calendar.html">Calendario</a></li>
+                    <li class="sidebar-item" id="nav-availability"><a href="availability.html">Disponibilidad</a></li>
+                    <li class="sidebar-item" id="nav-pricing"><a href="pricing.html">Tarifas</a></li>
+                    <li class="sidebar-item active" id="nav-feedbacks"><a href="feedbacks.html">Feedbacks</a></li>
+                    <li class="sidebar-item" id="nav-stripe"><a href="billing.html">Facturación y Stripe</a></li>
+                    <li class="sidebar-item" id="nav-settings"><a href="settings.html">Configuración</a></li>
+                    <li class="sidebar-item" id="nav-clientview"><a href="client-view.html" target="_blank" style="color: var(--accent-color);">Vista alumno</a></li>
+                </ul>
+            </div>
+
+            <!-- Sidebar profile footer -->
+            <div class="sidebar-profile">
+                <div class="sidebar-profile-card">
+                    <div style="width: 38px; height: 38px; border-radius: 50%; background: var(--primary-color); display: flex; align-items: center; justify-content: center; font-weight: 700; color: white; font-size: 0.9rem;" id="userProfileLetter">A</div>
+                    <div>
+                        <strong style="font-size: 0.85rem; display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 140px;" id="userProfileEmail">Admin</strong>
+                        <span style="font-size: 0.7rem; color: var(--text-muted); font-weight: 700; display: block; text-transform: uppercase;">Administrador</span>
+                    </div>
+                </div>
+                <div class="sidebar-item mt-md" style="list-style: none;">
+                    <a href="#" onclick="signOut(); return false;" style="color: var(--error); font-weight:700; font-size:0.85rem; display:flex; align-items:center; gap: 8px; padding: 10px;">
+                        Cerrar sesión
+                    </a>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Right Workspace Main Content -->
+        <main class="main-workspace">
+            <div class="mb-lg flex-between">
+                <div>
+                    <h1 style="margin: 0; font-size: 2.2rem; font-weight: 700;">Feedbacks y Valoraciones</h1>
+                    <p class="text-muted" style="margin-top: 4px;">Opiniones de alumnas registradas de la vista pública o recopiladas manualmente.</p>
+                </div>
+                <button class="btn btn-primary" onclick="showAddFeedbackModal()">
+                    + Registrar Opinión 💬
+                </button>
+            </div>
+
+            <!-- Summary KPI boxes -->
+            <div class="feedback-summary-cards">
+                <div class="feedback-summary-box">
+                    <div>
+                        <div style="font-size: 0.7rem; text-transform: uppercase; font-weight: 800; color: var(--text-muted); letter-spacing: 0.5px;">Media de Satisfacción</div>
+                        <div style="font-size: 2.2rem; font-weight: 800; display: flex; align-items: center; gap: 8px; margin-top: 4px; line-height: 1;">
+                            <span id="avgRatingValue">5.0</span>
+                            <span style="color: #F59E0B; font-size: 1.5rem;">★</span>
+                        </div>
+                    </div>
+                    <div style="font-size: 2rem; opacity: 0.3;">📈</div>
+                </div>
+                <div class="feedback-summary-box">
+                    <div>
+                        <div style="font-size: 0.7rem; text-transform: uppercase; font-weight: 800; color: var(--text-muted); letter-spacing: 0.5px;">Opiniones Recibidas</div>
+                        <div style="font-size: 2.2rem; font-weight: 800; margin-top: 4px; line-height: 1;" id="totalFeedbacksValue">0</div>
+                    </div>
+                    <div style="font-size: 2rem; opacity: 0.3;">💬</div>
+                </div>
+            </div>
+
+            <!-- Feedbacks Grid container -->
+            <div class="feedback-grid" id="feedbacksContainer">
+                <!-- Se llena dinámicamente -->
+            </div>
+
+        </main>
+    </div>
+
+    <!-- SDKs -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="js/supabase-service.js"></script>
+    <script src="js/data-models.js"></script>
+    <script src="js/utils.js"></script>
+
+    <script>
+        function initFeedbacks() {
+            if (window.BrandConfig) {
+                window.BrandConfig.applyTheme();
+            }
+
+            // Hydrate profiles
+            const trainerEmail = localStorage.getItem('_trainerEmail') || 'admin@posingtheheels.com';
+            document.getElementById('userProfileEmail').textContent = trainerEmail;
+            document.getElementById('userProfileLetter').textContent = trainerEmail[0].toUpperCase();
+
+            renderFeedbacks();
+        }
+
+        function renderFeedbacks() {
+            const list = Feedbacks.getAll();
+            const container = document.getElementById('feedbacksContainer');
+
+            // Actualizar KPIs
+            document.getElementById('totalFeedbacksValue').textContent = list.length;
+            if (list.length > 0) {
+                const sum = list.reduce((total, fb) => total + fb.rating, 0);
+                const avg = (sum / list.length).toFixed(1);
+                document.getElementById('avgRatingValue').textContent = avg;
+            } else {
+                document.getElementById('avgRatingValue').textContent = '-';
+            }
+
+            if (list.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state" style="grid-column: span 2; width: 100%;">
+                        <div class="empty-state-icon">💬</div>
+                        <div class="empty-state-title">No hay valoraciones registradas</div>
+                        <div class="empty-state-text">Las opiniones que envíen tus alumnas aparecerán aquí.</div>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = list.map(fb => {
+                const starsHtml = '★'.repeat(fb.rating) + '☆'.repeat(5 - fb.rating);
+                const firstLetter = fb.clientName ? fb.clientName[0].toUpperCase() : 'A';
+                const formattedDate = formatDateTime(fb.date).split(' ')[0]; // Solo fecha sin hora
+
+                return `
+                    <div class="feedback-card">
+                        <button class="feedback-delete-btn" onclick="deleteFeedback('${fb.id}')" title="Eliminar valoración">🗑️</button>
+                        
+                        <div>
+                            <div class="feedback-stars">${starsHtml}</div>
+                            <div class="feedback-comment">"${fb.comment || 'Excelente clase.'}"</div>
+                        </div>
+
+                        <div class="feedback-client-info">
+                            <div class="feedback-avatar">${firstLetter}</div>
+                            <div>
+                                <div style="font-size: 0.88rem; font-weight:700; color: var(--text-primary);">${fb.clientName}</div>
+                                <div style="font-size: 0.72rem; color: var(--text-muted);">${formattedDate}</div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function showAddFeedbackModal() {
+            const content = `
+                <div class="form-group">
+                    <label class="form-label">Nombre de la Alumna</label>
+                    <input type="text" id="addFbClientName" class="form-input" placeholder="Ej: Laura García" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Calificación de Satisfacción</label>
+                    <select id="addFbRating" class="form-select">
+                        <option value="5" selected>⭐⭐⭐⭐⭐ (5/5 Excelente)</option>
+                        <option value="4">⭐⭐⭐⭐☆ (4/5 Muy Bueno)</option>
+                        <option value="3">⭐⭐⭐☆☆ (3/5 Aceptable)</option>
+                        <option value="2">⭐⭐☆☆☆ (2/5 Insuficiente)</option>
+                        <option value="1">⭐☆☆☆☆ (1/5 Muy Deficiente)</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Comentario o Testimonio</label>
+                    <textarea id="addFbComment" class="form-textarea" placeholder="Escriba la opinión de la alumna recibida por WhatsApp, email, redes..."></textarea>
+                </div>
+            `;
+
+            showModal('Registrar Opinión Manualmente', content, [
+                { text: 'Cancelar', class: 'btn-secondary', onclick: 'window.closeModal()' },
+                { text: 'Guardar Feedback 💾', class: 'btn-primary', onclick: 'submitAddFeedback()' }
+            ]);
+        }
+
+        function submitAddFeedback() {
+            const name = document.getElementById('addFbClientName').value.trim();
+            const rating = parseInt(document.getElementById('addFbRating').value);
+            const comment = document.getElementById('addFbComment').value.trim();
+
+            if(!name || !comment) {
+                showToast('Complete los campos obligatorios.', 'warning');
+                return;
+            }
+
+            try {
+                Feedbacks.create({
+                    clientName: name,
+                    rating: rating,
+                    comment: comment
+                });
+
+                showToast('Opinión guardada correctamente.', 'success');
+                window.closeModal();
+                renderFeedbacks();
+            } catch(e) {
+                showToast('Error al registrar valoración.', 'error');
+            }
+        }
+
+        function deleteFeedback(id) {
+            if (confirm('¿Estás seguro de que deseas eliminar permanentemente esta valoración?')) {
+                try {
+                    Feedbacks.delete(id);
+                    showToast('Valoración eliminada.', 'success');
+                    renderFeedbacks();
+                } catch(e) {
+                    showToast('Error al borrar la opinión.', 'error');
+                }
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', initFeedbacks);
+    </script>
+</body>
+</html>

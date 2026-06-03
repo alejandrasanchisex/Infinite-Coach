@@ -49,6 +49,25 @@ const SupabaseService = {
     async saveTrainerData(trainerId, fullData) {
         if (!this.client) this.init();
         try {
+            // Si el que guarda es un cliente, preservar la configuración de marca del entrenador de la nube
+            const isTrainer = typeof localStorage !== 'undefined' && localStorage.getItem('_trainerAuthed') === '1';
+            if (!isTrainer && trainerId !== 'default') {
+                try {
+                    const { data: cloudProfile } = await this.client
+                        .from('trainer_profiles')
+                        .select('full_data')
+                        .eq('trainer_id', trainerId)
+                        .single();
+                    
+                    if (cloudProfile && cloudProfile.full_data && cloudProfile.full_data.brand) {
+                        console.log("💾 Sincronización de Cliente: Preservando configuración de marca de la nube.");
+                        fullData.brand = cloudProfile.full_data.brand;
+                    }
+                } catch (errFetch) {
+                    console.warn("No se pudo pre-cargar la marca de la nube para fusionar:", errFetch);
+                }
+            }
+
             const { error } = await this.client
                 .from('trainer_profiles')
                 .upsert({ 
