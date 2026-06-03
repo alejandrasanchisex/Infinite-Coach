@@ -3096,15 +3096,17 @@ const BrandConfig = {
         headerLogos.forEach(logoImg => {
             const defaultLogo = 'img/logo-infinite-marble.png';
             const hasLogo = brand.logo && brand.logo.length > 5;
-            logoImg.src = hasLogo ? brand.logo : defaultLogo;
+            const logoSrcToUse = hasLogo ? brand.logo : defaultLogo;
+            logoImg.src = logoSrcToUse;
             
-            const extraStyles = "background: white; padding: 2px; border-radius: 4px;";
-            logoImg.style.cssText = `display: block !important; opacity: 1 !important; visibility: visible !important; max-height: 40px !important; width: auto !important; object-fit: contain !important; ${extraStyles}`;
+            logoImg.style.cssText = `display: block !important; opacity: 1 !important; visibility: visible !important; width: 40px !important; height: 40px !important; object-fit: contain !important; background: white; padding: 2px; border-radius: 6px; flex-shrink: 0;`;
             
             logoImg.onerror = () => {
-                if (logoImg.src !== defaultLogo && !logoImg.src.includes('blob:')) {
+                if (!logoImg.dataset.fallbackApplied) {
+                    logoImg.dataset.fallbackApplied = '1';
                     console.warn("Logo failed to load, falling back to default:", logoImg.src);
                     logoImg.src = defaultLogo;
+                    logoImg.style.cssText = `display: block !important; opacity: 1 !important; visibility: visible !important; width: 40px !important; height: 40px !important; object-fit: contain !important; background: white; padding: 2px; border-radius: 6px; flex-shrink: 0;`;
                 }
             };
         });

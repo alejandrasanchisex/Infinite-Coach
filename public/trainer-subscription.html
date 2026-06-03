@@ -5,7 +5,7 @@
     <script>
         // Force PWA cache bust / reload
         (function() {
-            const CURRENT_VERSION = '363';
+            const CURRENT_VERSION = '364';
             const savedVersion = localStorage.getItem('app_version');
             if (savedVersion !== CURRENT_VERSION) {
                 localStorage.setItem('app_version', CURRENT_VERSION);
@@ -31,7 +31,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="styles/theme.css?v=363">
+    <link rel="stylesheet" href="styles/theme.css?v=364">
     <link rel="stylesheet" href="styles/components.css">
     <style>
         .sub-container {
@@ -160,8 +160,8 @@
     </div>
 
     <!-- Scripts -->
-    <script src="js/data-models.js?v=363"></script>
-    <script src="js/utils.js?v=363"></script>
+    <script src="js/data-models.js?v=364"></script>
+    <script src="js/utils.js?v=364"></script>
     <script>
         const PLATFORM_KEY = 'saasFitnessPlatform';
         let currentTrainer = null;
@@ -214,6 +214,6 @@
             window.location.href = 'trainer-dashboard.html';
         }
     </script>
-    <script src="js/custom-recipes.js?v=363"></script></body>
+    <script src="js/custom-recipes.js?v=364"></script></body>
 
 </html>

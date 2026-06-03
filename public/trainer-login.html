@@ -4,7 +4,7 @@
     <script>
         // Force PWA cache bust / reload
         (function() {
-            const CURRENT_VERSION = '363';
+            const CURRENT_VERSION = '364';
             const savedVersion = localStorage.getItem('app_version');
             if (savedVersion !== CURRENT_VERSION) {
                 localStorage.setItem('app_version', CURRENT_VERSION);
@@ -30,7 +30,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="styles/theme.css?v=363">
+    <link rel="stylesheet" href="styles/theme.css?v=364">
     <link rel="stylesheet" href="styles/components.css">
     <style>
         body {
@@ -191,7 +191,7 @@
                 ¿No tienes una licencia? <br> Contacta con <a href="https://ingeniaia.es" style="color: rgba(255,255,255,0.5); text-decoration: underline;">Ingenia</a>.
             </p>
             <p style="font-size: 0.8rem; font-weight: 600;">
-                <a href="client-login.html?v=363" style="color: var(--primary-color); text-decoration: none;">Acceso Clientes 📲</a>
+                <a href="client-login.html?v=364" style="color: var(--primary-color); text-decoration: none;">Acceso Clientes 📲</a>
             </p>
         </div>
     </div>
@@ -204,8 +204,8 @@
 
     <!-- Supabase SDK & Service -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="js/supabase-service.js?v=363"></script>
-    <script src="js/utils.js?v=363"></script>
+    <script src="js/supabase-service.js?v=364"></script>
+    <script src="js/utils.js?v=364"></script>
 
     <script>
         const PLATFORM_KEY = 'saasFitnessPlatform';
@@ -328,5 +328,5 @@
             }
         });
     </script>
-    <script src="js/custom-recipes.js?v=363"></script></body>
+    <script src="js/custom-recipes.js?v=364"></script></body>
 </html>

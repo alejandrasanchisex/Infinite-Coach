@@ -4,7 +4,7 @@
     <script>
         // Force PWA cache bust / reload
         (function() {
-            const CURRENT_VERSION = '363';
+            const CURRENT_VERSION = '364';
             const savedVersion = localStorage.getItem('app_version');
             if (savedVersion !== CURRENT_VERSION) {
                 localStorage.setItem('app_version', CURRENT_VERSION);
@@ -28,7 +28,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Suscripción Activa - Fitness App</title>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="styles/theme.css?v=363">
+    <link rel="stylesheet" href="styles/theme.css?v=364">
     <link rel="stylesheet" href="styles/components.css">
     <style>
         body {
@@ -66,9 +66,9 @@
 
     <!-- Supabase SDK & Service -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="js/supabase-service.js?v=363"></script>
+    <script src="js/supabase-service.js?v=364"></script>
 
-    <script src="js/data-models.js?v=363"></script>
+    <script src="js/data-models.js?v=364"></script>
     <script>
         document.addEventListener('DOMContentLoaded', async () => {
             const params = new URLSearchParams(window.location.search);
@@ -127,5 +127,5 @@
             }
         });
     </script>
-    <script src="js/custom-recipes.js?v=363"></script></body>
+    <script src="js/custom-recipes.js?v=364"></script></body>
 </html>
