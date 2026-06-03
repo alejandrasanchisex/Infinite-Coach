@@ -3398,7 +3398,7 @@ const BrandConfig = {
     // Default brand settings
     let defaultBrand = {
         name: 'Infinite Coach',
-        logo: 'img/logo-infinite-marble.png',
+        logo: 'img/logo-infinite-coach.png',
         configured: true,
         colors: { primary: '#00D9FF', secondary: '#1A1A2E', accent: '#FF6B6B' },
         fiscalData: { invoiceSeries: 'F' + new Date().getFullYear() }
@@ -3423,7 +3423,7 @@ const BrandConfig = {
         if (res && (res.name === 'ASTeam' || res.logo === 'https://bieeydhacavxymoosasx.supabase.co/storage/v1/object/public/Media/1779724548154_Gemini_Generated_Image_vse84nvse84nvse8.png' || (res.colors && res.colors.primary === '#fdbfec'))) {
             res = {
                 name: 'Infinite Coach',
-                logo: 'img/logo-infinite-marble.png',
+                logo: 'img/logo-infinite-coach.png',
                 configured: true,
                 colors: { primary: '#00D9FF', secondary: '#1A1A2E', accent: '#FF6B6B' },
                 fiscalData: { invoiceSeries: 'F' + new Date().getFullYear() }
@@ -3450,7 +3450,7 @@ const BrandConfig = {
             res.colors = defaultBrand.colors;
             changed = true;
         }
-        if (!res.logo || res.logo === 'img/logo-infinite-marble.png') {
+        if (!res.logo || res.logo === 'img/logo-infinite-coach.png') {
             res.logo = defaultBrand.logo;
             changed = true;
         }
@@ -3485,7 +3485,7 @@ const BrandConfig = {
         }
     }
     if (res && (!res.logo || res.logo.length < 5)) {
-        res.logo = 'img/logo-infinite-marble.png';
+        res.logo = 'img/logo-infinite-coach.png';
     }
     return res;
   },
@@ -3559,14 +3559,14 @@ const BrandConfig = {
     
     if (brand) {
         if (loginLogoContainer) {
-            const defaultLogo = 'img/logo-infinite-marble.png';
+            const defaultLogo = 'img/logo-infinite-coach.png';
             const hasLogo = brand.logo && brand.logo.length > 5;
             const logoSrc = hasLogo ? brand.logo : defaultLogo;
             loginLogoContainer.innerHTML = `<img src="${logoSrc}" alt="${brand.name || ''}" style="width: 100%; height: 100%; object-fit: contain; border-radius: 19px;">`;
         }
 
         headerLogos.forEach(logoImg => {
-            const defaultLogo = 'img/logo-infinite-marble.png';
+            const defaultLogo = 'img/logo-infinite-coach.png';
             const hasLogo = brand.logo && brand.logo.length > 5;
             const logoSrcToUse = hasLogo ? brand.logo : defaultLogo;
             logoImg.src = logoSrcToUse;
@@ -3588,7 +3588,7 @@ const BrandConfig = {
                 logoImg.src = brand.logo;
                 logoImg.style.cssText = `display: block !important; opacity: 1 !important; visibility: visible !important; max-width: 150px !important; max-height: 150px !important; object-fit: contain !important; background: white; padding: 10px; border-radius: 4px;`;
             } else {
-                logoImg.src = 'img/logo-infinite-marble.png';
+                logoImg.src = 'img/logo-infinite-coach.png';
                 logoImg.style.cssText = `max-width: 150px !important; max-height: 150px !important; object-fit: contain !important; background: white; padding: 10px;`;
             }
         });
@@ -3606,7 +3606,7 @@ const BrandConfig = {
         
         // Favicon PWA
         try {
-            const defaultLogo = 'img/logo-infinite-marble.png';
+            const defaultLogo = 'img/logo-infinite-coach.png';
             const currentLogo = (brand && brand.logo && brand.logo.length > 5) ? brand.logo : defaultLogo;
             const absoluteLogo = currentLogo.startsWith('http') || currentLogo.startsWith('data:')
                 ? currentLogo
