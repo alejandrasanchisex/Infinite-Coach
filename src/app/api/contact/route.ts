@@ -4,7 +4,7 @@ import nodemailer from "nodemailer";
 export async function POST(request: Request) {
   try {
     const body = await request.json();
-    const { name, age, goals, customGoal, attitude, expectations, phone, email, howToContinue, toEmail, brand, primaryColor } = body;
+    const { name, age, goals, customGoal, attitude, expectations, phone, email, howToContinue, toEmail, brand, primaryColor, subject } = body;
 
     // Validaciones básicas
     const hasGoals = (goals && goals.length > 0) || (customGoal && customGoal.trim());
@@ -25,7 +25,7 @@ export async function POST(request: Request) {
     const targetEmail = toEmail || "alejandra.asteam@gmail.com";
 
     // Configurar el contenido del correo
-    const emailSubject = `Nuevo formulario ${targetBrand}!`;
+    const emailSubject = subject || `Nuevo formulario ${targetBrand}!`;
     const emailBody = `
       <meta charset="utf-8">
       <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #e0e0e0; border-radius: 10px; background-color: #fafafa;">

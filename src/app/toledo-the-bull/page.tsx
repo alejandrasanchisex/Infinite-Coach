@@ -108,7 +108,8 @@ export default function ToledoTheBullLanding() {
         ...formData,
         toEmail: "vtoledonutrition@gmail.com",
         brand: "Toledo The Bull",
-        primaryColor: "#E60026"
+        primaryColor: "#E60026",
+        subject: "Nuevo formulario - Web The Bull"
       };
 
       const res = await fetch("/api/contact", {
