@@ -56,7 +56,7 @@ window.getDietEditorHTML = function (diet) {
     let currentMacros = { protein: 0, carbs: 0, fat: 0 };
 
     (diet.meals || []).forEach(meal => {
-        const option1Foods = (meal.foods || []).filter(f => !f.option || f.option === 1);
+        const option1Foods = (meal.foods || []).filter(f => !f.option || Number(f.option) === 1);
         option1Foods.forEach(food => {
             currentCalories += parseFloat(food.calories || 0);
             currentMacros.protein += parseFloat(food.protein || 0);
@@ -475,7 +475,7 @@ window.recalculateDietTotals = function(dietId) {
 
     (diet.meals || []).forEach(meal => {
         // Solo sumamos la Opción 1 para el total de la tarjeta
-        const option1Foods = (meal.foods || []).filter(f => !f.option || f.option === 1);
+        const option1Foods = (meal.foods || []).filter(f => !f.option || Number(f.option) === 1);
         option1Foods.forEach(food => {
             totalCals += parseInt(food.calories || 0);
             totalMacros.protein += parseFloat(food.protein || 0);

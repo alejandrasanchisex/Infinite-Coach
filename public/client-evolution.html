@@ -6,7 +6,7 @@
     <script>
         // Force PWA cache bust / reload
         (function() {
-            const CURRENT_VERSION = '365';
+            const CURRENT_VERSION = '457';
             const savedVersion = localStorage.getItem('app_version');
             if (savedVersion !== CURRENT_VERSION) {
                 localStorage.setItem('app_version', CURRENT_VERSION);
@@ -30,9 +30,9 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="styles/theme.css?v=365">
-    <link rel="stylesheet" href="styles/components.css?v=365">
-    <link rel="stylesheet" href="styles/mobile.css?v=365">
+    <link rel="stylesheet" href="styles/theme.css?v=457">
+    <link rel="stylesheet" href="styles/components.css?v=457">
+    <link rel="stylesheet" href="styles/mobile.css?v=457">
     <style>
         .evo-tab { display: none !important; }
         .evo-tab.active { display: block !important; }
@@ -100,6 +100,64 @@
             }
         }
     </style>
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <script>
+        (function() {
+            var params = new URLSearchParams(window.location.search);
+            var tid = params.get('t') || localStorage.getItem('activeTrainerId') || 'default';
+            if (tid) {
+                var lower = tid.toLowerCase().trim();
+                if (lower === 'asteam' || lower === 'alejandra') {
+                    tid = 't-w0iybl7qb';
+                } else if (lower === 'toledo' || lower === 'vtoledo') {
+                    tid = 't-8umeizyns';
+                }
+            }
+            
+            // Si el cliente está logueado, intentar deducir su entrenador para PWA
+            var clientId = localStorage.getItem('clientId') || sessionStorage.getItem('clientId');
+            if (clientId) {
+                for (var i = 0; i < localStorage.length; i++) {
+                    var key = localStorage.key(i);
+                    if (key && key.indexOf('fitnessAppData_') === 0 && key.indexOf('_backup') === -1) {
+                        var raw = localStorage.getItem(key);
+                        if (raw) {
+                            try {
+                                var parsed = JSON.parse(raw);
+                                if (parsed && parsed.clients) {
+                                    for (var j = 0; j < parsed.clients.length; j++) {
+                                        if (parsed.clients[j].id === clientId) {
+                                            var foundTid = key.replace('fitnessAppData_', '');
+                                            if (foundTid && foundTid !== 'default' && foundTid !== 'admin') {
+                                                tid = foundTid;
+                                                break;
+                                            }
+                                        }
+                                    }
+                                }
+                            } catch(e) {}
+                        }
+                    }
+                    if (tid && tid !== 'default' && tid !== 'admin') break;
+                }
+            }
+            
+            var brandName = 'Infinite Coach';
+            var iconUrl = 'img/logo-infinite-coach.png';
+            if (tid === 't-w0iybl7qb') {
+                brandName = 'ASTeam';
+                iconUrl = 'https://bieeydhacavxymoosasx.supabase.co/storage/v1/object/public/Media/1779724548154_Gemini_Generated_Image_vse84nvse84nvse8.png';
+            } else if (tid === 't-8umeizyns') {
+                brandName = 'Toledo The Bull';
+                iconUrl = 'https://bieeydhacavxymoosasx.supabase.co/storage/v1/object/public/Media/1781711106755_toledo_the_bull.png';
+            }
+            
+            document.write('<meta name="apple-mobile-web-app-title" content="' + brandName + '">');
+            document.write('<link rel="apple-touch-icon" href="' + iconUrl + '">');
+            document.write('<link rel="manifest" href="manifest.json?t=' + tid + '">');
+        })();
+    </script>
 </head>
 <body style="min-height: 100vh; background: #0a0a0c;" class="theme-client">
     <header class="header">
@@ -110,10 +168,10 @@
                     <span id="brandName">Infinite Coach</span>
                 </div>
                 <ul class="nav-links">
-                    <li><a href="client-dashboard.html?v=365" class="nav-link">Inicio</a></li>
-                    <li><a href="client-profile.html?v=365" class="nav-link">Ficha</a></li>
+                    <li><a href="client-dashboard.html?v=457" class="nav-link">Inicio</a></li>
+                    <li><a href="client-profile.html?v=457" class="nav-link">Ficha</a></li>
 
-                    <li><a href="client-login.html?v=365" class="nav-link">Salir</a></li>
+                    <li><a href="client-login.html?v=457" class="nav-link">Salir</a></li>
                 </ul>
                 <button class="menu-toggle" onclick="toggleMenu()" style="margin-left: auto;">☰</button>
             </nav>
@@ -197,12 +255,12 @@
 
     <!-- Supabase SDK & Service -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="js/supabase-service.js?v=365"></script>
+    <script src="js/supabase-service.js?v=457"></script>
 
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script src="js/config.js?v=365"></script>
-    <script src="js/data-models.js?v=365"></script>
-    <script src="js/utils.js?v=365"></script>
+    <script src="js/config.js?v=457"></script>
+    <script src="js/data-models.js?v=457"></script>
+    <script src="js/utils.js?v=457"></script>
     <script>
         const cId = sessionStorage.getItem('clientId') || localStorage.getItem('clientId');
         if (!cId) {
@@ -236,9 +294,8 @@
 
             const fetchedClient = Clients.getById(cId);
             if (!fetchedClient) {
-                localStorage.removeItem('clientId');
-                sessionStorage.removeItem('clientId');
-                window.location.replace('client-login.html');
+                const activeId = localStorage.getItem('activeTrainerId') || 'default';
+                window.location.replace('client-login.html?reauth=true&t=' + activeId);
                 return;
             }
 
@@ -343,7 +400,7 @@
                     return `<tr>
                         <td>${new Date(h.date).toLocaleDateString()}</td>
                         <td><span class="badge-s">${w ? 'S'+w : '-'}</span></td>
-                        <td><strong>${h.weight || '-'}k</strong></td>
+                        <td><strong>${h.weight ? Math.round(parseFloat(h.weight) * 100) / 100 + 'k' : '-'}</strong></td>
                         ${pers.map(p => `<td>${(h.perimeters?.[p]) || fm[p] || '-'}</td>`).join('')}
                     </tr>`;
                 }).join('');
@@ -367,7 +424,7 @@
                 if (ch1) ch1.destroy();
                 ch1 = new Chart(ctx, { type:'line', data:{
                     labels: hist.map(h=>new Date(h.date).toLocaleDateString()),
-                    datasets:[{label:'Peso', data:hist.map(h=>h.weight), borderColor:brand.colors?.primary||'#3b82f6', tension:0.4, fill:true, backgroundColor: (brand.colors?.primary||'#3b82f6')+'22', pointRadius: 5}]
+                    datasets:[{label:'Peso', data:hist.map(h=> h.weight ? Math.round(parseFloat(h.weight)*100)/100 : null), borderColor:brand.colors?.primary||'#3b82f6', tension:0.4, fill:true, backgroundColor: (brand.colors?.primary||'#3b82f6')+'22', pointRadius: 5}]
                 }, options:{ responsive:true, maintainAspectRatio:false, plugins:{legend:{display:false}} }});
             }
             updateExSels();
@@ -503,7 +560,7 @@
                     <div class="flex-between mb-sm" style="border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom:8px;">
                         <span class="badge-s">Semana ${getWeek(f.date)||'-'}</span>
                         <span style="font-family:monospace; opacity:0.8;">${new Date(f.date).toLocaleDateString()}</span>
-                        <strong style="color:var(--primary-color);">${f.weight||'-'}k</strong>
+                        <strong style="color:var(--primary-color);">${f.weight ? Math.round(parseFloat(f.weight) * 100) / 100 + 'k' : '-'}</strong>
                     </div>
                     <div class="grid grid-4 gap-xs">
                         ${f.photos.front?`<img src="${f.photos.front}" style="width:100%; border-radius:8px; aspect-ratio:3/4; object-fit:cover;" onclick="window.open('${f.photos.front}')">`:''}
@@ -515,5 +572,5 @@
         }
 
     </script>
-    <script src="js/custom-recipes.js?v=365"></script></body>
+    <script src="js/custom-recipes.js?v=457"></script></body>
 </html>

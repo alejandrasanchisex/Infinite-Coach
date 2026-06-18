@@ -5,7 +5,7 @@
     <script>
         // Force PWA cache bust / reload
         (function() {
-            const CURRENT_VERSION = '365';
+            const CURRENT_VERSION = '457';
             const savedVersion = localStorage.getItem('app_version');
             if (savedVersion !== CURRENT_VERSION) {
                 localStorage.setItem('app_version', CURRENT_VERSION);
@@ -31,8 +31,9 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="styles/theme.css?v=365">
-    <link rel="stylesheet" href="styles/components.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="styles/theme.css?v=457">
+    <link rel="stylesheet" href="styles/components.css?v=457">
 </head>
 
 <body>
@@ -59,14 +60,14 @@
                 </div>
                 <button class="menu-toggle" onclick="toggleMenu()">☰</button>
                 <ul class="nav-links" id="navLinks">
-                    <li><a href="trainer-dashboard.html?v=365" class="nav-link">Dashboard</a></li>
-                    <li><a href="trainer-clients.html?v=365" class="nav-link">Clientes</a></li>
-                    <li><a href="trainer-routines.html?v=365" class="nav-link">Rutinas</a></li>
-                    <li><a href="trainer-diets.html?v=365" class="nav-link">Dietas</a></li>
-                    <li><a href="trainer-feedbacks.html?v=365" class="nav-link">Revisiones</a></li>
-                    <li><a href="trainer-media.html?v=365" class="nav-link">Biblioteca</a></li>
-                    <li><a href="trainer-appointments.html?v=365" class="nav-link active">Agenda</a></li>
-                    <li><a href="trainer-settings.html?v=365" class="nav-link">Configuración</a></li>
+                    <li><a href="trainer-dashboard.html?v=457" class="nav-link">Dashboard</a></li>
+                    <li><a href="trainer-clients.html?v=457" class="nav-link">Clientes</a></li>
+                    <li><a href="trainer-routines.html?v=457" class="nav-link">Rutinas</a></li>
+                    <li><a href="trainer-diets.html?v=457" class="nav-link">Dietas</a></li>
+                    <li><a href="trainer-feedbacks.html?v=457" class="nav-link">Revisiones</a></li>
+                    <li><a href="trainer-media.html?v=457" class="nav-link">Biblioteca</a></li>
+                    <li><a href="trainer-appointments.html?v=457" class="nav-link active">Agenda</a></li>
+                    <li><a href="trainer-settings.html?v=457" class="nav-link">Configuración</a></li>
                 </ul>
             </nav>
         </div>
@@ -118,14 +119,14 @@
 
     <!-- Supabase SDK & Service -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="js/supabase-service.js?v=365"></script>
+    <script src="js/supabase-service.js?v=457"></script>
 
     <!-- Nuevos Scripts de Google -->
-    <script src="js/config.js?v=365"></script>
-    <script src="js/auth.js?v=365"></script>
-    <script src="js/sheets.js?v=365"></script>
-    <script src="js/data-models.js?v=365"></script>
-    <script src="js/utils.js?v=365"></script>
+    <script src="js/config.js?v=457"></script>
+    <script src="js/auth.js?v=457"></script>
+    <script src="js/sheets.js?v=457"></script>
+    <script src="js/data-models.js?v=457"></script>
+    <script src="js/utils.js?v=457"></script>
     <script>
         if (!BrandConfig.isConfigured()) window.location.href = 'index.html';
 
@@ -165,14 +166,27 @@
                                 <strong>${client?.name || 'Cliente desconocido'}</strong>
                                 <span class="badge badge-info">${apt.type === 'call' ? '📞 Llamada' : apt.type === 'meeting' ? '🤝 Reunión' : '📝 Seguimiento'}</span>
                             </div>
-                            <div class="text-secondary mt-sm" style="font-size: 0.9rem; display: flex; justify-content: flex-between; align-items: flex-end;">
+                            <div class="text-secondary mt-sm" style="font-size: 0.9rem; display: flex; flex-direction: column; gap: 8px;">
                                 <div>
                                     <div style="color: var(--primary-color); font-weight: 500;">⏰ ${formatDateTime(apt.date)}</div>
                                     ${apt.notes ? `<div style="margin-top: 4px; opacity: 0.8;">📝 ${apt.notes}</div>` : ''}
                                 </div>
-                                <button class="btn btn-sm btn-outline" onclick="window.open('${gcalUrl}', '_blank')" style="padding: 4px 8px; font-size: 0.7rem; margin-top: 10px;">
-                                    🗓️ Sincronizar GCal
-                                </button>
+                                <div style="display: flex; gap: 8px; flex-wrap: wrap; margin-top: 4px;">
+                                    <button class="btn btn-sm btn-outline" onclick="window.open('${gcalUrl}', '_blank')" style="padding: 4px 8px; font-size: 0.7rem; display: inline-flex; align-items: center; gap: 4px;">
+                                        <i class="far fa-calendar-plus"></i> Sincronizar GCal
+                                    </button>
+                                    <button class="btn btn-sm btn-outline" onclick="editAppointment('${apt.id}')" style="padding: 4px 8px; font-size: 0.7rem; display: inline-flex; align-items: center; gap: 4px; color: var(--primary-color); border-color: rgba(0, 217, 255, 0.3);">
+                                        <i class="fas fa-edit"></i> Editar
+                                    </button>
+                                    <button class="btn btn-sm btn-outline btn-error" onclick="cancelAppointment('${apt.id}')" style="padding: 4px 8px; font-size: 0.7rem; display: inline-flex; align-items: center; gap: 4px;">
+                                        <i class="fas fa-times-circle"></i> Cancelar
+                                    </button>
+                                    ${client?.phone ? `
+                                    <button class="btn btn-sm btn-outline" onclick="whatsappClient('${client.phone}', '${client.name.replace(/'/g, "\\'")}', '${apt.date}')" style="padding: 4px 8px; font-size: 0.7rem; display: inline-flex; align-items: center; gap: 4px; color: #25d366; border-color: rgba(37, 211, 102, 0.3);">
+                                        <i class="fab fa-whatsapp"></i> WhatsApp
+                                    </button>
+                                    ` : ''}
+                                </div>
                             </div>
                         </div>
                         ${upcoming.indexOf(apt) < upcoming.length - 1 ? '<div class="divider" style="margin: 15px 0;"></div>' : ''}
@@ -275,7 +289,91 @@
             }
         };
 
-        
+        window.editAppointment = function (id) {
+            const appointments = Appointments.getAll() || [];
+            const apt = appointments.find(a => a.id == id);
+            if (!apt) {
+                showToast('Cita no encontrada', 'error');
+                return;
+            }
+
+            const clients = Clients.getAll();
+
+            showModal('Editar Cita', `
+        <form id="editAppointmentForm">
+          <div class="form-group">
+            <label class="form-label">Cliente</label>
+            <select class="form-select" id="editClientSelect" required>
+              <option value="">Seleccionar cliente...</option>
+              ${clients.map(c => `<option value="${c.id}" ${c.id === apt.clientId ? 'selected' : ''}>${c.name}</option>`).join('')}
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Fecha y Hora</label>
+            <input type="datetime-local" class="form-input" id="editAppointmentDate" value="${apt.date}" required>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Tipo</label>
+            <select class="form-select" id="editAppointmentType">
+              <option value="call" ${apt.type === 'call' ? 'selected' : ''}>Llamada</option>
+              <option value="meeting" ${apt.type === 'meeting' ? 'selected' : ''}>Reunión</option>
+              <option value="followup" ${apt.type === 'followup' ? 'selected' : ''}>Seguimiento</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Notas</label>
+            <textarea class="form-textarea" id="editAppointmentNotes" rows="3">${apt.notes || ''}</textarea>
+          </div>
+        </form>
+      `, [
+                { text: 'Cancelar', class: 'btn-secondary', onclick: 'window.closeModal()' },
+                { text: 'Guardar', class: 'btn-primary', onclick: `window.updateAppointment('${id}')` }
+            ]);
+        };
+
+        window.updateAppointment = function (id) {
+            const clientId = document.getElementById('editClientSelect').value;
+            const date = document.getElementById('editAppointmentDate').value;
+            const type = document.getElementById('editAppointmentType').value;
+            const notes = document.getElementById('editAppointmentNotes').value;
+
+            if (!clientId || !date) {
+                showToast('Por favor, selecciona un cliente y una fecha válida', 'error');
+                return false;
+            }
+
+            const updatedApt = Appointments.update(id, {
+                clientId,
+                date,
+                type,
+                notes
+            });
+
+            if (updatedApt) {
+                showToast('Cita actualizada con éxito', 'success');
+                loadAppointments();
+                window.closeModal();
+                return true;
+            } else {
+                showToast('Error al actualizar la cita', 'error');
+                return false;
+            }
+        };
+
+        window.cancelAppointment = function (id) {
+            if (confirm('¿Estás seguro de que deseas cancelar esta cita?')) {
+                Appointments.delete(id);
+                showToast('Cita cancelada con éxito', 'success');
+                loadAppointments();
+            }
+        };
+
+        window.whatsappClient = function (phone, name, date) {
+            const formattedDate = formatDateTime(date);
+            const msg = `¡Hola ${name}! Te escribo para coordinar nuestra cita del ${formattedDate}.`;
+            const url = generateWhatsAppLink(phone, msg);
+            window.open(url, '_blank');
+        };
 
         loadAppointments();
     </script>
@@ -298,5 +396,5 @@
             if (typeof loadAppointments === 'function') loadAppointments();
         }
     </script>
-    <script src="js/custom-recipes.js?v=365"></script></body>
+    <script src="js/custom-recipes.js?v=457"></script></body>
 </html>

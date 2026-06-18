@@ -4,7 +4,7 @@
     <script>
         // Force PWA cache bust / reload
         (function() {
-            const CURRENT_VERSION = '365';
+            const CURRENT_VERSION = '457';
             const savedVersion = localStorage.getItem('app_version');
             if (savedVersion !== CURRENT_VERSION) {
                 localStorage.setItem('app_version', CURRENT_VERSION);
@@ -31,8 +31,8 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <link rel="stylesheet" href="styles/theme.css?v=365">
-    <link rel="stylesheet" href="styles/components.css">
+    <link rel="stylesheet" href="styles/theme.css?v=457">
+    <link rel="stylesheet" href="styles/components.css?v=457">
     <style>
         .media-container { padding: 1.5rem 0; }
         .tabs-nav { display: flex; gap: 2rem; margin-bottom: 2rem; border-bottom: 1px solid rgba(255,255,255,0.05); }
@@ -56,8 +56,8 @@
         .search-box { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; padding: 0.6rem 1.2rem; display: flex; align-items: center; gap: 10px; width: 300px; }
         .search-box input { background: none; border: none; color: #fff; outline: none; font-size: 0.9rem; width: 100%; }
 
-        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); backdrop-filter: blur(8px); display: none; align-items: center; justify-content: center; z-index: 2000; padding: 20px; }
-        .modal-content { background: #161b22; width: 100%; max-width: 900px; border-radius: 24px; overflow: hidden; position: relative; border: 1px solid rgba(255,255,255,0.1); display: flex; }
+        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); backdrop-filter: blur(8px); display: none; justify-content: center; align-items: flex-start; z-index: 99999 !important; padding: 80px 20px 40px 20px; overflow-y: auto; }
+        .modal-content { background: #161b22; width: 100%; max-width: 900px; border-radius: 24px; overflow: hidden; position: relative; border: 1px solid rgba(255,255,255,0.1); display: flex; margin: 0 auto; }
         .modal-left { flex: 1; position: relative; max-height: 550px; overflow: hidden; }
         .modal-left img { width: 100%; height: 100%; object-fit: cover; }
         .modal-right { flex: 1; padding: 2.5rem; overflow-y: auto; max-height: 550px; }
@@ -96,14 +96,14 @@
                     </div>
                     <button class="menu-toggle" onclick="toggleMenu()">☰</button>
                     <ul class="nav-links" id="navLinks">
-                        <li><a href="trainer-dashboard.html?v=365" class="nav-link">Dashboard</a></li>
-                        <li><a href="trainer-clients.html?v=365" class="nav-link">Clientes</a></li>
-                        <li><a href="trainer-routines.html?v=365" class="nav-link">Rutinas</a></li>
-                        <li><a href="trainer-diets.html?v=365" class="nav-link">Dietas</a></li>
-                        <li><a href="trainer-feedbacks.html?v=365" class="nav-link">Revisiones</a></li>
-                        <li><a href="trainer-media.html?v=365" class="nav-link active">Biblioteca</a></li>
-                        <li><a href="trainer-appointments.html?v=365" class="nav-link">Agenda</a></li>
-                        <li><a href="trainer-settings.html?v=365" class="nav-link">Configuración</a></li>
+                        <li><a href="trainer-dashboard.html?v=457" class="nav-link">Dashboard</a></li>
+                        <li><a href="trainer-clients.html?v=457" class="nav-link">Clientes</a></li>
+                        <li><a href="trainer-routines.html?v=457" class="nav-link">Rutinas</a></li>
+                        <li><a href="trainer-diets.html?v=457" class="nav-link">Dietas</a></li>
+                        <li><a href="trainer-feedbacks.html?v=457" class="nav-link">Revisiones</a></li>
+                        <li><a href="trainer-media.html?v=457" class="nav-link active">Biblioteca</a></li>
+                        <li><a href="trainer-appointments.html?v=457" class="nav-link">Agenda</a></li>
+                        <li><a href="trainer-settings.html?v=457" class="nav-link">Configuración</a></li>
                         <li><a href="#" onclick="window.location.reload(); return false;" class="nav-link" style="color:var(--error-color)">🚪 Salir</a></li>
                     </ul>
                 </nav>
@@ -119,7 +119,27 @@
                             <i class="fas fa-search"></i>
                             <input type="text" id="mediaSearch" placeholder="Buscar por título..." oninput="renderGrid()">
                         </div>
-                        <button class="btn btn-primary" onclick="alert('Add')">+ Añadir Contenido</button>
+                        <div class="search-box" id="muscleFilterContainer" style="display: flex; align-items: center;">
+                            <i class="fas fa-filter" style="color: #64748b; margin-right: 8px;"></i>
+                            <select id="muscleFilter" onchange="renderGrid()" style="background: none; border: none; color: #fff; outline: none; font-size: 0.9rem; width: 100%; cursor: pointer;">
+                                <option value="" style="background: #161b22; color: #fff;">Todos los grupos</option>
+                                <option value="Pectorales" style="background: #161b22; color: #fff;">Pectorales</option>
+                                <option value="Dorsales" style="background: #161b22; color: #fff;">Dorsales</option>
+                                <option value="Lumbares" style="background: #161b22; color: #fff;">Lumbares</option>
+                                <option value="Hombros" style="background: #161b22; color: #fff;">Hombros</option>
+                                <option value="Biceps" style="background: #161b22; color: #fff;">Bíceps</option>
+                                <option value="Triceps" style="background: #161b22; color: #fff;">Tríceps</option>
+                                <option value="Antebrazo" style="background: #161b22; color: #fff;">Antebrazo</option>
+                                <option value="Abdominales" style="background: #161b22; color: #fff;">Abdominales</option>
+                                <option value="Cuadriceps" style="background: #161b22; color: #fff;">Cuádriceps</option>
+                                <option value="Isquiotibiales" style="background: #161b22; color: #fff;">Isquiotibiales</option>
+                                <option value="Gemelos" style="background: #161b22; color: #fff;">Gemelos</option>
+                                <option value="Glúteos" style="background: #161b22; color: #fff;">Glúteos</option>
+                                <option value="Cuello" style="background: #161b22; color: #fff;">Cuello</option>
+                            </select>
+                        </div>
+                        <button id="btnGenerateInfiniteRecipe" class="btn btn-primary" style="background: linear-gradient(135deg, var(--primary-color, #00D9FF) 0%, #0088FF 100%); color: #000; font-weight: 800; display: none; align-items: center; gap: 6px; margin-right: 10px;" onclick="openInfiniteRecipeModal()">✨ Receta Infinite</button>
+                        <button class="btn btn-primary" onclick="openAddModal()">+ Añadir Contenido</button>
                     </div>
                 </div>
                 <div class="media-container">
@@ -166,9 +186,9 @@
 
     <!-- MODAL EDITOR -->
     <div id="editModal" class="modal-overlay">
-        <div class="modal-content" style="max-width: 600px; display: block; padding: 2.5rem;">
+        <div class="modal-content" style="max-width: 600px; display: block; padding: 2.5rem; margin: 0 auto;">
             <button class="close-modal" onclick="closeEditModal()">&times;</button>
-            <h2 style="margin-top:0; margin-bottom: 2rem; color: var(--primary-color);">Editar Contenido</h2>
+            <h2 id="editModalTitle" style="margin-top:0; margin-bottom: 2rem; color: var(--primary-color);">Editar Contenido</h2>
             <input type="hidden" id="editId">
             <div class="form-group">
                 <label id="editUrlLabel">Imagen de la Ficha</label>
@@ -196,16 +216,19 @@
                 <label>Grupo Muscular</label>
                 <select id="editMuscle" class="form-control" style="cursor: pointer;">
                     <option value="">— Selecciona un grupo —</option>
-                    <option value="Pecho">Pecho</option>
-                    <option value="Espalda">Espalda</option>
+                    <option value="Pectorales">Pectorales</option>
+                    <option value="Dorsales">Dorsales</option>
+                    <option value="Lumbares">Lumbares</option>
                     <option value="Hombros">Hombros</option>
-                    <option value="Bíceps">Bíceps</option>
-                    <option value="Tríceps">Tríceps</option>
-                    <option value="Piernas">Piernas</option>
+                    <option value="Biceps">Bíceps</option>
+                    <option value="Triceps">Tríceps</option>
+                    <option value="Antebrazo">Antebrazo</option>
+                    <option value="Abdominales">Abdominales</option>
+                    <option value="Cuadriceps">Cuádriceps</option>
+                    <option value="Isquiotibiales">Isquiotibiales</option>
+                    <option value="Gemelos">Gemelos</option>
                     <option value="Glúteos">Glúteos</option>
-                    <option value="Core">Core</option>
-                    <option value="Cardio">Cardio</option>
-                    <option value="Fullbody">Fullbody</option>
+                    <option value="Cuello">Cuello</option>
                 </select>
             </div>
             <div style="display: flex; gap: 1rem; margin-top: 2rem;">
@@ -215,9 +238,53 @@
         </div>
     </div>
 
+    <!-- MODAL GENERADOR RECETA INFINITE -->
+    <div id="infiniteRecipeModal" class="modal-overlay">
+        <div class="modal-content" style="max-width: 600px; display: block; padding: 2.5rem; margin: 0 auto;">
+            <button class="close-modal" onclick="closeInfiniteRecipeModal()">&times;</button>
+            <h2 style="margin-top:0; margin-bottom: 2rem; color: var(--primary-color); display: flex; align-items: center; gap: 10px;">✨ Generación de Receta Infinite</h2>
+            
+            <div id="infiniteRecipeStatus" style="margin-bottom: 1.5rem; padding: 12px; border-radius: 8px; font-size: 0.85rem; color: #fff;">
+                <!-- Dynamically populated status -->
+            </div>
+
+            <div class="form-group">
+                <label>Título de la Receta</label>
+                <input type="text" id="infRecipeTitle" class="form-control" placeholder="Ej: Tortitas de Avena y Plátano">
+            </div>
+            
+            <div class="form-group">
+                <label>Ingredientes (separados por comas)</label>
+                <textarea id="infRecipeIngredients" class="form-control" placeholder="Ej: Avena, plátano, huevos, canela, miel"></textarea>
+            </div>
+            
+            <div class="form-group">
+                <label>Descripción / Elaboración</label>
+                <textarea id="infRecipeDesc" class="form-control" placeholder="Ej: Mezclar los ingredientes y cocinar a fuego medio en sartén antiadherente..."></textarea>
+            </div>
+
+            <div id="infGenerationProgress" style="display: none; flex-direction: column; align-items: center; justify-content: center; gap: 12px; margin: 20px 0; padding: 15px; border-radius: 12px; background: rgba(255,255,255,0.03);">
+                <div class="spinner" style="border: 4px solid rgba(255,255,255,0.1); width: 36px; height: 36px; border-radius: 50%; border-left-color: var(--primary-color); animation: spin 1s linear infinite;"></div>
+                <div id="infProgressText" style="font-size: 0.85rem; color: var(--primary-color); font-weight: bold; text-align: center;">Generando receta e imagen premium...</div>
+            </div>
+
+            <style>
+                @keyframes spin {
+                    0% { transform: rotate(0deg); }
+                    100% { transform: rotate(360deg); }
+                }
+            </style>
+
+            <div style="display: flex; gap: 1rem; margin-top: 2rem;">
+                <button id="btnGenerateInf" class="btn btn-primary" onclick="generateInfiniteRecipe()" style="flex:1;">Generar Receta Premium</button>
+                <button class="btn" onclick="closeInfiniteRecipeModal()" style="flex:1; background: rgba(255,255,255,0.05);">Cancelar</button>
+            </div>
+        </div>
+    </div>
+
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="js/supabase-service.js?v=365"></script>
-    <script src="js/data-models.js?v=365"></script>
+    <script src="js/supabase-service.js?v=457"></script>
+    <script src="js/data-models.js?v=457"></script>
     <script src="js/utils.js"></script>
     <script src="js/cloud-storage.js"></script>
 
@@ -231,12 +298,26 @@
             if(t === 'exercise') document.getElementById('t-v').classList.add('active');
             else if(t === 'recipe') document.getElementById('t-p').classList.add('active');
             else document.getElementById('t-h').classList.add('active');
+            
+            // Mostrar/ocultar filtro de grupo muscular según la pestaña activa
+            const filterContainer = document.getElementById('muscleFilterContainer');
+            if (filterContainer) {
+                filterContainer.style.display = (t === 'exercise') ? 'flex' : 'none';
+            }
+            
+            // Mostrar/ocultar botón Receta Infinite
+            const btnInf = document.getElementById('btnGenerateInfiniteRecipe');
+            if (btnInf) {
+                btnInf.style.display = (t === 'recipe') ? 'inline-flex' : 'none';
+            }
+            
             renderGrid();
         }
 
         async function renderGrid() {
             const grid = document.getElementById('grid');
             const query = document.getElementById('mediaSearch').value.toLowerCase();
+            const muscleFilterVal = document.getElementById('muscleFilter')?.value || '';
             grid.innerHTML = '<div style="grid-column:1/-1; text-align:center; padding:5rem; opacity:0.5;">Cargando...</div>';
             try {
                 if(window.syncFromCloud) await window.syncFromCloud();
@@ -291,7 +372,15 @@
 
                 const items = mediaCache.filter(m => {
                     const matchesTab = (currentTab === 'hidden') ? m.status === 'hidden' : (m.category === currentTab && m.status !== 'hidden');
-                    return matchesTab && m.title.toLowerCase().includes(query);
+                    
+                    let matchesMuscle = true;
+                    if (currentTab === 'exercise' && muscleFilterVal) {
+                        const mGroup = m.muscleGroup || '';
+                        matchesMuscle = (typeof mGroup === 'string' && mGroup.toLowerCase() === muscleFilterVal.toLowerCase()) ||
+                                        (Array.isArray(mGroup) && mGroup.some(g => String(g).toLowerCase() === muscleFilterVal.toLowerCase()));
+                    }
+                    
+                    return matchesTab && matchesMuscle && m.title.toLowerCase().includes(query);
                 });
 
                 let topBarHtml = '';
@@ -358,7 +447,10 @@
 
                 } else {
                     grid.style.display = 'grid'; // Restaurar el grid normal para recetas y ocultos
-                    grid.innerHTML = topBarHtml + items.map(m => `
+                    const sortedItems = currentTab === 'recipe'
+                        ? [...items].sort((a, b) => (a.title || '').localeCompare(b.title || '', 'es', { sensitivity: 'base' }))
+                        : items;
+                    grid.innerHTML = topBarHtml + sortedItems.map(m => `
                         <div class="media-card">
                             <div class="media-img"><img src="${m.category === 'recipe' ? m.url : (getYouTubeId(m.url) ? 'https://img.youtube.com/vi/'+getYouTubeId(m.url)+'/maxresdefault.jpg' : m.url)}" loading="lazy"></div>
                             <div class="media-title">${m.title}</div>
@@ -388,9 +480,53 @@
             } catch(e) { alert("Error al subir."); } finally { btn.disabled = false; btn.textContent = "Guardar Cambios"; }
         }
 
+        function openAddModal() {
+            document.getElementById('editId').value = "";
+            document.getElementById('editUrl').value = "";
+            document.getElementById('editTitle').value = "";
+            document.getElementById('editDesc').value = "";
+            
+            const cat = (currentTab === 'recipe') ? 'recipe' : 'exercise';
+            const titleEl = document.getElementById('editModalTitle');
+            if (titleEl) {
+                titleEl.innerText = (cat === 'recipe') ? 'Añadir Nueva Receta' : 'Añadir Nuevo Ejercicio';
+            }
+            
+            const btnSave = document.getElementById('btnSave');
+            if (btnSave) {
+                btnSave.textContent = "Añadir Contenido";
+            }
+            
+            if (cat === 'exercise') {
+                document.getElementById('editUrlLabel').innerText = 'Enlace del Vídeo (YouTube, Vimeo, etc.)';
+                document.getElementById('uploadBtnLabel').style.display = 'none';
+                document.getElementById('editIngredientsGroup').style.display = 'none';
+                document.getElementById('editMuscleGroup').style.display = 'block';
+                document.getElementById('editMuscle').value = "";
+            } else {
+                document.getElementById('editUrlLabel').innerText = 'Imagen de la Ficha';
+                document.getElementById('uploadBtnLabel').style.display = 'inline-flex';
+                document.getElementById('editIngredientsGroup').style.display = 'block';
+                document.getElementById('editMuscleGroup').style.display = 'none';
+                document.getElementById('editIngredients').value = "";
+            }
+            
+            document.getElementById('editModal').style.display = 'flex';
+        }
+
         function openEditModal(id) {
             const m = mediaCache.find(item => item.id == id);
             if(!m) return;
+            
+            const titleEl = document.getElementById('editModalTitle');
+            if (titleEl) {
+                titleEl.innerText = 'Editar Contenido';
+            }
+            const btnSave = document.getElementById('btnSave');
+            if (btnSave) {
+                btnSave.textContent = "Guardar Cambios";
+            }
+            
             document.getElementById('editId').value = m.id;
             document.getElementById('editUrl').value = m.url;
             document.getElementById('editTitle').value = m.title;
@@ -404,7 +540,26 @@
                 document.getElementById('editMuscleGroup').style.display = 'block';
                 // Normalizar el valor al primer grupo si hay varios, para el select
                 const muscleVal = Array.isArray(m.muscleGroup) ? m.muscleGroup[0] : (m.muscleGroup ? m.muscleGroup.split(',')[0].trim() : '');
-                document.getElementById('editMuscle').value = muscleVal;
+                
+                // Mapear valores antiguos o alternativos para coincidir con las opciones oficiales del select
+                let normalizedVal = muscleVal;
+                if (muscleVal) {
+                    const lowerVal = muscleVal.toLowerCase().trim();
+                    if (lowerVal === 'pecho') normalizedVal = 'Pectorales';
+                    else if (lowerVal === 'espalda') normalizedVal = 'Dorsales';
+                    else if (lowerVal === 'bíceps' || lowerVal === 'biceps') normalizedVal = 'Biceps';
+                    else if (lowerVal === 'tríceps' || lowerVal === 'triceps') normalizedVal = 'Triceps';
+                    else if (lowerVal === 'core' || lowerVal === 'abdominales') normalizedVal = 'Abdominales';
+                    else if (lowerVal === 'piernas' || lowerVal === 'pierna' || lowerVal === 'cuadriceps') normalizedVal = 'Cuadriceps';
+                    else if (lowerVal === 'glúteos' || lowerVal === 'gluteos') normalizedVal = 'Glúteos';
+                    else if (lowerVal === 'isquiotibiales' || lowerVal === 'isquios') normalizedVal = 'Isquiotibiales';
+                    else if (lowerVal === 'gemelos') normalizedVal = 'Gemelos';
+                    else if (lowerVal === 'hombros') normalizedVal = 'Hombros';
+                    else if (lowerVal === 'lumbares') normalizedVal = 'Lumbares';
+                    else if (lowerVal === 'antebrazo') normalizedVal = 'Antebrazo';
+                    else if (lowerVal === 'cuello') normalizedVal = 'Cuello';
+                }
+                document.getElementById('editMuscle').value = normalizedVal;
             } else {
                 document.getElementById('editUrlLabel').innerText = 'Imagen de la Ficha';
                 document.getElementById('uploadBtnLabel').style.display = 'inline-flex';
@@ -419,19 +574,64 @@
 
         async function saveChanges() {
             const id = document.getElementById('editId').value;
-            const m = mediaCache.find(item => item.id == id);
-            const updateData = {
-                url: document.getElementById('editUrl').value,
-                title: document.getElementById('editTitle').value,
-                description: document.getElementById('editDesc').value
-            };
-            if (m && m.category === 'exercise') {
-                updateData.muscleGroup = document.getElementById('editMuscle').value;
-            } else {
-                updateData.ingredients = document.getElementById('editIngredients').value;
+            const urlVal = document.getElementById('editUrl').value.trim();
+            const titleVal = document.getElementById('editTitle').value.trim();
+            const descVal = document.getElementById('editDesc').value.trim();
+            
+            if (!urlVal || !titleVal) {
+                alert("Por favor, introduce un título y una URL/Enlace.");
+                return;
             }
-            await Media.update(id, updateData);
-            closeEditModal(); renderGrid();
+            
+            const btn = document.getElementById('btnSave');
+            btn.disabled = true;
+            btn.textContent = "Guardando...";
+            
+            try {
+                if (id) {
+                    // Modo edición
+                    const m = mediaCache.find(item => item.id == id);
+                    const updateData = {
+                        url: urlVal,
+                        title: titleVal,
+                        description: descVal
+                    };
+                    if (m && m.category === 'exercise') {
+                        updateData.muscleGroup = document.getElementById('editMuscle').value;
+                    } else {
+                        updateData.ingredients = document.getElementById('editIngredients').value;
+                    }
+                    await Media.update(id, updateData);
+                    if (typeof showToast === 'function') showToast('Cambios guardados con éxito', 'success');
+                } else {
+                    // Modo creación
+                    const cat = (currentTab === 'recipe' || currentTab === 'hidden') ? 'recipe' : 'exercise';
+                    const newMedia = {
+                        type: (cat === 'recipe') ? 'image' : 'video',
+                        category: cat,
+                        url: urlVal,
+                        title: titleVal,
+                        description: descVal,
+                        isSystem: false,
+                        userEdited: true
+                    };
+                    if (cat === 'exercise') {
+                        newMedia.muscleGroup = document.getElementById('editMuscle').value;
+                    } else {
+                        newMedia.ingredients = document.getElementById('editIngredients').value;
+                    }
+                    await Media.create(newMedia);
+                    if (typeof showToast === 'function') showToast('Contenido añadido con éxito', 'success');
+                }
+                closeEditModal();
+                renderGrid();
+            } catch (e) {
+                console.error(e);
+                alert("Error al guardar cambios.");
+            } finally {
+                btn.disabled = false;
+                btn.textContent = id ? "Guardar Cambios" : "Añadir Contenido";
+            }
         }
 
                 async function restoreItem(id) {
@@ -527,9 +727,304 @@
         function closeMediaModal() { document.getElementById('mediaModal').style.display = 'none'; }
         function closeEditModal() { document.getElementById('editModal').style.display = 'none'; }
         
+        // --- FUNCIONES PREMIUM GENERADOR RECETA INFINITE ---
+        function getTrainerPlan() {
+            const activeId = localStorage.getItem('activeTrainerId') || 'default';
+            const platformRaw = localStorage.getItem('saasFitnessPlatform');
+            let currentTrainer = null;
+            if (platformRaw) {
+                try {
+                    const platformData = JSON.parse(platformRaw);
+                    currentTrainer = platformData.trainers.find(t => t.id === activeId);
+                } catch (e) {
+                    console.warn(e);
+                }
+            }
+            if (!currentTrainer && activeId.toLowerCase().includes('demo')) {
+                return 'Plan Demo';
+            }
+            return currentTrainer ? (currentTrainer.plan || 'Plan Basic') : 'Plan Basic';
+        }
+
+        function checkInfiniteRecipeLimit() {
+            const plan = getTrainerPlan().toLowerCase();
+            const isEliteOrDemo = plan.includes('elite') || plan.includes('demo');
+            if (!isEliteOrDemo) {
+                return { allowed: false, reason: 'plan' };
+            }
+            
+            const data = getData();
+            const personal = data.media || [];
+            const now = new Date();
+            const currentYear = now.getFullYear();
+            const currentMonth = now.getMonth();
+            
+            const count = personal.filter(m => {
+                if (m.category !== 'recipe' || m.isSystem) return false;
+                if (!m.createdAt) return false;
+                const created = new Date(m.createdAt);
+                return created.getFullYear() === currentYear && created.getMonth() === currentMonth;
+            }).length;
+            
+            if (count >= 5) {
+                return { allowed: false, reason: 'limit', count };
+            }
+            
+            return { allowed: true, count };
+        }
+
+        function openInfiniteRecipeModal() {
+            const limitCheck = checkInfiniteRecipeLimit();
+            const statusDiv = document.getElementById('infiniteRecipeStatus');
+            const btnGenerate = document.getElementById('btnGenerateInf');
+            const currentPlan = getTrainerPlan();
+            
+            if (limitCheck.allowed) {
+                statusDiv.style.background = 'rgba(0, 217, 255, 0.08)';
+                statusDiv.style.borderColor = 'rgba(0, 217, 255, 0.2)';
+                statusDiv.style.color = 'var(--primary-color)';
+                statusDiv.innerHTML = `🛡️ <strong>Plan ${currentPlan} Activo:</strong> Tienes disponibles <strong>${5 - limitCheck.count}</strong> de 5 recetas de generación Infinite este mes.`;
+                btnGenerate.disabled = false;
+                btnGenerate.style.opacity = '1';
+                btnGenerate.style.cursor = 'pointer';
+            } else {
+                statusDiv.style.background = 'rgba(239, 68, 68, 0.1)';
+                statusDiv.style.borderColor = 'rgba(239, 68, 68, 0.2)';
+                statusDiv.style.color = '#ff6b6b';
+                if (limitCheck.reason === 'plan') {
+                    statusDiv.innerHTML = `⚠️ <strong>Plan No Compatible (${currentPlan}):</strong> Esta herramienta requiere el Plan <strong>ELITE</strong>.`;
+                } else {
+                    statusDiv.innerHTML = `⚠️ <strong>Límite Superado:</strong> Has agotado tus 5 recetas de generación Infinite de este mes (Total creadas: ${limitCheck.count}).`;
+                }
+                btnGenerate.disabled = true;
+                btnGenerate.style.opacity = '0.5';
+                btnGenerate.style.cursor = 'not-allowed';
+            }
+            
+            document.getElementById('infRecipeTitle').value = '';
+            document.getElementById('infRecipeIngredients').value = '';
+            document.getElementById('infRecipeDesc').value = '';
+            document.getElementById('infiniteRecipeModal').style.display = 'flex';
+        }
+
+        function closeInfiniteRecipeModal() {
+            document.getElementById('infiniteRecipeModal').style.display = 'none';
+        }
+
+        async function generateInfiniteRecipe() {
+            const title = document.getElementById('infRecipeTitle').value.trim();
+            const ingredients = document.getElementById('infRecipeIngredients').value.trim();
+            const desc = document.getElementById('infRecipeDesc').value.trim();
+            
+            if (!title || !ingredients) {
+                alert('Por favor, indica el título y los ingredientes de la receta');
+                return;
+            }
+            
+            const limitCheck = checkInfiniteRecipeLimit();
+            if (!limitCheck.allowed) {
+                if (limitCheck.reason === 'plan') {
+                    alert('Esta función premium requiere el Plan ELITE');
+                } else {
+                    alert('Límite mensual alcanzado (5 recetas generadas al mes)');
+                }
+                return;
+            }
+            
+            const btnGenerate = document.getElementById('btnGenerateInf');
+            const progressContainer = document.getElementById('infGenerationProgress');
+            const progressText = document.getElementById('infProgressText');
+            
+            btnGenerate.disabled = true;
+            progressContainer.style.display = 'flex';
+            progressText.innerText = 'Traduciendo ingredientes y estructurando prompt de IA...';
+            
+            try {
+                // Auxiliares de traducción avanzada
+                const translate = (text) => {
+                    if (!text) return "";
+                    let clean = text.toLowerCase()
+                                    .normalize("NFD")
+                                    .replace(/[\u0300-\u036f]/g, ""); // remove accents
+                    
+                    const dict = {
+                        'pechuga de pollo': 'chicken breast',
+                        'pechuga de pavo': 'turkey breast',
+                        'aceite de oliva': 'olive oil',
+                        'crema de cacahuete': 'peanut butter',
+                        'queso batido': 'cottage cheese',
+                        'queso fresco': 'fresh cheese',
+                        'queso cottage': 'cottage cheese',
+                        'queso de cabra': 'goat cheese',
+                        'claras de huevo': 'egg whites',
+                        'clara de huevo': 'egg white',
+                        'jamon de york': 'york ham',
+                        'jamon york': 'york ham',
+                        'jamon cocido': 'cooked ham',
+                        'jamon serrano': 'serrano ham',
+                        'frutos rojos': 'berries',
+                        'tortilla francesa': 'french omelette',
+                        
+                        'pollo': 'chicken',
+                        'pavo': 'turkey',
+                        'ternera': 'beef',
+                        'cerdo': 'pork',
+                        'lomo': 'pork loin',
+                        'atun': 'tuna',
+                        'salmon': 'salmon',
+                        'merluza': 'hake',
+                        'bacalao': 'cod',
+                        'gambas': 'shrimp',
+                        'langostinos': 'prawns',
+                        'pulpo': 'octopus',
+                        
+                        'arroz': 'rice',
+                        'quinoa': 'quinoa',
+                        'avena': 'oats',
+                        'pan': 'bread',
+                        'pasta': 'pasta',
+                        'macarrones': 'macaroni',
+                        'tallarines': 'noodles',
+                        'espaguetis': 'spaghetti',
+                        'fideos': 'noodles',
+                        'tortitas': 'pancakes',
+                        
+                        'huevo': 'egg',
+                        'huevos': 'eggs',
+                        'clara': 'egg white',
+                        'claras': 'egg whites',
+                        
+                        'queso': 'cheese',
+                        'yogur': 'yogurt',
+                        'leche': 'milk',
+                        'mantequilla': 'butter',
+                        
+                        'aguacate': 'avocado',
+                        'pina': 'pineapple',
+                        'platano': 'banana',
+                        'manzana': 'apple',
+                        'fresa': 'strawberry',
+                        'fresas': 'strawberries',
+                        'arandanos': 'blueberries',
+                        'limon': 'lemon',
+                        'naranja': 'orange',
+                        
+                        'brocoli': 'broccoli',
+                        'espinacas': 'spinach',
+                        'esparragos': 'asparagus',
+                        'calabacin': 'zucchini',
+                        'zanahoria': 'carrot',
+                        'zanahorias': 'carrots',
+                        'lechuga': 'lettuce',
+                        'cebolla': 'onion',
+                        'ajo': 'garlic',
+                        'champinones': 'mushrooms',
+                        'setas': 'mushrooms',
+                        'pimiento': 'pepper',
+                        'pimientos': 'peppers',
+                        'tomate': 'tomato',
+                        'tomates': 'tomatoes',
+                        'verduras': 'vegetables',
+                        'ensalada': 'salad',
+                        
+                        'nueces': 'walnuts',
+                        'almendras': 'almonds',
+                        'cacahuete': 'peanut',
+                        'cacahuetes': 'peanuts',
+                        
+                        'miel': 'honey',
+                        'chocolate': 'chocolate',
+                        'cafe': 'coffee',
+                        'proteina': 'protein',
+                        'tortilla': 'omelette',
+                        'panqueque': 'pancake',
+                        'panqueques': 'pancakes',
+                        'crema': 'cream',
+                        'salsa': 'sauce',
+                        'aceite': 'oil',
+                        
+                        'y': 'and',
+                        'con': 'with'
+                    };
+
+                    // First replace multi-word terms (longest first)
+                    const sortedMultiWords = Object.keys(dict).filter(k => k.includes(' ')).sort((a,b) => b.length - a.length);
+                    for (const phrase of sortedMultiWords) {
+                        const regex = new RegExp('\\b' + phrase + '\\b', 'g');
+                        clean = clean.replace(regex, dict[phrase]);
+                    }
+
+                    // Now translate single words preserving other tokens
+                    const tokens = clean.split(/(\b\w+\b)/);
+                    const translatedTokens = tokens.map(token => {
+                        if (/^\w+$/.test(token)) {
+                            return dict[token] !== undefined ? dict[token] : token;
+                        }
+                        return token;
+                    });
+
+                    return translatedTokens.join('').replace(/\s+/g, ' ').trim();
+                };
+                
+                const englishTitle = translate(title);
+                const englishIngredients = translate(ingredients);
+                
+                // Prompt optimizado con la estética fondo blanco mármol sin utensilios
+                const prompt = `professional food photography of ${englishTitle} containing ${englishIngredients}, minimalist gourmet style, top-down overhead view, white plate centered on clean white marble background, no kitchen utensils, no forks, no knives, no spoons, soft clean bright lighting, food ready to eat, hyperrealistic food, 8k`;
+                
+                progressText.innerText = 'Creando imagen de alta calidad con IA al estilo Infinite...';
+                
+                const randomSeed = Math.floor(Math.random() * 1000000);
+                const proxyUrl = `/api/proxy-image?prompt=${encodeURIComponent(prompt)}&seed=${randomSeed}`;
+                
+                const response = await fetch(proxyUrl);
+                if (!response.ok) throw new Error('Error al generar la imagen con el servidor de IA.');
+                
+                const blob = await response.blob();
+                
+                progressText.innerText = 'Guardando la imagen en tu almacenamiento de Supabase...';
+                
+                const fileName = `infinite-recipe-${Date.now()}.jpg`;
+                const uploadedUrl = await CloudStorage.upload(blob, fileName);
+                
+                if (!uploadedUrl) {
+                    throw new Error('No se pudo guardar la imagen en Supabase.');
+                }
+                
+                progressText.innerText = 'Registrando la receta en tu biblioteca...';
+                
+                const newRecipe = Media.create({
+                    category: 'recipe',
+                    type: 'image',
+                    url: uploadedUrl,
+                    title: title,
+                    description: desc || 'Receta premium generada automáticamente con IA.',
+                    ingredients: ingredients,
+                    isSystem: false,
+                    userEdited: true
+                });
+                
+                if (newRecipe) {
+                    alert('¡Receta Infinite generada con éxito!');
+                    closeInfiniteRecipeModal();
+                    await renderGrid();
+                } else {
+                    throw new Error('Error al registrar la receta en la base de datos.');
+                }
+                
+            } catch (err) {
+                console.error(err);
+                alert(err.message || 'Error al procesar la generación de la receta');
+            } finally {
+                btnGenerate.disabled = false;
+                progressContainer.style.display = 'none';
+            }
+        }
+
         window.onclick = (e) => { 
             if(e.target == document.getElementById('mediaModal')) closeMediaModal(); 
             if(e.target == document.getElementById('editModal')) closeEditModal(); 
+            if(e.target == document.getElementById('infiniteRecipeModal')) closeInfiniteRecipeModal();
         };
         window.onload = async () => {
             if (window.SupabaseService) {

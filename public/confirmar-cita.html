@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cita Confirmada | Ingenia IA</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles/theme.css?v=457">
+    <link rel="stylesheet" href="styles/components.css?v=457">
+    <style>
+        body {
+            background-color: #0B0B1A;
+            color: white;
+            font-family: 'Outfit', sans-serif;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            margin: 0;
+            overflow-x: hidden;
+        }
+        .confirm-card {
+            background: #121226;
+            padding: 3rem 2rem;
+            border-radius: 20px;
+            text-align: center;
+            max-width: 480px;
+            width: 100%;
+            border: 1px solid rgba(0, 217, 255, 0.3);
+            box-shadow: 0 20px 50px rgba(0,0,0,0.6);
+            box-sizing: border-box;
+            animation: fadeIn 0.6s ease-out forwards;
+        }
+        .glow-circle {
+            width: 80px;
+            height: 80px;
+            background: rgba(0, 217, 255, 0.1);
+            border: 2px solid #00D9FF;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3rem;
+            margin: 0 auto 1.5rem auto;
+            box-shadow: 0 0 20px rgba(0, 217, 255, 0.3);
+            animation: scaleUp 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+        }
+        .details-box {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+            padding: 1.25rem;
+            margin: 1.5rem 0;
+            text-align: left;
+        }
+        .details-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            font-size: 0.9rem;
+        }
+        .details-row:last-child {
+            border-bottom: none;
+        }
+        .label {
+            color: rgba(255, 255, 255, 0.5);
+            font-weight: 500;
+        }
+        .val {
+            color: white;
+            font-weight: 600;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes scaleUp {
+            from { transform: scale(0.5); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+        .action-buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-top: 1.5rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="confirm-card">
+        <div class="glow-circle">📅</div>
+        <h1 style="color: #00D9FF; margin: 0 0 0.5rem 0; font-size: 1.8rem;">¡Reunión Confirmada!</h1>
+        <p style="opacity: 0.8; font-size: 0.95rem; line-height: 1.5; margin: 0;">
+            Has aceptado la convocatoria para la Welcome Call. El evento se ha registrado en tu calendario.
+        </p>
+
+        <div class="details-box">
+            <div class="details-row">
+                <span class="label">Asesor/Entrenador:</span>
+                <span id="trainer-val" class="val">-</span>
+            </div>
+            <div class="details-row">
+                <span class="label">Cliente:</span>
+                <span id="client-val" class="val">-</span>
+            </div>
+            <div class="details-row">
+                <span class="label">Fecha y Hora:</span>
+                <span id="date-val" class="val">-</span>
+            </div>
+            <div class="details-row">
+                <span class="label">Plataforma:</span>
+                <span class="val">Microsoft Teams</span>
+            </div>
+        </div>
+
+        <div class="action-buttons">
+            <a id="demo-btn" href="#" class="btn btn-primary" style="display: block; text-decoration: none; padding: 12px; font-weight: 700; border-radius: 8px;">
+                🚀 Acceder a mi Demo de Infinite Coach
+            </a>
+            <a id="teams-btn" href="https://teams.microsoft.com/l/meetup-join/19%3ameeting_welcomecall_ingeniaia" target="_blank" class="btn" style="display: block; text-decoration: none; padding: 12px; font-weight: 600; border-radius: 8px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); color: white;">
+                💻 Unirse a la reunión de Teams
+            </a>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const params = new URLSearchParams(window.location.search);
+            const clientName = params.get('name') || 'Invitado';
+            const trainerName = params.get('trainer') || 'Asesor de Onboarding';
+            const callDate = params.get('date') || 'Fecha acordada';
+            const demoLink = params.get('demo') || '#';
+
+            document.getElementById('client-val').textContent = clientName;
+            document.getElementById('trainer-val').textContent = trainerName;
+            document.getElementById('date-val').textContent = callDate;
+            
+            const demoBtn = document.getElementById('demo-btn');
+            if (demoLink && demoLink !== '#') {
+                demoBtn.href = demoLink;
+            } else {
+                demoBtn.style.display = 'none';
+            }
+        });
+    </script>
+</body>
+</html>

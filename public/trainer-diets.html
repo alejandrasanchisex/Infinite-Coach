@@ -5,7 +5,7 @@
     <script>
         // Force PWA cache bust / reload
         (function() {
-            const CURRENT_VERSION = '365';
+            const CURRENT_VERSION = '458';
             const savedVersion = localStorage.getItem('app_version');
             if (savedVersion !== CURRENT_VERSION) {
                 localStorage.setItem('app_version', CURRENT_VERSION);
@@ -354,7 +354,6 @@
 
         function showFoodModal(id = null) {
             let food = { name: '', calories: 0, protein: 0, carbs: 0, fat: 0, type: 'g' };
-            const isSys = id && String(id).startsWith('seed_');
             if (id) {
                 food = Foods.getById(id) || food;
             }
@@ -362,11 +361,11 @@
             const content = `
                 <div class="form-group">
                     <label class="form-label">Nombre del alimento *</label>
-                    <input type="text" id="foodName" class="form-input" value="${food.name}" ${isSys ? 'disabled style="opacity: 0.65; cursor: not-allowed;"' : ''}>
+                    <input type="text" id="foodName" class="form-input" value="${food.name}">
                 </div>
                 <div class="form-group">
                     <label class="form-label">Tipo de Medición</label>
-                    <select id="foodType" class="form-select" ${isSys ? 'disabled style="opacity: 0.65; cursor: not-allowed;"' : ''}>
+                    <select id="foodType" class="form-select">
                         <option value="g" ${food.type === 'g' ? 'selected' : ''}>Gramos (Valores x 100g)</option>
                         <option value="unit" ${food.type === 'unit' ? 'selected' : ''}>Por Unidad / Porción</option>
                     </select>

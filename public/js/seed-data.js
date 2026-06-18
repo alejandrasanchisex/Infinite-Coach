@@ -25,7 +25,7 @@
         { name: "Tofu Firme", calories: 83, protein: 10, carbs: 1, fat: 5 },
         { name: "Seitán", calories: 120, protein: 24, carbs: 4, fat: 2 },
         { name: "Edamame (sin vaina)", calories: 122, protein: 11, carbs: 10, fat: 5 },
-        { name: "Proteína en Polvo (Media)", calories: 370, protein: 80, carbs: 6, fat: 3 },
+
 
         // HUEVOS Y LÁCTEOS
         { name: "Huevo Entero (1 ud L)", calories: 75, protein: 6.5, carbs: 0.5, fat: 5, type: 'unit' },

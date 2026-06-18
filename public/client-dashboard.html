@@ -7,7 +7,7 @@
     <script>
         // Force PWA cache bust / reload
         (function() {
-            const CURRENT_VERSION = '365';
+            const CURRENT_VERSION = '457';
             const savedVersion = localStorage.getItem('app_version');
             if (savedVersion !== CURRENT_VERSION) {
                 localStorage.setItem('app_version', CURRENT_VERSION);
@@ -31,12 +31,67 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="styles/theme.css?v=365">
-    <link rel="stylesheet" href="styles/components.css?v=365">
-    <link rel="stylesheet" href="styles/mobile.css?v=365">
-    <link rel="manifest" href="manifest.json">
+    <link rel="stylesheet" href="styles/theme.css?v=457">
+    <link rel="stylesheet" href="styles/components.css?v=457">
+    <link rel="stylesheet" href="styles/mobile.css?v=457">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <script>
+        (function() {
+            var params = new URLSearchParams(window.location.search);
+            var tid = params.get('t') || localStorage.getItem('activeTrainerId') || 'default';
+            if (tid) {
+                var lower = tid.toLowerCase().trim();
+                if (lower === 'asteam' || lower === 'alejandra') {
+                    tid = 't-w0iybl7qb';
+                } else if (lower === 'toledo' || lower === 'vtoledo') {
+                    tid = 't-8umeizyns';
+                }
+            }
+            
+            // Si el cliente está logueado, intentar deducir su entrenador para PWA
+            var clientId = localStorage.getItem('clientId') || sessionStorage.getItem('clientId');
+            if (clientId) {
+                for (var i = 0; i < localStorage.length; i++) {
+                    var key = localStorage.key(i);
+                    if (key && key.indexOf('fitnessAppData_') === 0 && key.indexOf('_backup') === -1) {
+                        var raw = localStorage.getItem(key);
+                        if (raw) {
+                            try {
+                                var parsed = JSON.parse(raw);
+                                if (parsed && parsed.clients) {
+                                    for (var j = 0; j < parsed.clients.length; j++) {
+                                        if (parsed.clients[j].id === clientId) {
+                                            var foundTid = key.replace('fitnessAppData_', '');
+                                            if (foundTid && foundTid !== 'default' && foundTid !== 'admin') {
+                                                tid = foundTid;
+                                                break;
+                                            }
+                                        }
+                                    }
+                                }
+                            } catch(e) {}
+                        }
+                    }
+                    if (tid && tid !== 'default' && tid !== 'admin') break;
+                }
+            }
+            
+            var brandName = 'Infinite Coach';
+            var iconUrl = 'img/logo-infinite-coach.png';
+            if (tid === 't-w0iybl7qb') {
+                brandName = 'ASTeam';
+                iconUrl = 'https://bieeydhacavxymoosasx.supabase.co/storage/v1/object/public/Media/1779724548154_Gemini_Generated_Image_vse84nvse84nvse8.png';
+            } else if (tid === 't-8umeizyns') {
+                brandName = 'Toledo The Bull';
+                iconUrl = 'https://bieeydhacavxymoosasx.supabase.co/storage/v1/object/public/Media/1781711106755_toledo_the_bull.png';
+            }
+            
+            document.write('<meta name="apple-mobile-web-app-title" content="' + brandName + '">');
+            document.write('<link rel="apple-touch-icon" href="' + iconUrl + '">');
+            document.write('<link rel="manifest" href="manifest.json?t=' + tid + '">');
+        })();
+    </script>
 </head>
 
 <body class="theme-client">
@@ -49,10 +104,10 @@
                     <span id="brandName">Infinite Coach</span>
                 </div>
                 <ul class="nav-links" id="navLinks">
-                    <li><a href="client-dashboard.html?v=365" class="nav-link active">Inicio</a></li>
-                    <li><a href="client-profile.html?v=365" class="nav-link">Ficha Técnica</a></li>
+                    <li><a href="client-dashboard.html?v=457" class="nav-link active">Inicio</a></li>
+                    <li><a href="client-profile.html?v=457" class="nav-link">Ficha Técnica</a></li>
 
-                    <li><a href="client-login.html?v=365" class="nav-link">Salir</a></li>
+                    <li><a href="client-login.html?v=457" class="nav-link">Salir</a></li>
                 </ul>
                 <button class="menu-toggle" onclick="toggleMenu()" style="margin-left: auto;">☰</button>
             </nav>
@@ -178,12 +233,12 @@
 
     <!-- Supabase SDK & Service -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="js/supabase-service.js?v=365"></script>
+    <script src="js/supabase-service.js?v=457"></script>
 
-    <script src="js/config.js?v=365"></script>
-    <script src="js/data-models.js?v=365"></script>
-    <script src="js/utils.js?v=365"></script>
-    <script src="js/custom-exercises.js?v=365"></script>
+    <script src="js/config.js?v=457"></script>
+    <script src="js/data-models.js?v=457"></script>
+    <script src="js/utils.js?v=457"></script>
+    <script src="js/custom-exercises.js?v=457"></script>
     <script>
         // CLIENT INITIALIZATION
         const urlParams = new URLSearchParams(window.location.search);
@@ -194,6 +249,8 @@
             const lower = trainerIdFromUrl.toLowerCase().trim();
             if (lower === 'asteam' || lower === 'alejandra') {
                 trainerIdFromUrl = 't-w0iybl7qb';
+            } else if (lower === 'toledo' || lower === 'vtoledo') {
+                trainerIdFromUrl = 't-8umeizyns';
             }
         }
         
@@ -201,16 +258,18 @@
             sessionStorage.setItem('clientId', clientIdFromUrl);
             localStorage.setItem('clientId', clientIdFromUrl);
         }
-        if (trainerIdFromUrl) {
-            localStorage.setItem('activeTrainerId', trainerIdFromUrl);
-            window.activeTrainerId = trainerIdFromUrl;
-        } else {
-            const activeId = localStorage.getItem('activeTrainerId') || window.activeTrainerId;
-            if (!activeId || activeId === 'default' || activeId === 'admin') {
-                localStorage.setItem('activeTrainerId', 'default');
-                window.activeTrainerId = 'default';
+
+        const storedTid = localStorage.getItem('activeTrainerId');
+        let finalTid = trainerIdFromUrl;
+        if (!finalTid || finalTid === 'default' || finalTid === 'admin') {
+            if (storedTid && storedTid !== 'default' && storedTid !== 'admin') {
+                finalTid = storedTid;
+            } else {
+                finalTid = 'default';
             }
         }
+        localStorage.setItem('activeTrainerId', finalTid);
+        window.activeTrainerId = finalTid;
 
         const clientId = sessionStorage.getItem('clientId') || localStorage.getItem('clientId');
         if (!clientId) {
@@ -445,11 +504,42 @@
             renderLocalData();
 
             // --- 4. ACCIONES ADICIONALES (STRIPE / NOTIFICACIONES) ---
-            const client = Clients.getById(clientId);
+            let client = Clients.getById(clientId);
             if (!client) {
-                localStorage.removeItem('clientId');
-                sessionStorage.removeItem('clientId');
-                window.location.replace('client-login.html');
+                // Intento final de búsqueda cruzada en Supabase en tiempo real (si la base de datos de origen cambió o el contexto se desconfiguró)
+                if (window.SupabaseService && window.SupabaseService.client) {
+                    try {
+                        const { data: profiles, error } = await window.SupabaseService.client
+                            .from('trainer_profiles')
+                            .select('trainer_id, full_data');
+                        
+                        if (!error && profiles) {
+                            for (let i = 0; i < profiles.length; i++) {
+                                const p = profiles[i];
+                                const clientsList = (p.full_data && p.full_data.clients) || [];
+                                const found = clientsList.find(c => c.id === clientId);
+                                if (found) {
+                                    console.log(`[dashboard] Cliente recuperado mediante búsqueda cruzada en la nube: ${p.trainer_id}`);
+                                    localStorage.setItem('activeTrainerId', p.trainer_id);
+                                    window.activeTrainerId = p.trainer_id;
+                                    localStorage.setItem('fitnessAppData_' + p.trainer_id, JSON.stringify(p.full_data));
+                                    
+                                    // Sincronizar y volver a renderizar con la marca del entrenador correcto
+                                    await window.syncFromCloud();
+                                    renderLocalData();
+                                    client = Clients.getById(clientId);
+                                    break;
+                                }
+                            }
+                        }
+                    } catch(e) { console.warn("Error en búsqueda cruzada de recuperación:", e); }
+                }
+            }
+
+            if (!client) {
+                // NUNCA borrar clientId de localStorage para respetar la persistencia deseada por el usuario
+                const activeId = localStorage.getItem('activeTrainerId') || 'default';
+                window.location.replace('client-login.html?reauth=true&t=' + activeId);
                 return;
             }
 
@@ -458,7 +548,46 @@
                 const paymentStatusParam = urlParams.get('payment');
                 if (paymentStatusParam === 'success') {
                     client.paymentStatus = 'paid';
-                    Clients.update(clientId, { paymentStatus: 'paid' });
+                    
+                    const durationParam = urlParams.get('duration');
+                    if (durationParam) {
+                        const months = parseInt(durationParam);
+                        if (!isNaN(months) && months > 0) {
+                            let baseDate = new Date(); // Por defecto, empezar desde hoy
+                            
+                            // Si el cliente ya tenía una fecha de vigencia válida en el futuro, extender desde esa fecha
+                            if (client.paymentExpiry) {
+                                try {
+                                    const parts = client.paymentExpiry.split('/');
+                                    if (parts.length === 3) {
+                                        const day = parseInt(parts[0]);
+                                        const month = parseInt(parts[1]) - 1;
+                                        let year = parseInt(parts[2]);
+                                        if (year < 100) year += 2000;
+                                        const existingExpiry = new Date(year, month, day);
+                                        if (!isNaN(existingExpiry) && existingExpiry > baseDate) {
+                                            baseDate = existingExpiry;
+                                        }
+                                    }
+                                } catch (e) {
+                                    console.warn('Error parsing existing expiry date:', e);
+                                }
+                            }
+                            
+                            // Sumar los meses correspondientes
+                            baseDate.setMonth(baseDate.getMonth() + months);
+                            
+                            const day = String(baseDate.getDate()).padStart(2, '0');
+                            const month = String(baseDate.getMonth() + 1).padStart(2, '0');
+                            const year = baseDate.getFullYear();
+                            client.paymentExpiry = `${day}/${month}/${year}`;
+                        }
+                    }
+                    
+                    Clients.update(clientId, { 
+                        paymentStatus: 'paid',
+                        paymentExpiry: client.paymentExpiry || ''
+                    });
                     
                     if (typeof showToast === 'function') {
                         showToast('🎉 ¡Pago completado con éxito! Tu cuota está al día.', 'success');
@@ -585,7 +714,7 @@
         }
     </style>
 
-    <script src="js/custom-recipes.js?v=365"></script>
-    <script src="js/pwa-install.js?v=365"></script>
+    <script src="js/custom-recipes.js?v=457"></script>
+    <script src="js/pwa-install.js?v=457"></script>
 </body>
 </html>

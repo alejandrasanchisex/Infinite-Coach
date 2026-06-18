@@ -3,6 +3,7 @@
    ============================================ */
 
 @media (max-width: 1024px) {
+    .grid-6,
     .grid-5 {
         grid-template-columns: repeat(3, 1fr) !important;
     }
@@ -40,6 +41,7 @@
     .grid-2, .grid-3, .grid-4 {
         grid-template-columns: 1fr !important;
     }
+    .grid-6,
     .grid-5 {
         grid-template-columns: repeat(2, 1fr) !important;
     }
@@ -179,13 +181,13 @@
 
     /* 9. Premium Modals (Sheet-like layouts on mobile) */
     .modal-overlay {
-        padding: 10px !important;
+        padding: 80px 10px 20px 10px !important;
     }
 
     .modal {
         max-width: 100% !important;
         width: 100% !important;
-        max-height: 94vh !important;
+        max-height: calc(100vh - 100px) !important;
         border-radius: var(--radius-lg) !important;
     }
 
@@ -221,6 +223,7 @@
 }
 
 @media (max-width: 480px) {
+    .grid-6,
     .grid-5 {
         grid-template-columns: 1fr !important;
     }

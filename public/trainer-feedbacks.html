@@ -5,7 +5,7 @@
     <script>
         // Force PWA cache bust / reload
         (function() {
-            const CURRENT_VERSION = '365';
+            const CURRENT_VERSION = '457';
             const savedVersion = localStorage.getItem('app_version');
             if (savedVersion !== CURRENT_VERSION) {
                 localStorage.setItem('app_version', CURRENT_VERSION);
@@ -31,8 +31,8 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="styles/theme.css?v=365">
-    <link rel="stylesheet" href="styles/components.css">
+    <link rel="stylesheet" href="styles/theme.css?v=457">
+    <link rel="stylesheet" href="styles/components.css?v=457">
     <style>
         .feedback-grid {
             display: grid;
@@ -103,14 +103,14 @@
                 </div>
                 <button class="menu-toggle" onclick="toggleMenu()">☰</button>
                 <ul class="nav-links" id="navLinks">
-                    <li><a href="trainer-dashboard.html?v=365" class="nav-link">Dashboard</a></li>
-                    <li><a href="trainer-clients.html?v=365" class="nav-link">Clientes</a></li>
-                    <li><a href="trainer-routines.html?v=365" class="nav-link">Rutinas</a></li>
-                    <li><a href="trainer-diets.html?v=365" class="nav-link">Dietas</a></li>
-                    <li><a href="trainer-feedbacks.html?v=365" class="nav-link active">Revisiones</a></li>
-                    <li><a href="trainer-media.html?v=365" class="nav-link">Biblioteca</a></li>
-                    <li><a href="trainer-appointments.html?v=365" class="nav-link">Agenda</a></li>
-                    <li><a href="trainer-settings.html?v=365" class="nav-link">Configuración</a></li>
+                    <li><a href="trainer-dashboard.html?v=457" class="nav-link">Dashboard</a></li>
+                    <li><a href="trainer-clients.html?v=457" class="nav-link">Clientes</a></li>
+                    <li><a href="trainer-routines.html?v=457" class="nav-link">Rutinas</a></li>
+                    <li><a href="trainer-diets.html?v=457" class="nav-link">Dietas</a></li>
+                    <li><a href="trainer-feedbacks.html?v=457" class="nav-link active">Revisiones</a></li>
+                    <li><a href="trainer-media.html?v=457" class="nav-link">Biblioteca</a></li>
+                    <li><a href="trainer-appointments.html?v=457" class="nav-link">Agenda</a></li>
+                    <li><a href="trainer-settings.html?v=457" class="nav-link">Configuración</a></li>
                     <li><a href="#" onclick="if(typeof AUTH !== 'undefined') { AUTH.signOut() } else { window.location.reload() }; return false;" class="nav-link" style="color:var(--error-color)">🚪 Salir</a></li>
                 </ul>
             </nav>
@@ -156,13 +156,13 @@
     <!-- Scripts -->
     <!-- Supabase SDK & Service -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="js/supabase-service.js?v=365"></script>
+    <script src="js/supabase-service.js?v=457"></script>
 
-    <script src="js/config.js?v=365"></script>
-    <script src="js/auth.js?v=365"></script>
-    <script src="js/sheets.js?v=365"></script>
-    <script src="js/data-models.js?v=365"></script>
-    <script src="js/utils.js?v=365"></script>
+    <script src="js/config.js?v=457"></script>
+    <script src="js/auth.js?v=457"></script>
+    <script src="js/sheets.js?v=457"></script>
+    <script src="js/data-models.js?v=457"></script>
+    <script src="js/utils.js?v=457"></script>
     <script>
         BrandConfig.applyTheme();
         const brand = BrandConfig.get();
@@ -239,10 +239,10 @@
                                 </div>
 
                                 <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 20px;">
+                                    <div class="metric-badge">⚖️ Peso: <strong>${fb.weight ? Math.round(parseFloat(fb.weight) * 100) / 100 : '---'} kg</strong></div>
                                     <div class="metric-badge">⚡ Energía: <strong>${fb.energy || 3}/5</strong></div>
                                     <div class="metric-badge">✅ Adherencia: <strong>${fb.adherence || 3}/5</strong></div>
                                     <div class="metric-badge">😊 Humor: <strong>${fb.satisfaction || 3}/5</strong></div>
-                                    <div class="metric-badge">⚖️ Peso: <strong>${fb.weight || '---'} kg</strong></div>
                                     <div class="metric-badge">😴 Sueño: <strong>${fb.sleep || '---'}/5</strong></div>
                                     <div class="metric-badge">🧠 Estrés: <strong>${fb.stress || '---'}/5</strong></div>
                                 </div>
@@ -377,6 +377,6 @@
             loadFeedbacks();
         }
     </script>
-    <script src="js/custom-recipes.js?v=365"></script></body>
+    <script src="js/custom-recipes.js?v=457"></script></body>
 
 </html>

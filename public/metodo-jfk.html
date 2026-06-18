@@ -1,0 +1,775 @@
+<!DOCTYPE html>
+<html lang="es" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Asesorías Método JFK</title>
+    
+    <!-- Favicon JFK -->
+    <link rel="icon" type="image/png" href="/img/metodo_jfk_logo.png">
+    <link rel="apple-touch-icon" href="/img/metodo_jfk_logo.png">
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#C61B23',
+                        primaryDark: '#a5151c',
+                        accent: '#ff6b6b',
+                        bgDark: '#090A0F',
+                        cardDark: '#12131A',
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        /* Custom styles for checkboxes and radios */
+        input[type="checkbox"]:checked + span::before {
+            background-color: #C61B23;
+            border-color: #C61B23;
+            content: "\f00c";
+            font-family: "Font Awesome 5 Free";
+            font-weight: 900;
+            color: #ffffff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.75rem;
+        }
+        /* Hide scrollbars for the carousel */
+        .scrollbar-none::-webkit-scrollbar {
+            display: none;
+        }
+        .scrollbar-none {
+            -ms-overflow-style: none;  /* IE and Edge */
+            scrollbar-width: none;  /* Firefox */
+        }
+    </style>
+</head>
+<body class="bg-bgDark text-white min-h-screen relative antialiased overflow-x-hidden selection:bg-[#C61B23] selection:text-white">
+
+    <!-- Background Orbs & Effects in Crimson Red -->
+    <div class="absolute top-0 inset-x-0 h-full pointer-events-none overflow-hidden z-0">
+        <div class="absolute -top-[10%] -left-[10%] w-[600px] h-[600px] rounded-full bg-[#C61B23]/8 blur-[130px]"></div>
+        <div class="absolute top-[30%] -right-[15%] w-[500px] h-[500px] rounded-full bg-[#C61B23]/6 blur-[120px]"></div>
+        <div class="absolute bottom-[20%] left-[5%] w-[700px] h-[700px] rounded-full bg-[#C61B23]/4 blur-[160px]"></div>
+        
+        <!-- Subtle grid lines background overlay -->
+        <div class="absolute inset-0 opacity-[0.02]" 
+             style="background-image: linear-gradient(rgba(198,27,35,0.15) 1px, transparent 1px), linear-gradient(90deg, rgba(198,27,35,0.15) 1px, transparent 1px); background-size: 40px 40px;">
+        </div>
+    </div>
+
+    <div class="relative z-10 max-w-6xl mx-auto px-4 py-8 md:py-16">
+        
+        <!-- Header / Logo -->
+        <header class="flex justify-between items-center mb-16 md:mb-24">
+            <div class="flex items-center gap-3">
+                <img 
+                  src="/img/metodo_jfk_logo.png" 
+                  alt="Método JFK Logo" 
+                  class="w-12 h-12 rounded-xl object-contain bg-black p-0.5 shadow-lg shadow-primary/20 border border-primary/30"
+                />
+                <div>
+                    <span class="font-extrabold text-xl tracking-tight block">Método JFK</span>
+                    <span class="text-xs text-primary block font-bold tracking-widest uppercase">JFK Coach</span>
+                </div>
+            </div>
+            <a
+              href="#formulario"
+              class="hidden sm:inline-flex items-center gap-1.5 px-5 py-2.5 rounded-full border border-white/10 bg-white/5 text-sm font-semibold hover:bg-[#C61B23]/25 hover:border-primary/45 transition-all text-primary"
+            >
+              Empezar Ahora <i class="fa-solid fa-chevron-right text-xs"></i>
+            </a>
+        </header>
+
+        <!-- Hero Section -->
+        <section class="text-center max-w-3xl mx-auto mb-20 md:mb-32">
+            <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-primary/10 text-primary text-xs font-bold uppercase tracking-wider mb-6 border border-primary/20">
+                <i class="fa-solid fa-sparkles animate-pulse"></i> Construye el futuro que siempre soñaste
+            </div>
+            <h1 class="text-4xl sm:text-6xl font-black tracking-tight leading-tight mb-8">
+                Lleva tu físico y rendimiento al <span class="text-primary italic font-serif">Siguiente Nivel</span>
+            </h1>
+            <p class="text-gray-400 text-lg sm:text-xl leading-relaxed mb-10">
+                ¿Has trabajado duro para alcanzar tus metas sin ver los resultados que esperabas? Yo también lo he vivido y sé lo frustrante que es. Pero no te preocupes, ¡tiene solución! Lo clave es enfocarse en lo que realmente importa.
+            </p>
+            <div class="flex flex-col sm:flex-row gap-4 justify-center">
+                <a
+                  href="#formulario"
+                  class="px-8 py-4 bg-primary text-white font-extrabold rounded-2xl hover:bg-primaryDark transition-all shadow-lg shadow-primary/35 flex items-center justify-center gap-2 text-base scale-100 hover:scale-[1.02] active:scale-[0.98]"
+                >
+                  Comenzar Asesoría <i class="fa-solid fa-arrow-right"></i>
+                </a>
+                <a
+                  href="#metodo"
+                  class="px-8 py-4 bg-white/5 hover:bg-white/10 border border-white/10 text-white font-bold rounded-2xl transition-all flex items-center justify-center"
+                >
+                  Descubrir el Método
+                </a>
+            </div>
+        </section>
+
+        <!-- Transformations Section -->
+        <section class="mb-24 md:mb-36">
+            <div class="text-center mb-16">
+                <h2 class="text-3xl font-extrabold tracking-tight mb-4">
+                    Ellos lo lograron, <span class="text-primary">tú puedes ser el siguiente</span>
+                </h2>
+                <p class="text-gray-400 max-w-xl mx-auto">
+                    Echa un vistazo a los cambios físicos reales de personas que confiaron en el Método JFK y tomaron el control de su salud.
+                </p>
+            </div>
+
+            <div class="relative group px-1">
+                <!-- Left arrow -->
+                <button
+                    id="carousel-prev"
+                    class="absolute left-4 top-1/2 -translate-y-1/2 z-20 w-12 h-12 bg-black/60 hover:bg-primary border border-white/10 rounded-full flex items-center justify-center text-white transition-all shadow-lg backdrop-blur-sm focus:outline-none hover:scale-105 active:scale-95"
+                    aria-label="Anterior"
+                >
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                        <polyline points="15 18 9 12 15 6"></polyline>
+                    </svg>
+                </button>
+
+                <!-- Right arrow -->
+                <button
+                    id="carousel-next"
+                    class="absolute right-4 top-1/2 -translate-y-1/2 z-20 w-12 h-12 bg-black/60 hover:bg-primary border border-white/10 rounded-full flex items-center justify-center text-white transition-all shadow-lg backdrop-blur-sm focus:outline-none hover:scale-105 active:scale-95"
+                    aria-label="Siguiente"
+                >
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                        <polyline points="9 18 15 12 9 6"></polyline>
+                    </svg>
+                </button>
+
+                <!-- Carousel track -->
+                <div 
+                    id="transformations-carousel"
+                    class="flex items-center overflow-x-auto snap-x snap-mandatory gap-6 scrollbar-none scroll-smooth pb-4 px-2"
+                >
+                    <div class="snap-center shrink-0 w-full sm:w-[calc(50%-12px)] md:w-[calc(33.333%-16px)] overflow-hidden rounded-3xl border border-white/5 bg-[#12131A]/40 backdrop-blur-sm hover:border-primary/30 transition-all duration-300 group shadow-md shadow-primary/2">
+                        <img src="/img/jfk_transform_1.webp" alt="Cambio físico Método JFK 1" class="w-full h-auto block group-hover:scale-[1.03] transition-all duration-500">
+                    </div>
+                    <div class="snap-center shrink-0 w-full sm:w-[calc(50%-12px)] md:w-[calc(33.333%-16px)] overflow-hidden rounded-3xl border border-white/5 bg-[#12131A]/40 backdrop-blur-sm hover:border-primary/30 transition-all duration-300 group shadow-md shadow-primary/2">
+                        <img src="/img/jfk_transform_2.webp" alt="Cambio físico Método JFK 2" class="w-full h-auto block group-hover:scale-[1.03] transition-all duration-500">
+                    </div>
+                    <div class="snap-center shrink-0 w-full sm:w-[calc(50%-12px)] md:w-[calc(33.333%-16px)] overflow-hidden rounded-3xl border border-white/5 bg-[#12131A]/40 backdrop-blur-sm hover:border-primary/30 transition-all duration-300 group shadow-md shadow-primary/2">
+                        <img src="/img/jfk_transform_3.webp" alt="Cambio físico Método JFK 3" class="w-full h-auto block group-hover:scale-[1.03] transition-all duration-500">
+                    </div>
+                    <div class="snap-center shrink-0 w-full sm:w-[calc(50%-12px)] md:w-[calc(33.333%-16px)] overflow-hidden rounded-3xl border border-white/5 bg-[#12131A]/40 backdrop-blur-sm hover:border-primary/30 transition-all duration-300 group shadow-md shadow-primary/2">
+                        <img src="/img/jfk_transform_4.webp" alt="Cambio físico Método JFK 4" class="w-full h-auto block group-hover:scale-[1.03] transition-all duration-500">
+                    </div>
+                    <div class="snap-center shrink-0 w-full sm:w-[calc(50%-12px)] md:w-[calc(33.333%-16px)] overflow-hidden rounded-3xl border border-white/5 bg-[#12131A]/40 backdrop-blur-sm hover:border-primary/30 transition-all duration-300 group shadow-md shadow-primary/2">
+                        <img src="/img/jfk_transform_5.webp" alt="Cambio físico Método JFK 5" class="w-full h-auto block group-hover:scale-[1.03] transition-all duration-500">
+                    </div>
+                    <div class="snap-center shrink-0 w-full sm:w-[calc(50%-12px)] md:w-[calc(33.333%-16px)] overflow-hidden rounded-3xl border border-white/5 bg-[#12131A]/40 backdrop-blur-sm hover:border-primary/30 transition-all duration-300 group shadow-md shadow-primary/2">
+                        <img src="/img/jfk_transform_6.webp" alt="Cambio físico Método JFK 6" class="w-full h-auto block group-hover:scale-[1.03] transition-all duration-500">
+                    </div>
+                    <div class="snap-center shrink-0 w-full sm:w-[calc(50%-12px)] md:w-[calc(33.333%-16px)] overflow-hidden rounded-3xl border border-white/5 bg-[#12131A]/40 backdrop-blur-sm hover:border-primary/30 transition-all duration-300 group shadow-md shadow-primary/2">
+                        <img src="/img/jfk_transform_7.webp" alt="Cambio físico Método JFK 7" class="w-full h-auto block group-hover:scale-[1.03] transition-all duration-500">
+                    </div>
+                    <div class="snap-center shrink-0 w-full sm:w-[calc(50%-12px)] md:w-[calc(33.333%-16px)] overflow-hidden rounded-3xl border border-white/5 bg-[#12131A]/40 backdrop-blur-sm hover:border-primary/30 transition-all duration-300 group shadow-md shadow-primary/2">
+                        <img src="/img/jfk_transform_8.webp" alt="Cambio físico Método JFK 8" class="w-full h-auto block group-hover:scale-[1.03] transition-all duration-500">
+                    </div>
+                    <div class="snap-center shrink-0 w-full sm:w-[calc(50%-12px)] md:w-[calc(33.333%-16px)] overflow-hidden rounded-3xl border border-white/5 bg-[#12131A]/40 backdrop-blur-sm hover:border-primary/30 transition-all duration-300 group shadow-md shadow-primary/2">
+                        <img src="/img/jfk_transform_9.webp" alt="Cambio físico Método JFK 9" class="w-full h-auto block group-hover:scale-[1.03] transition-all duration-500">
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Method & Process Section -->
+        <section id="metodo" class="mb-24 md:mb-36 scroll-mt-20">
+            <div class="text-center mb-16">
+                <h2 class="text-3xl font-extrabold tracking-tight mb-4">
+                    ¿Te ves igual que hace 6 meses?
+                </h2>
+                <p class="text-gray-400 max-w-xl mx-auto">
+                    Si estás estancado/a, es hora de cambiar la estrategia. Todo lo que necesitas para optimizar tus resultados reunido en un solo ecosistema digital de alto rendimiento.
+                </p>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-16">
+                <!-- Feature 1 -->
+                <div class="bg-[#12131A]/60 backdrop-blur-md p-8 rounded-3xl border border-white/5 hover:border-primary/30 transition-all group flex flex-col justify-between">
+                    <div>
+                        <div class="w-14 h-14 rounded-2xl bg-primary/10 text-primary flex items-center justify-center mb-6 group-hover:bg-primary group-hover:text-white transition-all">
+                            <i class="fa-solid fa-dumbbell text-2xl"></i>
+                        </div>
+                        <h3 class="text-xl font-bold mb-3">Entrenamiento Inteligente</h3>
+                        <p class="text-gray-400 leading-relaxed text-sm">
+                            Planes adaptados a tu nivel, material disponible y objetivos. Cada ejercicio cuenta con un vídeo explicativo en HD para que ejecutes la técnica de forma impecable y evites lesiones. Registro e indicaciones de intensidad.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Feature 2 -->
+                <div class="bg-[#12131A]/60 backdrop-blur-md p-8 rounded-3xl border border-white/5 hover:border-primary/30 transition-all group flex flex-col justify-between">
+                    <div>
+                        <div class="w-14 h-14 rounded-2xl bg-primary/10 text-primary flex items-center justify-center mb-6 group-hover:bg-primary group-hover:text-white transition-all">
+                            <i class="fa-solid fa-apple-whole text-2xl"></i>
+                        </div>
+                        <h3 class="text-xl font-bold mb-3">Nutrición Flexible</h3>
+                        <p class="text-gray-400 leading-relaxed text-sm">
+                            Menús semanales adaptados a tus gustos y macros. Con recetas saludables, variadas y muy fáciles de preparar que te permitirán disfrutar del proceso sin pasar hambre.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Feature 3 -->
+                <div class="bg-[#12131A]/60 backdrop-blur-md p-8 rounded-3xl border border-white/5 hover:border-primary/30 transition-all group flex flex-col justify-between">
+                    <div>
+                        <div class="w-14 h-14 rounded-2xl bg-primary/10 text-primary flex items-center justify-center mb-6 group-hover:bg-primary group-hover:text-white transition-all">
+                            <i class="fa-solid fa-comments text-2xl"></i>
+                        </div>
+                        <h3 class="text-xl font-bold mb-3">Control y Soporte Diario</h3>
+                        <p class="text-gray-400 leading-relaxed text-sm">
+                            Estaremos comunicados a diario a través del chat. Podrás realizar tus revisiones periódicas, registrar tu evolución, fotos y hábitos clave (sueño, pasos, hidratación) y resolver dudas rápidamente.
+                        </p>
+            </div>
+        </section>
+
+        <!-- Onboarding Steps Section (from the image steps) -->
+        <section id="pasos-comenzar" class="mb-24 md:mb-36 scroll-mt-20">
+            <div class="text-center mb-16">
+                <h2 class="text-3xl font-extrabold tracking-tight mb-4">
+                    ¿Cómo empezar a trabajar juntos?
+                </h2>
+                <p class="text-gray-400 max-w-xl mx-auto">
+                    Sigue estos 3 sencillos pasos para iniciar tu cambio físico y comenzar tu asesoramiento personalizado.
+                </p>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                <!-- Step 1 -->
+                <div class="bg-[#12131A]/60 backdrop-blur-md p-6 rounded-3xl border border-white/5 hover:border-primary/30 transition-all group flex flex-col justify-between">
+                    <div>
+                        <h3 class="text-xl font-bold mb-3"><span class="text-primary">01.</span> Rellena el cuestionario</h3>
+                        <p class="text-gray-400 leading-relaxed text-sm">
+                            Rellenar el formulario es dar el primer paso para conseguir tu cambio físico y lograr tu objetivo.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Step 2 -->
+                <div class="bg-[#12131A]/60 backdrop-blur-md p-6 rounded-3xl border border-white/5 hover:border-primary/30 transition-all group flex flex-col justify-between">
+                    <div>
+                        <h3 class="text-xl font-bold mb-3"><span class="text-primary">02.</span> Espera a ser contactado/a</h3>
+                        <p class="text-gray-400 leading-relaxed text-sm">
+                            Te mandaré un mensaje por WhatsApp en un plazo máximo de 24 horas para agendar nuestra primera charla.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Step 3 -->
+                <div class="bg-[#12131A]/60 backdrop-blur-md p-6 rounded-3xl border border-white/5 hover:border-primary/30 transition-all group flex flex-col justify-between">
+                    <div>
+                        <h3 class="text-xl font-bold mb-3"><span class="text-primary">03.</span> Comienza tu programa</h3>
+                        <p class="text-gray-400 leading-relaxed text-sm">
+                            Te llamaré para que me cuentes cuál es tu objetivo y podamos resolver tus dudas sobre cómo trabajo.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Lead Form Section -->
+        <section id="formulario" class="max-w-3xl mx-auto scroll-mt-20">
+            
+            <!-- Header Card -->
+            <div class="relative bg-cardDark rounded-t-3xl border-t-[6px] border-primary p-8 border-x border-b border-white/5 shadow-2xl">
+                <div class="absolute top-0 right-0 p-6 opacity-5 pointer-events-none text-primary">
+                    <i class="fa-solid fa-shield-halved text-8xl"></i>
+                </div>
+                <div class="flex items-center gap-4 mb-4">
+                    <img 
+                      src="/img/metodo_jfk_logo.png" 
+                      alt="Método JFK Logo Mini" 
+                      class="w-10 h-10 rounded-lg object-contain bg-black p-0.5"
+                    />
+                    <h2 class="text-2xl sm:text-3xl font-extrabold tracking-tight">Asesorías Método JFK</h2>
+                </div>
+                <p class="text-gray-300 text-sm sm:text-base leading-relaxed">
+                    ¡Gracias por interesarte por mi asesoría! Rellena el cuestionario a continuación y me pondré en contacto contigo en las próximas horas para valorar tu caso y empezar a trabajar juntos.
+                </p>
+            </div>
+
+            <!-- Form Container -->
+            <div id="form-wrapper">
+                <form id="contact-form" class="space-y-6 mt-6">
+                    
+                    <!-- Question 1: Name -->
+                    <div class="bg-[#12131A]/50 backdrop-blur-sm border border-white/5 rounded-2xl p-6 sm:p-8 space-y-4 shadow-xl">
+                        <label class="block text-base font-bold text-gray-200">
+                            Nombre y Apellidos <span class="text-primary">*</span>
+                        </label>
+                        <div class="relative">
+                            <i class="fa-solid fa-user absolute left-4 top-1/2 -translate-y-1/2 text-gray-500"></i>
+                            <input
+                              type="text"
+                              name="Nombre_y_Apellidos"
+                              required
+                              placeholder="Escribe tu respuesta"
+                              class="w-full bg-bgDark border border-white/10 rounded-xl py-4 pl-12 pr-4 text-white placeholder-gray-600 focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all"
+                            />
+                        </div>
+                    </div>
+
+                    <!-- Question 2: Age -->
+                    <div class="bg-[#12131A]/50 backdrop-blur-sm border border-white/5 rounded-2xl p-6 sm:p-8 space-y-4 shadow-xl">
+                        <label class="block text-base font-bold text-gray-200">
+                            Edad <span class="text-primary">*</span>
+                        </label>
+                        <div class="relative">
+                            <i class="fa-solid fa-calendar absolute left-4 top-1/2 -translate-y-1/2 text-gray-500"></i>
+                            <input
+                              type="number"
+                              name="Edad"
+                              required
+                              min="1"
+                              max="120"
+                              placeholder="Escribe tu edad"
+                              class="w-full bg-bgDark border border-white/10 rounded-xl py-4 pl-12 pr-4 text-white placeholder-gray-600 focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all"
+                            />
+                        </div>
+                    </div>
+
+                    <!-- Question 3: Goal (Multiselect) -->
+                    <div class="bg-[#12131A]/50 backdrop-blur-sm border border-white/5 rounded-2xl p-6 sm:p-8 space-y-4 shadow-xl">
+                        <label class="block text-base font-bold text-gray-200">
+                            ¿Cuál es tu objetivo? <span class="text-primary">*</span>
+                        </label>
+                        
+                        <div class="space-y-3">
+                            <label class="flex items-start gap-3 cursor-pointer group">
+                                <input
+                                  type="checkbox"
+                                  name="Objetivo[]"
+                                  value="Mejorar y aprender hábitos saludables"
+                                  class="w-5 h-5 rounded bg-bgDark border border-white/10 text-primary focus:ring-primary/20 cursor-pointer transition-all mt-0.5"
+                                />
+                                <span class="text-gray-300 text-sm sm:text-base group-hover:text-white transition-colors">
+                                    Mejorar y aprender hábitos saludables
+                                </span>
+                            </label>
+
+                            <label class="flex items-start gap-3 cursor-pointer group">
+                                <input
+                                  type="checkbox"
+                                  name="Objetivo[]"
+                                  value="Ganar masa muscular"
+                                  class="w-5 h-5 rounded bg-bgDark border border-white/10 text-primary focus:ring-primary/20 cursor-pointer transition-all mt-0.5"
+                                />
+                                <span class="text-gray-300 text-sm sm:text-base group-hover:text-white transition-colors">
+                                    Ganar masa muscular
+                                </span>
+                            </label>
+
+                            <label class="flex items-start gap-3 cursor-pointer group">
+                                <input
+                                  type="checkbox"
+                                  name="Objetivo[]"
+                                  value="Pérdida de grasa"
+                                  class="w-5 h-5 rounded bg-bgDark border border-white/10 text-primary focus:ring-primary/20 cursor-pointer transition-all mt-0.5"
+                                />
+                                <span class="text-gray-300 text-sm sm:text-base group-hover:text-white transition-colors">
+                                    Pérdida de grasa
+                                </span>
+                            </label>
+
+                            <label class="flex items-start gap-3 cursor-pointer group">
+                                <input
+                                  type="checkbox"
+                                  name="Objetivo[]"
+                                  value="Potenciarme como atleta"
+                                  class="w-5 h-5 rounded bg-bgDark border border-white/10 text-primary focus:ring-primary/20 cursor-pointer transition-all mt-0.5"
+                                />
+                                <span class="text-gray-300 text-sm sm:text-base group-hover:text-white transition-colors">
+                                    Potenciarme como atleta
+                                </span>
+                            </label>
+
+                            <!-- Custom Option "Otro" -->
+                            <div class="space-y-2 pt-2">
+                                <label class="flex items-center gap-3 cursor-pointer group">
+                                    <input
+                                      type="checkbox"
+                                      id="chk-otro"
+                                      class="w-5 h-5 rounded bg-bgDark border border-white/10 text-primary focus:ring-primary/20 cursor-pointer transition-all"
+                                      onchange="toggleOtroInput()"
+                                    />
+                                    <span class="text-gray-300 text-sm sm:text-base group-hover:text-white transition-colors">
+                                        Otro:
+                                    </span>
+                                </label>
+                                <input
+                                  type="text"
+                                  id="input-otro"
+                                  name="Objetivo_Otro"
+                                  placeholder="Escribe tu otro objetivo aquí"
+                                  disabled
+                                  class="hidden w-[calc(100%-2rem)] ml-8 bg-bgDark border border-white/10 rounded-xl py-3 px-4 text-white placeholder-gray-600 focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all"
+                                />
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Question 4: Attitude (Radio) -->
+                    <div class="bg-[#12131A]/50 backdrop-blur-sm border border-white/5 rounded-2xl p-6 sm:p-8 space-y-4 shadow-xl">
+                        <label class="block text-base font-bold text-gray-200">
+                            ¿Con qué actitud entrarías a la asesoría? <span class="text-primary">*</span>
+                        </label>
+                        
+                        <div class="space-y-4">
+                            <label class="flex items-start gap-3 cursor-pointer group">
+                                <input
+                                  type="radio"
+                                  name="Actitud"
+                                  required
+                                  value="Quiero ver qué tal, no es una prioridad"
+                                  class="w-5 h-5 rounded-full bg-bgDark border border-white/10 text-primary focus:ring-primary/20 cursor-pointer transition-all mt-0.5"
+                                />
+                                <span class="text-gray-300 text-sm sm:text-base group-hover:text-white transition-colors">
+                                    Quiero ver qué tal, no es una prioridad
+                                </span>
+                            </label>
+
+                            <label class="flex items-start gap-3 cursor-pointer group">
+                                <input
+                                  type="radio"
+                                  name="Actitud"
+                                  value="Tengo muchas ganas de empezar el cambio y mejorar. ¡Estoy 100% comprometido/a!"
+                                  class="w-5 h-5 rounded-full bg-bgDark border border-white/10 text-primary focus:ring-primary/20 cursor-pointer transition-all mt-0.5"
+                                />
+                                <span class="text-gray-300 text-sm sm:text-base group-hover:text-white transition-colors">
+                                    Tengo muchas ganas de empezar el cambio y mejorar. ¡Estoy 100% comprometido/a!
+                                </span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Question: Como Continuar (Radio) -->
+                    <div class="bg-[#12131A]/50 backdrop-blur-sm border border-white/5 rounded-2xl p-6 sm:p-8 space-y-4 shadow-xl">
+                        <label class="block text-base font-bold text-gray-200">
+                            Dime cómo quieres continuar: <span class="text-primary">*</span>
+                        </label>
+                        
+                        <div class="space-y-4">
+                            <label class="flex items-start gap-3 cursor-pointer group">
+                                <input
+                                  type="radio"
+                                  name="Como_Continuar"
+                                  required
+                                  value="Quiero más información, tengo algunas dudas"
+                                  class="w-5 h-5 rounded-full bg-bgDark border border-white/10 text-primary focus:ring-primary/20 cursor-pointer transition-all mt-0.5"
+                                />
+                                <span class="text-gray-300 text-sm sm:text-base group-hover:text-white transition-colors">
+                                    Quiero más información, tengo algunas dudas
+                                </span>
+                            </label>
+
+                            <label class="flex items-start gap-3 cursor-pointer group">
+                                <input
+                                  type="radio"
+                                  name="Como_Continuar"
+                                  value="Quiero que me envies el formulario para que puedas diseñar y comenzar mi plan!"
+                                  class="w-5 h-5 rounded-full bg-bgDark border border-white/10 text-primary focus:ring-primary/20 cursor-pointer transition-all mt-0.5"
+                                />
+                                <span class="text-gray-300 text-sm sm:text-base group-hover:text-white transition-colors">
+                                    Quiero que me envies el formulario para que puedas diseñar y comenzar mi plan!
+                                </span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Question 5: Expectations (TextArea) -->
+                    <div class="bg-[#12131A]/50 backdrop-blur-sm border border-white/5 rounded-2xl p-6 sm:p-8 space-y-4 shadow-xl">
+                        <label class="block text-base font-bold text-gray-200">
+                            ¿Cómo crees que te puedo ayudar? ¿Qué esperas de la asesoría?
+                        </label>
+                        <textarea
+                          name="Expectativas"
+                          rows="4"
+                          placeholder="Escribe tus expectativas detalladas..."
+                          class="w-full bg-bgDark border border-white/10 rounded-xl py-4 px-4 text-white placeholder-gray-600 focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all resize-none"
+                        ></textarea>
+                    </div>
+
+                    <!-- Question 6: Phone -->
+                    <div class="bg-[#12131A]/50 backdrop-blur-sm border border-white/5 rounded-2xl p-6 sm:p-8 space-y-4 shadow-xl">
+                        <label class="block text-base font-bold text-gray-200">
+                            Número de teléfono para ponerme en contacto <span class="text-primary">*</span>
+                        </label>
+                        <div class="relative">
+                            <i class="fa-solid fa-phone absolute left-4 top-1/2 -translate-y-1/2 text-gray-500"></i>
+                            <input
+                              type="tel"
+                              name="Telefono"
+                              required
+                              placeholder="Escribe tu número de teléfono"
+                              class="w-full bg-bgDark border border-white/10 rounded-xl py-4 pl-12 pr-4 text-white placeholder-gray-600 focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all"
+                            />
+                        </div>
+                    </div>
+
+                    <!-- Question 7: Email -->
+                    <div class="bg-[#12131A]/50 backdrop-blur-sm border border-white/5 rounded-2xl p-6 sm:p-8 space-y-4 shadow-xl">
+                        <label class="block text-base font-bold text-gray-200">
+                            Y correo electrónico para trabajar juntos/as <span class="text-primary">*</span>
+                        </label>
+                        <div class="relative">
+                            <i class="fa-solid fa-envelope absolute left-4 top-1/2 -translate-y-1/2 text-gray-500"></i>
+                            <input
+                              type="email"
+                              name="Email"
+                              required
+                              placeholder="Escribe tu correo electrónico"
+                              class="w-full bg-bgDark border border-white/10 rounded-xl py-4 pl-12 pr-4 text-white placeholder-gray-600 focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all"
+                            />
+                        </div>
+                    </div>
+
+                    <!-- Error Alert -->
+                    <div id="error-alert" class="hidden bg-primary/10 border border-primary/30 text-primary text-sm px-4 py-3 rounded-xl"></div>
+
+                    <!-- Submit Button -->
+                    <button
+                      type="submit"
+                      id="submit-btn"
+                      class="w-full py-4 text-center bg-primary hover:bg-primaryDark text-white font-extrabold rounded-2xl shadow-xl shadow-primary/20 transition-all cursor-pointer flex items-center justify-center gap-2"
+                    >
+                        <span>Enviar Formulario</span>
+                        <i class="fa-solid fa-arrow-right"></i>
+                    </button>
+                </form>
+            </div>
+
+            <!-- Success State -->
+            <div id="success-wrapper" class="hidden bg-[#12131A]/40 backdrop-blur-md border border-white/5 rounded-b-3xl p-12 text-center shadow-2xl mt-6">
+                <div class="w-20 h-20 rounded-full bg-primary/10 text-primary flex items-center justify-center mx-auto mb-6">
+                    <i class="fa-solid fa-circle-check text-4xl"></i>
+                </div>
+                <h3 class="text-2xl font-bold mb-3">¡Formulario Recibido!</h3>
+                <p class="text-gray-400 max-w-md mx-auto mb-8">
+                    Tus respuestas han sido enviadas con éxito. Me pondré en contacto contigo lo antes posible para valorar tu caso y empezar a trabajar en tus metas.
+                </p>
+                <button
+                  onclick="resetFormState()"
+                  class="px-6 py-3 bg-white/5 hover:bg-white/10 border border-white/10 rounded-xl text-sm font-semibold transition-all hover:border-primary/30"
+                >
+                    Volver a enviar
+                </button>
+            </div>
+
+            <!-- Video Presentation -->
+            <div class="max-w-4xl mx-auto rounded-3xl overflow-hidden border border-white/5 hover:border-primary/25 transition-all shadow-2xl mt-12 mb-16">
+                <div class="aspect-video w-full">
+                    <iframe class="w-full h-full" src="https://www.youtube.com/embed/78pn4788INE" title="Presentación Método JFK" frameBorder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowFullScreen></iframe>
+                </div>
+            </div>
+
+            <!-- Social Media & Footer Branding -->
+            <div class="text-center mt-16 mb-8 space-y-4">
+                <p class="text-gray-400 text-sm font-semibold">SÍGUEME EN MIS REDES SOCIALES</p>
+                <div class="flex justify-center gap-4">
+                    <a 
+                      href="https://www.instagram.com/metodo_jfk/" 
+                      target="_blank" 
+                      rel="noreferrer"
+                      class="w-10 h-10 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-gray-400 hover:text-white hover:bg-primary hover:border-primary transition-all"
+                    >
+                        <i class="fa-brands fa-instagram text-lg"></i>
+                    </a>
+                </div>
+                <div class="text-center text-gray-500 text-xs pt-4">
+                    © <span id="current-year"></span> Método JFK. Todos los derechos reservados.<br />
+                    Impulsado por la plataforma premium <span class="text-primary font-semibold">Infinite Coach</span>.
+                </div>
+            </div>
+
+        </section>
+
+    </div>
+
+    <!-- Floating WhatsApp Button -->
+    <a 
+      href="https://wa.link/qwto85"
+      target="_blank"
+      rel="noreferrer"
+      class="fixed bottom-6 right-6 z-50 w-14 h-14 bg-[#25D366] hover:bg-[#128C7E] text-white rounded-full shadow-2xl flex items-center justify-center transition-all duration-300 hover:scale-110 active:scale-95 group"
+      title="Contactar por WhatsApp"
+    >
+      <span class="absolute -top-12 right-0 bg-white text-black text-xs font-bold px-3 py-1.5 rounded-xl shadow-lg border border-gray-100 whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none">
+        ¿Dudas? Escríbeme
+      </span>
+      <svg class="w-8 h-8 fill-current" viewBox="0 0 24 24">
+        <path d="M12.031 2c-5.514 0-9.99 4.478-9.99 9.99 0 2.08.647 4.01 1.747 5.612l-1.144 4.173 4.29-1.127c1.545.922 3.338 1.455 5.26 1.455 5.516 0 10.002-4.478 10.002-9.99C22.005 6.478 17.519 2 12.031 2zm6.273 14.253c-.256.716-1.5 1.401-2.062 1.488-.518.082-1.189.146-3.414-.775-2.845-1.177-4.636-4.075-4.777-4.263-.143-.188-1.152-1.533-1.152-2.924 0-1.392.73-2.072 1.01-2.353.28-.28.616-.352.822-.352.207 0 .414.002.595.01.187.008.438-.073.684.52.256.617.876 2.132.953 2.285.077.154.128.334.026.54-.103.205-.154.333-.307.513-.153.18-.323.401-.462.538-.154.154-.316.323-.136.634.18.31.8 1.309 1.716 2.128.784.7 1.442.92 1.75 1.045.309.125.49.103.673-.105.183-.207.784-.912.994-1.22.21-.309.422-.257.712-.149.29.11 1.842.868 2.152 1.023.31.154.518.23.595.36.078.13.078.752-.178 1.47z"/>
+      </svg>
+    </a>
+
+    <!-- Scripts for Form Interactivity -->
+    <script>
+        document.getElementById('current-year').textContent = new Date().getFullYear();
+
+        function toggleOtroInput() {
+            const chkOtro = document.getElementById('chk-otro');
+            const inputOtro = document.getElementById('input-otro');
+            if (chkOtro.checked) {
+                inputOtro.disabled = false;
+                inputOtro.classList.remove('hidden');
+                inputOtro.required = true;
+                inputOtro.focus();
+            } else {
+                inputOtro.disabled = true;
+                inputOtro.classList.add('hidden');
+                inputOtro.required = false;
+                inputOtro.value = '';
+            }
+        }
+
+        const form = document.getElementById('contact-form');
+        const submitBtn = document.getElementById('submit-btn');
+        const errorAlert = document.getElementById('error-alert');
+        const formWrapper = document.getElementById('form-wrapper');
+        const successWrapper = document.getElementById('success-wrapper');
+
+        form.addEventListener('submit', async function(e) {
+            e.preventDefault();
+            errorAlert.classList.add('hidden');
+            
+            // Check if at least one checkbox is checked
+            const checkboxes = document.querySelectorAll('input[name="Objetivo[]"]:checked');
+            const chkOtro = document.getElementById('chk-otro');
+            if (checkboxes.length === 0 && !chkOtro.checked) {
+                errorAlert.textContent = "Por favor, selecciona al menos un objetivo.";
+                errorAlert.classList.remove('hidden');
+                return;
+            }
+
+            // Set loading state
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = `
+                <svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.377 0 0 5.377 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                </svg>
+                <span>Enviando respuestas...</span>
+            `;
+
+            // Prepare Form Data
+            const formData = new FormData(form);
+            
+            const selectedGoals = [];
+            document.querySelectorAll('input[name="Objetivo[]"]:checked').forEach((el) => {
+                selectedGoals.push(el.value);
+            });
+            const customGoal = (chkOtro && chkOtro.checked) ? document.getElementById('input-otro').value.trim() : '';
+            
+            const attitudeEl = document.querySelector('input[name="Actitud"]:checked');
+            const attitude = attitudeEl ? attitudeEl.value : '';
+            
+            const comoContinuarEl = document.querySelector('input[name="Como_Continuar"]:checked');
+            const howToContinue = comoContinuarEl ? comoContinuarEl.value : '';
+            
+            const payload = {
+                name: formData.get('Nombre_y_Apellidos'),
+                age: formData.get('Edad'),
+                goals: selectedGoals,
+                customGoal: customGoal,
+                attitude: attitude,
+                howToContinue: howToContinue,
+                expectations: formData.get('Expectativas'),
+                phone: formData.get('Telefono'),
+                email: formData.get('Email'),
+                toEmail: "julian.fitkraff@gmail.com",
+                brand: "Método JFK",
+                primaryColor: "#C61B23"
+            };
+
+            const json = JSON.stringify(payload);
+
+            try {
+                const response = await fetch('/api/contact', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json'
+                    },
+                    body: json
+                });
+                
+                const result = await response.json();
+                
+                if (response.status === 200 && result.success) {
+                    formWrapper.classList.add('hidden');
+                    successWrapper.classList.remove('hidden');
+                    form.reset();
+                    document.getElementById('chk-otro').checked = false;
+                    toggleOtroInput();
+                } else {
+                    errorAlert.textContent = result.error || "Ocurrió un error al enviar el formulario.";
+                    errorAlert.classList.remove('hidden');
+                }
+            } catch (error) {
+                console.log(error);
+                errorAlert.textContent = "Error de red. Por favor, inténtalo de nuevo.";
+                errorAlert.classList.remove('hidden');
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = `
+                    <span>Enviar Formulario</span>
+                    <i class="fa-solid fa-arrow-right"></i>
+                `;
+            }
+        });
+
+        function resetFormState() {
+            successWrapper.classList.add('hidden');
+            formWrapper.classList.remove('hidden');
+        }
+
+        // Transformations Carousel functionality
+        const carousel = document.getElementById('transformations-carousel');
+        const prevBtn = document.getElementById('carousel-prev');
+        const nextBtn = document.getElementById('carousel-next');
+
+        if (carousel && prevBtn && nextBtn) {
+            prevBtn.addEventListener('click', () => {
+                const scrollAmount = carousel.clientWidth;
+                carousel.scrollBy({
+                    left: -scrollAmount,
+                    behavior: 'smooth'
+                });
+            });
+
+            nextBtn.addEventListener('click', () => {
+                const scrollAmount = carousel.clientWidth;
+                carousel.scrollBy({
+                    left: scrollAmount,
+                    behavior: 'smooth'
+                });
+            });
+        }
+    </script>
+</body>
+</html>

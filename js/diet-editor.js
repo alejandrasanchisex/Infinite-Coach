@@ -56,7 +56,7 @@ window.getDietEditorHTML = function (diet) {
     let currentMacros = { protein: 0, carbs: 0, fat: 0 };
 
     (diet.meals || []).forEach(meal => {
-        const option1Foods = (meal.foods || []).filter(f => !f.option || f.option === 1);
+        const option1Foods = (meal.foods || []).filter(f => !f.option || Number(f.option) === 1);
         option1Foods.forEach(food => {
             currentCalories += parseInt(food.calories || 0);
             currentMacros.protein += parseInt(food.protein || 0);

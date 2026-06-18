@@ -56,7 +56,7 @@ window.getDietEditorHTML = function (diet) {
     let currentMacros = { protein: 0, carbs: 0, fat: 0 };
 
     (diet.meals || []).forEach(meal => {
-        const option1Foods = (meal.foods || []).filter(f => !f.option || f.option === 1);
+        const option1Foods = (meal.foods || []).filter(f => !f.option || Number(f.option) === 1);
         option1Foods.forEach(food => {
             currentCalories += parseFloat(food.calories || 0);
             currentMacros.protein += parseFloat(food.protein || 0);
@@ -129,6 +129,11 @@ window.getDietEditorHTML = function (diet) {
         <div class="grid grid-2 gap-sm" style="padding-right: 5px;">
             ${(diet.meals || []).map((meal, idx) => window.renderMealCard(meal, idx)).join('')}
         </div>
+        <div class="flex gap-sm mt-lg justify-center pb-lg" style="grid-column: span 2; display: flex; justify-content: center; gap: 15px;">
+            <button class="btn btn-outline" style="border-color: var(--primary-color); color: var(--primary-color);" onclick="window.addMealToDiet()">➕ Añadir Comida</button>
+            <button class="btn btn-outline" style="border-color: var(--primary-color); color: var(--primary-color);" onclick="window.calculateRecipeQuantities()">⚡ Calcular macros</button>
+            ${(diet.meals || []).length > 1 ? `<button class="btn btn-outline" style="border-color: rgba(255,100,100,0.5); color: #ff6b6b;" onclick="window.removeLastMealFromDiet()">✕ Eliminar Última Comida</button>` : ''}
+        </div>
     `;
 };
 
@@ -136,6 +141,52 @@ window.renderDietEditor = function () {
     if (!window.editingDietId) return;
     const diet = Diets.getById(window.editingDietId);
     if (!diet) return;
+
+    // Auto-sanar alimentos con 0 kcal buscando en base de datos de forma dinámica
+    let dietChanged = false;
+    (diet.meals || []).forEach(meal => {
+        (meal.foods || []).forEach(food => {
+            const nameInput = (food.name || '').trim().toLowerCase();
+            const qty = parseFloat(food.quantity) || 0;
+            if (nameInput && qty > 0 && (parseInt(food.calories) === 0 || !food.calories)) {
+                let found = null;
+                if (typeof Foods !== 'undefined') {
+                    const allFoods = Foods.getAll();
+                    if (Array.isArray(allFoods)) {
+                        found = allFoods.find(f => f && f.name && typeof f.name === 'string' && f.name.trim().toLowerCase() === nameInput) || 
+                                allFoods.find(f => f && f.name && typeof f.name === 'string' && f.name.trim().toLowerCase().includes(nameInput));
+                    }
+                }
+                if (!found && typeof window.foodDatabase !== 'undefined' && Array.isArray(window.foodDatabase)) {
+                    found = window.foodDatabase.find(f => f && f.names && Array.isArray(f.names) && f.names.some(n => n && typeof n === 'string' && n.trim().toLowerCase().includes(nameInput)));
+                }
+
+                if (found) {
+                    const baseCals = found.calories || found.cals || 0;
+                    const baseP = found.protein || found.p || 0;
+                    const baseC = found.carbs || found.c || 0;
+                    const baseF = found.fat || found.f || 0;
+
+                    let factor = 1;
+                    if (found.type === 'unit' || found.unit === 'unit') {
+                        factor = qty;
+                    } else {
+                        factor = qty / 100;
+                    }
+
+                    food.calories = Math.round(baseCals * factor);
+                    food.protein = parseFloat((baseP * factor).toFixed(1));
+                    food.carbs = parseFloat((baseC * factor).toFixed(1));
+                    food.fat = parseFloat((baseF * factor).toFixed(1));
+                    dietChanged = true;
+                }
+            }
+        });
+    });
+
+    if (dietChanged) {
+        Diets.update(window.editingDietId, { meals: diet.meals });
+    }
 
     const content = window.getDietEditorHTML(diet);
 
@@ -183,7 +234,7 @@ window.renderDietEditor = function () {
 
         showModal('Editor de Dieta', `<div id="dietEditorContainer">${content}</div>`, [
             { text: '💾 GUARDAR Y CERRAR', class: 'btn-primary', onclick: 'window.saveAndCloseDietEditor()' },
-            { text: 'Cerrar sin guardar', class: 'btn-secondary', onclick: 'window.closeDietEditor()' }
+            { text: 'Cerrar', class: 'btn-secondary', onclick: 'window.closeDietEditor()' }
         ], 'modal-xxl modal-compact');
     }
 };
@@ -382,6 +433,177 @@ window.renderMealCard = function (meal, idx) {
 
 /* --- ACTION FUNCTIONS --- */
 
+window.calculateRecipeQuantities = function () {
+    const diet = Diets.getById(window.editingDietId);
+    if (!diet) {
+        showToast('No se encontró la dieta actual', 'error');
+        return;
+    }
+
+    const targetCals = parseFloat(diet.calories) || 0;
+    if (targetCals <= 0) {
+        showToast('⚠️ Por favor, define primero un objetivo de calorías mayor a 0.', 'warning');
+        return;
+    }
+
+    if (!diet.meals || diet.meals.length === 0) {
+        showToast('⚠️ No hay comidas en esta dieta para calcular.', 'warning');
+        return;
+    }
+
+    const targetMealCals = targetCals / diet.meals.length;
+
+    // Recorrer comidas y ajustar las cantidades de cada opción de alimento
+    diet.meals.forEach((meal, mealIdx) => {
+        // Encontrar todas las opciones únicas en esta comida
+        const optionNums = Array.from(new Set((meal.foods || []).map(f => f.option || 1)));
+        
+        optionNums.forEach(optNum => {
+            const optFoods = (meal.foods || []).filter(f => (f.option || 1) === optNum);
+            if (optFoods.length === 0) return;
+
+            // 1. Preparar referencias de base
+            optFoods.forEach(f => {
+                const nameInput = (f.name || '').trim().toLowerCase();
+                let found = null;
+
+                if (typeof Foods !== 'undefined') {
+                    const allFoods = Foods.getAll();
+                    if (Array.isArray(allFoods)) {
+                        found = allFoods.find(food => {
+                            if (!food || !food.name) return false;
+                            const dbName = food.name.trim().toLowerCase();
+                            return dbName === nameInput || dbName.includes(nameInput) || nameInput.includes(dbName);
+                        });
+                    }
+                }
+
+                if (!found && typeof window.foodDatabase !== 'undefined' && Array.isArray(window.foodDatabase)) {
+                    found = window.foodDatabase.find(food => {
+                        if (!food || !food.names) return false;
+                        return food.names.some(n => {
+                            if (!n) return false;
+                            const dbName = n.trim().toLowerCase();
+                            return dbName === nameInput || dbName.includes(nameInput) || nameInput.includes(dbName);
+                        });
+                    });
+                }
+
+                let isUnit = false;
+                let baseCals = 0;
+                let baseP = 0;
+                let baseC = 0;
+                let baseF = 0;
+
+                if (found) {
+                    isUnit = (found.type === 'unit' || found.unit === 'unit');
+                    baseCals = found.calories || found.cals || 0;
+                    baseP = found.protein || found.p || 0;
+                    baseC = found.carbs || found.c || 0;
+                    baseF = found.fat || found.f || 0;
+                } else {
+                    // Fallback using the food's existing macro values if positive
+                    const existingCals = parseFloat(f.calories) || 0;
+                    if (existingCals > 0) {
+                        baseCals = existingCals;
+                        baseP = parseFloat(f.protein) || 0;
+                        baseC = parseFloat(f.carbs) || 0;
+                        baseF = parseFloat(f.fat) || 0;
+
+                        const existingQty = parseFloat(f.quantity);
+                        if (!isNaN(existingQty) && existingQty > 0) {
+                            isUnit = (existingQty < 10);
+                            if (isUnit) {
+                                baseCals = baseCals / existingQty;
+                                baseP = baseP / existingQty;
+                                baseC = baseC / existingQty;
+                                baseF = baseF / existingQty;
+                            } else {
+                                baseCals = (baseCals / existingQty) * 100;
+                                baseP = (baseP / existingQty) * 100;
+                                baseC = (baseC / existingQty) * 100;
+                                baseF = (baseF / existingQty) * 100;
+                            }
+                        } else {
+                            isUnit = false;
+                        }
+                    } else {
+                        // Standard fallback
+                        isUnit = false;
+                        baseCals = 100;
+                        baseP = 5;
+                        baseC = 10;
+                        baseF = 2;
+                    }
+                }
+
+                let parsedQty = parseFloat(f.quantity);
+                let refQty = 100;
+                if (isUnit) {
+                    refQty = (!isNaN(parsedQty) && parsedQty > 0) ? parsedQty : 1;
+                } else {
+                    refQty = (!isNaN(parsedQty) && parsedQty > 0) ? parsedQty : 100;
+                }
+
+                let factor = isUnit ? refQty : (refQty / 100);
+                
+                f._refCals = baseCals * factor;
+                f._baseCals = baseCals;
+                f._baseP = baseP;
+                f._baseC = baseC;
+                f._baseF = baseF;
+                f._refQty = refQty;
+                f._isUnit = isUnit;
+            });
+
+            // 2. Sumar total de calorías de referencia
+            const totalRefCals = optFoods.reduce((sum, f) => sum + (f._refCals || 0), 0);
+
+            // 3. Aplicar escalado si es mayor que 0
+            if (totalRefCals > 0) {
+                const S = targetMealCals / totalRefCals;
+                optFoods.forEach(f => {
+                    const newQty = f._refQty * S;
+                    let finalQty = 0;
+                    if (f._isUnit) {
+                        finalQty = Math.max(1, Math.round(newQty));
+                        f.quantity = String(finalQty);
+                    } else {
+                        finalQty = Math.max(5, Math.round(newQty / 5) * 5);
+                        f.quantity = finalQty + "g";
+                    }
+
+                    const finalFactor = f._isUnit ? finalQty : (finalQty / 100);
+                    f.calories = Math.round(f._baseCals * finalFactor);
+                    f.protein = parseFloat((f._baseP * finalFactor).toFixed(1));
+                    f.carbs = parseFloat((f._baseC * finalFactor).toFixed(1));
+                    f.fat = parseFloat((f._baseF * finalFactor).toFixed(1));
+                });
+            }
+
+            // Limpiar variables temporales
+            optFoods.forEach(f => {
+                delete f._refCals;
+                delete f._baseCals;
+                delete f._baseP;
+                delete f._baseC;
+                delete f._baseF;
+                delete f._refQty;
+                delete f._isUnit;
+            });
+        });
+    });
+
+    // Guardar cambios
+    Diets.update(window.editingDietId, { meals: diet.meals });
+    
+    // Recalcular y re-renderizar
+    window.recalculateDietTotals(window.editingDietId);
+    window.renderDietEditor();
+
+    showToast('⚡ Cantidades y macros ajustados proporcionalmente', 'success');
+};
+
 window.toggleAddFoodForm = function (mealIdx, option) {
     if (window.activeMealForm && window.activeMealForm.mealIdx === mealIdx && window.activeMealForm.option === option) {
         window.activeMealForm = null;
@@ -467,33 +689,6 @@ window.addFood = function (mealIdx, optionNum) {
 };
 
 window.recalculateDietTotals = function(dietId) {
-    const diet = Diets.getById(dietId);
-    if (!diet) return;
-
-    let totalCals = 0;
-    let totalMacros = { protein: 0, carbs: 0, fat: 0 };
-
-    (diet.meals || []).forEach(meal => {
-        // Solo sumamos la Opción 1 para el total de la tarjeta
-        const option1Foods = (meal.foods || []).filter(f => !f.option || f.option === 1);
-        option1Foods.forEach(food => {
-            totalCals += parseInt(food.calories || 0);
-            totalMacros.protein += parseFloat(food.protein || 0);
-            totalMacros.carbs += parseFloat(food.carbs || 0);
-            totalMacros.fat += parseFloat(food.fat || 0);
-        });
-    });
-
-    // Actualizamos los valores reales del objeto dieta
-    Diets.update(dietId, { 
-        calories: totalCals, 
-        macros: {
-            protein: Math.round(totalMacros.protein),
-            carbs: Math.round(totalMacros.carbs),
-            fat: Math.round(totalMacros.fat)
-        }
-    });
-
     // Si existe la función de refrescar la lista de dietas, la llamamos
     if (typeof loadDiets === 'function') loadDiets();
 };
@@ -627,6 +822,43 @@ window.updateMealName = function (mealIdx, newName) {
     Diets.update(window.editingDietId, { meals: diet.meals });
 };
 
+window.addMealToDiet = function () {
+    const diet = Diets.getById(window.editingDietId);
+    if (!diet) return;
+    if (!diet.meals) diet.meals = [];
+    
+    const newMealIndex = diet.meals.length + 1;
+    diet.meals.push({
+        name: 'Comida ' + newMealIndex,
+        foods: [],
+        optionPhotos: {},
+        optionIngredients: {}
+    });
+    
+    Diets.update(diet.id, { 
+        meals: diet.meals,
+        mealsCount: diet.meals.length
+    });
+    showToast('Comida añadida', 'success');
+    window.renderDietEditor();
+};
+
+window.removeLastMealFromDiet = function () {
+    const diet = Diets.getById(window.editingDietId);
+    if (!diet) return;
+    if (!diet.meals || diet.meals.length <= 1) return;
+    
+    if (confirm('¿Estás seguro de eliminar la última comida (' + diet.meals[diet.meals.length - 1].name + ')?')) {
+        diet.meals.pop();
+        Diets.update(diet.id, { 
+            meals: diet.meals,
+            mealsCount: diet.meals.length
+        });
+        showToast('Última comida eliminada', 'success');
+        window.renderDietEditor();
+    }
+};
+
 window.updateDietGoal = function (type, value) {
     const val = parseInt(value) || 0;
     const diet = Diets.getById(window.editingDietId);
@@ -643,20 +875,42 @@ window.updateDietGoal = function (type, value) {
 // --- PHOTO SELECTOR LOGIC ---
 
 window.openPhotoSelector = function (mealIdx, optionNum) {
-    const recipes = Media.getAll().filter(m => m.category === 'recipe');
+    const renderPhotosList = (query = '') => {
+        const recipes = Media.getAll().filter(m => m.category === 'recipe');
+        const filtered = recipes.filter(r => r.title.toLowerCase().includes(query.toLowerCase()));
+        
+        if (filtered.length === 0) {
+            return `<p class="text-muted p-md text-center">No se encontraron recetas con "${query}"</p>`;
+        }
+        return `
+            <div class="grid grid-3 gap-sm">${filtered.map(r => `
+                <div class="card p-0 cursor-pointer hover-scale" style="transition: transform 0.2s;" onclick="window.selectDietPhoto(${mealIdx}, ${optionNum}, '${r.url}')">
+                    <img src="${r.url}" style="width: 100%; aspect-ratio: 16/9; object-fit: cover;">
+                    <div class="p-xs text-xs text-center text-truncate" style="font-weight: 600;">${r.title}</div>
+                </div>`).join('')}
+            </div>`;
+    };
+
+    window.onPhotoSearch = function (val) {
+        const container = document.getElementById('photoListContainer');
+        if (container) {
+            container.innerHTML = renderPhotosList(val);
+        }
+    };
+
+    const initialList = renderPhotosList();
     const content = `
         <div class="tabs mb-md" style="display: flex; gap: 10px; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 10px;">
             <button id="tabBtn-lib" class="btn btn-sm btn-primary" onclick="window.switchPhotoTab('lib')">Biblioteca</button>
             <button id="tabBtn-upload" class="btn btn-sm btn-outline" onclick="window.switchPhotoTab('upload')">Subir Foto</button>
         </div>
         <div id="tab-lib">
-             ${recipes.length === 0 ? '<p class="text-muted p-md text-center">No hay recetas en la biblioteca</p>' :
-            `<div class="grid grid-3 gap-sm">${recipes.map(r => `
-                <div class="card p-0 cursor-pointer" onclick="window.selectDietPhoto(${mealIdx}, ${optionNum}, '${r.url}')">
-                    <img src="${r.url}" style="width: 100%; aspect-ratio: 16/9; object-fit: cover;">
-                    <div class="p-xs text-xs text-center text-truncate">${r.title}</div>
-                </div>`).join('')}</div>`
-        }
+             <div class="mb-md">
+                 <input type="text" id="photoSearchInput" class="form-input" placeholder="🔍 Buscar receta por título..." oninput="window.onPhotoSearch(this.value)" style="width: 100%; margin-bottom: 10px; background: rgba(0,0,0,0.2); border: 1px solid rgba(255,255,255,0.1); border-radius: 6px; padding: 8px 12px; color: var(--text-primary);">
+             </div>
+             <div id="photoListContainer" style="max-height: 400px; overflow-y: auto; padding-right: 5px;">
+                 ${initialList}
+             </div>
         </div>
         <div id="tab-upload" style="display: none; padding: 20px; text-center;">
              <input type="file" id="dietPhotoInput" accept="image/*" class="form-input" onchange="window.previewDietPhotoUpload()">
@@ -665,6 +919,10 @@ window.openPhotoSelector = function (mealIdx, optionNum) {
         </div>
     `;
     showModal('Seleccionar Foto', content, [{ text: 'Cerrar', class: 'btn-secondary', onclick: 'window.closeModal(this)' }]);
+    
+    setTimeout(() => {
+        document.getElementById('photoSearchInput')?.focus();
+    }, 100);
 };
 
 window.switchPhotoTab = function (tab) {
@@ -972,15 +1230,17 @@ window.publishDietToClient = function (dietIdOverride) {
     const clients = Clients.getAll().filter(c => c.status !== 'inactive');
 
     const clientRows = clients.map(c => {
-        const hasThisDiet  = c.assignedDiet === dietId;
-        const hasDiffDiet  = c.assignedDiet && c.assignedDiet !== dietId;
-        const otherDiet    = hasDiffDiet ? Diets.getById(c.assignedDiet) : null;
+        let assignedDiets = c.assignedDiets || [];
+        if (!Array.isArray(assignedDiets)) {
+            assignedDiets = c.assignedDiet ? [c.assignedDiet] : [];
+        }
+        const hasThisDiet  = assignedDiets.includes(dietId);
 
         let statusHtml = '';
         if (hasThisDiet) {
             statusHtml = '<span style="color:#00e676;">✓ Esta dieta está activa para este cliente</span>';
-        } else if (hasDiffDiet) {
-            statusHtml = `Tiene asignada: <em>${otherDiet ? otherDiet.name : 'otra dieta'}</em>`;
+        } else if (assignedDiets.length > 0) {
+            statusHtml = `Tiene asignadas ${assignedDiets.length} dietas activas`;
         } else {
             statusHtml = 'Sin dieta asignada';
         }
@@ -991,24 +1251,18 @@ window.publishDietToClient = function (dietIdOverride) {
                 <div style="display:flex;flex-direction:column;gap:6px;align-items:flex-end;">
                     <button class="btn btn-sm btn-primary" style="font-size:0.75rem;min-width:160px;"
                         onclick="window._updateActiveDiet('${c.id}','${dietId}')">
-                        🔄 Actualizar dieta actual
+                        🔄 Actualizar dieta
                     </button>
                     <button class="btn btn-sm btn-outline" style="font-size:0.75rem;min-width:160px;color:#ff9800;border-color:rgba(255,152,0,0.4);"
                         onclick="window._archiveDiet('${c.id}','${dietId}')">
                         📦 Guardar como dieta antigua
                     </button>
                 </div>`;
-        } else if (hasDiffDiet) {
-            actionsHtml = `
-                <button class="btn btn-sm btn-outline" style="font-size:0.75rem;"
-                    onclick="window._assignDiet('${c.id}','${dietId}')">
-                    📤 Reemplazar&nbsp;dieta
-                </button>`;
         } else {
             actionsHtml = `
                 <button class="btn btn-sm btn-primary" style="font-size:0.75rem;"
                     onclick="window._assignDiet('${c.id}','${dietId}')">
-                    📤 Asignar
+                    📤 Asignar Dieta
                 </button>`;
         }
 
@@ -1072,7 +1326,34 @@ window.publishDietToClient = function (dietIdOverride) {
 };
 
 window._assignDiet = function (clientId, dietId) {
-    Clients.update(clientId, { assignedDiet: dietId, dietPublished: true });
+    const client = Clients.getById(clientId);
+    if (!client) return;
+    let assignedDiets = client.assignedDiets || [];
+    if (!Array.isArray(assignedDiets)) {
+        assignedDiets = client.assignedDiet ? [client.assignedDiet] : [];
+    }
+    if (!assignedDiets.includes(dietId)) {
+        assignedDiets.push(dietId);
+    }
+    
+    let publishedDiets = client.publishedDiets || [];
+    if (!Array.isArray(publishedDiets)) {
+        if (client.dietPublished !== false) {
+            publishedDiets = [...assignedDiets];
+        } else {
+            publishedDiets = [];
+        }
+    }
+    if (!publishedDiets.includes(dietId)) {
+        publishedDiets.push(dietId);
+    }
+
+    Clients.update(clientId, { 
+        assignedDiet: dietId, 
+        assignedDiets: assignedDiets,
+        publishedDiets: publishedDiets,
+        dietPublished: true 
+    });
     showToast('✓ Dieta publicada al cliente correctamente', 'success');
     document.getElementById('publishDietModal')?.remove();
     window.publishDietToClient(dietId);
@@ -1080,7 +1361,31 @@ window._assignDiet = function (clientId, dietId) {
 
 window._updateActiveDiet = function (clientId, dietId) {
     _snapshotDietToHistory(clientId, dietId, 'updated');
-    Clients.update(clientId, { assignedDiet: dietId, dietPublished: true });
+    const client = Clients.getById(clientId);
+    if (client) {
+        let assignedDiets = client.assignedDiets || [];
+        if (!Array.isArray(assignedDiets)) {
+            assignedDiets = client.assignedDiet ? [client.assignedDiet] : [];
+        }
+        if (!assignedDiets.includes(dietId)) {
+            assignedDiets.push(dietId);
+        }
+        
+        let publishedDiets = client.publishedDiets || [];
+        if (!Array.isArray(publishedDiets)) {
+            publishedDiets = [...assignedDiets];
+        }
+        if (!publishedDiets.includes(dietId)) {
+            publishedDiets.push(dietId);
+        }
+
+        Clients.update(clientId, { 
+            assignedDiet: dietId, 
+            assignedDiets: assignedDiets,
+            publishedDiets: publishedDiets,
+            dietPublished: true 
+        });
+    }
     showToast('🔄 Dieta actualizada en la App del cliente y guardada en historial', 'success');
     document.getElementById('publishDietModal')?.remove();
     window.publishDietToClient(dietId);
@@ -1096,7 +1401,32 @@ window._togglePublicStatus = function (clientId, status) {
 window._archiveDiet = function (clientId, dietId) {
     if (!confirm('¿Guardar esta dieta como "antigua"?')) return;
     _snapshotDietToHistory(clientId, dietId, 'archived');
-    Clients.update(clientId, { assignedDiet: null, dietPublished: false });
+    
+    const client = Clients.getById(clientId);
+    if (client) {
+        let assignedDiets = client.assignedDiets || [];
+        if (!Array.isArray(assignedDiets)) {
+            assignedDiets = client.assignedDiet ? [client.assignedDiet] : [];
+        }
+        assignedDiets = assignedDiets.filter(id => id !== dietId);
+        
+        let publishedDiets = client.publishedDiets || [];
+        if (Array.isArray(publishedDiets)) {
+            publishedDiets = publishedDiets.filter(id => id !== dietId);
+        }
+        
+        let primaryDietId = client.assignedDiet;
+        if (primaryDietId === dietId) {
+            primaryDietId = assignedDiets.length > 0 ? assignedDiets[0] : null;
+        }
+
+        Clients.update(clientId, { 
+            assignedDiet: primaryDietId, 
+            assignedDiets: assignedDiets,
+            publishedDiets: publishedDiets,
+            dietPublished: publishedDiets.length > 0
+        });
+    }
     showToast('📦 Dieta archivada', 'info');
     document.getElementById('publishDietModal')?.remove();
     window.publishDietToClient(dietId);
@@ -1204,7 +1534,7 @@ window.foodDatabase = [
     { names: ['Anacardos'], cals: 553, p: 18, c: 30, f: 44 },
     { names: ['Pistachos'], cals: 562, p: 20, c: 28, f: 45 },
     { names: ['Almendras', 'Almendras laminadas', 'Almendra molida'], cals: 579, p: 21, c: 22, f: 49 },
-    { names: ['Proteina en polvo', 'Batido de proteina', 'Whey Protein', 'Proteína de vainilla', 'Proteína chocolate', 'Proteína', 'Proteína en polvo isolate'], cals: 380, p: 80, c: 5, f: 4, type: 'unit', weightPerUnit: 30 },
+    { names: ['Proteina en polvo', 'Batido de proteina', 'Whey Protein', 'Proteína de vainilla', 'Proteína chocolate', 'Proteína', 'Proteína en polvo isolate'], cals: 380, p: 80, c: 5, f: 4 },
     { names: ['Miel'], cals: 304, p: 0.3, c: 82, f: 0 },
     { names: ['Dátil'], cals: 282, p: 2.5, c: 75, f: 0.4, type: 'unit', weightPerUnit: 8 },
     { names: ['Cacao'], cals: 228, p: 20, c: 58, f: 14 },

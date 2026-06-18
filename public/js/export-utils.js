@@ -89,7 +89,7 @@ window.exportDietToPDF = function (diet, clientName) {
     // -- MEALS --
     (diet.meals || []).forEach((meal, idx) => {
         // Only sum Option 1 for the Header Summary
-        const option1Foods = (meal.foods || []).filter(f => !f.option || f.option === 1);
+        const option1Foods = (meal.foods || []).filter(f => !f.option || Number(f.option) === 1);
         const mealCals = option1Foods.reduce((acc, f) => acc + (parseInt(f.calories) || 0), 0);
 
         // Group foods by option
@@ -252,7 +252,8 @@ window.exportDietToExcel = function (diet, clientName) {
     rows.push([]); // Spacer
 
     (diet.meals || []).forEach(meal => {
-        const mealCals = (meal.foods || []).reduce((acc, f) => acc + (parseInt(f.calories) || 0), 0);
+        const option1Foods = (meal.foods || []).filter(f => !f.option || Number(f.option) === 1);
+        const mealCals = option1Foods.reduce((acc, f) => acc + (parseInt(f.calories) || 0), 0);
 
         let mealHeader = meal.name.toUpperCase();
         if (pdfSettings.showCalories) mealHeader += ` (${mealCals} kcal)`;

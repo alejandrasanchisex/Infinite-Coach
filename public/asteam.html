@@ -1,0 +1,653 @@
+<!DOCTYPE html>
+<html lang="es" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Asesorías ASTeam</title>
+    
+    <!-- Favicon ASTeam -->
+    <link rel="icon" type="image/png" href="https://bieeydhacavxymoosasx.supabase.co/storage/v1/object/public/Media/1779724548154_Gemini_Generated_Image_vse84nvse84nvse8.png">
+    <link rel="apple-touch-icon" href="https://bieeydhacavxymoosasx.supabase.co/storage/v1/object/public/Media/1779724548154_Gemini_Generated_Image_vse84nvse84nvse8.png">
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#fdbfec',
+                        primaryDark: '#efa6db',
+                        accent: '#ff6b6b',
+                        bgDark: '#0F111A',
+                        cardDark: '#1A1D2B',
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        /* Hide default checkbox and radio */
+        input[type="checkbox"]:checked + span::before {
+            background-color: #fdbfec;
+            border-color: #fdbfec;
+            content: "\f00c";
+            font-family: "Font Awesome 5 Free";
+            font-weight: 900;
+            color: #0F111A;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.75rem;
+        }
+    </style>
+</head>
+<body class="bg-bgDark text-white min-h-screen relative antialiased overflow-x-hidden selection:bg-[#fdbfec] selection:text-black">
+
+    <!-- Background Orbs & Effects -->
+    <div class="absolute top-0 inset-x-0 h-full pointer-events-none overflow-hidden z-0">
+        <div class="absolute -top-[20%] -left-[10%] w-[600px] h-[600px] rounded-full bg-[#fdbfec]/5 blur-[120px]"></div>
+        <div class="absolute top-[40%] -right-[15%] w-[500px] h-[500px] rounded-full bg-[#ff6b6b]/4 blur-[120px]"></div>
+        <div class="absolute bottom-[10%] left-[5%] w-[700px] h-[700px] rounded-full bg-[#fdbfec]/3 blur-[150px]"></div>
+        
+        <!-- Subtle grid lines background overlay -->
+        <div class="absolute inset-0 opacity-[0.03]" 
+             style="background-image: linear-gradient(rgba(253,191,236,0.15) 1px, transparent 1px), linear-gradient(90deg, rgba(253,191,236,0.15) 1px, transparent 1px); background-size: 40px 40px;">
+        </div>
+    </div>
+
+    <div class="relative z-10 max-w-6xl mx-auto px-4 py-8 md:py-16">
+        
+        <!-- Header / Logo -->
+        <header class="flex justify-between items-center mb-16 md:mb-24">
+            <div class="flex items-center gap-3">
+                <img 
+                  src="https://bieeydhacavxymoosasx.supabase.co/storage/v1/object/public/Media/1779724548154_Gemini_Generated_Image_vse84nvse84nvse8.png" 
+                  alt="ASTeam Logo" 
+                  class="w-12 h-12 rounded-xl object-contain bg-white p-0.5 shadow-lg shadow-[#fdbfec]/10 border border-[#fdbfec]/20"
+                />
+                <div>
+                    <span class="font-extrabold text-xl tracking-tight block">ASTeam</span>
+                    <span class="text-xs text-primary block font-semibold tracking-widest uppercase">Asesorías</span>
+                </div>
+            </div>
+            <a
+              href="#formulario"
+              class="hidden sm:inline-flex items-center gap-1.5 px-5 py-2.5 rounded-full border border-white/10 bg-white/5 text-sm font-semibold hover:bg-white/10 hover:border-primary/20 transition-all text-primary"
+            >
+              Empezar Ahora <i class="fa-solid fa-chevron-right text-xs"></i>
+            </a>
+        </header>
+
+        <!-- Hero Section -->
+        <section class="text-center max-w-3xl mx-auto mb-20 md:mb-32">
+            <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-primary/10 text-primary text-xs font-bold uppercase tracking-wider mb-6 border border-primary/20">
+                <i class="fa-solid fa-sparkles"></i> Exclusivo Plan de Asesoría 1-a-1
+            </div>
+            <h1 class="text-4xl sm:text-6xl font-black tracking-tight leading-tight mb-8">
+                Lleva tu físico y rendimiento al <span class="text-primary italic font-serif">Siguiente Nivel</span>
+            </h1>
+            <p class="text-gray-400 text-lg sm:text-xl leading-relaxed mb-10">
+                Únete a ASTeam y accede a nuestra aplicación privada de asesoramiento premium. Todo tu plan de entrenamiento, nutrición y seguimiento diario estructurado de forma inteligente.
+            </p>
+            <div class="flex flex-col sm:flex-row gap-4 justify-center">
+                <a
+                  href="#formulario"
+                  class="px-8 py-4 bg-primary text-black font-extrabold rounded-2xl hover:bg-primaryDark transition-all shadow-lg shadow-primary/25 flex items-center justify-center gap-2 text-base"
+                >
+                  Comenzar Asesoría <i class="fa-solid fa-arrow-right"></i>
+                </a>
+                <a
+                  href="#que-ofrecemos"
+                  class="px-8 py-4 bg-white/5 hover:bg-white/10 border border-white/10 text-white font-bold rounded-2xl transition-all flex items-center justify-center"
+                >
+                  Descubrir la App
+                </a>
+            </div>
+        </section>
+
+        <!-- Promotional Launch Section -->
+        <section id="promo-lanzamiento" class="mb-20 md:mb-28 scroll-mt-20 animate-fade-in">
+            <div class="relative overflow-hidden rounded-3xl bg-gradient-to-r from-[#00D9FF]/10 via-accent/5 to-[#00D9FF]/5 border border-[#00D9FF]/20 p-8 md:p-12 shadow-2xl shadow-[#00D9FF]/5">
+                <!-- Decorative absolute shapes -->
+                <div class="absolute -right-20 -top-20 w-64 h-64 rounded-full bg-[#00D9FF]/25 blur-3xl pointer-events-none"></div>
+                <div class="absolute -left-20 -bottom-20 w-64 h-64 rounded-full bg-accent/20 blur-3xl pointer-events-none"></div>
+                
+                <div class="relative z-10 flex flex-col lg:flex-row items-center justify-between gap-8">
+                    <div class="text-left max-w-xl">
+                        <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-accent/20 text-accent text-xs font-bold uppercase tracking-wider mb-4 border border-accent/30 animate-pulse">
+                            <i class="fa-solid fa-gift"></i> Regalo de Lanzamiento Exclusivo
+                        </span>
+                        <h2 class="text-3xl sm:text-4xl font-extrabold tracking-tight mb-4 text-white leading-tight">
+                            Consigue <span class="text-[#00D9FF]">Tu Propia Web</span> Totalmente Gratis
+                        </h2>
+                        <p class="text-gray-300 text-base leading-relaxed mb-6">
+                            Para celebrar el lanzamiento oficial de nuestra plataforma, si te unes a la asesoría 1-a-1 hoy, te regalamos tu propia web profesional y personalizada. Muestra tu marca, capta clientes o comparte tu proceso con el mundo sin coste de desarrollo ni hosting inicial.
+                        </p>
+                        <div class="flex items-center gap-3">
+                            <div class="flex -space-x-2">
+                                <span class="w-8 h-8 rounded-full bg-[#00D9FF]/20 border border-[#00D9FF]/30 flex items-center justify-center text-[10px] font-bold text-[#00D9FF]">J</span>
+                                <span class="w-8 h-8 rounded-full bg-accent/20 border border-accent/30 flex items-center justify-center text-[10px] font-bold text-accent">M</span>
+                                <span class="w-8 h-8 rounded-full bg-[#00D9FF]/35 border border-[#00D9FF]/45 flex items-center justify-center text-[10px] font-bold text-white">A</span>
+                            </div>
+                            <span class="text-xs text-gray-400">
+                                <strong class="text-[#00D9FF]">12 plazas ya reservadas</strong>. ¡Quedan muy pocas!
+                            </span>
+                        </div>
+                    </div>
+                    
+                    <div class="w-full lg:w-auto flex flex-col items-center bg-[#1A1D2B]/80 backdrop-blur-md p-6 sm:p-8 rounded-2xl border border-white/5 text-center min-w-[280px]">
+                        <div class="text-xs text-gray-400 uppercase tracking-widest mb-1">Quedan disponibles</div>
+                        <div class="text-5xl font-black text-white my-2 flex items-baseline justify-center gap-1">
+                            <span class="text-[#00D9FF] font-serif italic text-6xl">8</span>
+                            <span class="text-gray-500 text-2xl">/</span>
+                            <span class="text-gray-400 text-2xl">20</span>
+                        </div>
+                        <div class="w-full bg-white/5 h-2 rounded-full mb-6 overflow-hidden">
+                            <div class="bg-gradient-to-r from-[#00D9FF] to-accent h-full rounded-full" style="width: 60%"></div>
+                        </div>
+                        <a
+                          href="#formulario"
+                          class="w-full px-6 py-3 bg-[#00D9FF] text-black font-extrabold rounded-xl hover:bg-[#00B6D6] hover:scale-[1.02] transition-all shadow-md shadow-[#00D9FF]/10 flex items-center justify-center gap-2 text-sm"
+                        >
+                          Reclamar Mi Web Gratis <i class="fa-solid fa-arrow-right text-xs"></i>
+                        </a>
+                        <span class="text-[10px] text-gray-500 mt-3 flex items-center gap-1 justify-center">
+                            <i class="fa-solid fa-clock"></i> Oferta válida por tiempo limitado
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- What Client Finds in the App Section -->
+        <section id="que-ofrecemos" class="mb-24 md:mb-36 scroll-mt-20">
+            <div class="text-center mb-16">
+                <h2 class="text-3xl font-extrabold tracking-tight mb-4">
+                    ¿Qué encontrarás dentro de la <span class="text-primary">App de ASTeam</span>?
+                </h2>
+                <p class="text-gray-400 max-w-xl mx-auto">
+                    Todo lo que necesitas para optimizar tus resultados reunido en un solo ecosistema digital de alto rendimiento.
+                </p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <!-- Card 1: Rutinas -->
+                <div class="bg-[#1A1D2B]/60 backdrop-blur-md p-8 rounded-3xl border border-white/5 hover:border-primary/30 transition-all group">
+                    <div class="w-14 h-14 rounded-2xl bg-primary/10 text-primary flex items-center justify-center mb-6 group-hover:bg-primary group-hover:text-black transition-all">
+                        <i class="fa-solid fa-dumbbell text-2xl"></i>
+                    </div>
+                    <h3 class="text-xl font-bold mb-3">Rutinas de Entrenamiento a Medida</h3>
+                    <p class="text-gray-400 leading-relaxed">
+                        Planes adaptados a tu nivel, material disponible y objetivos. Cada ejercicio cuenta con un vídeo explicativo en HD para que ejecutes la técnica de forma impecable y evites lesiones. Registro e indicaciones de intensidad.
+                    </p>
+                </div>
+
+                <!-- Card 2: Nutrición -->
+                <div class="bg-[#1A1D2B]/60 backdrop-blur-md p-8 rounded-3xl border border-white/5 hover:border-primary/30 transition-all group">
+                    <div class="w-14 h-14 rounded-2xl bg-primary/10 text-primary flex items-center justify-center mb-6 group-hover:bg-primary group-hover:text-black transition-all">
+                        <i class="fa-solid fa-apple-whole text-2xl"></i>
+                    </div>
+                    <h3 class="text-xl font-bold mb-3">Plan de Nutrición Flexible</h3>
+                    <p class="text-gray-400 leading-relaxed">
+                        Menús semanales adaptados a tus gustos y macros. Con recetas saludables, variadas y muy fáciles de preparar que te permitirán disfrutar del proceso sin pasar hambre.
+                    </p>
+                </div>
+
+                <!-- Card 3: Evolución -->
+                <div class="bg-[#1A1D2B]/60 backdrop-blur-md p-8 rounded-3xl border border-white/5 hover:border-accent/30 transition-all group">
+                    <div class="w-14 h-14 rounded-2xl bg-accent/10 text-accent flex items-center justify-center mb-6 group-hover:bg-accent group-hover:text-black transition-all">
+                        <i class="fa-solid fa-chart-line text-2xl"></i>
+                    </div>
+                    <h3 class="text-xl font-bold mb-3">Control de Hábitos y Evolución</h3>
+                    <p class="text-gray-400 leading-relaxed">
+                        Herramienta interactiva para registrar evolución, fotos de progreso y hábitos clave (sueño, pasos, hidratación). Observa tus métricas en gráficos interactivos en tiempo real.
+                    </p>
+                </div>
+
+                <!-- Card 4: Soporte -->
+                <div class="bg-[#1A1D2B]/60 backdrop-blur-md p-8 rounded-3xl border border-white/5 hover:border-primary/30 transition-all group">
+                    <div class="w-14 h-14 rounded-2xl bg-primary/10 text-primary flex items-center justify-center mb-6 group-hover:bg-primary group-hover:text-black transition-all">
+                        <i class="fa-solid fa-comments text-2xl"></i>
+                    </div>
+                    <h3 class="text-xl font-bold mb-3">Contacto y Chat Directo</h3>
+                    <p class="text-gray-400 leading-relaxed">
+                        Estaremos comunicados a diario a través del chat. Podrás realizar tus revisiones periódicas y resolver dudas rápidamente para mantenerte siempre motivado y enfocado.
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Lead Form Section -->
+        <section id="formulario" class="max-w-3xl mx-auto scroll-mt-20">
+            
+            <!-- Header Card -->
+            <div class="relative bg-cardDark rounded-t-3xl border-t-[6px] border-primary p-8 border-x border-b border-white/5 shadow-2xl">
+                <div class="absolute top-0 right-0 p-6 opacity-5 pointer-events-none text-primary">
+                    <i class="fa-solid fa-shield-halved text-8xl"></i>
+                </div>
+                <div class="flex items-center gap-4 mb-4">
+                    <img 
+                      src="https://bieeydhacavxymoosasx.supabase.co/storage/v1/object/public/Media/1779724548154_Gemini_Generated_Image_vse84nvse84nvse8.png" 
+                      alt="ASTeam Logo Mini" 
+                      class="w-10 h-10 rounded-lg object-contain bg-white p-0.5"
+                    />
+                    <h2 class="text-2xl sm:text-3xl font-extrabold tracking-tight">Asesorías ASTeam</h2>
+                </div>
+                <p class="text-gray-300 text-sm sm:text-base leading-relaxed">
+                    ¡Gracias por interesarte por la asesoría! Rellena el formulario y me pondré en contacto contigo en las próximas horas :)
+                </p>
+            </div>
+
+            <!-- Form Container -->
+            <div id="form-wrapper">
+                <form id="contact-form" class="space-y-6 mt-6">
+                    
+
+                    <!-- Question 1: Name -->
+                    <div class="bg-[#1A1D2B]/50 backdrop-blur-sm border border-white/5 rounded-2xl p-6 sm:p-8 space-y-4 shadow-xl">
+                        <label class="block text-base font-bold text-gray-200">
+                            Nombre y Apellidos <span class="text-accent">*</span>
+                        </label>
+                        <div class="relative">
+                            <i class="fa-solid fa-user absolute left-4 top-1/2 -translate-y-1/2 text-gray-500"></i>
+                            <input
+                              type="text"
+                              name="Nombre_y_Apellidos"
+                              required
+                              placeholder="Escribe tu respuesta corta"
+                              class="w-full bg-bgDark border border-white/10 rounded-xl py-4 pl-12 pr-4 text-white placeholder-gray-600 focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all"
+                            />
+                        </div>
+                    </div>
+
+                    <!-- Question 2: Age -->
+                    <div class="bg-[#1A1D2B]/50 backdrop-blur-sm border border-white/5 rounded-2xl p-6 sm:p-8 space-y-4 shadow-xl">
+                        <label class="block text-base font-bold text-gray-200">
+                            Edad <span class="text-accent">*</span>
+                        </label>
+                        <div class="relative">
+                            <i class="fa-solid fa-calendar absolute left-4 top-1/2 -translate-y-1/2 text-gray-500"></i>
+                            <input
+                              type="number"
+                              name="Edad"
+                              required
+                              min="1"
+                              max="120"
+                              placeholder="Escribe tu respuesta corta"
+                              class="w-full bg-bgDark border border-white/10 rounded-xl py-4 pl-12 pr-4 text-white placeholder-gray-600 focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all"
+                            />
+                        </div>
+                    </div>
+
+                    <!-- Question 3: Goal (Multiselect) -->
+                    <div class="bg-[#1A1D2B]/50 backdrop-blur-sm border border-white/5 rounded-2xl p-6 sm:p-8 space-y-4 shadow-xl">
+                        <label class="block text-base font-bold text-gray-200">
+                            ¿Cuál es tu objetivo? <span class="text-accent">*</span>
+                        </label>
+                        
+                        <div class="space-y-3">
+                            <label class="flex items-start gap-3 cursor-pointer group">
+                                <input
+                                  type="checkbox"
+                                  name="Objetivo[]"
+                                  value="Mejorar y aprender hábitos saludables"
+                                  class="w-5 h-5 rounded bg-bgDark border border-white/10 text-primary focus:ring-primary/20 cursor-pointer transition-all mt-0.5"
+                                />
+                                <span class="text-gray-300 text-sm sm:text-base group-hover:text-white transition-colors">
+                                    Mejorar y aprender hábitos saludables
+                                </span>
+                            </label>
+
+                            <label class="flex items-start gap-3 cursor-pointer group">
+                                <input
+                                  type="checkbox"
+                                  name="Objetivo[]"
+                                  value="Ganar masa muscular"
+                                  class="w-5 h-5 rounded bg-bgDark border border-white/10 text-primary focus:ring-primary/20 cursor-pointer transition-all mt-0.5"
+                                />
+                                <span class="text-gray-300 text-sm sm:text-base group-hover:text-white transition-colors">
+                                    Ganar masa muscular
+                                </span>
+                            </label>
+
+                            <label class="flex items-start gap-3 cursor-pointer group">
+                                <input
+                                  type="checkbox"
+                                  name="Objetivo[]"
+                                  value="Pérdida de grasa"
+                                  class="w-5 h-5 rounded bg-bgDark border border-white/10 text-primary focus:ring-primary/20 cursor-pointer transition-all mt-0.5"
+                                />
+                                <span class="text-gray-300 text-sm sm:text-base group-hover:text-white transition-colors">
+                                    Pérdida de grasa
+                                </span>
+                            </label>
+
+                            <label class="flex items-start gap-3 cursor-pointer group">
+                                <input
+                                  type="checkbox"
+                                  name="Objetivo[]"
+                                  value="Potenciarme como atleta"
+                                  class="w-5 h-5 rounded bg-bgDark border border-white/10 text-primary focus:ring-primary/20 cursor-pointer transition-all mt-0.5"
+                                />
+                                <span class="text-gray-300 text-sm sm:text-base group-hover:text-white transition-colors">
+                                    Potenciarme como atleta
+                                </span>
+                            </label>
+
+                            <!-- Custom Option "Otro" -->
+                            <div class="space-y-2 pt-2">
+                                <label class="flex items-center gap-3 cursor-pointer group">
+                                    <input
+                                      type="checkbox"
+                                      id="chk-otro"
+                                      class="w-5 h-5 rounded bg-bgDark border border-white/10 text-primary focus:ring-primary/20 cursor-pointer transition-all"
+                                      onchange="toggleOtroInput()"
+                                    />
+                                    <span class="text-gray-300 text-sm sm:text-base group-hover:text-white transition-colors">
+                                        Otro:
+                                    </span>
+                                </label>
+                                <input
+                                  type="text"
+                                  id="input-otro"
+                                  name="Objetivo_Otro"
+                                  placeholder="Escribe tu otro objetivo aquí"
+                                  disabled
+                                  class="hidden w-[calc(100%-2rem)] ml-8 bg-bgDark border border-white/10 rounded-xl py-3 px-4 text-white placeholder-gray-600 focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all"
+                                />
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Question 4: Attitude (Radio) -->
+                    <div class="bg-[#1A1D2B]/50 backdrop-blur-sm border border-white/5 rounded-2xl p-6 sm:p-8 space-y-4 shadow-xl">
+                        <label class="block text-base font-bold text-gray-200">
+                            ¿Con qué actitud entrarías a la asesoría? <span class="text-accent">*</span>
+                        </label>
+                        
+                        <div class="space-y-4">
+                            <label class="flex items-start gap-3 cursor-pointer group">
+                                <input
+                                  type="radio"
+                                  name="Actitud"
+                                  required
+                                  value="Quiero ver qué tal, no es una prioridad"
+                                  class="w-5 h-5 rounded-full bg-bgDark border border-white/10 text-primary focus:ring-primary/20 cursor-pointer transition-all mt-0.5"
+                                />
+                                <span class="text-gray-300 text-sm sm:text-base group-hover:text-white transition-colors">
+                                    Quiero ver qué tal, no es una prioridad
+                                </span>
+                            </label>
+
+                            <label class="flex items-start gap-3 cursor-pointer group">
+                                <input
+                                  type="radio"
+                                  name="Actitud"
+                                  value="Tengo muchas ganas de empezar el cambio y mejorar. ¡Estoy 100% comprometido/a!"
+                                  class="w-5 h-5 rounded-full bg-bgDark border border-white/10 text-primary focus:ring-primary/20 cursor-pointer transition-all mt-0.5"
+                                />
+                                <span class="text-gray-300 text-sm sm:text-base group-hover:text-white transition-colors">
+                                    Tengo muchas ganas de empezar el cambio y mejorar. ¡Estoy 100% comprometido/a!
+                                </span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- New Question: Como Continuar (Radio) -->
+                    <div class="bg-[#1A1D2B]/50 backdrop-blur-sm border border-white/5 rounded-2xl p-6 sm:p-8 space-y-4 shadow-xl">
+                        <label class="block text-base font-bold text-gray-200">
+                            Dime cómo quieres continuar: <span class="text-accent">*</span>
+                        </label>
+                        
+                        <div class="space-y-4">
+                            <label class="flex items-start gap-3 cursor-pointer group">
+                                <input
+                                  type="radio"
+                                  name="Como_Continuar"
+                                  required
+                                  value="Quiero más información, tengo algunas dudas"
+                                  class="w-5 h-5 rounded-full bg-bgDark border border-white/10 text-primary focus:ring-primary/20 cursor-pointer transition-all mt-0.5"
+                                />
+                                <span class="text-gray-300 text-sm sm:text-base group-hover:text-white transition-colors">
+                                    Quiero más información, tengo algunas dudas
+                                </span>
+                            </label>
+
+                            <label class="flex items-start gap-3 cursor-pointer group">
+                                <input
+                                  type="radio"
+                                  name="Como_Continuar"
+                                  value="Quiero que me envies el formulario para que puedas diseñar y comenzar mi plan!"
+                                  class="w-5 h-5 rounded-full bg-bgDark border border-white/10 text-primary focus:ring-primary/20 cursor-pointer transition-all mt-0.5"
+                                />
+                                <span class="text-gray-300 text-sm sm:text-base group-hover:text-white transition-colors">
+                                    Quiero que me envies el formulario para que puedas diseñar y comenzar mi plan!
+                                </span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Question 5: Expectations (TextArea) -->
+                    <div class="bg-[#1A1D2B]/50 backdrop-blur-sm border border-white/5 rounded-2xl p-6 sm:p-8 space-y-4 shadow-xl">
+                        <label class="block text-base font-bold text-gray-200">
+                            ¿Cómo crees que te puedo ayudar? ¿Qué esperas de la asesoría?
+                        </label>
+                        <textarea
+                          name="Expectativas"
+                          rows="4"
+                          placeholder="Texto de respuesta larga"
+                          class="w-full bg-bgDark border border-white/10 rounded-xl py-4 px-4 text-white placeholder-gray-600 focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all resize-none"
+                        ></textarea>
+                    </div>
+
+                    <!-- Question 6: Phone -->
+                    <div class="bg-[#1A1D2B]/50 backdrop-blur-sm border border-white/5 rounded-2xl p-6 sm:p-8 space-y-4 shadow-xl">
+                        <label class="block text-base font-bold text-gray-200">
+                            Número de teléfono para ponerme en contacto <span class="text-accent">*</span>
+                        </label>
+                        <div class="relative">
+                            <i class="fa-solid fa-phone absolute left-4 top-1/2 -translate-y-1/2 text-gray-500"></i>
+                            <input
+                              type="tel"
+                              name="Telefono"
+                              required
+                              placeholder="Escribe tu respuesta corta"
+                              class="w-full bg-bgDark border border-white/10 rounded-xl py-4 pl-12 pr-4 text-white placeholder-gray-600 focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all"
+                            />
+                        </div>
+                    </div>
+
+                    <!-- Question 7: Email -->
+                    <div class="bg-[#1A1D2B]/50 backdrop-blur-sm border border-white/5 rounded-2xl p-6 sm:p-8 space-y-4 shadow-xl">
+                        <label class="block text-base font-bold text-gray-200">
+                            Y correo electrónico para trabajar juntos/as <span class="text-accent">*</span>
+                        </label>
+                        <div class="relative">
+                            <i class="fa-solid fa-envelope absolute left-4 top-1/2 -translate-y-1/2 text-gray-500"></i>
+                            <input
+                              type="email"
+                              name="Email"
+                              required
+                              placeholder="Escribe tu respuesta corta"
+                              class="w-full bg-bgDark border border-white/10 rounded-xl py-4 pl-12 pr-4 text-white placeholder-gray-600 focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all"
+                            />
+                        </div>
+                    </div>
+
+                    <!-- Error Alert -->
+                    <div id="error-alert" class="hidden bg-[#ff6b6b]/10 border border-[#ff6b6b]/30 text-[#ff6b6b] text-sm px-4 py-3 rounded-xl"></div>
+
+                    <!-- Submit Button -->
+                    <button
+                      type="submit"
+                      id="submit-btn"
+                      class="w-full py-4 text-center bg-primary hover:bg-primaryDark text-black font-extrabold rounded-2xl shadow-xl shadow-primary/20 transition-all cursor-pointer flex items-center justify-center gap-2"
+                    >
+                        <span>Enviar Formulario</span>
+                        <i class="fa-solid fa-arrow-right"></i>
+                    </button>
+                </form>
+            </div>
+
+            <!-- Success State (hidden initially) -->
+            <div id="success-wrapper" class="hidden bg-[#1A1D2B]/40 backdrop-blur-md border border-white/5 rounded-b-3xl p-12 text-center shadow-2xl mt-6">
+                <div class="w-20 h-20 rounded-full bg-primary/10 text-primary flex items-center justify-center mx-auto mb-6">
+                    <i class="fa-solid fa-circle-check text-4xl"></i>
+                </div>
+                <h3 class="text-2xl font-bold mb-3">¡Formulario Recibido!</h3>
+                <p class="text-gray-400 max-w-md mx-auto mb-8">
+                    Tus respuestas han sido enviadas con éxito. Me pondré en contacto contigo lo antes posible para valorar tu caso y empezar a trabajar en tus metas.
+                </p>
+                <button
+                  onclick="resetFormState()"
+                  class="px-6 py-3 bg-white/5 hover:bg-white/10 border border-white/10 rounded-xl text-sm font-semibold transition-all hover:border-primary/30"
+                >
+                    Volver a enviar
+                </button>
+            </div>
+
+            <!-- Footer branding -->
+            <div class="text-center text-gray-500 text-xs mt-12 mb-8">
+                © <span id="current-year"></span> ASTeam. Todos los derechos reservados.<br />
+                Impulsado por la plataforma premium <span class="text-primary font-semibold">Infinite Coach</span>.
+            </div>
+
+        </section>
+
+    </div>
+
+    <!-- Scripts for Form Interactivity -->
+    <script>
+        document.getElementById('current-year').textContent = new Date().getFullYear();
+
+        function toggleOtroInput() {
+            const chkOtro = document.getElementById('chk-otro');
+            const inputOtro = document.getElementById('input-otro');
+            if (chkOtro.checked) {
+                inputOtro.disabled = false;
+                inputOtro.classList.remove('hidden');
+                inputOtro.required = true;
+                inputOtro.focus();
+            } else {
+                inputOtro.disabled = true;
+                inputOtro.classList.add('hidden');
+                inputOtro.required = false;
+                inputOtro.value = '';
+            }
+        }
+
+        const form = document.getElementById('contact-form');
+        const submitBtn = document.getElementById('submit-btn');
+        const errorAlert = document.getElementById('error-alert');
+        const formWrapper = document.getElementById('form-wrapper');
+        const successWrapper = document.getElementById('success-wrapper');
+
+        form.addEventListener('submit', async function(e) {
+            e.preventDefault();
+            errorAlert.classList.add('hidden');
+            
+            // Check if at least one checkbox is checked
+            const checkboxes = document.querySelectorAll('input[name="Objetivo[]"]:checked');
+            const chkOtro = document.getElementById('chk-otro');
+            if (checkboxes.length === 0 && !chkOtro.checked) {
+                errorAlert.textContent = "Por favor, selecciona al menos un objetivo.";
+                errorAlert.classList.remove('hidden');
+                return;
+            }
+
+            // Set loading state
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = `
+                <svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-black" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.377 0 0 5.377 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                </svg>
+                <span>Enviando respuestas...</span>
+            `;
+
+            // Prepare Form Data
+            const formData = new FormData(form);
+            
+            const selectedGoals = [];
+            document.querySelectorAll('input[name="Objetivo[]"]:checked').forEach((el) => {
+                selectedGoals.push(el.value);
+            });
+            const customGoal = (chkOtro && chkOtro.checked) ? document.getElementById('input-otro').value.trim() : '';
+            
+            const attitudeEl = document.querySelector('input[name="Actitud"]:checked');
+            const attitude = attitudeEl ? attitudeEl.value : '';
+            
+            const comoContinuarEl = document.querySelector('input[name="Como_Continuar"]:checked');
+            const howToContinue = comoContinuarEl ? comoContinuarEl.value : '';
+            
+            const payload = {
+                name: formData.get('Nombre_y_Apellidos'),
+                age: formData.get('Edad'),
+                goals: selectedGoals,
+                customGoal: customGoal,
+                attitude: attitude,
+                howToContinue: howToContinue,
+                expectations: formData.get('Expectativas'),
+                phone: formData.get('Telefono'),
+                email: formData.get('Email')
+            };
+
+            const json = JSON.stringify(payload);
+
+            try {
+                const response = await fetch('/api/contact', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json'
+                    },
+                    body: json
+                });
+                
+                const result = await response.json();
+                
+                if (response.status === 200 && result.success) {
+                    formWrapper.classList.add('hidden');
+                    successWrapper.classList.remove('hidden');
+                    form.reset();
+                    document.getElementById('chk-otro').checked = false;
+                    toggleOtroInput();
+                } else {
+                    errorAlert.textContent = result.error || "Ocurrió un error al enviar el formulario.";
+                    errorAlert.classList.remove('hidden');
+                }
+            } catch (error) {
+                console.log(error);
+                errorAlert.textContent = "Error de red. Por favor, inténtalo de nuevo.";
+                errorAlert.classList.remove('hidden');
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = `
+                    <span>Enviar Formulario</span>
+                    <i class="fa-solid fa-arrow-right"></i>
+                `;
+            }
+        });
+
+        function resetFormState() {
+            successWrapper.classList.add('hidden');
+            formWrapper.classList.remove('hidden');
+        }
+    </script>
+</body>
+</html>

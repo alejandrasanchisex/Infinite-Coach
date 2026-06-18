@@ -5,7 +5,7 @@
     <script>
         // Force PWA cache bust / reload
         (function() {
-            const CURRENT_VERSION = '365';
+            const CURRENT_VERSION = '457';
             const savedVersion = localStorage.getItem('app_version');
             if (savedVersion !== CURRENT_VERSION) {
                 localStorage.setItem('app_version', CURRENT_VERSION);
@@ -28,7 +28,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Gestión de Clientes - ASTeam</title>
-  <link rel="stylesheet" href="styles/theme.css?v=365">
+  <link rel="stylesheet" href="styles/theme.css?v=457">
   <link rel="stylesheet" href="styles/components.css">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 </head>
@@ -58,14 +58,14 @@
           </div>
           <button class="menu-toggle" onclick="toggleMenu()">☰</button>
           <ul class="nav-links" id="navLinks">
-            <li><a href="trainer-dashboard.html?v=365" class="nav-link">Dashboard</a></li>
-            <li><a href="trainer-clients.html?v=365" class="nav-link active">Clientes</a></li>
-            <li><a href="trainer-routines.html?v=365" class="nav-link">Rutinas</a></li>
-            <li><a href="trainer-diets.html?v=365" class="nav-link">Dietas</a></li>
-            <li><a href="trainer-feedbacks.html?v=365" class="nav-link">Revisiones</a></li>
-            <li><a href="trainer-media.html?v=365" class="nav-link">Biblioteca</a></li>
-            <li><a href="trainer-appointments.html?v=365" class="nav-link">Agenda</a></li>
-            <li><a href="trainer-settings.html?v=365" class="nav-link">Configuración</a></li>
+            <li><a href="trainer-dashboard.html?v=457" class="nav-link">Dashboard</a></li>
+            <li><a href="trainer-clients.html?v=457" class="nav-link active">Clientes</a></li>
+            <li><a href="trainer-routines.html?v=457" class="nav-link">Rutinas</a></li>
+            <li><a href="trainer-diets.html?v=457" class="nav-link">Dietas</a></li>
+            <li><a href="trainer-feedbacks.html?v=457" class="nav-link">Revisiones</a></li>
+            <li><a href="trainer-media.html?v=457" class="nav-link">Biblioteca</a></li>
+            <li><a href="trainer-appointments.html?v=457" class="nav-link">Agenda</a></li>
+            <li><a href="trainer-settings.html?v=457" class="nav-link">Configuración</a></li>
             <li><a href="#" onclick="if(typeof AUTH !== 'undefined') { AUTH.signOut() } else { window.location.reload() }; return false;" class="nav-link" style="color:var(--error-color)">🚪 Salir</a></li>
           </ul>
         </nav>
@@ -95,10 +95,10 @@
                   style="font-size: 0.75rem; color: var(--text-muted); margin-bottom: 5px; display: block;">Buscar
                   Cliente</label>
                 <div style="position: relative;">
-                  <input type="text" id="searchInput" class="form-input"
+                  <input type="text" id="searchInput" class="form-input search-input-mobile"
                     style="height: 42px; padding: 0 12px 0 40px; background: rgba(0,0,0,0.2);"
                     placeholder="Nombre, email o teléfono..." oninput="window.dibujarTabla()">
-                  <span
+                  <span class="search-icon-span"
                     style="position: absolute; left: 12px; top: 50%; transform: translateY(-50%); opacity: 0.5; pointer-events: none;">🔍</span>
                 </div>
               </div>
@@ -134,9 +134,9 @@
                 <tr style="text-align: left;">
                   <th style="padding: 15px;">CLIENTE</th>
                   <th>ESTADO</th>
-                  <th>REVISIÓN</th>
-                  <th>CÓDIGO ACCESO</th>
-                  <th>CONTACTO</th>
+                  <th class="hide-on-mobile">REVISIÓN</th>
+                  <th class="hide-on-mobile">CÓDIGO ACCESO</th>
+                  <th class="hide-on-mobile">CONTACTO</th>
                   <th style="text-align: right; padding-right: 15px;">ACCIONES</th>
                 </tr>
               </thead>
@@ -156,14 +156,14 @@
 
   <!-- Supabase SDK & Service -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script src="js/supabase-service.js?v=365"></script>
+  <script src="js/supabase-service.js?v=457"></script>
 
-  <script src="js/config.js?v=365"></script>
-  <script src="js/auth.js?v=365"></script>
-  <script src="js/sheets.js?v=365"></script>
-  <script src="js/data-models.js?v=365"></script>
-  <script src="js/custom-exercises.js?v=365"></script>
-  <script src="js/utils.js?v=365"></script>
+  <script src="js/config.js?v=457"></script>
+  <script src="js/auth.js?v=457"></script>
+  <script src="js/sheets.js?v=457"></script>
+  <script src="js/data-models.js?v=457"></script>
+  <script src="js/custom-exercises.js?v=457"></script>
+  <script src="js/utils.js?v=457"></script>
   <script>
     const daysMapShort = { '1': 'Lun', '2': 'Mar', '3': 'Mié', '4': 'Jue', '5': 'Vie', '6': 'Sáb', '7': 'Dom' };
 
@@ -226,7 +226,7 @@
             <td>
               <span class="badge ${statusBadge}">${statusText}</span>
             </td>
-            <td>
+            <td class="hide-on-mobile">
               <span class="badge" style="background: rgba(0,217,255,0.1); color: var(--primary-color); border: 1px solid var(--primary-color); min-width: 90px; text-align: center;">
                 ${(() => {
                   if (c.reviewFrequency === 'specific' && c.specificReviewDate) {
@@ -243,8 +243,8 @@
                 })()}
               </span>
             </td>
-            <td><code style="color:var(--primary-color)">${c.accessCode}</code></td>
-            <td>${c.phone || '---'}</td>
+            <td class="hide-on-mobile"><code style="color:var(--primary-color)">${c.accessCode}</code></td>
+            <td class="hide-on-mobile">${c.phone || '---'}</td>
             <td style="text-align: right; padding-right: 15px;">
               <div class="flex gap-sm" style="justify-content: flex-end;">
                 <a href="trainer-client-detail.html?id=${c.id}" class="btn btn-sm btn-secondary" title="Ver Detalle">👁️</a>
@@ -257,7 +257,7 @@
     }
 
     window.abrirModalNuevo = function() {
-      // ENFORCEMENT OF 20-CLIENT LIMIT FOR PLAN BASIC
+      // ENFORCEMENT OF 15-CLIENT LIMIT FOR PLAN BASIC
       try {
         const allClients = window.Clients ? window.Clients.getAll() : [];
         const activeClients = allClients.filter(c => c.status === 'active');
@@ -272,8 +272,8 @@
             if (t) trainerPlan = t.plan;
         }
 
-        if (trainerPlan === 'Plan Basic' && activeClients.length >= 20) {
-            showToast('⚠️ Límite alcanzado: El Plan Basic está limitado a 20 clientes activos. Por favor, actualiza al Plan Pro para tener clientes ilimitados.', 'error');
+        if (trainerPlan === 'Plan Basic' && activeClients.length >= 15) {
+            showToast('⚠️ Límite alcanzado: El Plan Basic está limitado a un máximo de 15 clientes activos. Por favor, actualiza tu plan a PRO o ELITE para activar más clientes.', 'error');
             return;
         }
       } catch (err) {
@@ -305,7 +305,7 @@
       const name = document.getElementById('c_name').value;
       if (!name) return showToast("El nombre es obligatorio", "error");
 
-      // ENFORCEMENT OF 20-CLIENT LIMIT FOR PLAN BASIC (Double protection)
+      // ENFORCEMENT OF 15-CLIENT LIMIT FOR PLAN BASIC (Double protection)
       try {
         const allClients = window.Clients ? window.Clients.getAll() : [];
         const activeClients = allClients.filter(c => c.status === 'active');
@@ -320,8 +320,8 @@
             if (t) trainerPlan = t.plan;
         }
 
-        if (trainerPlan === 'Plan Basic' && activeClients.length >= 20) {
-            showToast('⚠️ Límite alcanzado: El Plan Basic está limitado a 20 clientes activos. Por favor, actualiza al Plan Pro para tener clientes ilimitados.', 'error');
+        if (trainerPlan === 'Plan Basic' && activeClients.length >= 15) {
+            showToast('⚠️ Límite alcanzado: El Plan Basic está limitado a un máximo de 15 clientes activos. Por favor, actualiza tu plan a PRO o ELITE para activar más clientes.', 'error');
             window.closeModal();
             return;
         }
@@ -424,6 +424,6 @@
       if (typeof window.dibujarTabla === 'function') window.dibujarTabla();
     }
   </script>
-    <script src="js/custom-recipes.js?v=365"></script></body>
+    <script src="js/custom-recipes.js?v=457"></script></body>
 
 </html>

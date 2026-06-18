@@ -1,0 +1,727 @@
+<!DOCTYPE html>
+<html lang="es" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Asesorías Toledo The Bull</title>
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="https://bieeydhacavxymoosasx.supabase.co/storage/v1/object/public/Media/1781711106755_toledo_the_bull.png">
+    <link rel="apple-touch-icon" href="https://bieeydhacavxymoosasx.supabase.co/storage/v1/object/public/Media/1781711106755_toledo_the_bull.png">
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#E60026',
+                        primaryDark: '#b5001e',
+                        accent: '#ffffff',
+                        bgDark: '#0A0A0E',
+                        cardDark: '#121217',
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        /* Hide scrollbars for the carousel */
+        .scrollbar-none::-webkit-scrollbar {
+            display: none;
+        }
+        .scrollbar-none {
+            -ms-overflow-style: none;  /* IE and Edge */
+            scrollbar-width: none;  /* Firefox */
+        }
+    </style>
+</head>
+<body class="bg-bgDark text-white min-h-screen relative antialiased overflow-x-hidden selection:bg-[#E60026] selection:text-white">
+
+    <!-- Background Orbs & Effects in Crimson Red -->
+    <div class="absolute top-0 inset-x-0 h-full pointer-events-none overflow-hidden z-0">
+        <div class="absolute -top-[10%] -left-[10%] w-[600px] h-[600px] rounded-full bg-[#E60026]/10 blur-[130px]"></div>
+        <div class="absolute top-[30%] -right-[15%] w-[500px] h-[500px] rounded-full bg-[#E60026]/8 blur-[120px]"></div>
+        <div class="absolute bottom-[20%] left-[5%] w-[700px] h-[700px] rounded-full bg-[#E60026]/6 blur-[160px]"></div>
+        
+        <!-- Subtle grid lines background overlay -->
+        <div class="absolute inset-0 opacity-[0.03]" 
+             style="background-image: linear-gradient(rgba(230,0,38,0.15) 1px, transparent 1px), linear-gradient(90deg, rgba(230,0,38,0.15) 1px, transparent 1px); background-size: 40px 40px;">
+        </div>
+    </div>
+
+    <div class="relative z-10 max-w-6xl mx-auto px-4 py-8 md:py-16">
+        
+        <!-- Header / Logo -->
+        <header class="flex justify-between items-center mb-16 md:mb-24">
+            <div class="flex items-center gap-3">
+                <img 
+                  src="https://bieeydhacavxymoosasx.supabase.co/storage/v1/object/public/Media/1781711106755_toledo_the_bull.png" 
+                  alt="Toledo The Bull Logo" 
+                  class="w-12 h-12 rounded-xl object-contain bg-black p-0.5 shadow-lg shadow-primary/20 border border-primary/30"
+                />
+                <div>
+                    <span class="font-extrabold text-xl tracking-tight block">Toledo The Bull</span>
+                    <span class="text-xs text-primary block font-bold tracking-widest uppercase">IFBB Pro Athlete</span>
+                </div>
+            </div>
+            <a
+              href="#formulario"
+              class="hidden sm:inline-flex items-center gap-1.5 px-5 py-2.5 rounded-full border border-white/10 bg-white/5 text-sm font-semibold hover:bg-primary/25 hover:border-primary/45 transition-all text-primary"
+            >
+              Empezar Ahora <i class="fa-solid fa-chevron-right text-xs"></i>
+            </a>
+        </header>
+
+        <!-- Hero Section -->
+        <section class="text-center max-w-3xl mx-auto mb-20 md:mb-32">
+            <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-primary/10 text-primary text-xs font-bold uppercase tracking-wider mb-6 border border-primary/20">
+                <i class="fa-solid fa-sparkles animate-pulse"></i> Desata tu máximo potencial físico
+            </div>
+            <h1 class="text-4xl sm:text-6xl font-black tracking-tight leading-tight mb-8">
+                Lleva tu físico y rendimiento al <span class="text-primary italic font-serif">Máximo Nivel</span>
+            </h1>
+            <p class="text-gray-400 text-lg sm:text-xl leading-relaxed mb-10">
+                Asesoría deportiva y nutricional de élite guiada directamente por el atleta profesional IFBB Pro Víctor Toledo "The Bull". Con el Método The Bull conseguirás una transformación física definitiva y llevarás tu rendimiento al siguiente nivel.
+            </p>
+            <div class="flex flex-col sm:flex-row gap-4 justify-center">
+                <a
+                  href="#formulario"
+                  class="px-8 py-4 bg-primary text-white font-extrabold rounded-2xl hover:bg-primaryDark transition-all shadow-lg shadow-primary/35 flex items-center justify-center gap-2 text-base scale-100 hover:scale-[1.02] active:scale-[0.98]"
+                >
+                  Comenzar Asesoría <i class="fa-solid fa-arrow-right"></i>
+                </a>
+                <a
+                  href="#metodo"
+                  class="px-8 py-4 bg-white/5 hover:bg-white/10 border border-white/10 text-white font-bold rounded-2xl transition-all flex items-center justify-center"
+                >
+                  Descubrir el Método
+                </a>
+            </div>
+        </section>
+
+        <!-- Transformations Section -->
+        <section class="mb-24 md:mb-36">
+            <div class="text-center mb-16">
+                <h2 class="text-3xl font-extrabold tracking-tight mb-4">
+                    Cambios Reales, <span class="text-primary">Resultados Garantizados</span>
+                </h2>
+                <p class="text-gray-400 max-w-xl mx-auto">
+                    Visualiza las transformaciones físicas de personas que decidieron confiar en mi método y tomaron el control de su cuerpo.
+                </p>
+            </div>
+
+            <div class="relative group px-1">
+                <!-- Left arrow -->
+                <button
+                    id="carousel-prev"
+                    class="absolute left-4 top-1/2 -translate-y-1/2 z-20 w-12 h-12 bg-black/60 hover:bg-primary border border-white/10 rounded-full flex items-center justify-center text-white transition-all shadow-lg backdrop-blur-sm focus:outline-none hover:scale-105 active:scale-95"
+                    aria-label="Anterior"
+                >
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                        <polyline points="15 18 9 12 15 6"></polyline>
+                    </svg>
+                </button>
+
+                <!-- Right arrow -->
+                <button
+                    id="carousel-next"
+                    class="absolute right-4 top-1/2 -translate-y-1/2 z-20 w-12 h-12 bg-black/60 hover:bg-primary border border-white/10 rounded-full flex items-center justify-center text-white transition-all shadow-lg backdrop-blur-sm focus:outline-none hover:scale-105 active:scale-95"
+                    aria-label="Siguiente"
+                >
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                        <polyline points="9 18 15 12 9 6"></polyline>
+                    </svg>
+                </button>
+
+                <!-- Carousel track -->
+                <div 
+                    id="transformations-carousel"
+                    class="flex items-center overflow-x-auto snap-x snap-mandatory gap-6 scrollbar-none scroll-smooth pb-4 px-2"
+                >
+                    <div class="snap-center shrink-0 w-full sm:w-[calc(50%-12px)] md:w-[calc(33.333%-16px)] flex items-center justify-center p-2 rounded-3xl border border-white/5 bg-[#121217]/40 backdrop-blur-sm hover:border-primary/30 transition-all duration-300 group shadow-md shadow-primary/2">
+                        <img src="/img/toledo_transform_1.png" alt="Cambio físico 1" class="w-full h-auto block rounded-2xl max-h-[450px] object-contain group-hover:scale-[1.02] transition-all duration-500">
+                    </div>
+                    <div class="snap-center shrink-0 w-full sm:w-[calc(50%-12px)] md:w-[calc(33.333%-16px)] flex items-center justify-center p-2 rounded-3xl border border-white/5 bg-[#121217]/40 backdrop-blur-sm hover:border-primary/30 transition-all duration-300 group shadow-md shadow-primary/2">
+                        <img src="/img/toledo_transform_2.png" alt="Cambio físico 2" class="w-full h-auto block rounded-2xl max-h-[450px] object-contain group-hover:scale-[1.02] transition-all duration-500">
+                    </div>
+                    <div class="snap-center shrink-0 w-full sm:w-[calc(50%-12px)] md:w-[calc(33.333%-16px)] flex items-center justify-center p-2 rounded-3xl border border-white/5 bg-[#121217]/40 backdrop-blur-sm hover:border-primary/30 transition-all duration-300 group shadow-md shadow-primary/2">
+                        <img src="/img/toledo_transform_3.png" alt="Cambio físico 3" class="w-full h-auto block rounded-2xl max-h-[450px] object-contain group-hover:scale-[1.02] transition-all duration-500">
+                    </div>
+                    <div class="snap-center shrink-0 w-full sm:w-[calc(50%-12px)] md:w-[calc(33.333%-16px)] flex items-center justify-center p-2 rounded-3xl border border-white/5 bg-[#121217]/40 backdrop-blur-sm hover:border-primary/30 transition-all duration-300 group shadow-md shadow-primary/2">
+                        <img src="/img/toledo_transform_4.png" alt="Cambio físico 4" class="w-full h-auto block rounded-2xl max-h-[450px] object-contain group-hover:scale-[1.02] transition-all duration-500">
+                    </div>
+                    <div class="snap-center shrink-0 w-full sm:w-[calc(50%-12px)] md:w-[calc(33.333%-16px)] flex items-center justify-center p-2 rounded-3xl border border-white/5 bg-[#121217]/40 backdrop-blur-sm hover:border-primary/30 transition-all duration-300 group shadow-md shadow-primary/2">
+                        <img src="/img/toledo_transform_5.png" alt="Cambio físico 5" class="w-full h-auto block rounded-2xl max-h-[450px] object-contain group-hover:scale-[1.02] transition-all duration-500">
+                    </div>
+                    <div class="snap-center shrink-0 w-full sm:w-[calc(50%-12px)] md:w-[calc(33.333%-16px)] flex items-center justify-center p-2 rounded-3xl border border-white/5 bg-[#121217]/40 backdrop-blur-sm hover:border-primary/30 transition-all duration-300 group shadow-md shadow-primary/2">
+                        <img src="/img/toledo_transform_6.png" alt="Cambio físico 6" class="w-full h-auto block rounded-2xl max-h-[450px] object-contain group-hover:scale-[1.02] transition-all duration-500">
+                    </div>
+                    <div class="snap-center shrink-0 w-full sm:w-[calc(50%-12px)] md:w-[calc(33.333%-16px)] flex items-center justify-center p-2 rounded-3xl border border-white/5 bg-[#121217]/40 backdrop-blur-sm hover:border-primary/30 transition-all duration-300 group shadow-md shadow-primary/2">
+                        <img src="/img/toledo_transform_7.png" alt="Cambio físico 7" class="w-full h-auto block rounded-2xl max-h-[450px] object-contain group-hover:scale-[1.02] transition-all duration-500">
+                    </div>
+                    <div class="snap-center shrink-0 w-full sm:w-[calc(50%-12px)] md:w-[calc(33.333%-16px)] flex items-center justify-center p-2 rounded-3xl border border-white/5 bg-[#121217]/40 backdrop-blur-sm hover:border-primary/30 transition-all duration-300 group shadow-md shadow-primary/2">
+                        <img src="/img/toledo_transform_8.png" alt="Cambio físico 8" class="w-full h-auto block rounded-2xl max-h-[450px] object-contain group-hover:scale-[1.02] transition-all duration-500">
+                    </div>
+                    <div class="snap-center shrink-0 w-full sm:w-[calc(50%-12px)] md:w-[calc(33.333%-16px)] flex items-center justify-center p-2 rounded-3xl border border-white/5 bg-[#121217]/40 backdrop-blur-sm hover:border-primary/30 transition-all duration-300 group shadow-md shadow-primary/2">
+                        <img src="/img/toledo_transform_9.png" alt="Cambio físico 9" class="w-full h-auto block rounded-2xl max-h-[450px] object-contain group-hover:scale-[1.02] transition-all duration-500">
+                    </div>
+                    <div class="snap-center shrink-0 w-full sm:w-[calc(50%-12px)] md:w-[calc(33.333%-16px)] flex items-center justify-center p-2 rounded-3xl border border-white/5 bg-[#121217]/40 backdrop-blur-sm hover:border-primary/30 transition-all duration-300 group shadow-md shadow-primary/2">
+                        <img src="/img/toledo_transform_10.png" alt="Cambio físico 10" class="w-full h-auto block rounded-2xl max-h-[450px] object-contain group-hover:scale-[1.02] transition-all duration-500">
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="metodo" class="mb-24 md:mb-36 scroll-mt-20">
+            <div class="text-center mb-16">
+                <h2 class="text-3xl font-extrabold tracking-tight mb-4">
+                    El Método The Bull de Alto Rendimiento
+                </h2>
+                <p class="text-gray-400 max-w-xl mx-auto">
+                    Estrategias científicas de entrenamiento y nutrición adaptadas al nivel de competición y aplicadas a tu vida diaria para lograr un cambio físico real y duradero.
+                </p>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-16">
+                <!-- Feature 1 -->
+                <div class="bg-[#121217]/60 backdrop-blur-md p-8 rounded-3xl border border-white/5 hover:border-primary/30 transition-all group flex flex-col justify-between">
+                    <div>
+                        <div class="w-14 h-14 rounded-2xl bg-primary/10 text-primary flex items-center justify-center mb-6 group-hover:bg-primary group-hover:text-white transition-all">
+                            <i class="fa-solid fa-dumbbell text-2xl"></i>
+                        </div>
+                        <h3 class="text-xl font-bold mb-3">Entrenamiento Personalizado</h3>
+                        <p class="text-gray-400 leading-relaxed text-sm">
+                            Rutinas planificadas en base a tus objetivos y nivel para conseguir un rendimiento superior.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Feature 2 -->
+                <div class="bg-[#121217]/60 backdrop-blur-md p-8 rounded-3xl border border-white/5 hover:border-primary/30 transition-all group flex flex-col justify-between">
+                    <div>
+                        <div class="w-14 h-14 rounded-2xl bg-primary/10 text-primary flex items-center justify-center mb-6 group-hover:bg-primary group-hover:text-white transition-all">
+                            <i class="fa-solid fa-apple-whole text-2xl"></i>
+                        </div>
+                        <h3 class="text-xl font-bold mb-3">Nutrición de Precisión</h3>
+                        <p class="text-gray-400 leading-relaxed text-sm">
+                            Estructura nutricional adaptada a tus requerimientos energéticos y gustos. Planes flexibles con recetas deliciosas y fáciles de preparar para hacer el proceso sostenible en el tiempo.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Feature 3 -->
+                <div class="bg-[#121217]/60 backdrop-blur-md p-8 rounded-3xl border border-white/5 hover:border-primary/30 transition-all group flex flex-col justify-between">
+                    <div>
+                        <div class="w-14 h-14 rounded-2xl bg-primary/10 text-primary flex items-center justify-center mb-6 group-hover:bg-primary group-hover:text-white transition-all">
+                            <i class="fa-solid fa-chart-line text-2xl"></i>
+                        </div>
+                        <h3 class="text-xl font-bold mb-3">Feedback y Optimización</h3>
+                        <p class="text-gray-400 leading-relaxed text-sm">
+                            Revisiones periódicas exhaustivas para valorar tu evolución y reajustar las variables necesarias. Soporte continuo mediante chat directo para resolver cualquier duda.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Lead Form Section -->
+        <section id="formulario" class="max-w-3xl mx-auto scroll-mt-20">
+            
+            <!-- Header Card -->
+            <div class="relative bg-cardDark rounded-t-3xl border-t-[6px] border-primary p-8 border-x border-b border-white/5 shadow-2xl">
+                <div class="absolute top-0 right-0 p-6 opacity-5 pointer-events-none text-primary">
+                    <i class="fa-solid fa-shield-halved text-8xl"></i>
+                </div>
+                <div class="flex items-center gap-4 mb-4">
+                    <img 
+                      src="https://bieeydhacavxymoosasx.supabase.co/storage/v1/object/public/Media/1781711106755_toledo_the_bull.png" 
+                      alt="Toledo The Bull Logo Mini" 
+                      class="w-10 h-10 rounded-lg object-contain bg-black p-0.5"
+                    />
+                    <h2 class="text-2xl sm:text-3xl font-extrabold tracking-tight">Postular a Asesoría</h2>
+                </div>
+                <p class="text-gray-300 text-sm sm:text-base leading-relaxed">
+                    Completa el siguiente cuestionario detalladamente. Analizaré tu caso personalmente y me pondré en contacto contigo en las próximas horas si cumples con el perfil de compromiso requerido.
+                </p>
+            </div>
+
+            <!-- Form Container -->
+            <div id="form-wrapper">
+                <form id="contact-form" class="space-y-6 mt-6">
+                    
+                    <!-- Question 1: Name -->
+                    <div class="bg-[#121217]/50 backdrop-blur-sm border border-white/5 rounded-2xl p-6 sm:p-8 space-y-4 shadow-xl">
+                        <label class="block text-base font-bold text-gray-200">
+                            Nombre y Apellidos <span class="text-primary">*</span>
+                        </label>
+                        <div class="relative">
+                            <i class="fa-solid fa-user absolute left-4 top-1/2 -translate-y-1/2 text-gray-500"></i>
+                            <input
+                              type="text"
+                              name="Nombre_y_Apellidos"
+                              required
+                              placeholder="Escribe tu respuesta"
+                              class="w-full bg-bgDark border border-white/10 rounded-xl py-4 pl-12 pr-4 text-white placeholder-gray-600 focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all"
+                            />
+                        </div>
+                    </div>
+
+                    <!-- Question 2: Age -->
+                    <div class="bg-[#121217]/50 backdrop-blur-sm border border-white/5 rounded-2xl p-6 sm:p-8 space-y-4 shadow-xl">
+                        <label class="block text-base font-bold text-gray-200">
+                            Edad <span class="text-primary">*</span>
+                        </label>
+                        <div class="relative">
+                            <i class="fa-solid fa-calendar absolute left-4 top-1/2 -translate-y-1/2 text-gray-500"></i>
+                            <input
+                              type="number"
+                              name="Edad"
+                              required
+                              min="1"
+                              max="120"
+                              placeholder="Escribe tu edad"
+                              class="w-full bg-bgDark border border-white/10 rounded-xl py-4 pl-12 pr-4 text-white placeholder-gray-600 focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all"
+                            />
+                        </div>
+                    </div>
+
+                    <!-- Question 3: Goal (Multiselect) -->
+                    <div class="bg-[#121217]/50 backdrop-blur-sm border border-white/5 rounded-2xl p-6 sm:p-8 space-y-4 shadow-xl">
+                        <label class="block text-base font-bold text-gray-200">
+                            ¿Cuáles son tus objetivos principales? <span class="text-primary">*</span>
+                        </label>
+                        
+                        <div class="space-y-3">
+                            <label class="flex items-start gap-3 cursor-pointer group">
+                                <input
+                                  type="checkbox"
+                                  name="Objetivo[]"
+                                  value="Mejorar composición corporal y hábitos"
+                                  class="w-5 h-5 rounded bg-bgDark border border-white/10 accent-primary text-primary focus:ring-primary/20 cursor-pointer transition-all mt-0.5"
+                                />
+                                <span class="text-gray-300 text-sm sm:text-base group-hover:text-white transition-colors">
+                                    Mejorar composición corporal y hábitos
+                                </span>
+                            </label>
+
+                            <label class="flex items-start gap-3 cursor-pointer group">
+                                <input
+                                  type="checkbox"
+                                  name="Objetivo[]"
+                                  value="Ganar masa muscular (Hipertrofia)"
+                                  class="w-5 h-5 rounded bg-bgDark border border-white/10 accent-primary text-primary focus:ring-primary/20 cursor-pointer transition-all mt-0.5"
+                                />
+                                <span class="text-gray-300 text-sm sm:text-base group-hover:text-white transition-colors">
+                                    Ganar masa muscular (Hipertrofia)
+                                </span>
+                            </label>
+
+                            <label class="flex items-start gap-3 cursor-pointer group">
+                                <input
+                                  type="checkbox"
+                                  name="Objetivo[]"
+                                  value="Pérdida de grasa / Definición"
+                                  class="w-5 h-5 rounded bg-bgDark border border-white/10 accent-primary text-primary focus:ring-primary/20 cursor-pointer transition-all mt-0.5"
+                                />
+                                <span class="text-gray-300 text-sm sm:text-base group-hover:text-white transition-colors">
+                                    Pérdida de grasa / Definición
+                                </span>
+                            </label>
+
+                            <label class="flex items-start gap-3 cursor-pointer group">
+                                <input
+                                  type="checkbox"
+                                  name="Objetivo[]"
+                                  value="Aumento de fuerza y rendimiento deportivo"
+                                  class="w-5 h-5 rounded bg-bgDark border border-white/10 accent-primary text-primary focus:ring-primary/20 cursor-pointer transition-all mt-0.5"
+                                />
+                                <span class="text-gray-300 text-sm sm:text-base group-hover:text-white transition-colors">
+                                    Aumento de fuerza y rendimiento deportivo
+                                </span>
+                            </label>
+
+                            <label class="flex items-start gap-3 cursor-pointer group">
+                                <input
+                                  type="checkbox"
+                                  name="Objetivo[]"
+                                  value="Competir en culturismo"
+                                  class="w-5 h-5 rounded bg-bgDark border border-white/10 accent-primary text-primary focus:ring-primary/20 cursor-pointer transition-all mt-0.5"
+                                />
+                                <span class="text-gray-300 text-sm sm:text-base group-hover:text-white transition-colors">
+                                    Competir en culturismo
+                                </span>
+                            </label>
+
+                            <!-- Custom Option "Otro" -->
+                            <div class="space-y-2 pt-2">
+                                <label class="flex items-center gap-3 cursor-pointer group">
+                                    <input
+                                      type="checkbox"
+                                      id="chk-otro"
+                                      class="w-5 h-5 rounded bg-bgDark border border-white/10 accent-primary text-primary focus:ring-primary/20 cursor-pointer transition-all"
+                                      onchange="toggleOtroInput()"
+                                    />
+                                    <span class="text-gray-300 text-sm sm:text-base group-hover:text-white transition-colors">
+                                        Otro objetivo:
+                                    </span>
+                                </label>
+                                <input
+                                  type="text"
+                                  id="input-otro"
+                                  name="Objetivo_Otro"
+                                  placeholder="Escribe tu otro objetivo aquí"
+                                  disabled
+                                  class="hidden w-[calc(100%-2rem)] ml-8 bg-bgDark border border-white/10 rounded-xl py-3 px-4 text-white placeholder-gray-600 focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all"
+                                />
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Question 4: Attitude (Radio) -->
+                    <div class="bg-[#121217]/50 backdrop-blur-sm border border-white/5 rounded-2xl p-6 sm:p-8 space-y-4 shadow-xl">
+                        <label class="block text-base font-bold text-gray-200">
+                            ¿Con qué nivel de compromiso entras a la asesoría? <span class="text-primary">*</span>
+                        </label>
+                        
+                        <div class="space-y-4">
+                            <label class="flex items-start gap-3 cursor-pointer group">
+                                <input
+                                  type="radio"
+                                  name="Actitud"
+                                  required
+                                  value="Quiero ver de qué se trata, no es mi máxima prioridad actual"
+                                  class="w-5 h-5 rounded-full bg-bgDark border border-white/10 text-primary focus:ring-primary/20 cursor-pointer transition-all mt-0.5"
+                                />
+                                <span class="text-gray-300 text-sm sm:text-base group-hover:text-white transition-colors">
+                                    Quiero ver de qué se trata, no es mi máxima prioridad actual
+                                </span>
+                            </label>
+
+                            <label class="flex items-start gap-3 cursor-pointer group">
+                                <input
+                                  type="radio"
+                                  name="Actitud"
+                                  value="¡Estoy al 100% y dispuesto/a a darlo todo"
+                                  class="w-5 h-5 rounded-full bg-bgDark border border-white/10 text-primary focus:ring-primary/20 cursor-pointer transition-all mt-0.5"
+                                />
+                                <span class="text-gray-300 text-sm sm:text-base group-hover:text-white transition-colors">
+                                    ¡Estoy al 100% y dispuesto/a a darlo todo
+                                </span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Question: Como Continuar (Radio) -->
+                    <div class="bg-[#121217]/50 backdrop-blur-sm border border-white/5 rounded-2xl p-6 sm:p-8 space-y-4 shadow-xl">
+                        <label class="block text-base font-bold text-gray-200">
+                            ¿Cómo prefieres que continuemos? <span class="text-primary">*</span>
+                        </label>
+                        
+                        <div class="space-y-4">
+                            <label class="flex items-start gap-3 cursor-pointer group">
+                                <input
+                                  type="radio"
+                                  name="Como_Continuar"
+                                  required
+                                  value="Quiero más información general porque tengo algunas dudas"
+                                  class="w-5 h-5 rounded-full bg-bgDark border border-white/10 text-primary focus:ring-primary/20 cursor-pointer transition-all mt-0.5"
+                                />
+                                <span class="text-gray-300 text-sm sm:text-base group-hover:text-white transition-colors">
+                                    Quiero más información general porque tengo algunas dudas
+                                </span>
+                            </label>
+
+                            <label class="flex items-start gap-3 cursor-pointer group">
+                                <input
+                                  type="radio"
+                                  name="Como_Continuar"
+                                  value="¡Quiero que me envíes el formulario de admisión completo para empezar cuanto antes!"
+                                  class="w-5 h-5 rounded-full bg-bgDark border border-white/10 text-primary focus:ring-primary/20 cursor-pointer transition-all mt-0.5"
+                                />
+                                <span class="text-gray-300 text-sm sm:text-base group-hover:text-white transition-colors">
+                                    ¡Quiero que me envíes el formulario de admisión completo para empezar cuanto antes!
+                                </span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Question 5: Expectations (TextArea) -->
+                    <div class="bg-[#121217]/50 backdrop-blur-sm border border-white/5 rounded-2xl p-6 sm:p-8 space-y-4 shadow-xl">
+                        <label class="block text-base font-bold text-gray-200">
+                            ¿Qué esperas conseguir y cómo crees que puedo ayudarte?
+                        </label>
+                        <textarea
+                          name="Expectativas"
+                          rows="4"
+                          placeholder="Escribe tus respuestas o dudas..."
+                          class="w-full bg-bgDark border border-white/10 rounded-xl py-4 px-4 text-white placeholder-gray-600 focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all resize-none"
+                        ></textarea>
+                    </div>
+
+                    <!-- Question 6: Phone -->
+                    <div class="bg-[#121217]/50 backdrop-blur-sm border border-white/5 rounded-2xl p-6 sm:p-8 space-y-4 shadow-xl">
+                        <label class="block text-base font-bold text-gray-200">
+                            Número de teléfono para contacto rápido (WhatsApp) <span class="text-primary">*</span>
+                        </label>
+                        <div class="relative">
+                            <i class="fa-solid fa-phone absolute left-4 top-1/2 -translate-y-1/2 text-gray-500"></i>
+                            <input
+                              type="tel"
+                              name="Telefono"
+                              required
+                              placeholder="Escribe tu número de teléfono"
+                              class="w-full bg-bgDark border border-white/10 rounded-xl py-4 pl-12 pr-4 text-white placeholder-gray-600 focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all"
+                            />
+                        </div>
+                    </div>
+
+                    <!-- Question 7: Email -->
+                    <div class="bg-[#121217]/50 backdrop-blur-sm border border-white/5 rounded-2xl p-6 sm:p-8 space-y-4 shadow-xl">
+                        <label class="block text-base font-bold text-gray-200">
+                            Dirección de correo electrónico <span class="text-primary">*</span>
+                        </label>
+                        <div class="relative">
+                            <i class="fa-solid fa-envelope absolute left-4 top-1/2 -translate-y-1/2 text-gray-500"></i>
+                            <input
+                              type="email"
+                              name="Email"
+                              required
+                              placeholder="Escribe tu correo electrónico"
+                              class="w-full bg-bgDark border border-white/10 rounded-xl py-4 pl-12 pr-4 text-white placeholder-gray-600 focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all"
+                            />
+                        </div>
+                    </div>
+
+                    <!-- Error Alert -->
+                    <div id="error-alert" class="hidden bg-primary/10 border border-primary/30 text-primary text-sm px-4 py-3 rounded-xl"></div>
+
+                    <!-- Submit Button -->
+                    <button
+                      type="submit"
+                      id="submit-btn"
+                      class="w-full py-4 text-center bg-primary hover:bg-primaryDark text-white font-extrabold rounded-2xl shadow-xl shadow-primary/20 transition-all cursor-pointer flex items-center justify-center gap-2"
+                    >
+                        <span>Enviar Formulario</span>
+                        <i class="fa-solid fa-arrow-right"></i>
+                    </button>
+                </form>
+            </div>
+
+            <!-- Success State -->
+            <div id="success-wrapper" class="hidden bg-[#121217]/40 backdrop-blur-md border border-white/5 rounded-b-3xl p-12 text-center shadow-2xl mt-6">
+                <div class="w-20 h-20 rounded-full bg-primary/10 text-primary flex items-center justify-center mx-auto mb-6">
+                    <i class="fa-solid fa-circle-check text-4xl"></i>
+                </div>
+                <h3 class="text-2xl font-bold mb-3">¡Formulario Recibido!</h3>
+                <p class="text-gray-400 max-w-md mx-auto mb-8">
+                    Tus respuestas han sido enviadas correctamente. Valoraré tu información y me pondré en contacto contigo por teléfono o email en un plazo de 24-48 horas.
+                </p>
+                <button
+                  onclick="resetFormState()"
+                  class="px-6 py-3 bg-white/5 hover:bg-white/10 border border-white/10 rounded-xl text-sm font-semibold transition-all hover:border-primary/30"
+                >
+                    Volver a enviar
+                </button>
+            </div>
+
+            <!-- Social Media & Footer Branding -->
+            <div class="text-center mt-16 mb-8 space-y-4">
+                <p class="text-gray-400 text-sm font-semibold">SÍGUEME EN MIS REDES SOCIALES</p>
+                <div class="flex justify-center gap-4">
+                    <a 
+                      href="https://www.instagram.com/toledo_thebull/" 
+                      target="_blank" 
+                      rel="noreferrer"
+                      class="w-10 h-10 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-gray-400 hover:text-white hover:bg-primary hover:border-primary transition-all"
+                    >
+                        <i class="fa-brands fa-instagram text-lg"></i>
+                    </a>
+                </div>
+                <div class="text-center text-gray-500 text-xs pt-4">
+                    © <span id="current-year"></span> Toledo The Bull. Todos los derechos reservados.<br />
+                    Impulsado por la plataforma premium <span class="text-primary font-semibold">Infinite Coach</span>.
+                </div>
+            </div>
+
+        </section>
+
+    </div>
+
+    <!-- Floating WhatsApp Button -->
+    <a 
+      href="https://wa.me/34600000000"
+      target="_blank"
+      rel="noreferrer"
+      class="fixed bottom-6 right-6 z-50 w-14 h-14 bg-[#25D366] hover:bg-[#128C7E] text-white rounded-full shadow-2xl flex items-center justify-center transition-all duration-300 hover:scale-110 active:scale-95 group"
+      title="Contactar por WhatsApp"
+    >
+      <span class="absolute -top-12 right-0 bg-white text-black text-xs font-bold px-3 py-1.5 rounded-xl shadow-lg border border-gray-100 whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none">
+        ¿Dudas? Escríbeme
+      </span>
+      <svg class="w-8 h-8 fill-current" viewBox="0 0 24 24">
+        <path d="M12.031 2c-5.514 0-9.99 4.478-9.99 9.99 0 2.08.647 4.01 1.747 5.612l-1.144 4.173 4.29-1.127c1.545.922 3.338 1.455 5.26 1.455 5.516 0 10.002-4.478 10.002-9.99C22.005 6.478 17.519 2 12.031 2zm6.273 14.253c-.256.716-1.5 1.401-2.062 1.488-.518.082-1.189.146-3.414-.775-2.845-1.177-4.636-4.075-4.777-4.263-.143-.188-1.152-1.533-1.152-2.924 0-1.392.73-2.072 1.01-2.353.28-.28.616-.352.822-.352.207 0 .414.002.595.01.187.008.438-.073.684.52.256.617.876 2.132.953 2.285.077.154.128.334.026.54-.103.205-.154.333-.307.513-.153.18-.323.401-.462.538-.154.154-.316.323-.136.634.18.31.8 1.309 1.716 2.128.784.7 1.442.92 1.75 1.045.309.125.49.103.673-.105.183-.207.784-.912.994-1.22.21-.309.422-.257.712-.149.29.11 1.842.868 2.152 1.023.31.154.518.23.595.36.078.13.078.752-.178 1.47z"/>
+      </svg>
+    </a>
+
+    <!-- Scripts for Form Interactivity -->
+    <script>
+        document.getElementById('current-year').textContent = new Date().getFullYear();
+
+        function toggleOtroInput() {
+            const chkOtro = document.getElementById('chk-otro');
+            const inputOtro = document.getElementById('input-otro');
+            if (chkOtro.checked) {
+                inputOtro.disabled = false;
+                inputOtro.classList.remove('hidden');
+                inputOtro.required = true;
+                inputOtro.focus();
+            } else {
+                inputOtro.disabled = true;
+                inputOtro.classList.add('hidden');
+                inputOtro.required = false;
+                inputOtro.value = '';
+            }
+        }
+
+        const form = document.getElementById('contact-form');
+        const submitBtn = document.getElementById('submit-btn');
+        const errorAlert = document.getElementById('error-alert');
+        const formWrapper = document.getElementById('form-wrapper');
+        const successWrapper = document.getElementById('success-wrapper');
+
+        form.addEventListener('submit', async function(e) {
+            e.preventDefault();
+            errorAlert.classList.add('hidden');
+            
+            // Check if at least one checkbox is checked
+            const checkboxes = document.querySelectorAll('input[name="Objetivo[]"]:checked');
+            const chkOtro = document.getElementById('chk-otro');
+            if (checkboxes.length === 0 && !chkOtro.checked) {
+                errorAlert.textContent = "Por favor, selecciona al menos un objetivo.";
+                errorAlert.classList.remove('hidden');
+                return;
+            }
+
+            // Set loading state
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = `
+                <svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-white inline-block" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.377 0 0 5.377 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                </svg>
+                <span>Enviando respuestas...</span>
+            `;
+
+            // Prepare Form Data
+            const formData = new FormData(form);
+            
+            const selectedGoals = [];
+            document.querySelectorAll('input[name="Objetivo[]"]:checked').forEach((el) => {
+                selectedGoals.push(el.value);
+            });
+            const customGoal = (chkOtro && chkOtro.checked) ? document.getElementById('input-otro').value.trim() : '';
+            
+            const attitudeEl = document.querySelector('input[name="Actitud"]:checked');
+            const attitude = attitudeEl ? attitudeEl.value : '';
+            
+            const comoContinuarEl = document.querySelector('input[name="Como_Continuar"]:checked');
+            const howToContinue = comoContinuarEl ? comoContinuarEl.value : '';
+            
+            const payload = {
+                name: formData.get('Nombre_y_Apellidos'),
+                age: formData.get('Edad'),
+                goals: selectedGoals,
+                customGoal: customGoal,
+                attitude: attitude,
+                howToContinue: howToContinue,
+                expectations: formData.get('Expectativas'),
+                phone: formData.get('Telefono'),
+                email: formData.get('Email'),
+                toEmail: "vtoledonutrition@gmail.com",
+                brand: "Toledo The Bull",
+                primaryColor: "#E60026"
+            };
+
+            const json = JSON.stringify(payload);
+
+            try {
+                const response = await fetch('/api/contact', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json'
+                    },
+                    body: json
+                });
+                
+                const result = await response.json();
+                
+                if (response.status === 200 && result.success) {
+                    formWrapper.classList.add('hidden');
+                    successWrapper.classList.remove('hidden');
+                    form.reset();
+                    document.getElementById('chk-otro').checked = false;
+                    toggleOtroInput();
+                } else {
+                    errorAlert.textContent = result.error || "Ocurrió un error al enviar el formulario.";
+                    errorAlert.classList.remove('hidden');
+                }
+            } catch (error) {
+                console.log(error);
+                errorAlert.textContent = "Error de red. Por favor, inténtalo de nuevo.";
+                errorAlert.classList.remove('hidden');
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = `
+                    <span>Enviar Formulario</span>
+                    <i class="fa-solid fa-arrow-right"></i>
+                `;
+            }
+        });
+
+        function resetFormState() {
+            successWrapper.classList.add('hidden');
+            formWrapper.classList.remove('hidden');
+        }
+
+        // Transformations Carousel functionality
+        const carousel = document.getElementById('transformations-carousel');
+        const prevBtn = document.getElementById('carousel-prev');
+        const nextBtn = document.getElementById('carousel-next');
+
+        if (carousel && prevBtn && nextBtn) {
+            prevBtn.addEventListener('click', () => {
+                const scrollAmount = carousel.clientWidth;
+                carousel.scrollBy({
+                    left: -scrollAmount,
+                    behavior: 'smooth'
+                });
+            });
+
+            nextBtn.addEventListener('click', () => {
+                const scrollAmount = carousel.clientWidth;
+                carousel.scrollBy({
+                    left: scrollAmount,
+                    behavior: 'smooth'
+                });
+            });
+        }
+    </script>
+</body>
+</html>

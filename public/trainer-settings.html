@@ -3,9 +3,35 @@
 
 <head>
     <script>
+        window.capturedLogs = [];
+        (function() {
+            const orgLog = console.log;
+            const orgWarn = console.warn;
+            const orgError = console.error;
+            console.log = function(...args) {
+                window.capturedLogs.push({ type: 'log', time: new Date().toISOString(), msg: args.map(a => typeof a === 'object' ? JSON.stringify(a) : String(a)).join(' ') });
+                orgLog.apply(console, args);
+            };
+            console.warn = function(...args) {
+                window.capturedLogs.push({ type: 'warn', time: new Date().toISOString(), msg: args.map(a => typeof a === 'object' ? JSON.stringify(a) : String(a)).join(' ') });
+                orgWarn.apply(console, args);
+            };
+            console.error = function(...args) {
+                window.capturedLogs.push({ type: 'error', time: new Date().toISOString(), msg: args.map(a => typeof a === 'object' ? JSON.stringify(a) : String(a)).join(' ') });
+                orgError.apply(console, args);
+            };
+            window.onerror = function(message, source, lineno, colno, error) {
+                window.capturedLogs.push({ type: 'exception', time: new Date().toISOString(), msg: `${message} at ${source}:${lineno}:${colno}` });
+                return false;
+            };
+            window.onunhandledrejection = function(event) {
+                window.capturedLogs.push({ type: 'rejection', time: new Date().toISOString(), msg: event.reason ? (event.reason.message || String(event.reason)) : 'Unhandled promise rejection' });
+            };
+        })();
+
         // Force PWA cache bust / reload
         (function() {
-            const CURRENT_VERSION = '365';
+            const CURRENT_VERSION = '460';
             const savedVersion = localStorage.getItem('app_version');
             if (savedVersion !== CURRENT_VERSION) {
                 localStorage.setItem('app_version', CURRENT_VERSION);
@@ -31,8 +57,8 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="styles/theme.css?v=365">
-    <link rel="stylesheet" href="styles/components.css?v=365">
+    <link rel="stylesheet" href="styles/theme.css?v=457">
+    <link rel="stylesheet" href="styles/components.css?v=457">
     <style>
         .settings-section {
             margin-bottom: var(--spacing-xl);
@@ -113,14 +139,14 @@
                 </div>
                 <button class="menu-toggle" onclick="toggleMenu()">☰</button>
                 <ul class="nav-links" id="navLinks">
-                    <li><a href="trainer-dashboard.html?v=365" class="nav-link">Dashboard</a></li>
-                    <li><a href="trainer-clients.html?v=365" class="nav-link">Clientes</a></li>
-                    <li><a href="trainer-routines.html?v=365" class="nav-link">Rutinas</a></li>
-                    <li><a href="trainer-diets.html?v=365" class="nav-link">Dietas</a></li>
-                    <li><a href="trainer-feedbacks.html?v=365" class="nav-link">Revisiones</a></li>
-                    <li><a href="trainer-media.html?v=365" class="nav-link">Biblioteca</a></li>
-                    <li><a href="trainer-appointments.html?v=365" class="nav-link">Agenda</a></li>
-                    <li><a href="trainer-settings.html?v=365" class="nav-link active">Configuración</a></li>
+                    <li><a href="trainer-dashboard.html?v=457" class="nav-link">Dashboard</a></li>
+                    <li><a href="trainer-clients.html?v=457" class="nav-link">Clientes</a></li>
+                    <li><a href="trainer-routines.html?v=457" class="nav-link">Rutinas</a></li>
+                    <li><a href="trainer-diets.html?v=457" class="nav-link">Dietas</a></li>
+                    <li><a href="trainer-feedbacks.html?v=457" class="nav-link">Revisiones</a></li>
+                    <li><a href="trainer-media.html?v=457" class="nav-link">Biblioteca</a></li>
+                    <li><a href="trainer-appointments.html?v=457" class="nav-link">Agenda</a></li>
+                    <li><a href="trainer-settings.html?v=457" class="nav-link active">Configuración</a></li>
                     <li><a href="#" onclick="if(typeof AUTH !== 'undefined') { AUTH.signOut() } else { window.location.reload() }; return false;" class="nav-link" style="color:var(--error-color)">🚪 Salir</a></li>
                 </ul>
             </nav>
@@ -191,12 +217,22 @@
                                         <input type="color" id="accentColorInput" class="form-input" style="height: 50px; cursor: pointer;">
                                     </div>
                                 </div>
-                                <div class="form-group mb-md">
-                                    <label class="text-xs mb-xs display-block">Modo Visual (Tema)</label>
-                                    <select id="themeModeInput" class="form-select mb-sm" style="background: rgba(255,255,255,0.05); color: var(--text-primary); border: 1px solid rgba(255,255,255,0.1); border-radius: 6px; padding: 10px; width: 100%;">
-                                        <option value="dark" style="background: var(--bg-card); color: #fff;">🌙 Modo Noche (Oscuro)</option>
-                                        <option value="light" style="background: var(--bg-card); color: #fff;">☀️ Modo Día (Claro)</option>
-                                    </select>
+                                <div class="grid grid-3 gap-md mb-md">
+                                    <div>
+                                        <label class="text-xs mb-xs display-block">Modo Visual (Tema)</label>
+                                        <select id="themeModeInput" class="form-select" style="background: rgba(255,255,255,0.05); color: var(--text-primary); border: 1px solid rgba(255,255,255,0.1); border-radius: 6px; padding: 10px; height: 50px; width: 100%;">
+                                            <option value="dark" style="background: var(--bg-card); color: #fff;">🌙 Modo Noche (Oscuro)</option>
+                                            <option value="light" style="background: var(--bg-card); color: #fff;">☀️ Modo Día (Claro)</option>
+                                        </select>
+                                    </div>
+                                    <div>
+                                        <label class="text-xs mb-xs display-block">Color Fondo Noche</label>
+                                        <input type="color" id="bgDarkColorInput" class="form-input" style="height: 50px; cursor: pointer;">
+                                    </div>
+                                    <div>
+                                        <label class="text-xs mb-xs display-block">Color Fondo Día</label>
+                                        <input type="color" id="bgLightColorInput" class="form-input" style="height: 50px; cursor: pointer;">
+                                    </div>
                                 </div>
                                 <div class="flex-column gap-sm">
                                     <button class="btn btn-primary" onclick="applyColors()">🎨 Aplicar y Guardar cambios</button>
@@ -256,6 +292,9 @@
                                     <label class="checkbox-label">
                                         <input type="checkbox" id="clientShowRIR"> Mostrar RIR / Intensidad (App)
                                     </label>
+                                    <label class="checkbox-label">
+                                        <input type="checkbox" id="clientShowWeightHabit"> Mostrar Registro de Peso Diario (App)
+                                    </label>
                                 </div>
                             </div>
                             <div class="divider"></div>
@@ -298,11 +337,15 @@
                                 </div>
                                 <div class="flex-row justify-between mt-xs" id="saasClientLimitRow" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
                                     <span class="text-xs opacity-70" style="font-size: 0.8rem; opacity: 0.7;">Límite de clientes:</span>
-                                    <span class="text-xs font-bold text-white" id="saasClientLimitVal" style="font-size: 0.8rem; font-weight: 700; color: white;">... / 20 clientes</span>
+                                    <span class="text-xs font-bold text-white" id="saasClientLimitVal" style="font-size: 0.8rem; font-weight: 700; color: white;">... / 15 clientes</span>
                                 </div>
-                                <div class="flex-row justify-between mt-xs" style="display: flex; justify-content: space-between; align-items: center;">
+                                <div class="flex-row justify-between mt-xs" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
                                     <span class="text-xs opacity-70" style="font-size: 0.8rem; opacity: 0.7;">Estado:</span>
                                     <span class="text-xs font-bold" id="saasStatusVal" style="font-size: 0.8rem; font-weight: 700; color: #4CAF50;">🟢 Activo</span>
+                                </div>
+                                <div class="flex-row justify-between mt-xs" style="display: flex; justify-content: space-between; align-items: center;">
+                                    <span class="text-xs opacity-70" style="font-size: 0.8rem; opacity: 0.7;">Clave de acceso:</span>
+                                    <span class="text-xs font-bold text-white" id="saasLicenseKeyVal" style="font-size: 0.8rem; font-weight: 700; color: white;">...</span>
                                 </div>
                             </div>
                         </div>
@@ -507,17 +550,17 @@
 
     <!-- Supabase SDK & Service -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="js/supabase-service.js?v=365"></script>
+    <script src="js/supabase-service.js?v=457"></script>
 
     <!-- UI Scripts -->
-    <script src="js/config.js?v=365"></script>
-    <script src="js/auth.js?v=365"></script>
-    <script src="js/sheets.js?v=365"></script>
-    <script src="js/data-models.js?v=365"></script>
-    <script src="js/cloud-storage.js?v=365"></script>
-    <script src="js/utils.js?v=365"></script>
+    <script src="js/config.js?v=457"></script>
+    <script src="js/auth.js?v=457"></script>
+    <script src="js/sheets.js?v=457"></script>
+    <script src="js/data-models.js?v=460"></script>
+    <script src="js/cloud-storage.js?v=457"></script>
+    <script src="js/utils.js?v=457"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
-    <script src="js/excel-manager.js?v=365"></script>
+    <script src="js/excel-manager.js?v=457"></script>
     <script>
         // Global Variables
         let feedbackQuestions = [];
@@ -593,7 +636,8 @@
                     (trainerEmail && tr.email && tr.email.toLowerCase() === trainerEmail.toLowerCase())
                 );
                 
-                const isAlejandra = (activeId === 't-w0iybl7qb' || 
+                const isAlejandra = (activeId.includes('t-w0iybl7qb') || 
+                                     activeId.includes('t-zum04ds2n') || 
                                      (trainerEmail && (trainerEmail.toLowerCase() === 'ingenia@ingeniaia.es' || trainerEmail.toLowerCase() === 'alejandra.asteam@gmail.com')));
 
                 if (!t && isAlejandra) {
@@ -609,7 +653,8 @@
                         plan: 'Plan Basic',
                         email: trainerEmail || (isAlejandra ? 'alejandra.asteam@gmail.com' : 'trainer@infinitecoach.es'),
                         status: 'active',
-                        expiryDate: '18/06/2026'
+                        expiryDate: '18/06/2026',
+                        licenseKey: localStorage.getItem('_rememberedTrainerKey') || 'FIT-XXXX-26'
                     };
                 }
 
@@ -642,8 +687,8 @@
                             clientLimitRow.style.display = 'flex';
                             const allClients = window.Clients ? window.Clients.getAll() : [];
                             const activeCount = allClients.filter(c => c.status === 'active').length;
-                            clientLimitVal.textContent = `${activeCount} / 20 clientes`;
-                            if (activeCount >= 20) {
+                            clientLimitVal.textContent = `${activeCount} / 15 clientes`;
+                            if (activeCount >= 15) {
                                 clientLimitVal.style.color = '#ff6b6b';
                             } else {
                                 clientLimitVal.style.color = 'white';
@@ -662,6 +707,11 @@
                             statusVal.textContent = '🔴 Expirado / Suspendido';
                             statusVal.style.color = '#ff6b6b';
                         }
+                    }
+
+                    const licenseKeyVal = document.getElementById('saasLicenseKeyVal');
+                    if (licenseKeyVal) {
+                        licenseKeyVal.textContent = t.licenseKey || localStorage.getItem('_rememberedTrainerKey') || 'FIT-XXXX-26';
                     }
                 }
             } catch (err) {
@@ -682,7 +732,6 @@
             const whatsappInput = document.getElementById('whatsappInput');
             if (whatsappInput) whatsappInput.value = b.whatsapp || '';
 
-            // Colors
             const prim = document.getElementById('primaryColorInput');
             if (prim) prim.value = (b.colors && b.colors.primary) ? b.colors.primary : '#00D9FF';
             const sec = document.getElementById('secondaryColorInput');
@@ -691,17 +740,22 @@
             if (acc) acc.value = (b.colors && b.colors.accent) ? b.colors.accent : '#FF6B6B';
             const themeModeInput = document.getElementById('themeModeInput');
             if (themeModeInput) themeModeInput.value = (b.colors && b.colors.themeMode) ? b.colors.themeMode : 'dark';
+            const bgDarkColorInput = document.getElementById('bgDarkColorInput');
+            if (bgDarkColorInput) bgDarkColorInput.value = (b.colors && b.colors.bgDark) ? b.colors.bgDark : '#0F0F1E';
+            const bgLightColorInput = document.getElementById('bgLightColorInput');
+            if (bgLightColorInput) bgLightColorInput.value = (b.colors && b.colors.bgLight) ? b.colors.bgLight : '#E2E8F0';
 
             // ... rest of loadSettings logic ...
             const pdf = b.pdfSettings || { showCalories: true, showMacros: true };
             if(document.getElementById('pdfShowCalories')) document.getElementById('pdfShowCalories').checked = pdf.showCalories;
             if(document.getElementById('pdfShowMacros')) document.getElementById('pdfShowMacros').checked = pdf.showMacros;
 
-            const clientSettings = b.clientSettings || { showExerciseVideos: true, showCalories: true, showMacros: true, showRIR: true };
+            const clientSettings = b.clientSettings || { showExerciseVideos: true, showCalories: true, showMacros: true, showRIR: true, showWeightHabit: true };
             if (document.getElementById('clientShowVideos')) document.getElementById('clientShowVideos').checked = clientSettings.showExerciseVideos;
             if (document.getElementById('clientShowCalories')) document.getElementById('clientShowCalories').checked = clientSettings.showCalories !== false;
             if (document.getElementById('clientShowMacros')) document.getElementById('clientShowMacros').checked = clientSettings.showMacros !== false;
             if (document.getElementById('clientShowRIR')) document.getElementById('clientShowRIR').checked = clientSettings.showRIR !== false;
+            if (document.getElementById('clientShowWeightHabit')) document.getElementById('clientShowWeightHabit').checked = clientSettings.showWeightHabit !== false;
 
             const trainerSettings = b.trainerSettings || { autoSaveDietTemplate: false };
             if (document.getElementById('autoSaveDietTemplate')) document.getElementById('autoSaveDietTemplate').checked = trainerSettings.autoSaveDietTemplate;
@@ -758,13 +812,15 @@
                 const secondary = document.getElementById('secondaryColorInput').value;
                 const accent = document.getElementById('accentColorInput').value;
                 const themeMode = document.getElementById('themeModeInput').value;
+                const bgDark = document.getElementById('bgDarkColorInput').value;
+                const bgLight = document.getElementById('bgLightColorInput').value;
 
                 const updated = {
                     ...b,
                     name: newName,
                     whatsapp: newWhatsapp,
                     logo: currentLogoBase64 || b.logo, // IMPORTANTE: No sobrescribir con null si no se ha subido uno nuevo
-                    colors: { primary, secondary, accent, themeMode },
+                    colors: { primary, secondary, accent, themeMode, bgDark, bgLight },
                     trainerSettings: {
                         ...(b.trainerSettings || {}),
                         autoSaveDietTemplate: document.getElementById('autoSaveDietTemplate').checked
@@ -779,7 +835,8 @@
                         showExerciseVideos: document.getElementById('clientShowVideos').checked,
                         showCalories: document.getElementById('clientShowCalories').checked,
                         showMacros: document.getElementById('clientShowMacros').checked,
-                        showRIR: document.getElementById('clientShowRIR').checked
+                        showRIR: document.getElementById('clientShowRIR').checked,
+                        showWeightHabit: document.getElementById('clientShowWeightHabit').checked
                     }
                 };
                 
@@ -789,11 +846,184 @@
                 // Re-aplicar inmediatamente
                 BrandConfig.applyTheme();
                 console.log("Configuración guardada y aplicada con éxito");
+                if (typeof window.uploadDebugLogs === 'function') {
+                    window.uploadDebugLogs("After saveBrandSettings");
+                }
             } catch (err) {
                 console.error("Error al guardar configuración:", err);
                 showToast("Error al guardar: " + err.message, "error");
             }
         }
+
+        // --- AUTOSAVE FOR SETTINGS IMPLEMENTATION ---
+        window.silentSaveBrandSettings = function() {
+            try {
+                const brandNameEl = document.getElementById('brandNameInput');
+                if (!brandNameEl) return;
+                const b = BrandConfig.get();
+                const newName = brandNameEl.value.trim();
+                const newWhatsapp = document.getElementById('whatsappInput').value.trim();
+                
+                const primary = document.getElementById('primaryColorInput').value;
+                const secondary = document.getElementById('secondaryColorInput').value;
+                const accent = document.getElementById('accentColorInput').value;
+                const themeMode = document.getElementById('themeModeInput').value;
+                const bgDark = document.getElementById('bgDarkColorInput').value;
+                const bgLight = document.getElementById('bgLightColorInput').value;
+
+                const updated = {
+                    ...b,
+                    name: newName,
+                    whatsapp: newWhatsapp,
+                    logo: currentLogoBase64 || b.logo,
+                    colors: { primary, secondary, accent, themeMode, bgDark, bgLight },
+                    trainerSettings: {
+                        ...(b.trainerSettings || {}),
+                        autoSaveDietTemplate: document.getElementById('autoSaveDietTemplate').checked
+                    },
+                    pdfSettings: {
+                        ...(b.pdfSettings || {}),
+                        showCalories: document.getElementById('pdfShowCalories').checked,
+                        showMacros: document.getElementById('pdfShowMacros').checked
+                    },
+                    clientSettings: {
+                        ...(b.clientSettings || {}),
+                        showExerciseVideos: document.getElementById('clientShowVideos').checked,
+                        showCalories: document.getElementById('clientShowCalories').checked,
+                        showMacros: document.getElementById('clientShowMacros').checked,
+                        showRIR: document.getElementById('clientShowRIR').checked,
+                        showWeightHabit: document.getElementById('clientShowWeightHabit').checked
+                    }
+                };
+                BrandConfig.set(updated);
+                BrandConfig.applyTheme();
+            } catch(e) { console.error("Silent save brand config error:", e); }
+        };
+
+        window.silentSavePaymentSettings = function() {
+            try {
+                const b = BrandConfig.get();
+                b.paymentMethods = [...window.activePaymentMethods];
+                if (b.paymentMethods.length > 0) {
+                    b.paymentSettings = {
+                        method: b.paymentMethods[0].type,
+                        id: b.paymentMethods[0].id,
+                        instructions: b.paymentMethods[0].note || ''
+                    };
+                } else {
+                    b.paymentSettings = {
+                        method: 'none', id: '', instructions: ''
+                    };
+                }
+                BrandConfig.set(b);
+            } catch(e) { console.error("Silent save payment error:", e); }
+        };
+
+        window.silentSaveStripeSettings = function() {
+            try {
+                const stripePkEl = document.getElementById('stripePublicKey');
+                if (!stripePkEl) return;
+                const b = BrandConfig.get();
+                const pk = stripePkEl.value.trim();
+                const sk = document.getElementById('stripeSecretKey').value.trim();
+                b.stripeSettings = {
+                    publicKey: pk,
+                    secretKey: sk,
+                    plans: window.activeStripePlans ? window.activeStripePlans.filter(p => p.priceId && (p.priceId.startsWith('price_') || p.priceId.startsWith('http'))) : []
+                };
+                BrandConfig.set(b);
+                if (pk && sk && !window.activePaymentMethods.find(m => m.type === 'Stripe')) {
+                    window.activePaymentMethods.push({ type: 'Stripe', id: 'Activo' });
+                    if (typeof window.renderPaymentMethods === 'function') window.renderPaymentMethods();
+                    window.silentSavePaymentSettings();
+                }
+            } catch(e) { console.error("Silent save stripe error:", e); }
+        };
+
+        window.silentSaveFiscalSettings = function() {
+            try {
+                const fiscalNameEl = document.getElementById('fiscalNameInput');
+                if (!fiscalNameEl) return;
+                const b = BrandConfig.get();
+                const fiscal = {
+                    companyName: fiscalNameEl.value.trim(),
+                    nif: document.getElementById('fiscalNifInput').value.trim(),
+                    address: document.getElementById('fiscalAddressInput').value.trim(),
+                    zip: document.getElementById('fiscalZipInput').value.trim(),
+                    city: document.getElementById('fiscalCityInput').value.trim(),
+                    defaultIva: parseInt(document.getElementById('fiscalIvaInput').value) || 21,
+                    invoiceSeries: document.getElementById('fiscalSeriesInput').value.trim()
+                };
+                const updated = { ...b, fiscalData: fiscal, logo: currentLogoBase64 || b.logo };
+                BrandConfig.set(updated);
+            } catch(e) { console.error("Silent save fiscal error:", e); }
+        };
+
+        let saveBrandTimeout = null;
+        window.triggerSilentSaveBrand = function() {
+            if (saveBrandTimeout) clearTimeout(saveBrandTimeout);
+            saveBrandTimeout = setTimeout(() => {
+                window.silentSaveBrandSettings();
+            }, 500);
+        };
+
+        let saveStripeTimeout = null;
+        window.triggerSilentSaveStripe = function() {
+            if (saveStripeTimeout) clearTimeout(saveStripeTimeout);
+            saveStripeTimeout = setTimeout(() => {
+                window.silentSaveStripeSettings();
+            }, 500);
+        };
+
+        let saveFiscalTimeout = null;
+        window.triggerSilentSaveFiscal = function() {
+            if (saveFiscalTimeout) clearTimeout(saveFiscalTimeout);
+            saveFiscalTimeout = setTimeout(() => {
+                window.silentSaveFiscalSettings();
+            }, 500);
+        };
+
+        // Attach global input / change listener for settings fields
+        document.addEventListener('input', function(e) {
+            const id = e.target.id;
+            if (!id) return;
+            if ([
+                'brandNameInput', 'whatsappInput', 'primaryColorInput', 'secondaryColorInput', 
+                'accentColorInput', 'themeModeInput', 'bgDarkColorInput', 'bgLightColorInput', 'autoSaveDietTemplate',
+                'pdfShowCalories', 'pdfShowMacros', 'clientShowVideos', 'clientShowCalories',
+                'clientShowMacros', 'clientShowRIR', 'clientShowWeightHabit'
+            ].includes(id)) {
+                window.triggerSilentSaveBrand();
+            } else if (['stripePublicKey', 'stripeSecretKey'].includes(id)) {
+                window.triggerSilentSaveStripe();
+            } else if ([
+                'fiscalNameInput', 'fiscalNifInput', 'fiscalAddressInput', 'fiscalZipInput',
+                'fiscalCityInput', 'fiscalIvaInput', 'fiscalSeriesInput'
+            ].includes(id)) {
+                window.triggerSilentSaveFiscal();
+            }
+        });
+
+        document.addEventListener('change', function(e) {
+            const id = e.target.id;
+            if (!id) return;
+            if ([
+                'brandNameInput', 'whatsappInput', 'primaryColorInput', 'secondaryColorInput', 
+                'accentColorInput', 'themeModeInput', 'bgDarkColorInput', 'bgLightColorInput', 'autoSaveDietTemplate',
+                'pdfShowCalories', 'pdfShowMacros', 'clientShowVideos', 'clientShowCalories',
+                'clientShowMacros', 'clientShowRIR', 'clientShowWeightHabit'
+            ].includes(id)) {
+                window.triggerSilentSaveBrand();
+            } else if (['stripePublicKey', 'stripeSecretKey'].includes(id)) {
+                window.triggerSilentSaveStripe();
+            } else if ([
+                'fiscalNameInput', 'fiscalNifInput', 'fiscalAddressInput', 'fiscalZipInput',
+                'fiscalCityInput', 'fiscalIvaInput', 'fiscalSeriesInput'
+            ].includes(id)) {
+                window.triggerSilentSaveFiscal();
+            }
+        });
+        // --- END OF AUTOSAVE FOR SETTINGS ---
 
         // Las funciones saveFiscalSettings y savePaymentSettings completas están definidas más abajo en sus secciones correspondientes.
 
@@ -834,11 +1064,13 @@
             document.getElementById('newPaymentId').value = '';
             document.getElementById('newPaymentNote').value = '';
             renderPaymentMethods();
+            if (typeof window.silentSavePaymentSettings === 'function') window.silentSavePaymentSettings();
         }
 
         window.removePaymentMethod = function(index) {
             window.activePaymentMethods.splice(index, 1);
             renderPaymentMethods();
+            if (typeof window.silentSavePaymentSettings === 'function') window.silentSavePaymentSettings();
         }
 
         let _batchStatusRetries = 0;
@@ -1084,11 +1316,13 @@
                 const secondary = document.getElementById('secondaryColorInput').value;
                 const accent = document.getElementById('accentColorInput').value;
                 const themeMode = document.getElementById('themeModeInput').value;
+                const bgDark = document.getElementById('bgDarkColorInput').value;
+                const bgLight = document.getElementById('bgLightColorInput').value;
 
                 const b = BrandConfig.get();
                 const updated = {
                     ...b,
-                    colors: { primary, secondary, accent, themeMode },
+                    colors: { primary, secondary, accent, themeMode, bgDark, bgLight },
                     logo: currentLogoBase64 || b.logo // Asegurar que el logo se mantiene
                 };
 
@@ -1106,13 +1340,17 @@
                 primary: '#00D9FF',
                 secondary: '#1A1A2E',
                 accent: '#FF6B6B',
-                themeMode: 'dark'
+                themeMode: 'dark',
+                bgDark: '#0F0F1E',
+                bgLight: '#E2E8F0'
             };
 
             document.getElementById('primaryColorInput').value = defaults.primary;
             document.getElementById('secondaryColorInput').value = defaults.secondary;
             document.getElementById('accentColorInput').value = defaults.accent;
             document.getElementById('themeModeInput').value = defaults.themeMode;
+            document.getElementById('bgDarkColorInput').value = defaults.bgDark;
+            document.getElementById('bgLightColorInput').value = defaults.bgLight;
 
             const b = BrandConfig.get();
             b.colors = defaults;
@@ -1186,12 +1424,14 @@
                 feedbackQuestions.push(val);
                 input.value = '';
                 renderQuestions();
+                BrandConfig.set({ feedbackQuestions: feedbackQuestions });
             }
         }
 
         function removeQuestion(index) {
             feedbackQuestions.splice(index, 1);
             renderQuestions();
+            BrandConfig.set({ feedbackQuestions: feedbackQuestions });
         }
 
         function saveQuestions() {
@@ -1223,12 +1463,14 @@
                 feedbackPerimeters.push(val);
                 input.value = '';
                 renderPerimeters();
+                BrandConfig.set({ trainerPerimeters: Array.from(feedbackPerimeters) });
             }
         }
 
         function removePerimeter(index) {
             feedbackPerimeters.splice(index, 1);
             renderPerimeters();
+            BrandConfig.set({ trainerPerimeters: Array.from(feedbackPerimeters) });
         }
 
         function savePerimeters() {
@@ -1295,15 +1537,18 @@
             if (!window.activeStripePlans) window.activeStripePlans = [];
             window.activeStripePlans.push({ name: '', priceId: '' });
             renderStripePlans();
+            if (typeof window.triggerSilentSaveStripe === 'function') window.triggerSilentSaveStripe();
         };
 
         window.updateStripePlan = function(index, field, value) {
             window.activeStripePlans[index][field] = value;
+            if (typeof window.triggerSilentSaveStripe === 'function') window.triggerSilentSaveStripe();
         };
 
         window.removeStripePlan = function(index) {
             window.activeStripePlans.splice(index, 1);
             renderStripePlans();
+            if (typeof window.triggerSilentSaveStripe === 'function') window.triggerSilentSaveStripe();
         };
 
         window.saveStripeSettings = function() {
@@ -1431,6 +1676,45 @@
             ]);
         };
 
+        window.uploadDebugLogs = async function(note = "") {
+            try {
+                if (!window.SupabaseService || !window.SupabaseService.client) return;
+                const activeId = window.activeTrainerId || localStorage.getItem('activeTrainerId') || 'default';
+                if (activeId === 'default') return;
+                
+                const meta = {
+                    note: note,
+                    activeId: activeId,
+                    _trainerEmail: localStorage.getItem('_trainerEmail'),
+                    activeTrainerIdInStorage: localStorage.getItem('activeTrainerId'),
+                    isBrandConfigDelegated: window.BrandConfig !== undefined && window.BrandConfig !== null && typeof window.BrandConfig.get === 'function'
+                };
+                
+                const payload = [
+                    { type: 'diagnostic-state', time: new Date().toISOString(), msg: JSON.stringify(meta) },
+                    ...window.capturedLogs
+                ];
+                
+                const { data, error } = await window.SupabaseService.client
+                    .from('trainer_profiles')
+                    .select('full_data')
+                    .eq('trainer_id', activeId)
+                    .single();
+                
+                if (data) {
+                    const full = data.full_data || {};
+                    full.debugLogs = (full.debugLogs || []).concat(payload).slice(-250); // Keep last 250 log entries
+                    
+                    await window.SupabaseService.client
+                        .from('trainer_profiles')
+                        .update({ full_data: full })
+                        .eq('trainer_id', activeId);
+                }
+            } catch (err) {
+                console.warn("Silent failure uploading debug logs:", err);
+            }
+        };
+
         // Load settings on page load
         loadSettings();
     </script>
@@ -1457,8 +1741,15 @@
 
             // Cargar ajustes
             if (typeof loadSettings === 'function') loadSettings();
+
+            // Trigger diagnostic log upload
+            setTimeout(() => {
+                if (typeof window.uploadDebugLogs === 'function') {
+                    window.uploadDebugLogs("On page load (Google Auth Success)");
+                }
+            }, 2500);
         }
     </script>
-    <script src="js/custom-recipes.js?v=365"></script></body>
+    <script src="js/custom-recipes.js?v=457"></script></body>
 
 </html>

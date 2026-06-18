@@ -252,10 +252,24 @@
                 if (m.category !== 'exercise') return true;
                 const isOfficial = m.id && (String(m.id).startsWith('sys-ex-') || String(m.id).startsWith('prof-ex-'));
                 const isSystem = m.isSystem === true;
-                return isOfficial || isSystem;
+                const isPersonal = !isOfficial && !isSystem; // Conservar los añadidos por el entrenador
+                return isOfficial || isSystem || isPersonal;
             });
+
+            // Deduplicación por ID para evitar duplicados del bug de comparación por título
+            const seenIds = new Set();
+            data.media = data.media.filter(m => {
+                if (m.category === 'exercise' && m.id) {
+                    if (seenIds.has(m.id)) {
+                        return false;
+                    }
+                    seenIds.add(m.id);
+                }
+                return true;
+            });
+
             if (data.media.length !== initialCount) {
-                console.log(`🧹 Real Mode (Exercises): Purga completada. Eliminados ${initialCount - data.media.length} activos.`);
+                console.log(`🧹 Real Mode (Exercises): Purga/Deduplicación completada. Eliminados ${initialCount - data.media.length} activos.`);
                 changed = true;
             }
         }
@@ -318,14 +332,15 @@
         if (data.media) {
             for (const group in PRO_EXERCISES) {
                 PRO_EXERCISES[group].forEach(proEx => {
+                    const targetId = 'sys-ex-' + proEx.name.replace(/\s+/g, '-').toLowerCase();
                     const mediaIndex = data.media.findIndex(m => 
                         m.category === 'exercise' && 
-                        m.title.toLowerCase().trim() === proEx.name.toLowerCase().trim()
+                        m.id === targetId
                     );
 
                     if (mediaIndex === -1) {
                         data.media.push({
-                            id: 'sys-ex-' + proEx.name.replace(/\s+/g, '-').toLowerCase(),
+                            id: targetId,
                             type: 'video',
                             category: 'exercise',
                             url: proEx.videoUrl,
@@ -336,10 +351,22 @@
                         });
                         changed = true;
                     } else {
-                        if (!data.media[mediaIndex].url || data.media[mediaIndex].isSystem || data.media[mediaIndex].muscleGroup !== group) {
-                            data.media[mediaIndex].url = proEx.videoUrl;
-                            data.media[mediaIndex].muscleGroup = group;
-                            changed = true;
+                        const currentEx = data.media[mediaIndex];
+                        // Si el entrenador personalizó la url o el grupo, lo marcamos como userEdited para protegerlo
+                        if (currentEx.url && currentEx.url !== proEx.videoUrl && !currentEx.url.includes('placeholder')) {
+                            if (!currentEx.userEdited) {
+                                currentEx.userEdited = true;
+                                changed = true;
+                            }
+                        }
+                        
+                        // Solo actualizamos de forma automática si no ha sido editado por el usuario
+                        if (!currentEx.userEdited) {
+                            if (currentEx.url !== proEx.videoUrl || currentEx.muscleGroup !== group) {
+                                currentEx.url = proEx.videoUrl;
+                                currentEx.muscleGroup = group;
+                                changed = true;
+                            }
                         }
                     }
                 });

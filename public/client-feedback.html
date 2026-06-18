@@ -7,7 +7,7 @@
     <script>
         // Force PWA cache bust / reload
         (function() {
-            const CURRENT_VERSION = '365';
+            const CURRENT_VERSION = '457';
             const savedVersion = localStorage.getItem('app_version');
             if (savedVersion !== CURRENT_VERSION) {
                 localStorage.setItem('app_version', CURRENT_VERSION);
@@ -31,12 +31,67 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="styles/theme.css?v=365">
-    <link rel="stylesheet" href="styles/components.css?v=365">
-    <link rel="stylesheet" href="styles/mobile.css?v=365">
-    <link rel="manifest" href="manifest.json">
+    <link rel="stylesheet" href="styles/theme.css?v=457">
+    <link rel="stylesheet" href="styles/components.css?v=457">
+    <link rel="stylesheet" href="styles/mobile.css?v=457">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <script>
+        (function() {
+            var params = new URLSearchParams(window.location.search);
+            var tid = params.get('t') || localStorage.getItem('activeTrainerId') || 'default';
+            if (tid) {
+                var lower = tid.toLowerCase().trim();
+                if (lower === 'asteam' || lower === 'alejandra') {
+                    tid = 't-w0iybl7qb';
+                } else if (lower === 'toledo' || lower === 'vtoledo') {
+                    tid = 't-8umeizyns';
+                }
+            }
+            
+            // Si el cliente está logueado, intentar deducir su entrenador para PWA
+            var clientId = localStorage.getItem('clientId') || sessionStorage.getItem('clientId');
+            if (clientId) {
+                for (var i = 0; i < localStorage.length; i++) {
+                    var key = localStorage.key(i);
+                    if (key && key.indexOf('fitnessAppData_') === 0 && key.indexOf('_backup') === -1) {
+                        var raw = localStorage.getItem(key);
+                        if (raw) {
+                            try {
+                                var parsed = JSON.parse(raw);
+                                if (parsed && parsed.clients) {
+                                    for (var j = 0; j < parsed.clients.length; j++) {
+                                        if (parsed.clients[j].id === clientId) {
+                                            var foundTid = key.replace('fitnessAppData_', '');
+                                            if (foundTid && foundTid !== 'default' && foundTid !== 'admin') {
+                                                tid = foundTid;
+                                                break;
+                                            }
+                                        }
+                                    }
+                                }
+                            } catch(e) {}
+                        }
+                    }
+                    if (tid && tid !== 'default' && tid !== 'admin') break;
+                }
+            }
+            
+            var brandName = 'Infinite Coach';
+            var iconUrl = 'img/logo-infinite-coach.png';
+            if (tid === 't-w0iybl7qb') {
+                brandName = 'ASTeam';
+                iconUrl = 'https://bieeydhacavxymoosasx.supabase.co/storage/v1/object/public/Media/1779724548154_Gemini_Generated_Image_vse84nvse84nvse8.png';
+            } else if (tid === 't-8umeizyns') {
+                brandName = 'Toledo The Bull';
+                iconUrl = 'https://bieeydhacavxymoosasx.supabase.co/storage/v1/object/public/Media/1781711106755_toledo_the_bull.png';
+            }
+            
+            document.write('<meta name="apple-mobile-web-app-title" content="' + brandName + '">');
+            document.write('<link rel="apple-touch-icon" href="' + iconUrl + '">');
+            document.write('<link rel="manifest" href="manifest.json?t=' + tid + '">');
+        })();
+    </script>
     <style>
         .rating-group {
             display: flex;
@@ -100,10 +155,10 @@
                     <span id="brandName">Infinite Coach</span>
                 </div>
                 <ul class="nav-links" id="navLinks">
-                    <li><a href="client-dashboard.html?v=365" class="nav-link">Inicio</a></li>
-                    <li><a href="client-profile.html?v=365" class="nav-link">Ficha Técnica</a></li>
+                    <li><a href="client-dashboard.html?v=457" class="nav-link">Inicio</a></li>
+                    <li><a href="client-profile.html?v=457" class="nav-link">Ficha Técnica</a></li>
 
-                    <li><a href="client-login.html?v=365" class="nav-link">Salir</a></li>
+                    <li><a href="client-login.html?v=457" class="nav-link">Salir</a></li>
                 </ul>
                 <button class="menu-toggle" onclick="toggleMenu()" style="margin-left: auto;">☰</button>
             </nav>
@@ -287,11 +342,11 @@
 
     <!-- Supabase SDK & Service -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="js/supabase-service.js?v=365"></script>
+    <script src="js/supabase-service.js?v=457"></script>
 
-    <script src="js/data-models.js?v=365"></script>
-    <script src="js/cloud-storage.js?v=365"></script>
-    <script src="js/utils.js?v=365"></script>
+    <script src="js/data-models.js?v=457"></script>
+    <script src="js/cloud-storage.js?v=457"></script>
+    <script src="js/utils.js?v=457"></script>
     <script>
         const clientId = sessionStorage.getItem('clientId') || localStorage.getItem('clientId');
         if (!clientId) {
@@ -327,9 +382,8 @@
             // Load client
             client = Clients.getById(clientId);
             if (!client) {
-                localStorage.removeItem('clientId');
-                sessionStorage.removeItem('clientId');
-                window.location.replace('client-login.html');
+                const activeId = localStorage.getItem('activeTrainerId') || 'default';
+                window.location.replace('client-login.html?reauth=true&t=' + activeId);
                 return;
             }
 
@@ -503,7 +557,7 @@
                     energy: parseInt(document.getElementById('energyRating').value),
                     adherence: parseInt(document.getElementById('adherenceRating').value),
                     satisfaction: parseInt(document.getElementById('satisfactionRating').value),
-                    weight: parseFloat(document.getElementById('currentWeight').value) || null,
+                    weight: document.getElementById('currentWeight').value ? Math.round(parseFloat(document.getElementById('currentWeight').value) * 100) / 100 : null,
                     sleep: parseInt(document.getElementById('sleepRating').value),
                     stress: parseInt(document.getElementById('stressRating').value),
                     answers: answers,
@@ -688,7 +742,7 @@
                             <div class="grid grid-3 gap-xs text-center" style="margin-bottom: 15px;">
                                 <div style="background: rgba(0,0,0,0.25); padding: 8px; border-radius: 6px; border: 1px solid rgba(255,255,255,0.02);">
                                     <div class="text-muted" style="font-size: 0.6rem;">PESO</div>
-                                    <div style="font-weight: 700; font-size: 0.95rem; color: white; margin-top: 2px;">${lastFb.weight || '---'} kg</div>
+                                    <div style="font-weight: 700; font-size: 0.95rem; color: white; margin-top: 2px;">${lastFb.weight ? Math.round(parseFloat(lastFb.weight) * 100) / 100 : '---'} kg</div>
                                 </div>
                                 <div style="background: rgba(0,0,0,0.25); padding: 8px; border-radius: 6px; border: 1px solid rgba(255,255,255,0.02);">
                                     <div class="text-muted" style="font-size: 0.6rem;">ENERGÍA</div>
@@ -757,6 +811,6 @@
         `;
         document.head.appendChild(style);
     </script>
-    <script src="js/custom-recipes.js?v=365"></script></body>
+    <script src="js/custom-recipes.js?v=457"></script></body>
 
 </html>

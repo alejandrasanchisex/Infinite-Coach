@@ -3,77 +3,80 @@
 
 <head>
     <script>
-        // Force PWA cache bust / reload
         (function() {
-            const CURRENT_VERSION = '365';
+            const CURRENT_VERSION = '460';
             const savedVersion = localStorage.getItem('app_version');
             if (savedVersion !== CURRENT_VERSION) {
                 localStorage.setItem('app_version', CURRENT_VERSION);
                 if ('serviceWorker' in navigator) {
-                    navigator.serviceWorker.getRegistrations().then(function(registrations) {
-                        for (let registration of registrations) {
-                            registration.unregister();
-                        }
-                    }).catch(function(err) {
-                        console.warn('SW unregister failed:', err);
-                    }).finally(function() {
-                        window.location.reload(true);
-                    });
-                } else {
-                    window.location.reload(true);
-                }
+                    navigator.serviceWorker.getRegistrations().then(function(r) { r.forEach(x=>x.unregister()); })
+                    .finally(function() { window.location.reload(true); });
+                } else { window.location.reload(true); }
             }
         })();
     </script>
     <meta charset="UTF-8">
-    <script>
-        if ('serviceWorker' in navigator) {
-            navigator.serviceWorker.getRegistrations().then(registrations => {
-                for (let registration of registrations) {
-                    registration.unregister();
-                }
-            });
-        }
-    </script>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Gestión de Rutinas - Fitness App</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="styles/theme.css?v=365">
-    <link rel="stylesheet" href="styles/components.css">
+    <link rel="stylesheet" href="styles/theme.css?v=457">
+    <link rel="stylesheet" href="styles/components.css?v=457">
     <style>
-        /* Bulletproof sizing override for routine editor and xl modals */
-        .modal-overlay.modal-xl .modal,
-        .modal-overlay:has(.routine-editor) .modal {
-            max-width: 1250px !important;
-            width: 96% !important;
-        }
+        #inlineEditorSection { display: none; animation: fadeInUp 0.25s ease; }
+        @keyframes fadeInUp { from{opacity:0;transform:translateY(12px)} to{opacity:1;transform:translateY(0)} }
 
-        /* Ocultar botón de cerrar (X) y botones secundarios de cierre en modales de esta página */
-        .modal-close { 
-            display: none !important; 
+        .editor-sticky-bar {
+            position: sticky; top: 0; z-index: 50;
+            background: var(--bg-dark, #0f0f14);
+            border-bottom: 1px solid rgba(255,255,255,0.07);
+            padding: 14px 0; margin-bottom: 24px;
         }
-        .mb-none { margin-bottom: 0 !important; }
-        .text-center { text-align: center; }
+        .day-sidebar-item {
+            padding: 10px 14px; border-radius: 8px; cursor: pointer;
+            font-size: 0.85rem; border: 1px solid rgba(255,255,255,0.06);
+            transition: all 0.18s; color: var(--text-secondary);
+        }
+        .day-sidebar-item:hover { background: rgba(255,255,255,0.04); }
+        .day-sidebar-item.active {
+            background: rgba(0,217,255,0.13);
+            border-color: var(--primary-color);
+            color: var(--primary-color); font-weight: 700;
+        }
+        .ex-grid {
+            display: grid;
+            grid-template-columns: 1.8fr 1.5fr 64px 140px 54px 104px;
+            gap: 8px; align-items: center;
+            padding: 7px 10px;
+            background: rgba(255,255,255,0.015);
+            border: 1px solid rgba(255,255,255,0.05);
+            border-radius: 8px; margin-bottom: 4px;
+        }
+        .ex-header {
+            font-size: 0.62rem; font-weight: 700;
+            text-transform: uppercase; color: var(--text-muted);
+            padding: 0 10px 6px; opacity: 0.7;
+        }
+        .ex-grid input.form-input { padding: 6px 8px; font-size: 0.85rem; }
+        .modal-close { display: none !important; }
+        .modal-overlay.modal-xl .modal { max-width: 1100px !important; width: 95% !important; }
     </style>
 </head>
 
 <body>
-    <!-- Pantalla de Login -->
-    <div id="login-screen" class="wizard-container" style="min-height: 100vh; display: flex; align-items: center; justify-content: center;">
-        <div class="card wizard-card" style="max-width: 400px; text-align: center; padding: 2rem;">
-            <div style="font-size: 3rem; margin-bottom: 1rem;">🔒</div>
+    <!-- Login -->
+    <div id="login-screen" class="wizard-container" style="min-height:100vh;display:flex;align-items:center;justify-content:center;">
+        <div class="card wizard-card" style="max-width:400px;text-align:center;padding:2rem;">
+            <div style="font-size:3rem;margin-bottom:1rem;">🔒</div>
             <h2>Acceso a tu Backend</h2>
-            <p class="text-muted mb-lg">Introduce tus credenciales para acceder a tu base de datos de clientes y rutinas.</p>
-            <div id="google-signin-container">
-                <!-- El formulario se inyecta desde auth.js -->
-            </div>
+            <p class="text-muted mb-lg">Introduce tus credenciales para acceder.</p>
+            <div id="google-signin-container"></div>
         </div>
     </div>
 
-    <!-- App Principal -->
-    <div id="app" style="display: none;">
+    <!-- App -->
+    <div id="app" style="display:none;">
         <header class="header">
             <div class="container">
                 <nav class="nav">
@@ -83,15 +86,15 @@
                     </div>
                     <button class="menu-toggle" onclick="toggleMenu()">☰</button>
                     <ul class="nav-links" id="navLinks">
-                        <li><a href="trainer-dashboard.html?v=365" class="nav-link">Dashboard</a></li>
-                        <li><a href="trainer-clients.html?v=365" class="nav-link">Clientes</a></li>
-                        <li><a href="trainer-routines.html?v=365" class="nav-link active">Rutinas</a></li>
-                        <li><a href="trainer-diets.html?v=365" class="nav-link">Dietas</a></li>
-                        <li><a href="trainer-feedbacks.html?v=365" class="nav-link">Revisiones</a></li>
-                        <li><a href="trainer-media.html?v=365" class="nav-link">Biblioteca</a></li>
-                        <li><a href="trainer-appointments.html?v=365" class="nav-link">Agenda</a></li>
-                        <li><a href="trainer-settings.html?v=365" class="nav-link">Configuración</a></li>
-                        <li><a href="#" onclick="if(typeof AUTH !== 'undefined') { AUTH.signOut() } else { window.location.reload() }; return false;" class="nav-link" style="color:var(--error-color)">🚪 Salir</a></li>
+                        <li><a href="trainer-dashboard.html?v=457" class="nav-link">Dashboard</a></li>
+                        <li><a href="trainer-clients.html?v=457" class="nav-link">Clientes</a></li>
+                        <li><a href="trainer-routines.html?v=457" class="nav-link active">Rutinas</a></li>
+                        <li><a href="trainer-diets.html?v=457" class="nav-link">Dietas</a></li>
+                        <li><a href="trainer-feedbacks.html?v=457" class="nav-link">Revisiones</a></li>
+                        <li><a href="trainer-media.html?v=457" class="nav-link">Biblioteca</a></li>
+                        <li><a href="trainer-appointments.html?v=457" class="nav-link">Agenda</a></li>
+                        <li><a href="trainer-settings.html?v=457" class="nav-link">Configuración</a></li>
+                        <li><a href="#" onclick="if(typeof AUTH!=='undefined'){AUTH.signOut()}else{window.location.reload()};return false;" class="nav-link" style="color:var(--error-color)">🚪 Salir</a></li>
                     </ul>
                 </nav>
             </div>
@@ -99,99 +102,113 @@
 
         <main class="main-content">
             <div class="container">
-                <div class="flex-between mb-lg">
-                    <div>
-                        <h1>Gestión de Rutinas</h1>
-                        <p class="text-muted">Crea y administra programas de entrenamiento</p>
-                    </div>
-                    <div class="flex gap-sm">
-                        <button class="btn btn-outline" onclick="showMuscleGroupsConfig()">
-                            Grupos Musculares
-                        </button>
-                        <button class="btn btn-primary" onclick="showAddRoutineModal()">
-                            Nueva Rutina
-                        </button>
-                    </div>
-                </div>
 
-                <!-- Filters -->
-                <div class="card p-md mb-lg bg-secondary" style="background: rgba(255, 255, 255, 0.05);">
-                    <div class="grid grid-2 gap-md" style="align-items: end;">
+                <!-- ── LIST VIEW ── -->
+                <div id="listSection">
+                    <div class="flex-between mb-lg align-center">
                         <div>
-                            <label class="form-label text-xs">Buscar</label>
-                            <input type="text" id="filterSearch" class="form-input" placeholder="Nombre de la rutina..."
-                                oninput="loadRoutines()">
+                            <h1>Gestión de Rutinas</h1>
+                            <p class="text-muted">Crea y administra programas de entrenamiento</p>
                         </div>
-                        <div>
-                            <label class="form-label text-xs">Días de entreno</label>
-                            <select id="filterDays" class="form-select" onchange="loadRoutines()">
-                                <option value="">Todos</option>
-                                <option value="1">1 día</option>
-                                <option value="2">2 días</option>
-                                <option value="3">3 días</option>
-                                <option value="4">4 días</option>
-                                <option value="5">5 días</option>
-                                <option value="6">6 días</option>
-                                <option value="7">7 días</option>
-                            </select>
+                        <div class="flex gap-sm">
+                            <button class="btn btn-outline" onclick="showMuscleGroupsConfig()">Grupos Musculares</button>
+                            <button class="btn btn-primary" onclick="showAddRoutineModal()">Nueva Rutina</button>
                         </div>
                     </div>
-                </div>
 
-                <div class="grid grid-3">
+                    <div class="card p-md mb-lg" style="background:rgba(255,255,255,0.05);">
+                        <div class="grid grid-2 gap-md" style="align-items:end;">
+                            <div>
+                                <label class="form-label text-xs">Buscar</label>
+                                <input type="text" id="filterSearch" class="form-input" placeholder="Nombre de la rutina..." oninput="loadRoutines()">
+                            </div>
+                            <div>
+                                <label class="form-label text-xs">Días de entreno</label>
+                                <select id="filterDays" class="form-select" onchange="loadRoutines()">
+                                    <option value="">Todos</option>
+                                    <option value="1">1 día</option><option value="2">2 días</option>
+                                    <option value="3">3 días</option><option value="4">4 días</option>
+                                    <option value="5">5 días</option><option value="6">6 días</option>
+                                    <option value="7">7 días</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
                     <div id="routinesContainer">
                         <div class="empty-state">
-                            <div class="empty-state-title">No hay rutinas creadas</div>
-                            <div class="empty-state-text">Crea tu primera rutina de entrenamiento</div>
+                            <div class="empty-state-title">No se encontraron rutinas</div>
+                            <div class="empty-state-text">Prueba con otros filtros o crea una nueva</div>
                         </div>
                     </div>
                 </div>
+
+                <!-- ── INLINE EDITOR ── -->
+                <div id="inlineEditorSection">
+
+                    <!-- Sticky top bar -->
+                    <div class="editor-sticky-bar">
+                        <div class="flex-between align-center">
+                            <div class="flex gap-md align-center" style="flex-wrap:wrap;">
+                                <button class="btn btn-secondary" onclick="closeInlineEditor()" style="padding:8px 14px;font-size:0.8rem;">← Volver</button>
+                                <input type="text" id="editorRoutineName" class="form-input" placeholder="Nombre de la plantilla" style="font-size:1.05rem;font-weight:700;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);min-width:250px;">
+                                <input type="text" id="editorRoutineDesc" class="form-input" placeholder="Descripción (opcional)" style="font-size:0.85rem;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.06);min-width:200px;">
+                            </div>
+                            <button class="btn btn-primary" onclick="saveInlineRoutine()" style="font-size:0.85rem;padding:10px 22px;font-weight:700;">💾 Guardar Plantilla</button>
+                        </div>
+                    </div>
+
+                    <!-- Editor body -->
+                    <div style="display:flex;gap:24px;">
+
+                        <!-- Day sidebar -->
+                        <div style="width:160px;flex-shrink:0;">
+                            <div class="flex-between align-center mb-sm">
+                                <span style="font-size:0.62rem;font-weight:800;color:var(--text-muted);text-transform:uppercase;letter-spacing:1px;">Sesiones</span>
+                                <button onclick="addInlineDay()" title="Añadir sesión" style="background:var(--primary-color);border:none;width:22px;height:22px;border-radius:4px;color:#000;cursor:pointer;font-weight:800;font-size:1rem;display:flex;align-items:center;justify-content:center;">+</button>
+                            </div>
+                            <div id="inlineDayTabs" style="display:flex;flex-direction:column;gap:5px;"></div>
+                        </div>
+
+                        <!-- Exercise panel -->
+                        <div style="flex:1;min-width:0;">
+                            <div id="inlineDayContent"></div>
+                            <datalist id="routineExercisesList"></datalist>
+                        </div>
+                    </div>
+                </div>
+
             </div>
         </main>
     </div>
 
-    <!-- Supabase SDK & Service -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="js/supabase-service.js?v=365"></script>
-
-    <script src="js/config.js?v=365"></script>
-    <script src="js/auth.js?v=365"></script>
-    <script src="js/sheets.js?v=365"></script>
-    <script src="js/data-models.js?v=365"></script>
-    <script src="js/utils.js?v=365"></script>
-    <script src="js/custom-exercises.js?v=365"></script>
+    <script src="js/supabase-service.js?v=457"></script>
+    <script src="js/config.js?v=457"></script>
+    <script src="js/auth.js?v=457"></script>
+    <script src="js/sheets.js?v=457"></script>
+    <script src="js/data-models.js?v=460"></script>
+    <script src="js/utils.js?v=457"></script>
+    <script src="js/custom-exercises.js?v=457"></script>
     <script>
-        // Chequeo defensivo: BrandConfig puede variar entre versiones
-        if (typeof BrandConfig !== 'undefined' && typeof BrandConfig.isConfigured === 'function' && !BrandConfig.isConfigured()) {
-            window.location.href = 'index.html';
-        }
-
+        // Brand
         if (typeof BrandConfig !== 'undefined' && typeof BrandConfig.applyTheme === 'function') BrandConfig.applyTheme();
-        const brand = (typeof BrandConfig !== 'undefined' && typeof BrandConfig.get === 'function') ? BrandConfig.get() : { name: 'Infinite Coach' };
-        document.getElementById('brandName').textContent = brand.name;
-        if (brand.logo) {
-            document.getElementById('brandLogo').src = brand.logo;
-            document.getElementById('brandLogo').style.display = 'block';
-        }
+        const _brand = (typeof BrandConfig !== 'undefined' && typeof BrandConfig.get === 'function') ? BrandConfig.get() : { name: 'Infinite Coach' };
+        document.getElementById('brandName').textContent = _brand.name;
+        if (_brand.logo) { document.getElementById('brandLogo').src = _brand.logo; document.getElementById('brandLogo').style.display = 'block'; }
 
-        // ============================================
-        // MUSCLE GROUPS CONFIGURATION
-        // ============================================
-
+        // ═══════════════════════════════════════════
+        // MUSCLE GROUPS
+        // ═══════════════════════════════════════════
         let customGroups = [];
 
         function getMuscleGroups() {
             const exercises = Media.getAll().filter(m => m.category === 'exercise');
-            const defaultGroups = ['Pectorales', 'Dorsales', 'Lumbares', 'Hombros', 'Biceps', 'Triceps', 'Antebrazo', 'Abdominales', 'Cuadriceps', 'Isquiotibiales', 'Gemelos', 'Glúteos', 'Cuello'];
+            const defaultGroups = ['Pectorales','Dorsales','Lumbares','Hombros','Biceps','Triceps','Antebrazo','Abdominales','Cuadriceps','Isquiotibiales','Gemelos','Glúteos','Cuello'];
             const activeGroups = exercises.map(m => m.muscleGroup).filter(Boolean);
             const groups = [...new Set([...defaultGroups, ...activeGroups, ...customGroups])];
-            
             const exerciseMap = {};
-            groups.forEach(g => {
-                exerciseMap[g] = exercises
-                    .filter(m => m.muscleGroup === g)
-                    .map(m => ({ name: m.title, videoUrl: m.url, id: m.id }));
-            });
+            groups.forEach(g => { exerciseMap[g] = exercises.filter(m => m.muscleGroup === g).map(m => ({ name: m.title, videoUrl: m.url, id: m.id })); });
             return { groups, exercises: exerciseMap };
         }
 
@@ -199,483 +216,467 @@
 
         window.showMuscleGroupsConfig = function() {
             try {
-            const config = getMuscleGroups();
-            if (!currentActiveGroup) currentActiveGroup = config.groups[0];
-
-            const content = `
-                <div style="display: flex; height: calc(100vh - 280px); min-height: 500px; gap: 20px;">
-                    <!-- Sidebar: Grupos -->
-                    <div style="width: 180px; border-right: 1px solid rgba(255,255,255,0.1); padding-right: 15px; overflow-y: auto;">
-                        <h4 style="margin-bottom: 15px; font-size: 0.7rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px;">Grupos</h4>
-                        <div id="groupsList" style="display: flex; flex-direction: column; gap: 4px;">
-                            ${config.groups.map(g => `
-                                <div onclick="setActiveGroup('${g}')" style="padding: 8px 12px; border-radius: 8px; cursor: pointer; transition: all 0.2s; background: ${currentActiveGroup === g ? 'var(--primary-color)' : 'transparent'}; color: ${currentActiveGroup === g ? '#000' : 'inherit'}; font-weight: ${currentActiveGroup === g ? '700' : '400'}; font-size: 0.85rem;">
-                                    ${g}
-                                </div>
-                            `).join('')}
+                const config = getMuscleGroups();
+                if (!currentActiveGroup) currentActiveGroup = config.groups[0];
+                const content = `
+                    <div style="display:flex;height:calc(100vh - 280px);min-height:500px;gap:20px;">
+                        <div style="width:180px;border-right:1px solid rgba(255,255,255,0.1);padding-right:15px;overflow-y:auto;">
+                            <h4 style="margin-bottom:15px;font-size:0.7rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:1px;">Grupos</h4>
+                            <div id="groupsList" style="display:flex;flex-direction:column;gap:4px;">
+                                ${config.groups.map(g => `<div onclick="setActiveGroup('${g.replace(/'/g,"\\'")}') " style="padding:8px 12px;border-radius:8px;cursor:pointer;background:${currentActiveGroup===g?'var(--primary-color)':'transparent'};color:${currentActiveGroup===g?'#000':'inherit'};font-weight:${currentActiveGroup===g?700:400};font-size:0.85rem;">${g}</div>`).join('')}
+                            </div>
+                            <hr style="margin:15px 0;border:none;border-top:1px solid rgba(255,255,255,0.1);">
+                            <button onclick="addNewGroup()" class="btn btn-xs btn-outline" style="width:100%;font-size:0.7rem;">+ Añadir Grupo</button>
                         </div>
-                        <hr style="margin: 15px 0; border: none; border-top: 1px solid rgba(255,255,255,0.1);">
-                        <button onclick="addNewGroup()" class="btn btn-xs btn-outline" style="width: 100%; font-size: 0.7rem;">+ Añadir Grupo</button>
-                    </div>
-
-                    <!-- Main: Ejercicios -->
-                    <div style="flex: 1; display: flex; flex-direction: column; overflow: hidden;">
-                        <div class="flex-between mb-sm">
-                            <h3 id="activeGroupName" style="margin: 0; font-size: 1.2rem;">${currentActiveGroup}</h3>
-                            <button onclick="deleteCurrentGroup()" class="btn btn-xs btn-outline btn-error" style="font-size: 0.65rem; padding: 2px 8px;">Eliminar Grupo</button>
+                        <div style="flex:1;display:flex;flex-direction:column;overflow:hidden;">
+                            <div class="flex-between mb-sm">
+                                <h3 style="margin:0;font-size:1.2rem;">${currentActiveGroup}</h3>
+                                <button onclick="deleteCurrentGroup()" class="btn btn-xs btn-outline btn-error" style="font-size:0.65rem;padding:2px 8px;">Eliminar Grupo</button>
+                            </div>
+                            <div class="card p-xs mb-sm" style="background:rgba(0,217,255,0.05);border:1px dashed var(--primary-color);display:flex;gap:8px;align-items:center;">
+                                <input type="text" id="newExName" class="form-input" placeholder="Nuevo ejercicio..." style="flex:1;padding:6px 12px;font-size:0.85rem;">
+                                <button onclick="addNewExerciseDirect()" class="btn btn-sm btn-primary" style="padding:6px 15px;">Añadir</button>
+                            </div>
+                            <div id="exercisesLibrary" style="flex:1;overflow-y:auto;padding-right:5px;">${renderExercisesList(config, currentActiveGroup)}</div>
                         </div>
-
-                        <!-- Formulario Añadir Rápido -->
-                        <div class="card p-xs mb-sm" style="background: rgba(var(--primary-color-rgb), 0.05); border: 1px dashed var(--primary-color); display: flex; gap: 8px; align-items: center;">
-                            <input type="text" id="newExName" class="form-input" placeholder="Nuevo ejercicio..." style="flex: 1; padding: 6px 12px; font-size: 0.85rem;">
-                            <button onclick="addNewExerciseDirect()" class="btn btn-sm btn-primary" style="padding: 6px 15px;">Añadir</button>
-                        </div>
-                        
-                        <div id="exercisesLibrary" style="flex: 1; overflow-y: auto; padding-right: 5px;">
-                            ${renderExercisesList(config, currentActiveGroup)}
-                        </div>
-                    </div>
-                </div>
-            `;
-
-                // Cerrar modales previos para evitar apilamiento
+                    </div>`;
                 document.querySelectorAll('.modal-overlay').forEach(m => m.remove());
-
-                showModal('Biblioteca de Ejercicios', content, [
-                    { text: 'Cerrar Biblioteca', class: 'btn-secondary', onclick: 'window.closeModal()' }
-                ], 'modal-xl');
-            } catch(err) {
-                console.error('Error en showMuscleGroupsConfig:', err);
-                showToast('Error al abrir Grupos Musculares: ' + err.message, 'error');
-            }
+                showModal('Biblioteca de Ejercicios', content, [{ text: 'Cerrar', class: 'btn-secondary', onclick: 'window.closeModal()' }], 'modal-xl');
+            } catch(err) { showToast('Error: ' + err.message, 'error'); }
         }
 
         function renderExercisesList(config, group) {
             const exercises = config.exercises[group] || [];
-            if (exercises.length === 0) {
-                return `<div class="text-muted" style="text-align: center; padding-top: 40px;">No hay ejercicios en este grupo.</div>`;
-            }
-
-            return `
-                <div style="display: flex; flex-direction: column; gap: 5px;">
-                    <div style="display: grid; grid-template-columns: 2.5fr 1.5fr 70px; gap: 10px; padding: 0 10px; opacity: 0.5; font-size: 0.6rem; font-weight: 700; text-transform: uppercase;">
-                        <div>Nombre</div>
-                        <div>URL Video / Link</div>
-                        <div></div>
-                    </div>
-                    ${exercises.map((ex, idx) => {
-                        const exName = ex.name;
-                        const exUrl = ex.videoUrl || '';
-                        const id = ex.id;
-                        const domId = `${group.replace(/\s+/g, '_')}_${idx}`;
-                        return `
-                        <div class="card" style="display: flex; background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.05); gap: 10px; align-items: center; padding: 4px 8px; border-radius: 8px;">
-                            <input type="text" id="exName_${domId}" value="${exName}" class="form-input" style="flex: 2.5; border: none; background: transparent; padding: 2px; font-size: 0.9rem;">
-                            <div style="flex: 1.5; font-size: 0.75rem; text-align: left; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; padding-left: 5px;">
-                                ${exUrl ? `<a href="${exUrl}" target="_blank" style="color: var(--primary-color); text-decoration: none; font-weight: 600;">📺 Ver Video</a>` : `<span style="opacity: 0.3;">Sin vídeo</span>`}
-                            </div>
-                            <div style="display: flex; gap: 5px; width: 70px; justify-content: flex-end;">
-                                <button onclick="saveExerciseRow('${group}', ${idx}, '${id}')" class="btn btn-xs btn-primary" style="height: 28px; width: 28px; padding: 0; min-width: unset; font-size: 0.75rem;" title="Guardar Cambios">💾</button>
-                                <button onclick="removeExerciseFromGroup('${group}', ${idx}, '${id}')" class="btn btn-xs btn-outline btn-error" style="height: 28px; width: 28px; padding: 0; min-width: unset; font-size: 0.75rem; opacity: 0.6;" title="Eliminar">🗑️</button>
-                            </div>
+            if (!exercises.length) return `<div class="text-muted" style="text-align:center;padding-top:40px;">No hay ejercicios.</div>`;
+            return `<div style="display:flex;flex-direction:column;gap:5px;">
+                <div style="display:grid;grid-template-columns:2.5fr 1.5fr 70px;gap:10px;padding:0 10px;opacity:0.5;font-size:0.6rem;font-weight:700;text-transform:uppercase;"><div>Nombre</div><div>URL Video</div><div></div></div>
+                ${exercises.map((ex,idx) => {
+                    const domId = `${group.replace(/\s+/g,'_')}_${idx}`;
+                    return `<div class="card" style="display:flex;background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.05);gap:10px;align-items:center;padding:4px 8px;border-radius:8px;">
+                        <input type="text" id="exName_${domId}" value="${(ex.name||'').replace(/"/g,'&quot;')}" class="form-input" style="flex:2.5;border:none;background:transparent;padding:2px;font-size:0.9rem;">
+                        <div style="flex:1.5;font-size:0.75rem;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${ex.videoUrl ? `<a href="${ex.videoUrl}" target="_blank" style="color:var(--primary-color);">📺 Ver</a>` : `<span style="opacity:0.3;">Sin vídeo</span>`}</div>
+                        <div style="display:flex;gap:5px;width:70px;justify-content:flex-end;">
+                            <button onclick="saveExerciseRow('${group}',${idx},'${ex.id}')" class="btn btn-xs btn-primary" style="height:28px;width:28px;padding:0;min-width:unset;">💾</button>
+                            <button onclick="removeExerciseFromGroup('${group}',${idx},'${ex.id}')" class="btn btn-xs btn-outline btn-error" style="height:28px;width:28px;padding:0;min-width:unset;opacity:0.6;">🗑️</button>
                         </div>
-                    `}).join('')}
-                </div>
-            `;
+                    </div>`;
+                }).join('')}
+            </div>`;
         }
 
         window.saveExerciseRow = function(group, idx, id) {
-            const domId = `${group.replace(/\s+/g, '_')}_${idx}`;
+            const domId = `${group.replace(/\s+/g,'_')}_${idx}`;
             const name = document.getElementById(`exName_${domId}`).value.trim();
-            
-            if (!name) return showToast('El nombre es obligatorio', 'error');
-
-            // Preservar la URL de video existente para que no se pierda al renombrar
+            if (!name) return showToast('El nombre es obligatorio','error');
             const config = getMuscleGroups();
-            const existingEx = (config.exercises[group] || [])[idx];
-            const videoUrl = existingEx ? (existingEx.videoUrl || '') : '';
-
-            if (id && id !== 'undefined' && id !== 'null') {
-                Media.update(id, { title: name, url: videoUrl, muscleGroup: group });
-            } else {
-                const data = getData();
-                if (!data.media) data.media = [];
-                const newId = 'sys-ex-' + name.replace(/\s+/g, '-').toLowerCase();
-                const sysItems = [...(window.SYSTEM_RECIPES || []), ...(window.SYSTEM_MEDIA || [])];
-                const alreadyExists = sysItems.some(m => m.id === newId) || data.media.some(m => m.id === newId);
-                const finalId = alreadyExists ? 'sys-ex-' + generateUUID() : newId;
-                
-                data.media.push({
-                    id: finalId,
-                    type: 'video',
-                    category: 'exercise',
-                    url: videoUrl,
-                    title: name,
-                    muscleGroup: group,
-                    isSystem: false,
-                    createdAt: new Date().toISOString()
-                });
+            const existingEx = (config.exercises[group]||[])[idx];
+            const videoUrl = existingEx ? (existingEx.videoUrl||'') : '';
+            if (id && id !== 'undefined' && id !== 'null') { Media.update(id, { title:name, url:videoUrl, muscleGroup:group }); }
+            else {
+                const data = getData(); if (!data.media) data.media = [];
+                const newId = 'sys-ex-' + name.replace(/\s+/g,'-').toLowerCase();
+                const sysItems = [...(window.SYSTEM_RECIPES||[]),...(window.SYSTEM_MEDIA||[])];
+                const alreadyExists = sysItems.some(m=>m.id===newId)||data.media.some(m=>m.id===newId);
+                data.media.push({ id: alreadyExists?'sys-ex-'+generateUUID():newId, type:'video', category:'exercise', url:videoUrl, title:name, muscleGroup:group, isSystem:false, createdAt:new Date().toISOString() });
                 saveData(data);
             }
-
-            showToast('Cambios guardados', 'success');
-            showMuscleGroupsConfig();
+            showToast('Cambios guardados','success'); showMuscleGroupsConfig();
         }
-
         window.addNewExerciseDirect = function() {
             const name = document.getElementById('newExName').value.trim();
-            if (!name) return showToast('El nombre es obligatorio', 'error');
-
-            const data = getData();
-            if (!data.media) data.media = [];
-
-            const newId = 'sys-ex-' + name.replace(/\s+/g, '-').toLowerCase();
-            const sysItems = [...(window.SYSTEM_RECIPES || []), ...(window.SYSTEM_MEDIA || [])];
-            const alreadyExists = sysItems.some(m => m.id === newId) || data.media.some(m => m.id === newId);
-            const finalId = alreadyExists ? 'sys-ex-' + generateUUID() : newId;
-
-            data.media.push({
-                id: finalId,
-                type: 'video',
-                category: 'exercise',
-                url: '', // No se permite añadir enlaces de video desde aquí
-                title: name,
-                muscleGroup: currentActiveGroup,
-                isSystem: false,
-                createdAt: new Date().toISOString()
-            });
-            saveData(data);
-
-            showMuscleGroupsConfig();
-            showToast('Ejercicio añadido', 'success');
+            if (!name) return showToast('El nombre es obligatorio','error');
+            const data = getData(); if (!data.media) data.media = [];
+            const newId = 'sys-ex-' + name.replace(/\s+/g,'-').toLowerCase();
+            const sysItems = [...(window.SYSTEM_RECIPES||[]),...(window.SYSTEM_MEDIA||[])];
+            const alreadyExists = sysItems.some(m=>m.id===newId)||data.media.some(m=>m.id===newId);
+            data.media.push({ id: alreadyExists?'sys-ex-'+generateUUID():newId, type:'video', category:'exercise', url:'', title:name, muscleGroup:currentActiveGroup, isSystem:false, createdAt:new Date().toISOString() });
+            saveData(data); showMuscleGroupsConfig(); showToast('Ejercicio añadido','success');
         }
-
-        window.setActiveGroup = function(g) {
-            currentActiveGroup = g;
-            showMuscleGroupsConfig();
-        }
-
+        window.setActiveGroup = function(g) { currentActiveGroup = g; showMuscleGroupsConfig(); }
         window.addNewGroup = function() {
-            const name = prompt('Nombre del nuevo grupo muscular:');
-            if (!name) return;
-
-            const config = getMuscleGroups();
-            if (config.groups.includes(name)) {
-                showToast('Este grupo ya existe', 'error');
-                return;
-            }
-
-            customGroups.push(name);
-            currentActiveGroup = name;
-            showMuscleGroupsConfig();
+            const name = prompt('Nombre del nuevo grupo muscular:'); if (!name) return;
+            if (getMuscleGroups().groups.includes(name)) { showToast('Este grupo ya existe','error'); return; }
+            customGroups.push(name); currentActiveGroup = name; showMuscleGroupsConfig();
         }
-
         window.deleteCurrentGroup = function() {
-            if (!confirm(`¿Estás seguro de que quieres eliminar el grupo "${currentActiveGroup}"?`)) return;
-
-            const config = getMuscleGroups();
-            const exercises = config.exercises[currentActiveGroup] || [];
-            exercises.forEach(ex => {
-                if (ex.id) Media.delete(ex.id);
-            });
-
-            customGroups = customGroups.filter(g => g !== currentActiveGroup);
-            currentActiveGroup = null;
-            showMuscleGroupsConfig();
-            showToast('Grupo eliminado', 'success');
+            if (!confirm(`¿Eliminar "${currentActiveGroup}"?`)) return;
+            const config = getMuscleGroups(); (config.exercises[currentActiveGroup]||[]).forEach(ex=>{ if(ex.id) Media.delete(ex.id); });
+            customGroups = customGroups.filter(g=>g!==currentActiveGroup); currentActiveGroup = null; showMuscleGroupsConfig(); showToast('Grupo eliminado','success');
         }
-
         window.removeExerciseFromGroup = function(group, idx, id) {
-            if (!confirm('¿Eliminar este ejercicio de la biblioteca?')) return;
-
-            if (id && id !== 'undefined' && id !== 'null') {
-                Media.delete(id);
-            }
-            showMuscleGroupsConfig();
-            showToast('Ejercicio eliminado', 'success');
+            if (!confirm('¿Eliminar este ejercicio?')) return;
+            if (id && id !== 'undefined' && id !== 'null') Media.delete(id);
+            showMuscleGroupsConfig(); showToast('Ejercicio eliminado','success');
         }
 
-        // ============================================
-        // ROUTINES MANAGEMENT
-        // ============================================
-
+        // ═══════════════════════════════════════════
+        // ROUTINES LIST
+        // ═══════════════════════════════════════════
         function loadRoutines() {
             const container = document.getElementById('routinesContainer');
-            const search = document.getElementById('filterSearch').value.toLowerCase();
+            const search = (document.getElementById('filterSearch').value||'').toLowerCase();
             const days = document.getElementById('filterDays').value;
-            
             const routines = Routines.getAll().filter(r => {
-                const matchesSearch = r.name.toLowerCase().includes(search);
-                const matchesDays = !days || (r.exercises && r.exercises.length > 0 && Math.max(...r.exercises.map(e => e.day)) == days);
-                return matchesSearch && matchesDays;
+                const matchSearch = r.name.toLowerCase().includes(search);
+                const totalDays = (r.days||[]).length;
+                const matchDays = !days || totalDays == days;
+                return matchSearch && matchDays;
             });
-
-            if (routines.length === 0) {
-                container.innerHTML = `
-                    <div class="empty-state">
-                        <div class="empty-state-title">No se encontraron rutinas</div>
-                        <div class="empty-state-text">Prueba con otros filtros o crea una nueva</div>
-                    </div>
-                `;
+            if (!routines.length) {
+                container.innerHTML = `<div class="empty-state"><div class="empty-state-title">No se encontraron rutinas</div><div class="empty-state-text">Prueba con otros filtros o crea una nueva</div></div>`;
                 return;
             }
-
-            container.innerHTML = routines.map(r => {
-                // Count total exercises across all days
-                const totalExercises = (r.days || []).reduce((sum, day) => sum + (day.exercises ? day.exercises.length : 0), 0);
-                const totalDays = (r.days || []).length;
-
-                return `
-                <div class="card p-md shadow-sm">
-                    <div class="flex-between mb-sm">
-                        <h3 class="mb-none">${r.name}</h3>
+            container.innerHTML = `<div class="grid grid-3 gap-md">${routines.map(r => {
+                const totalEx = (r.days||[]).reduce((s,d)=>s+(d.exercises?d.exercises.length:0),0);
+                const totalDays = (r.days||[]).length;
+                const totalWeeks = (r.weeks||[]).length;
+                return `<div class="card p-md" style="border:1px solid rgba(255,255,255,0.07);transition:border 0.2s;" onmouseover="this.style.borderColor='rgba(0,217,255,0.35)'" onmouseout="this.style.borderColor='rgba(255,255,255,0.07)'">
+                    <div class="flex-between mb-sm align-center">
+                        <h3 style="margin:0;font-size:1rem;font-weight:700;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:180px;">${r.name}</h3>
+                        ${r.isTemplate ? `<span style="font-size:0.58rem;background:rgba(0,217,255,0.1);color:var(--primary-color);padding:2px 7px;border-radius:4px;font-weight:700;border:1px solid rgba(0,217,255,0.2);white-space:nowrap;">PLANTILLA</span>` : ''}
                     </div>
-                    <p class="text-sm text-muted mb-md">${r.description || 'Sin descripción'}</p>
-                    <div class="flex-between">
-                        <div class="flex gap-sm">
-                            <span class="text-xs text-muted">${totalDays} días</span>
-                            <span class="text-xs text-muted">|</span>
-                            <span class="text-xs text-muted">${totalExercises} ejercicios</span>
-                        </div>
-                        <div class="flex gap-xs">
-                            <button class="btn btn-sm btn-outline" onclick="editRoutine('${r.id}')">Editar</button>
-                            <button class="btn btn-sm btn-outline btn-error" onclick="deleteRoutine('${r.id}')">Eliminar</button>
-                        </div>
+                    <p class="text-sm text-muted mb-md" style="min-height:34px;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;">${r.description || 'Sin descripción'}</p>
+                    <div class="flex gap-sm mb-md" style="flex-wrap:wrap;">
+                        <span style="font-size:0.7rem;background:rgba(255,255,255,0.05);padding:3px 9px;border-radius:4px;">📅 ${totalDays} días</span>
+                        <span style="font-size:0.7rem;background:rgba(255,255,255,0.05);padding:3px 9px;border-radius:4px;">🏋️ ${totalEx} ejercicios</span>
+                        ${totalWeeks ? `<span style="font-size:0.7rem;background:rgba(255,255,255,0.05);padding:3px 9px;border-radius:4px;">🗓️ ${totalWeeks} sem</span>` : ''}
                     </div>
-                </div>
-                `;
-            }).join('');
+                    <div class="flex gap-xs" style="flex-wrap: wrap; justify-content: flex-end; margin-top: 5px; width: 100%;">
+                        <button class="btn btn-sm btn-outline" style="padding: 4px 8px; font-size: 0.75rem; flex: 1;" onclick="openInlineEditor('${r.id}')">✏️ Editar</button>
+                        <button class="btn btn-sm btn-outline" style="padding: 4px 8px; font-size: 0.75rem; flex: 1;" onclick="duplicateRoutine('${r.id}')" title="Duplicar plantilla">📑 Duplicar</button>
+                        <button class="btn btn-sm btn-danger" style="padding: 4px 8px; font-size: 0.75rem;" onclick="deleteRoutine('${r.id}')">🗑️</button>
+                    </div>
+                </div>`;
+            }).join('')}</div>`;
         }
 
         function showAddRoutineModal() {
             const content = `
-                <div class="form-group">
-                    <label class="form-label">Nombre de la Rutina</label>
-                    <input type="text" id="newRoutineName" class="form-input" placeholder="Ej: Fullbody Principiantes">
-                </div>
-                <div class="form-group">
-                    <label class="form-label">Descripción (opcional)</label>
-                    <textarea id="newRoutineDesc" class="form-input" rows="3"></textarea>
-                </div>
-            `;
+                <div class="form-group"><label class="form-label">Nombre de la Rutina</label><input type="text" id="newRoutineName" class="form-input" placeholder="Ej: Fullbody Principiantes"></div>
+                <div class="form-group"><label class="form-label">Descripción (opcional)</label><textarea id="newRoutineDesc" class="form-input" rows="3"></textarea></div>`;
             showModal('Nueva Rutina', content, [
-                { text: 'Cancelar', class: 'btn-secondary', onclick: 'window.closeModal(this)' },
-                { text: 'Crear', class: 'btn-primary', onclick: 'createRoutineFromModal()' }
+                { text: 'Cancelar', class: 'btn-secondary', onclick: 'window.closeModal()' },
+                { text: 'Crear y Editar', class: 'btn-primary', onclick: 'createAndOpenRoutine()' }
             ]);
         }
-
-        window.createRoutineFromModal = function() {
-            const name = document.getElementById('newRoutineName').value;
-            const description = document.getElementById('newRoutineDesc').value;
-
-            if (!name) {
-                showToast('El nombre es obligatorio', 'error');
-                return;
-            }
-
+        window.createAndOpenRoutine = function() {
+            const name = document.getElementById('newRoutineName').value.trim();
+            const description = document.getElementById('newRoutineDesc').value.trim();
+            if (!name) { showToast('El nombre es obligatorio','error'); return; }
             const routine = Routines.create({ name, description, days: [] });
             window.closeModal();
-            loadRoutines();
-            showToast('Rutina creada. ¡Pulsa Editar para añadir ejercicios!', 'success');
+            openInlineEditor(routine.id);
         }
-
-        let editingRoutine = null;
-        let activeDayIndex = 0;
-
-        window.editRoutine = function(id) {
-            const routine = Routines.getById(id);
-            if (!routine) return showToast('Rutina no encontrada', 'error');
-
-            editingRoutine = JSON.parse(JSON.stringify(routine));
-            activeDayIndex = 0;
-            renderRoutineEditor();
-        }
-
-        function renderRoutineEditor() {
-            const parameterizedExercises = getParameterizedExercises();
-            
-            const content = `
-                <div class="routine-editor" style="padding: 0 5px;">
-                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 15px; background: rgba(0,0,0,0.2); padding: 15px; border-radius: 10px; border: 1px solid rgba(255,255,255,0.05);">
-                        <div class="form-group mb-none">
-                            <label class="form-label" style="font-size: 0.75rem; opacity: 0.6;">Nombre de Plantilla</label>
-                            <input type="text" class="form-input" id="editRoutineName" value="${editingRoutine.name}" style="background: rgba(255,255,255,0.03);">
-                        </div>
-                        <div class="form-group mb-none">
-                            <label class="form-label" style="font-size: 0.75rem; opacity: 0.6;">Descripción Corta (opcional)</label>
-                            <input type="text" id="editRoutineDesc" class="form-input" value="${editingRoutine.description || ''}" style="background: rgba(255,255,255,0.03);">
-                        </div>
-                    </div>
-                    
-                    <div style="display: flex; height: calc(100vh - 350px); min-height: 450px; gap: 20px;">
-                        <!-- Sidebar de Días más compacto -->
-                        <div style="width: 150px; border-right: 1px solid rgba(255,255,255,0.1); padding-right: 15px;">
-                            <div class="flex-between mb-sm">
-                                <span style="font-size: 0.7rem; font-weight: 800; color: var(--text-muted);">SESIONES</span>
-                                <button onclick="addRoutineDay()" style="background: var(--primary-color); border: none; width: 22px; height: 22px; border-radius: 4px; color: #000; cursor: pointer; font-weight: 800;">+</button>
-                            </div>
-                            <div id="dayTabs" style="display: flex; flex-direction: column; gap: 5px;">
-                                ${(editingRoutine.days || []).map((day, index) => `
-                                    <div class="tab ${index === activeDayIndex ? 'active' : ''}" onclick="window.setEditorActiveDay(${index})" style="padding: 10px; border-radius: 6px; cursor: pointer; font-size: 0.85rem; background: ${index === activeDayIndex ? 'rgba(var(--primary-color-rgb), 0.15)' : 'transparent'}; border: 1px solid ${index === activeDayIndex ? 'var(--primary-color)' : 'rgba(255,255,255,0.05)'}; color: ${index === activeDayIndex ? 'var(--primary-color)' : 'inherit'};">
-                                        ${day.name || `Día ${index + 1}`}
-                                    </div>
-                                `).join('')}
-                            </div>
-                        </div>
-
-                        <!-- Panel de Ejercicios super compacto -->
-                        <div id="dayContentContainer" style="flex: 1; overflow-y: auto; padding-right: 5px;">
-                            ${renderEditorActiveDay(parameterizedExercises)}
-                        </div>
-                    </div>
-
-                    <!-- Datalist para autocomplete -->
-                    <datalist id="parameterizedExercisesList">
-                        ${parameterizedExercises.map(ex => `<option value="${ex.name}">${ex.name} (${ex.group})</option>`).join('')}
-                    </datalist>
-                </div>
-            `;
-
-            showModal('Editor de Plantilla', content, [
-                { text: 'Guardar Plantilla', class: 'btn-primary', onclick: 'saveRoutineChanges()' }
-            ], 'modal-xl');
-        }
-
-        function getParameterizedExercises() {
-            const config = getMuscleGroups();
-            let all = [];
-            for (const group in config.exercises) {
-                config.exercises[group].forEach(ex => {
-                    all.push({ name: ex.name || ex, group: group });
-                });
-            }
-            return all.sort((a,b) => a.name.localeCompare(b.name));
-        }
-
-        function renderEditorActiveDay(exercises) {
-            const day = (editingRoutine.days && editingRoutine.days[activeDayIndex]) || null;
-            if (!day) return `<div class="empty-state">No hay sesiones creadas. Pulsa el botón + para empezar.</div>`;
-
-            return `
-                <div style="display: flex; flex-direction: column; gap: 10px;">
-                    <div class="flex-between" style="background: rgba(255,255,255,0.02); padding: 8px 15px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.05);">
-                        <input type="text" class="form-input" value="${day.name || ''}" onchange="updateDayName(${activeDayIndex}, this.value)" placeholder="Nombre del día" style="max-width: 250px; font-weight: 700; border: none; background: transparent; padding: 0;">
-                        <button onclick="removeRoutineDay(${activeDayIndex})" class="btn btn-xs btn-outline btn-error" style="font-size: 0.65rem; padding: 2px 8px;">× Eliminar Día</button>
-                    </div>
-
-                    <div style="display: grid; grid-template-columns: 2.5fr 70px 70px 70px 40px; gap: 10px; padding: 0 10px; opacity: 0.5; font-size: 0.65rem; font-weight: 700; text-transform: uppercase;">
-                        <div>Ejercicio</div>
-                        <div style="text-align: center;">Sets</div>
-                        <div style="text-align: center;">Reps</div>
-                        <div style="text-align: center;">INT/RIR</div>
-                        <div></div>
-                    </div>
-
-                    <div id="exercisesContainer" style="display: flex; flex-direction: column; gap: 6px;">
-                        ${(day.exercises || []).map((ex, exIdx) => `
-                            <div class="card p-xs" style="background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.05); margin-bottom: 2px;">
-                                <div style="display: grid; grid-template-columns: 2.5fr 70px 70px 70px 40px; gap: 10px; align-items: center;">
-                                    <input type="text" class="form-input" value="${ex.name || ''}" onchange="updateExerciseData(${exIdx}, 'name', this.value)" list="parameterizedExercisesList" style="padding: 6px; font-weight: 500; font-size: 0.85rem; border-color: rgba(255,255,255,0.1);">
-                                    <input type="text" class="form-input text-center" value="${ex.sets || ''}" onchange="updateExerciseData(${exIdx}, 'sets', this.value)" style="padding: 6px; border-color: rgba(255,255,255,0.1);">
-                                    <input type="text" class="form-input text-center" value="${ex.reps || ''}" onchange="updateExerciseData(${exIdx}, 'reps', this.value)" style="padding: 6px; border-color: rgba(255,255,255,0.1);">
-                                    <input type="text" class="form-input text-center" value="${ex.intensity || ''}" onchange="updateExerciseData(${exIdx}, 'intensity', this.value)" style="padding: 6px; border-color: rgba(255,255,255,0.1);">
-                                    <button onclick="removeExercise(${exIdx})" class="btn btn-xs btn-outline btn-error" style="height: 30px; width: 30px; padding: 0; min-width: unset; font-size: 0.8rem;">🗑️</button>
-                                </div>
-                                <div class="flex align-center gap-xs mt-xs" style="padding-left: 5px; opacity: 0.8;">
-                                    <span style="font-size: 0.7rem;">💬</span>
-                                    <input type="text" class="form-input" placeholder="Comentarios..." value="${ex.notes || ''}" onchange="updateExerciseData(${exIdx}, 'notes', this.value)" style="border: none; border-bottom: 1px dashed rgba(255,255,255,0.1); font-size: 0.75rem; padding: 2px; background: transparent;">
-                                </div>
-                            </div>
-                        `).join('')}
-                    </div>
-                    <div style="display: flex; gap: 8px; margin-top: 10px;">
-                        <button class="btn btn-sm btn-outline" onclick="addExerciseToDay()" style="flex: 1; font-size: 0.75rem; padding: 10px; border-style: dashed; opacity: 0.7;">+ Añadir Ejercicio</button>
-                        <button class="btn btn-sm btn-primary" onclick="showAnatomicalMapModal()" style="font-size: 0.75rem; padding: 10px; display: flex; align-items: center; justify-content: center; gap: 6px;">🗺️ Mapa Muscular</button>
-                    </div>
-                </div>
-            `;
-        }
-
-        window.setEditorActiveDay = function(idx) {
-            activeDayIndex = idx;
-            renderRoutineEditor();
-        }
-
-        window.addRoutineDay = function() {
-            if (!editingRoutine.days) editingRoutine.days = [];
-            editingRoutine.days.push({ name: `Día ${editingRoutine.days.length + 1}`, exercises: [] });
-            activeDayIndex = editingRoutine.days.length - 1;
-            renderRoutineEditor();
-        }
-
-        window.removeRoutineDay = function(idx) {
-            if (!confirm('¿Eliminar esta sesión de la rutina?')) return;
-            editingRoutine.days.splice(idx, 1);
-            activeDayIndex = Math.max(0, activeDayIndex - 1);
-            renderRoutineEditor();
-        }
-
-        window.updateDayName = function(idx, val) {
-            editingRoutine.days[idx].name = val;
-        }
-
-        window.addExerciseToDay = function() {
-            if (!editingRoutine.days[activeDayIndex].exercises) editingRoutine.days[activeDayIndex].exercises = [];
-            editingRoutine.days[activeDayIndex].exercises.push({ name: '', sets: '', reps: '', intensity: '', notes: '' });
-            renderRoutineEditor();
-        }
-
-        window.removeExercise = function(idx) {
-            editingRoutine.days[activeDayIndex].exercises.splice(idx, 1);
-            renderRoutineEditor();
-        }
-
-        window.updateExerciseData = function(idx, field, val) {
-            editingRoutine.days[activeDayIndex].exercises[idx][field] = val;
-        }
-
-        window.saveRoutineChanges = function() {
-            editingRoutine.name = document.getElementById('editRoutineName').value;
-            editingRoutine.description = document.getElementById('editRoutineDesc').value;
-            
-            Routines.update(editingRoutine.id, editingRoutine);
-            window.closeModal();
-            loadRoutines();
-            showToast('Plantilla actualizada', 'success');
-        }
-
         window.deleteRoutine = function(id) {
-            if (confirm('¿Estás seguro de que quieres eliminar esta rutina?')) {
-                Routines.delete(id);
+            if (confirm('¿Eliminar esta plantilla?')) { Routines.delete(id); loadRoutines(); showToast('Plantilla eliminada','success'); }
+        }
+        window.duplicateRoutine = function(id) {
+            const routine = Routines.getById(id);
+            if (!routine) return;
+
+            // Deep clone
+            const newRoutineData = {
+                name: routine.name + " (Copia)",
+                description: routine.description || '',
+                duration: routine.duration || 'monthly',
+                days: JSON.parse(JSON.stringify(routine.days || [])),
+                weeks: JSON.parse(JSON.stringify(routine.weeks || [])),
+                exercises: JSON.parse(JSON.stringify(routine.exercises || [])),
+                goal: routine.goal || '',
+                sourceBlockId: routine.sourceBlockId || null,
+                isTemplate: true
+            };
+
+            const created = Routines.create(newRoutineData);
+            if (created) {
+                showToast('Plantilla duplicada correctamente', 'success');
                 loadRoutines();
-                showToast('Rutina eliminada', 'success');
+            } else {
+                showToast('Error al duplicar', 'error');
             }
         }
 
-        // Initialize
+        // ═══════════════════════════════════════════
+        // INLINE FULL-PAGE EDITOR
+        // ═══════════════════════════════════════════
+        let editingRoutine = null;
+        let activeInlineDayIdx = 0;
+
+        function buildExerciseDatalist() {
+            const config = getMuscleGroups(); const all = [];
+            for (const g in config.exercises) config.exercises[g].forEach(ex => all.push({ name: ex.name||ex, group: g }));
+            all.sort((a,b) => a.name.localeCompare(b.name));
+            document.getElementById('routineExercisesList').innerHTML = all.map(ex => `<option value="${ex.name}">${ex.name} (${ex.group})</option>`).join('');
+        }
+
+        window.openInlineEditor = function(id) {
+            const routine = Routines.getById(id);
+            if (!routine) return showToast('Plantilla no encontrada','error');
+            editingRoutine = JSON.parse(JSON.stringify(routine));
+            activeInlineDayIdx = 0;
+            document.getElementById('listSection').style.display = 'none';
+            document.getElementById('inlineEditorSection').style.display = 'block';
+            document.getElementById('editorRoutineName').value = editingRoutine.name || '';
+            document.getElementById('editorRoutineDesc').value = editingRoutine.description || '';
+            buildExerciseDatalist();
+            renderInlineEditor();
+        }
+
+        window.closeInlineEditor = function() {
+            document.getElementById('inlineEditorSection').style.display = 'none';
+            document.getElementById('listSection').style.display = 'block';
+            editingRoutine = null;
+            loadRoutines();
+        }
+
+        function renderInlineEditor() { renderInlineDayTabs(); renderInlineDayContent(); }
+
+        function renderInlineDayTabs() {
+            const tabs = document.getElementById('inlineDayTabs');
+            const days = editingRoutine.days || [];
+            if (!days.length) { tabs.innerHTML = `<div style="font-size:0.78rem;color:var(--text-muted);text-align:center;padding:16px 0;">Pulsa + para añadir una sesión</div>`; return; }
+            tabs.innerHTML = days.map((d,i) => `<div class="day-sidebar-item ${i===activeInlineDayIdx?'active':''}" onclick="setInlineDay(${i})">${d.name||'Día '+(i+1)}</div>`).join('');
+        }
+
+        function renderInlineDayContent() {
+            const container = document.getElementById('inlineDayContent');
+            const days = editingRoutine.days || [];
+            const day = days[activeInlineDayIdx];
+            if (!day) {
+                container.innerHTML = `<div class="card p-lg text-center" style="opacity:0.5;"><p>No hay sesiones. Pulsa <strong>+</strong> para crear la primera.</p></div>`;
+                return;
+            }
+            const exercises = day.exercises || [];
+            container.innerHTML = `
+                <div class="card p-md" style="background:linear-gradient(135deg,rgba(0,217,255,0.06) 0%,rgba(0,217,255,0.02) 100%);border:1px solid rgba(0,217,255,0.15);border-radius:12px;">
+                    <!-- Day header -->
+                    <div class="flex-between align-center mb-md">
+                        <div style="display:flex;align-items:center;gap:12px;">
+                            <div style="background:var(--accent-color,#ff6b6b);color:#fff;font-weight:800;padding:4px 10px;border-radius:6px;font-size:0.9rem;">D${activeInlineDayIdx+1}</div>
+                            <input type="text" id="inlineDayName" class="form-input" value="${(day.name||'').replace(/"/g,'&quot;')}" placeholder="Nombre del día (Ej: Glúteo, Empuje…)"
+                                onchange="updateInlineDayNameVal(${activeInlineDayIdx},this.value)"
+                                style="font-size:1rem;font-weight:700;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);min-width:240px;">
+                        </div>
+                        <div style="display:flex;align-items:center;gap:4px;">
+                            <button onclick="moveInlineDayByIdx(-1)" class="btn btn-sm btn-outline" title="Mover Izquierda" style="padding: 6px 10px; ${activeInlineDayIdx === 0 ? 'opacity: 0.3; pointer-events: none;' : ''}" ${activeInlineDayIdx === 0 ? 'disabled' : ''}>◀</button>
+                            <button onclick="moveInlineDayByIdx(1)" class="btn btn-sm btn-outline" title="Mover Derecha" style="padding: 6px 10px; ${activeInlineDayIdx === days.length - 1 ? 'opacity: 0.3; pointer-events: none;' : ''}" ${activeInlineDayIdx === days.length - 1 ? 'disabled' : ''}>▶</button>
+                            <button onclick="removeInlineDayByIdx(${activeInlineDayIdx})" class="btn btn-sm btn-outline" style="color:var(--error-color);border-color:rgba(239,68,68,0.25);">🗑️ Eliminar Día</button>
+                        </div>
+                    </div>
+
+                    <!-- Column headers -->
+                    <div class="ex-header" style="display:grid;grid-template-columns:1.8fr 1.5fr 64px 140px 54px 104px;gap:8px;padding:0 10px 6px;">
+                        <div>EJERCICIO</div><div>NOTAS</div>
+                        <div style="text-align:center;">SERIES</div>
+                        <div style="text-align:center;">REPS</div>
+                        <div style="text-align:center;">RIR</div>
+                        <div style="text-align:center;">ACCIONES</div>
+                    </div>
+
+                    <!-- Exercise rows -->
+                    <div id="inlineExerciseRows">
+                        ${exercises.map((ex,exIdx) => buildExRow(exIdx,ex)).join('')}
+                        ${!exercises.length ? `<div style="text-align:center;padding:24px;color:var(--text-muted);font-style:italic;">No hay ejercicios. ¡Añade uno abajo!</div>` : ''}
+                    </div>
+
+                    <!-- Buttons -->
+                    <div style="display:flex;gap:12px;margin-top:16px;">
+                        <button class="btn btn-sm btn-outline" onclick="addInlineExercise()" style="flex:2;border-style:dashed;border-color:rgba(0,217,255,0.3);color:var(--primary-color);">➕ Añadir Ejercicio</button>
+                        <button class="btn btn-sm btn-primary" onclick="showAnatomicalMapModal()" style="flex:1;display:flex;align-items:center;justify-content:center;gap:6px;">🗺️ Mapa Muscular</button>
+                    </div>
+                </div>`;
+        }
+
+        function buildExRow(exIdx, ex) {
+            return `<div style="background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.05);border-radius:8px;margin-bottom:4px;">
+                <div class="ex-grid">
+                    <input type="text" class="form-input" value="${(ex.name||'').replace(/"/g,'&quot;')}" placeholder="Nombre del ejercicio" list="routineExercisesList" onchange="updateInlineEx(${exIdx},'name',this.value)" style="font-size:0.85rem;">
+                    <input type="text" class="form-input" value="${(ex.notes||'').replace(/"/g,'&quot;')}" placeholder="💬 Notas, aproximaciones..." onchange="updateInlineEx(${exIdx},'notes',this.value)" style="font-size:0.75rem;color:var(--primary-color);">
+                    <input type="text" class="form-input" value="${ex.sets||''}" placeholder="3" onchange="updateInlineEx(${exIdx},'sets',this.value)" style="text-align:center;font-size:0.9rem;font-weight:700;color:var(--accent-color);">
+                    <input type="text" class="form-input" value="${ex.reps||''}" placeholder="12-10-8" onchange="updateInlineEx(${exIdx},'reps',this.value)" style="text-align:center;font-size:0.85rem;">
+                    <input type="text" class="form-input" value="${ex.intensity||ex.rir||''}" placeholder="1" onchange="updateInlineEx(${exIdx},'intensity',this.value)" style="text-align:center;font-size:0.85rem;">
+                    <div style="display:flex;gap:4px;justify-content:center;align-items:center;">
+                        <button onclick="moveInlineEx(${exIdx},-1)" class="btn btn-xs btn-outline" style="padding:4px 6px;border:1px solid rgba(255,255,255,0.1);" title="Subir">⬆️</button>
+                        <button onclick="moveInlineEx(${exIdx},1)"  class="btn btn-xs btn-outline" style="padding:4px 6px;border:1px solid rgba(255,255,255,0.1);" title="Bajar">⬇️</button>
+                        <button onclick="removeInlineEx(${exIdx})"  class="btn btn-xs btn-outline" style="padding:4px 6px;color:var(--error-color);border:1px solid rgba(239,68,68,0.2);" title="Eliminar">🗑️</button>
+                    </div>
+                </div>
+            </div>`;
+        }
+
+        // Day handlers
+        window.setInlineDay = function(idx) { activeInlineDayIdx = idx; renderInlineEditor(); }
+        
+        let autosaveRoutineTimeout = null;
+        window.triggerAutosaveInlineRoutine = function() {
+            if (autosaveRoutineTimeout) clearTimeout(autosaveRoutineTimeout);
+            autosaveRoutineTimeout = setTimeout(() => {
+                window.autosaveInlineRoutine();
+            }, 500);
+        };
+
+        window.autosaveInlineRoutine = function() {
+            if (!editingRoutine) return;
+            const nameEl = document.getElementById('editorRoutineName');
+            const descEl = document.getElementById('editorRoutineDesc');
+            const dayNameEl = document.getElementById('inlineDayName');
+            if (nameEl) editingRoutine.name = nameEl.value.trim() || editingRoutine.name;
+            if (descEl) editingRoutine.description = descEl.value.trim();
+            if (dayNameEl && editingRoutine.days[activeInlineDayIdx]) {
+                editingRoutine.days[activeInlineDayIdx].name = dayNameEl.value;
+            }
+            // Capture exercise row values live
+            document.querySelectorAll('#inlineExerciseRows .ex-grid').forEach((row, i) => {
+                const inputs = row.querySelectorAll('input');
+                const exArr = editingRoutine.days[activeInlineDayIdx]?.exercises;
+                if (inputs.length >= 5 && exArr && exArr[i]) {
+                    exArr[i].name      = inputs[0].value;
+                    exArr[i].notes     = inputs[1].value;
+                    exArr[i].sets      = inputs[2].value;
+                    exArr[i].reps      = inputs[3].value;
+                    exArr[i].intensity = inputs[4].value;
+                }
+            });
+            if (!editingRoutine.name) return; // Name is empty, skip save
+            try {
+                Routines.update(editingRoutine.id, editingRoutine);
+            } catch(e) {
+                console.error("Autosave inline routine error:", e);
+            }
+        };
+
+        window.addInlineDay = function() {
+            if (!editingRoutine.days) editingRoutine.days = [];
+            editingRoutine.days.push({ name:`Día ${editingRoutine.days.length+1}`, exercises:[] });
+            activeInlineDayIdx = editingRoutine.days.length - 1;
+            renderInlineEditor();
+            window.autosaveInlineRoutine();
+        }
+        window.removeInlineDayByIdx = function(idx) {
+            if (!confirm('¿Eliminar esta sesión?')) return;
+            editingRoutine.days.splice(idx, 1);
+            activeInlineDayIdx = Math.max(0, idx - 1);
+            renderInlineEditor();
+            window.autosaveInlineRoutine();
+        }
+        window.moveInlineDayByIdx = function(direction) {
+            if (!editingRoutine || !editingRoutine.days) return;
+            const targetIdx = activeInlineDayIdx + direction;
+            if (targetIdx < 0 || targetIdx >= editingRoutine.days.length) return;
+            
+            // Swap days
+            const temp = editingRoutine.days[activeInlineDayIdx];
+            editingRoutine.days[activeInlineDayIdx] = editingRoutine.days[targetIdx];
+            editingRoutine.days[targetIdx] = temp;
+            
+            activeInlineDayIdx = targetIdx;
+            renderInlineEditor();
+            window.autosaveInlineRoutine();
+        };
+        window.updateInlineDayNameVal = function(idx, val) { 
+            editingRoutine.days[idx].name = val; 
+            renderInlineDayTabs(); 
+            window.autosaveInlineRoutine();
+        }
+
+        // Exercise handlers
+        window.addInlineExercise = function() {
+            const day = editingRoutine.days[activeInlineDayIdx]; if (!day) return;
+            if (!day.exercises) day.exercises = [];
+            day.exercises.push({ name:'', sets:'', reps:'', intensity:'', notes:'' });
+            renderInlineDayContent();
+            window.autosaveInlineRoutine();
+        }
+        window.removeInlineEx = function(exIdx) { 
+            editingRoutine.days[activeInlineDayIdx].exercises.splice(exIdx,1); 
+            renderInlineDayContent(); 
+            window.autosaveInlineRoutine();
+        }
+        window.updateInlineEx = function(exIdx, field, val) { 
+            editingRoutine.days[activeInlineDayIdx].exercises[exIdx][field] = val; 
+            window.autosaveInlineRoutine();
+        }
+        window.moveInlineEx = function(exIdx, dir) {
+            const arr = editingRoutine.days[activeInlineDayIdx].exercises;
+            const target = exIdx + dir;
+            if (target < 0 || target >= arr.length) return;
+            [arr[exIdx], arr[target]] = [arr[target], arr[exIdx]];
+            renderInlineDayContent();
+            window.autosaveInlineRoutine();
+        }
+
+        // Save — captures live input values before persisting
+        window.saveInlineRoutine = function() {
+            const nameEl = document.getElementById('editorRoutineName');
+            const descEl = document.getElementById('editorRoutineDesc');
+            const dayNameEl = document.getElementById('inlineDayName');
+            if (nameEl) editingRoutine.name = nameEl.value.trim() || editingRoutine.name;
+            if (descEl) editingRoutine.description = descEl.value.trim();
+            if (dayNameEl && editingRoutine.days[activeInlineDayIdx]) {
+                editingRoutine.days[activeInlineDayIdx].name = dayNameEl.value;
+            }
+            // Capture exercise row values live
+            document.querySelectorAll('#inlineExerciseRows .ex-grid').forEach((row, i) => {
+                const inputs = row.querySelectorAll('input');
+                const exArr = editingRoutine.days[activeInlineDayIdx]?.exercises;
+                if (inputs.length >= 5 && exArr && exArr[i]) {
+                    exArr[i].name      = inputs[0].value;
+                    exArr[i].notes     = inputs[1].value;
+                    exArr[i].sets      = inputs[2].value;
+                    exArr[i].reps      = inputs[3].value;
+                    exArr[i].intensity = inputs[4].value;
+                }
+            });
+            if (!editingRoutine.name) { showToast('El nombre es obligatorio','error'); return; }
+            Routines.update(editingRoutine.id, editingRoutine);
+            showToast('✅ Plantilla guardada','success');
+        }
+
+        // Global listener for routine editor inputs
+        document.addEventListener('input', function(e) {
+            const id = e.target.id;
+            if (id === 'editorRoutineName' || id === 'editorRoutineDesc' || id === 'inlineDayName') {
+                window.triggerAutosaveInlineRoutine();
+            }
+            if (e.target.closest('#inlineExerciseRows')) {
+                window.triggerAutosaveInlineRoutine();
+            }
+        });
+
+        // Anatomical map (quick add by muscle group)
+        window.showAnatomicalMapModal = function() {
+            const config = getMuscleGroups();
+            const content = `
+                <p style="color:var(--text-muted);font-size:0.85rem;margin-bottom:12px;">Pulsa un grupo para añadir todos sus ejercicios al día actual.</p>
+                <div style="display:flex;flex-wrap:wrap;gap:8px;">
+                    ${config.groups.map(g => `<button onclick="addAllFromGroup('${g.replace(/'/g,"\\'")}') " class="btn btn-sm btn-outline" style="font-size:0.8rem;">${g} (${(config.exercises[g]||[]).length})</button>`).join('')}
+                </div>`;
+            showModal('🗺️ Añadir por Grupo Muscular', content, [{ text: 'Cerrar', class: 'btn-secondary', onclick: 'window.closeModal()' }]);
+        }
+        window.addAllFromGroup = function(group) {
+            const config = getMuscleGroups();
+            const exList = config.exercises[group] || [];
+            const day = editingRoutine.days[activeInlineDayIdx]; if (!day) return;
+            if (!day.exercises) day.exercises = [];
+            exList.forEach(ex => day.exercises.push({ name:ex.name, sets:'', reps:'', intensity:'', notes:'' }));
+            window.closeModal();
+            renderInlineDayContent();
+            showToast(`${exList.length} ejercicios de ${group} añadidos`,'success');
+            window.autosaveInlineRoutine();
+        }
+
+        // Init
         loadRoutines();
 
         async function onGoogleAuthSuccess() {
-            // Sincronizar con la nube (Supabase es ahora el primario)
-            if (window.SupabaseService) {
-                window.SupabaseService.init();
-                await window.syncFromCloud();
-            } else if (window.FirebaseService) {
-                await window.FirebaseService.init();
-                await window.syncFromCloud();
-            }
-
-            // Aplicar branding y Panel Maestro
-            if (typeof BrandConfig !== 'undefined') {
-                BrandConfig.applyTheme();
-            }
-
+            if (window.SupabaseService) { window.SupabaseService.init(); await window.syncFromCloud(); }
+            else if (window.FirebaseService) { await window.FirebaseService.init(); await window.syncFromCloud(); }
+            if (typeof BrandConfig !== 'undefined') BrandConfig.applyTheme();
             document.getElementById('login-screen').style.display = 'none';
             document.getElementById('app').style.display = 'block';
-            
-            if (typeof loadRoutines === 'function') loadRoutines();
+            loadRoutines();
         }
     </script>
-    <script src="js/custom-recipes.js?v=365"></script></body>
-
+    <script src="js/custom-recipes.js?v=457"></script>
+</body>
 </html>

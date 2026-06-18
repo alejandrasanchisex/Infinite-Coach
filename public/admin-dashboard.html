@@ -5,7 +5,7 @@
     <script>
         // Force PWA cache bust / reload
         (function() {
-            const CURRENT_VERSION = '365';
+            const CURRENT_VERSION = '457';
             const savedVersion = localStorage.getItem('app_version');
             if (savedVersion !== CURRENT_VERSION) {
                 localStorage.setItem('app_version', CURRENT_VERSION);
@@ -31,8 +31,8 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="styles/theme.css?v=365">
-    <link rel="stylesheet" href="styles/components.css">
+    <link rel="stylesheet" href="styles/theme.css?v=457">
+    <link rel="stylesheet" href="styles/components.css?v=457">
     <style>
         :root {
             --admin-primary: #8B5CF6; /* Purple for Master Admin */
@@ -569,9 +569,9 @@
 
     <!-- Supabase SDK & Service -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="js/supabase-service.js?v=365"></script>
+    <script src="js/supabase-service.js?v=457"></script>
 
-    <script src="js/utils.js?v=365"></script>
+    <script src="js/utils.js?v=457"></script>
 
     <script>
         // MASTER STATE CONTROL
@@ -584,9 +584,9 @@
                 const data = raw ? JSON.parse(raw) : { 
                     trainers: [], 
                     plans: [
-                        { id: 'Basic', name: 'Plan Basic', price: 29, desc: 'Hasta 20 clientes', stripeLink: '', appId: 'infinite-coach' },
-                        { id: 'Pro', name: 'Plan Pro', price: 59, desc: 'Clientes ilimitados', stripeLink: '', appId: 'infinite-coach' },
-                        { id: 'Elite', name: 'Plan Elite', price: 99, desc: 'Marca blanca', stripeLink: '', appId: 'infinite-coach' },
+                        { id: 'Basic', name: 'Plan Basic', price: 29, desc: 'Hasta 15 clientes', stripeLink: 'https://buy.stripe.com/4gM7sM1Hbeo6dct1g30Fi00', appId: 'infinite-coach' },
+                        { id: 'Pro', name: 'Plan Pro', price: 79, desc: 'Clientes ilimitados', stripeLink: 'https://buy.stripe.com/3cI6oI85z6VEb4l9Mz0Fi02', appId: 'infinite-coach' },
+                        { id: 'Elite', name: 'Plan Elite', price: 129, desc: 'Marca blanca', stripeLink: 'https://buy.stripe.com/fZueVegC51Bk5K1gaX0Fi01', appId: 'infinite-coach' },
                         { id: 'Demo', name: 'DEMO', price: 0, desc: 'Plan DEMO sin coste', stripeLink: '', appId: 'infinite-coach' }
                     ],
                     stats: { totalRevenue: 0 } 
@@ -597,9 +597,9 @@
                     if (!t.appId) t.appId = 'infinite-coach';
                 });
                 if(!data.plans) data.plans = [
-                    { id: 'Basic', name: 'Plan Basic', price: 29, desc: 'Hasta 20 clientes', stripeLink: '', appId: 'infinite-coach' },
-                    { id: 'Pro', name: 'Plan Pro', price: 59, desc: 'Clientes ilimitados', stripeLink: '', appId: 'infinite-coach' },
-                    { id: 'Elite', name: 'Plan Elite', price: 99, desc: 'Marca blanca', stripeLink: '', appId: 'infinite-coach' },
+                    { id: 'Basic', name: 'Plan Basic', price: 29, desc: 'Hasta 15 clientes', stripeLink: 'https://buy.stripe.com/4gM7sM1Hbeo6dct1g30Fi00', appId: 'infinite-coach' },
+                    { id: 'Pro', name: 'Plan Pro', price: 79, desc: 'Clientes ilimitados', stripeLink: 'https://buy.stripe.com/3cI6oI85z6VEb4l9Mz0Fi02', appId: 'infinite-coach' },
+                    { id: 'Elite', name: 'Plan Elite', price: 129, desc: 'Marca blanca', stripeLink: 'https://buy.stripe.com/fZueVegC51Bk5K1gaX0Fi01', appId: 'infinite-coach' },
                     { id: 'Free', name: 'Plan Gratis', price: 0, desc: 'Licencia Cortesía / Admin', stripeLink: '', appId: 'infinite-coach' },
                     { id: 'Demo', name: 'DEMO', price: 0, desc: 'Plan DEMO sin coste', stripeLink: '', appId: 'infinite-coach' }
                 ];
@@ -611,6 +611,38 @@
                     { id: 'infinite-coach', name: 'Infinite Coach', logo: 'https://images.unsplash.com/photo-1517838277536-f5f99be501cd?q=80&w=200&auto=format&fit=crop', primaryColor: '#8B5CF6', desc: 'Aplicación premium de entrenamiento personal y nutrición.' }
                 ];
                 if(!data.settings) data.settings = { platformName: 'Ingenia Licencias', adminEmail: 'ingenia@ingeniaia.es', adminPassword: 'fitness_pro_2026' };
+                
+                // Migración automática de precios antiguos (59/99) a nuevos (79/129) y configuración de links de Stripe
+                let migrated = false;
+                if (data.plans) {
+                    data.plans.forEach(p => {
+                        if (p.id === 'Basic') {
+                            if (p.price !== 29) { p.price = 29; migrated = true; }
+                            if (p.stripeLink !== 'https://buy.stripe.com/4gM7sM1Hbeo6dct1g30Fi00') {
+                                p.stripeLink = 'https://buy.stripe.com/4gM7sM1Hbeo6dct1g30Fi00';
+                                migrated = true;
+                            }
+                        }
+                        if (p.id === 'Pro') {
+                            if (p.price !== 79) { p.price = 79; migrated = true; }
+                            if (p.stripeLink !== 'https://buy.stripe.com/3cI6oI85z6VEb4l9Mz0Fi02') {
+                                p.stripeLink = 'https://buy.stripe.com/3cI6oI85z6VEb4l9Mz0Fi02';
+                                migrated = true;
+                            }
+                        }
+                        if (p.id === 'Elite') {
+                            if (p.price !== 129) { p.price = 129; migrated = true; }
+                            if (p.stripeLink !== 'https://buy.stripe.com/fZueVegC51Bk5K1gaX0Fi01') {
+                                p.stripeLink = 'https://buy.stripe.com/fZueVegC51Bk5K1gaX0Fi01';
+                                migrated = true;
+                            }
+                        }
+                    });
+                }
+                if (migrated) {
+                    localStorage.setItem(PLATFORM_KEY, JSON.stringify(data));
+                }
+
                 return data;
             } catch(e) {
                 console.error("Error storage:", e);
@@ -1415,5 +1447,5 @@
             });
         });
     </script>
-    <script src="js/custom-recipes.js?v=129"></script></body>
+    <script src="js/custom-recipes.js?v=457"></script></body>
 </html>

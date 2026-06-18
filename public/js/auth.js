@@ -55,6 +55,8 @@ const AUTH = {
     signOut: () => {
         sessionStorage.removeItem('_trainerAuthed');
         localStorage.removeItem('_trainerAuthed');
+        localStorage.removeItem('_trainerEmail');
+        localStorage.removeItem('activeTrainerId');
         window.location.reload();
     }
 };

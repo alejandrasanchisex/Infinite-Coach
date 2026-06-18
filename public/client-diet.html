@@ -7,7 +7,7 @@
   <script>
       // Force PWA cache bust / reload
       (function() {
-          const CURRENT_VERSION = '365';
+          const CURRENT_VERSION = '458';
           const savedVersion = localStorage.getItem('app_version');
           if (savedVersion !== CURRENT_VERSION) {
               localStorage.setItem('app_version', CURRENT_VERSION);
@@ -31,12 +31,67 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="styles/theme.css?v=365">
-  <link rel="stylesheet" href="styles/components.css?v=365">
-  <link rel="stylesheet" href="styles/mobile.css?v=365">
-  <link rel="manifest" href="manifest.json">
+  <link rel="stylesheet" href="styles/theme.css?v=458">
+  <link rel="stylesheet" href="styles/components.css?v=458">
+  <link rel="stylesheet" href="styles/mobile.css?v=458">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <script>
+      (function() {
+          var params = new URLSearchParams(window.location.search);
+          var tid = params.get('t') || localStorage.getItem('activeTrainerId') || 'default';
+          if (tid) {
+              var lower = tid.toLowerCase().trim();
+              if (lower === 'asteam' || lower === 'alejandra') {
+                  tid = 't-w0iybl7qb';
+              } else if (lower === 'toledo' || lower === 'vtoledo') {
+                  tid = 't-8umeizyns';
+              }
+          }
+          
+          // Si el cliente está logueado, intentar deducir su entrenador para PWA
+          var clientId = localStorage.getItem('clientId') || sessionStorage.getItem('clientId');
+          if (clientId) {
+              for (var i = 0; i < localStorage.length; i++) {
+                  var key = localStorage.key(i);
+                  if (key && key.indexOf('fitnessAppData_') === 0 && key.indexOf('_backup') === -1) {
+                      var raw = localStorage.getItem(key);
+                      if (raw) {
+                          try {
+                              var parsed = JSON.parse(raw);
+                              if (parsed && parsed.clients) {
+                                  for (var j = 0; j < parsed.clients.length; j++) {
+                                      if (parsed.clients[j].id === clientId) {
+                                          var foundTid = key.replace('fitnessAppData_', '');
+                                          if (foundTid && foundTid !== 'default' && foundTid !== 'admin') {
+                                              tid = foundTid;
+                                              break;
+                                          }
+                                      }
+                                  }
+                              }
+                          } catch(e) {}
+                      }
+                  }
+                  if (tid && tid !== 'default' && tid !== 'admin') break;
+              }
+          }
+          
+          var brandName = 'Infinite Coach';
+          var iconUrl = 'img/logo-infinite-coach.png';
+          if (tid === 't-w0iybl7qb') {
+              brandName = 'ASTeam';
+              iconUrl = 'https://bieeydhacavxymoosasx.supabase.co/storage/v1/object/public/Media/1779724548154_Gemini_Generated_Image_vse84nvse84nvse8.png';
+          } else if (tid === 't-8umeizyns') {
+              brandName = 'Toledo The Bull';
+              iconUrl = 'https://bieeydhacavxymoosasx.supabase.co/storage/v1/object/public/Media/1781711106755_toledo_the_bull.png';
+          }
+          
+          document.write('<meta name="apple-mobile-web-app-title" content="' + brandName + '">');
+          document.write('<link rel="apple-touch-icon" href="' + iconUrl + '">');
+          document.write('<link rel="manifest" href="manifest.json?t=' + tid + '">');
+      })();
+  </script>
   <style>
     :root {
       --bg-meal: rgba(30, 30, 46, 0.6);
@@ -494,6 +549,15 @@
       transition: all 0.2s ease;
     }
     .shopping-item.checked .check-box { background: var(--primary-color); color: #000; }
+    
+    /* Clean overrides for food items in light mode to prevent grey borders and white boxes */
+    html.theme-light .food-item,
+    body.theme-light .food-item {
+      background: transparent !important;
+      border: none !important;
+      box-shadow: none !important;
+      padding: 0 !important;
+    }
   </style>
 </head>
 
@@ -507,10 +571,10 @@
           <span id="brandName">Infinite Coach</span>
         </div>
         <ul class="nav-links" id="navLinks">
-          <li><a href="client-dashboard.html?v=365" class="nav-link">Inicio</a></li>
-          <li><a href="client-profile.html?v=365" class="nav-link">Ficha Técnica</a></li>
+          <li><a href="client-dashboard.html?v=458" class="nav-link">Inicio</a></li>
+          <li><a href="client-profile.html?v=458" class="nav-link">Ficha Técnica</a></li>
 
-          <li><a href="client-login.html?v=365" class="nav-link">Salir</a></li>
+          <li><a href="client-login.html?v=458" class="nav-link">Salir</a></li>
         </ul>
         <button class="menu-toggle" onclick="toggleMenu()" style="margin-left: auto;">☰</button>
       </nav>
@@ -523,6 +587,10 @@
         <div>
           <h1>Mi Plan Nutricional</h1>
           <p class="text-muted" id="dietName">--</p>
+          <div id="dietSelectorContainer" style="margin-top: 8px; margin-bottom: 12px; display: none;">
+            <select id="dietSelect" class="form-input" style="background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); color: var(--text-primary); border-radius: 8px; padding: 10px 14px; font-weight: 600; width: 100%; max-width: 320px;" onchange="window.switchClientDiet(this.value)">
+            </select>
+          </div>
         </div>
         <div class="flex gap-sm">
             <button id="shopBtn" class="btn btn-outline btn-sm" style="height: auto; gap: 8px; flex: 1;" onclick="showShoppingList()">
@@ -588,26 +656,35 @@
 
   <!-- Supabase SDK & Service -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script src="js/supabase-service.js?v=365"></script>
+  <script src="js/supabase-service.js?v=458"></script>
 
-  <script src="js/config.js?v=365"></script>
-  <script src="js/data-models.js?v=365"></script>
-  <script src="js/utils.js?v=365"></script>
-  <script src="js/custom-recipes.js?v=365"></script>
+  <script src="js/config.js?v=458"></script>
+  <script src="js/data-models.js?v=458"></script>
+  <script src="js/utils.js?v=458"></script>
+  <script src="js/custom-recipes.js?v=458"></script>
   <script>
     // --- RESOLUCIÓN DE TRAINER ID (FALLBACK SEGURO) ---
     (function() {
         var tParam = new URLSearchParams(window.location.search).get('t');
         if (tParam) {
-            localStorage.setItem('activeTrainerId', tParam);
-            window.activeTrainerId = tParam;
-        } else {
-            var activeId = localStorage.getItem('activeTrainerId') || window.activeTrainerId;
-            if (!activeId || activeId === 'admin') {
-                localStorage.setItem('activeTrainerId', 'default');
-                window.activeTrainerId = 'default';
+            tParam = tParam.toLowerCase().trim();
+            if (tParam === 'asteam' || tParam === 'alejandra') {
+                tParam = 't-w0iybl7qb';
+            } else if (tParam === 'toledo' || tParam === 'vtoledo') {
+                tParam = 't-8umeizyns';
             }
         }
+        var storedTid = localStorage.getItem('activeTrainerId');
+        var tid = tParam;
+        if (!tid || tid === 'default' || tid === 'admin') {
+            if (storedTid && storedTid !== 'default' && storedTid !== 'admin') {
+                tid = storedTid;
+            } else {
+                tid = 'default';
+            }
+        }
+        localStorage.setItem('activeTrainerId', tid);
+        window.activeTrainerId = tid;
     })();
 
     let clientId = new URLSearchParams(window.location.search).get('id') || sessionStorage.getItem('clientId') || localStorage.getItem('clientId');
@@ -648,9 +725,8 @@
 
       client = Clients.getById(clientId);
       if (!client) {
-          localStorage.removeItem('clientId');
-          sessionStorage.removeItem('clientId');
-          window.location.replace('client-login.html');
+          const activeId = localStorage.getItem('activeTrainerId') || 'default';
+          window.location.replace('client-login.html?reauth=true&t=' + activeId);
           return;
       }
 
@@ -675,7 +751,53 @@
           }
       }
 
-      diet = (client && client.assignedDiet && (client.dietPublished === true || client.dietPublished === undefined)) ? Diets.getById(client.assignedDiet) : null;
+      let clientDiets = [];
+      if (client) {
+          const isPublished = client.dietPublished === true || client.dietPublished === undefined;
+          if (isPublished) {
+              let dietsToMap = [];
+              if (client.assignedDiets && Array.isArray(client.assignedDiets)) {
+                  dietsToMap = client.assignedDiets;
+              } else if (client.assignedDiet) {
+                  dietsToMap = [client.assignedDiet];
+              }
+
+              clientDiets = dietsToMap.map(id => Diets.getById(id)).filter(Boolean).filter(d => {
+                  if (client.publishedDiets && Array.isArray(client.publishedDiets)) {
+                      return client.publishedDiets.includes(d.id);
+                  }
+                  return true;
+              });
+          }
+      }
+
+      // Handle multiple diets selector
+      const selectorContainer = document.getElementById('dietSelectorContainer');
+      const dietSelect = document.getElementById('dietSelect');
+      const dietNameEl = document.getElementById('dietName');
+
+      if (clientDiets.length > 1) {
+          if (selectorContainer && dietSelect) {
+              selectorContainer.style.display = 'block';
+              if (dietNameEl) dietNameEl.style.display = 'none';
+              
+              let selectedDietId = localStorage.getItem('client_selected_diet_id_' + client.id);
+              if (!selectedDietId || !clientDiets.some(d => d.id === selectedDietId)) {
+                  selectedDietId = clientDiets[0].id;
+              }
+
+              dietSelect.innerHTML = clientDiets.map(d => `
+                  <option value="${d.id}" ${d.id === selectedDietId ? 'selected' : ''}>🥗 ${d.name.replace(/^(Copia\s*-\s*)+/gi, '').replace(/\s*\(Copia\)$/gi, '')}</option>
+              `).join('');
+
+              diet = Diets.getById(selectedDietId);
+          }
+      } else {
+          if (selectorContainer) selectorContainer.style.display = 'none';
+          if (dietNameEl) dietNameEl.style.display = 'block';
+          
+          diet = clientDiets.length > 0 ? clientDiets[0] : null;
+      }
       
       const isSuppPublished = client && client.supplementationPublished !== false;
       if (!isSuppPublished) {
@@ -692,6 +814,15 @@
           console.log('No active diet to show');
       }
     });
+
+    window.switchClientDiet = function (dietId) {
+        if (!client) return;
+        localStorage.setItem('client_selected_diet_id_' + client.id, dietId);
+        diet = Diets.getById(dietId);
+        if (diet) {
+            loadDiet();
+        }
+    };
 
     function setupWhatsAppFab() {
       const fab = document.getElementById('whatsappFab');
@@ -710,7 +841,11 @@
     function loadDiet() {
       if (!diet) return;
 
-      document.getElementById('dietName').textContent = diet.name.replace(/^(Copia\s*-\s*)+/gi, '').replace(/\s*\(Copia\)$/gi, '');
+      const cleanedName = diet.name.replace(/^(Copia\s*-\s*)+/gi, '').replace(/\s*\(Copia\)$/gi, '');
+      const dietNameEl = document.getElementById('dietName');
+      if (dietNameEl) {
+          dietNameEl.textContent = cleanedName;
+      }
       renderDiet();
     }
 
@@ -734,7 +869,7 @@
       mealsToShow.forEach((meal, mIdx) => {
           const options = {};
           (meal.foods || []).forEach(f => {
-              const opt = f.option || 1;
+              const opt = Number(f.option || 1);
               if (!options[opt]) options[opt] = { foods: [], stats: { cals: 0, p: 0, c: 0, f: 0 } };
               options[opt].foods.push(f);
               options[opt].stats.cals += parseInt(f.calories || 0);
@@ -770,9 +905,10 @@
 
               return `
                 <div class="option-card-full">
+                    ${photoUrl ? `
                     <div class="meal-image-container">
-                        ${photoUrl ? `<img src="${photoUrl}" alt="${meal.name}">` : `<div class="flex-center" style="height:100%; color:rgba(255,255,255,0.05);"><i style="font-size:1.5rem;">🥗</i></div>`}
-                    </div>
+                        <img src="${photoUrl}" alt="${meal.name}">
+                    </div>` : ''}
                     <div class="meal-info">
                         <div class="option-label">${label}</div>
                         <div class="meal-name-row">${meal.name}${meal.optionIngredients && meal.optionIngredients[k] ? `: <span style="font-weight: normal; color: rgba(255,255,255,0.7);">${meal.optionIngredients[k]}</span>` : ''}</div>
@@ -876,21 +1012,35 @@
         // Collect all unique foods from ALL options of all meals
         const items = {};
         
-        let meals = diet.meals || [];
-        if (meals.length === 0 && diet.weeklyPlan) meals = diet.weeklyPlan[0].meals || [];
+        let meals = [];
+        if (diet.meals && diet.meals.length > 0) {
+            meals = diet.meals;
+        } else if (diet.weeklyPlan && diet.weeklyPlan.length > 0) {
+            diet.weeklyPlan.forEach(day => {
+                if (day.meals && Array.isArray(day.meals)) {
+                    meals = meals.concat(day.meals);
+                }
+            });
+        }
         
         meals.forEach(meal => {
-            if (meal.foods && meal.foods.length > 0) {
+            if (meal.foods && Array.isArray(meal.foods) && meal.foods.length > 0) {
                 // Include ALL options, not just option 1
                 meal.foods.forEach(f => {
-                    const name = f.name.trim();
-                    const qtyStr = f.quantity || '';
-                    const opt = f.option || 1;
-                    if (!items[name]) items[name] = { name, qties: [], options: new Set() };
-                    // Only add quantity once per option to avoid double-counting same food in multiple options
-                    if (!items[name].options.has(opt)) {
-                        items[name].qties.push(qtyStr);
-                        items[name].options.add(opt);
+                    try {
+                        if (!f) return;
+                        const name = (f.name || f.title || '').trim();
+                        if (!name) return;
+                        const qtyStr = f.quantity || '';
+                        const opt = Number(f.option || 1);
+                        if (!items[name]) items[name] = { name, qties: [], options: new Set() };
+                        // Only add quantity once per option to avoid double-counting same food in multiple options
+                        if (!items[name].options.has(opt)) {
+                            items[name].qties.push(qtyStr);
+                            items[name].options.add(opt);
+                        }
+                    } catch (e) {
+                        console.warn("Error processing food item in shopping list:", e, f);
                     }
                 });
             }
@@ -901,7 +1051,7 @@
                 <div class="shopping-item" onclick="this.classList.toggle('checked')">
                     <div class="check-box">✓</div>
                     <div style="flex:1;">
-                        <div style="font-weight:700; color:#fff;">${item.name}</div>
+                        <div style="font-weight:700; color: var(--text-primary);">${item.name}</div>
                     </div>
                 </div>
             `;
@@ -934,6 +1084,6 @@
 
     // Load on page load
   </script>
-    <script src="js/custom-recipes.js?v=365"></script></body>
+    <script src="js/custom-recipes.js?v=458"></script></body>
 
 </html>

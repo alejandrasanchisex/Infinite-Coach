@@ -3,16 +3,118 @@
 // ============================================
 
 const DB_VERSION = '1.0.1';
-let activeTrainerId = localStorage.getItem('activeTrainerId');
+let activeTrainerId = (function() {
+    // 1. Obtener del parámetro de búsqueda de la URL 't'
+    let tParam = null;
+    if (typeof window !== 'undefined' && window.location && window.location.search) {
+        tParam = new URLSearchParams(window.location.search).get('t');
+    }
+    
+    // Normalizar tParam
+    if (tParam) {
+        tParam = tParam.toLowerCase().trim();
+        if (tParam === 'asteam' || tParam === 'alejandra') {
+            tParam = 't-w0iybl7qb';
+        } else if (tParam === 'toledo' || tParam === 'vtoledo') {
+            tParam = 't-8umeizyns';
+        }
+    }
+    
+    let storedTrainerId = localStorage.getItem('activeTrainerId');
+    if (storedTrainerId) {
+        storedTrainerId = storedTrainerId.trim();
+    }
+    
+    // 2. Si el cliente está logueado, buscar su base de datos correspondiente (para restaurar contexto en PWA)
+    let clientId = localStorage.getItem('clientId') || sessionStorage.getItem('clientId');
+    if (clientId) {
+        for (let i = 0; i < localStorage.length; i++) {
+            const key = localStorage.key(i);
+            if (key && key.startsWith('fitnessAppData_') && !key.endsWith('_backup')) {
+                const raw = localStorage.getItem(key);
+                if (raw) {
+                    try {
+                        const parsed = JSON.parse(raw);
+                        if (parsed && parsed.clients && parsed.clients.some(c => c.id === clientId)) {
+                            const foundTid = key.replace('fitnessAppData_', '');
+                            if (foundTid && foundTid !== 'default' && foundTid !== 'admin') {
+                                console.log(`[data-models] Cliente detectado en base de datos: ${foundTid}. Restaurando contexto.`);
+                                return foundTid;
+                            }
+                        }
+                    } catch(e) {}
+                }
+            }
+        }
+    }
+    
+    // 3. Si hay tParam específico, priorizarlo
+    if (tParam && tParam !== 'default' && tParam !== 'admin') {
+        return tParam;
+    }
+    
+    // 4. Si hay entrenador guardado específico, conservarlo
+    if (storedTrainerId && storedTrainerId !== 'default' && storedTrainerId !== 'admin') {
+        return storedTrainerId;
+    }
+    
+    // 5. Mapeos de correos de entrenadores (si es el panel de coach)
+    const trainerEmail = localStorage.getItem('_trainerEmail') || '';
+    if (trainerEmail) {
+        const emailLower = trainerEmail.toLowerCase().trim();
+        if (emailLower === 'ingenia@ingeniaia.es') return 't-zum04ds2n';
+        if (emailLower === 'alejandra.asteam@gmail.com') return 't-w0iybl7qb';
+        if (emailLower === 'vtoledonutrition@gmail.com') return 't-8umeizyns';
+    }
+    
+    return tParam || storedTrainerId || 'default';
+})();
+
 if (activeTrainerId === 'alejandra_asteam_gmail_com') {
     activeTrainerId = 't-w0iybl7qb';
-    localStorage.setItem('activeTrainerId', 't-w0iybl7qb');
 }
 if (!activeTrainerId || activeTrainerId === 'default' || activeTrainerId === 'admin') {
     activeTrainerId = 'default';
 }
+
+localStorage.setItem('activeTrainerId', activeTrainerId);
 window.activeTrainerId = activeTrainerId;
 const getStorageKey = () => `fitnessAppData_${window.activeTrainerId || 'default'}`;
+
+// 🧹 MOCK DATA CLEANUP FOR ASTEAM (PREVENT SPILLOVER RE-UPLOAD)
+(function() {
+    try {
+        const sKey = 'fitnessAppData_t-w0iybl7qb';
+        const raw = localStorage.getItem(sKey);
+        if (raw) {
+            const data = JSON.parse(raw);
+            const clients = data.clients || [];
+            
+            // Check if there are any clients other than Amalia and Fernando
+            const hasMock = clients.some(c => c.id !== '0db0ea7a-c413-44cb-b99e-dfd9790383eb' && c.id !== '20f2e6c2-2699-4ccc-a982-1e9fb141b9bb');
+            
+            // Check if Amalia or Fernando have incorrect fees in local storage
+            const amalia = clients.find(c => c.id === '0db0ea7a-c413-44cb-b99e-dfd9790383eb');
+            const fernando = clients.find(c => c.id === '20f2e6c2-2699-4ccc-a982-1e9fb141b9bb');
+            const hasWrongFees = (amalia && amalia.monthlyFee !== 65) || (fernando && fernando.monthlyFee !== 0);
+            
+            // Check if there are mock feedbacks or invoices in local storage
+            const feedbacks = data.feedbacks || [];
+            const invoices = data.invoices || [];
+            const hasMockFeedbacks = feedbacks.some(f => f.id === 'fb-pending-1' || f.id === 'fb-pending-2' || String(f.id).startsWith('fb-pending-'));
+            const hasMockInvoices = invoices.some(i => String(i.id).startsWith('inv-'));
+            
+            if (hasMock || hasWrongFees || hasMockFeedbacks || hasMockInvoices) {
+                console.warn("🧹 [ASTEAM CLEANUP] Test data spillover, wrong fees, or mock feedbacks/invoices detected in local storage. Wiping key and forcing clean sync from cloud...");
+                localStorage.removeItem(sKey);
+                localStorage.removeItem(sKey + '_backup');
+                localStorage.setItem('isNewInstall_t-w0iybl7qb', 'true');
+            }
+        }
+    } catch(e) {
+        console.error("[ASTEAM CLEANUP] Error checking local storage:", e);
+    }
+})();
 
 const updateActiveTrainerId = (newId) => {
     let targetId = newId;
@@ -32,9 +134,88 @@ if (trainerFromUrl) {
     const lower = trainerFromUrl.toLowerCase().trim();
     if (lower === 'asteam' || lower === 'alejandra') {
         trainerFromUrl = 't-w0iybl7qb';
+    } else if (lower === 'toledo' || lower === 'vtoledo') {
+        trainerFromUrl = 't-8umeizyns';
     }
     updateActiveTrainerId(trainerFromUrl);
 }
+
+const syncClientWithLatestFeedback = (client, feedbacks) => {
+    if (!client) return false;
+    const clientFeedbacks = (feedbacks || []).filter(f => f.clientId == client.id);
+    if (clientFeedbacks.length === 0) return false;
+
+    const sortedFeedbacks = [...clientFeedbacks].sort((a, b) => new Date(a.date) - new Date(b.date));
+    const latestFeedback = sortedFeedbacks[sortedFeedbacks.length - 1];
+    
+    if (!client.technicalData) {
+        client.technicalData = {};
+    }
+    
+    let changed = false;
+    
+    if (latestFeedback.weight !== undefined && latestFeedback.weight !== null) {
+        const val = Math.round(parseFloat(latestFeedback.weight) * 100) / 100;
+        if (client.technicalData.weight !== val) {
+            client.technicalData.weight = val;
+            changed = true;
+        }
+    }
+    
+    if (latestFeedback.perimeters) {
+        const p = latestFeedback.perimeters;
+        const mappings = [
+            { fbKey: 'Cintura', techKey: 'waist' },
+            { fbKey: 'Cadera', techKey: 'glute' },
+            { fbKey: 'Pecho', techKey: 'chest' },
+            { fbKey: 'Brazo', techKey: 'arm' },
+            { fbKey: 'Muslo', techKey: 'leg' }
+        ];
+        mappings.forEach(m => {
+            if (p[m.fbKey] !== undefined && p[m.fbKey] !== null) {
+                const val = parseFloat(p[m.fbKey]);
+                if (client.technicalData[m.techKey] !== val) {
+                    client.technicalData[m.techKey] = val;
+                    changed = true;
+                }
+            }
+        });
+    }
+    
+    if (!client.weightHistory) {
+        client.weightHistory = [];
+        changed = true;
+    }
+    
+    clientFeedbacks.forEach(fb => {
+        if (fb.weight || (fb.perimeters && Object.keys(fb.perimeters).length > 0)) {
+            const exists = client.weightHistory.some(h => 
+                h.date && Math.abs(new Date(h.date) - new Date(fb.date)) < 1000 * 60 * 5
+            );
+            if (!exists) {
+                client.weightHistory.push({
+                    date: fb.date,
+                    weight: fb.weight,
+                    perimeters: fb.perimeters,
+                    arm: fb.perimeters?.Brazo || undefined,
+                    leg: fb.perimeters?.Muslo || undefined,
+                    chest: fb.perimeters?.Pecho || undefined,
+                    glute: fb.perimeters?.Cadera || undefined,
+                    waist: fb.perimeters?.Cintura || undefined,
+                    week: fb.week,
+                    isFeedback: true
+                });
+                changed = true;
+            }
+        }
+    });
+    
+    if (changed) {
+        client.weightHistory.sort((a, b) => new Date(a.date) - new Date(b.date));
+    }
+    
+    return changed;
+};
 
 const getData = () => {
   const sKey = getStorageKey();
@@ -44,7 +225,8 @@ const getData = () => {
 
     const defaults = {
     version: DB_VERSION, clients: [], routines: [], diets: [], foods: [], media: [], 
-    hidden_system_media: [], deleted_system_media: [], brand: { name: 'Infinite Coach', configured: true }
+    hidden_system_media: [], deleted_system_media: [], brand: { name: 'Infinite Coach', configured: true },
+    supplementationTemplates: [], feedbacks: [], appointments: [], invoices: [], trainingLogs: [], habits: [], trainingBlocks: [], deletedIds: []
   };
   if (!raw) {
     const activeId = window.activeTrainerId || localStorage.getItem('activeTrainerId') || 'default';
@@ -62,6 +244,7 @@ const getData = () => {
     if (!data.appointments) data.appointments = [];
     if (!data.invoices) data.invoices = [];
     if (!data.trainingLogs) data.trainingLogs = [];
+    if (!data.supplementationTemplates) data.supplementationTemplates = [];
 
     // 🔥 MIGRACIÓN ÚNICA: Restaurar recetas ocultas a activas
     if (!localStorage.getItem('v310_unhide_recipes_done')) {
@@ -83,87 +266,7 @@ const getData = () => {
     // 🔥 MIGRACIÓN: Poblar "Mis Alimentos" con ingredientes maestros
     if (!localStorage.getItem('v316_seed_foods_done_v4')) {
         if (!data.foods) data.foods = [];
-        const initialFoodsSeed = [
-            { name: 'Pollo (Pechuga, Desmechado, Crudo)', calories: 120, protein: 23, carbs: 0, fat: 2.5, type: 'g' },
-            { name: 'Pavo (Pechuga, Fiambre, Solomillo)', calories: 105, protein: 22, carbs: 0, fat: 1.5, type: 'g' },
-            { name: 'Salmón (Fresco o Ahumado)', calories: 180, protein: 20, carbs: 0, fat: 11, type: 'g' },
-            { name: 'Atún al natural', calories: 116, protein: 26, carbs: 0, fat: 1, type: 'g' },
-            { name: 'Ternera magra', calories: 150, protein: 21, carbs: 0, fat: 5, type: 'g' },
-            { name: 'Pescado blanco (Merluza, Lubina)', calories: 80, protein: 18, carbs: 0, fat: 1, type: 'g' },
-            { name: 'Gambas cocidas', calories: 85, protein: 20, carbs: 0.5, fat: 0.8, type: 'g' },
-            { name: 'Bacalao desmigado', calories: 82, protein: 18, carbs: 0, fat: 0.7, type: 'g' },
-            { name: 'Sepia salteada', calories: 80, protein: 16, carbs: 0.7, fat: 0.9, type: 'g' },
-            { name: 'Mejillones al vapor', calories: 86, protein: 12, carbs: 3.4, fat: 2.2, type: 'g' },
-            { name: 'Jamón serrano (Limpio)', calories: 240, protein: 30, carbs: 0, fat: 13, type: 'g' },
-            { name: 'Huevo entero', calories: 155, protein: 13, carbs: 1.1, fat: 11, type: 'unit' },
-            { name: 'Claras de Huevo', calories: 52, protein: 11, carbs: 0.7, fat: 0.2, type: 'g' },
-            { name: 'Requesón', calories: 100, protein: 12, carbs: 3, fat: 4, type: 'g' },
-            { name: 'Queso cottage', calories: 98, protein: 11, carbs: 3.4, fat: 4.3, type: 'g' },
-            { name: 'Queso fresco tipo Burgos', calories: 110, protein: 11, carbs: 3, fat: 6, type: 'g' },
-            { name: 'Queso batido 0%', calories: 47, protein: 8, carbs: 3.5, fat: 0.1, type: 'g' },
-            { name: 'Skyr', calories: 65, protein: 11, carbs: 4, fat: 0.2, type: 'g' },
-            { name: 'Yogur griego', calories: 115, protein: 10, carbs: 3, fat: 7, type: 'unit' },
-            { name: 'Yogur natural', calories: 60, protein: 3.5, carbs: 4.7, fat: 3.3, type: 'g' },
-            { name: 'Kéfir', calories: 60, protein: 3.5, carbs: 4.8, fat: 3, type: 'g' },
-            { name: 'Queso crema light', calories: 150, protein: 6, carbs: 5, fat: 12, type: 'g' },
-            { name: 'Queso mozzarella light', calories: 200, protein: 22, carbs: 2, fat: 12, type: 'g' },
-            { name: 'Queso curado / gratinado', calories: 380, protein: 25, carbs: 1.3, fat: 30, type: 'g' },
-            { name: 'Queso havarti (Loncha)', calories: 330, protein: 21, carbs: 0.5, fat: 26, type: 'g' },
-            { name: 'Leche desnatada', calories: 34, protein: 3.4, carbs: 5, fat: 0.1, type: 'g' },
-            { name: 'Leche de soja', calories: 45, protein: 3.3, carbs: 2.5, fat: 1.8, type: 'g' },
-            { name: 'Leche de almendras / avellanas', calories: 24, protein: 0.5, carbs: 3, fat: 1.1, type: 'g' },
-            { name: 'Copos de avena / Harina de avena', calories: 389, protein: 16.9, carbs: 66, fat: 6.9, type: 'g' },
-            { name: 'Arroz (Blanco, Integral, Basmati, Jazmín)', calories: 350, protein: 7, carbs: 78, fat: 0.5, type: 'g' },
-            { name: 'Pasta integral', calories: 350, protein: 12, carbs: 72, fat: 1.5, type: 'g' },
-            { name: 'Pan integral / Centeno / Masa madre', calories: 250, protein: 9, carbs: 45, fat: 2.5, type: 'g' },
-            { name: 'Tortitas de arroz o maíz', calories: 380, protein: 8, carbs: 80, fat: 3, type: 'unit' },
-            { name: 'Tortilla de trigo integral', calories: 290, protein: 8, carbs: 45, fat: 6, type: 'unit' },
-            { name: 'Tortilla de maíz', calories: 220, protein: 5, carbs: 45, fat: 2.5, type: 'unit' },
-            { name: 'Batata / Boniato (asado)', calories: 86, protein: 1.6, carbs: 20, fat: 0.1, type: 'g' },
-            { name: 'Patata (Asada, Puré, Baby)', calories: 77, protein: 2, carbs: 17, fat: 0.1, type: 'g' },
-            { name: 'Quinoa cocida', calories: 370, protein: 14, carbs: 64, fat: 6, type: 'g' },
-            { name: 'Cuscús integral', calories: 350, protein: 12, carbs: 73, fat: 1.5, type: 'g' },
-            { name: 'Colines / Bastones integrales', calories: 390, protein: 11, carbs: 72, fat: 5, type: 'g' },
-            { name: 'Granola casera', calories: 450, protein: 10, carbs: 60, fat: 18, type: 'g' },
-            { name: 'Arepa de maíz precocido', calories: 360, protein: 7, carbs: 77, fat: 2.5, type: 'g' },
-            { name: 'Garbanzos cocidos', calories: 364, protein: 19, carbs: 61, fat: 6, type: 'g' },
-            { name: 'Lentejas cocidas', calories: 350, protein: 25, carbs: 63, fat: 1, type: 'g' },
-            { name: 'Alubias blancas cocidas', calories: 330, protein: 21, carbs: 60, fat: 0.8, type: 'g' },
-            { name: 'Falafel horneado', calories: 250, protein: 13, carbs: 30, fat: 8, type: 'g' },
-            { name: 'Hummus de garbanzo', calories: 170, protein: 5, carbs: 14, fat: 10, type: 'g' },
-            { name: 'Tofu firme', calories: 76, protein: 8, carbs: 1.9, fat: 4.8, type: 'g' },
-            { name: 'Edamame al vapor', calories: 120, protein: 11, carbs: 9, fat: 5, type: 'g' },
-            { name: 'Aguacate (Guacamole)', calories: 160, protein: 2, carbs: 9, fat: 15, type: 'g' },
-            { name: 'Aceite de oliva virgen extra', calories: 884, protein: 0, carbs: 0, fat: 100, type: 'g' },
-            { name: 'Crema de cacahuete o almendras', calories: 588, protein: 25, carbs: 20, fat: 50, type: 'g' },
-            { name: 'Nueces', calories: 654, protein: 15, carbs: 14, fat: 65, type: 'g' },
-            { name: 'Almendras naturales', calories: 579, protein: 21, carbs: 22, fat: 49, type: 'g' },
-            { name: 'Pistachos o Anacardos', calories: 560, protein: 19, carbs: 29, fat: 44.5, type: 'g' },
-            { name: 'Semillas (Chía, Lino, Calabaza)', calories: 530, protein: 19, carbs: 30, fat: 43, type: 'g' },
-            { name: 'Plátano', calories: 89, protein: 1.1, carbs: 23, fat: 0.3, type: 'unit' },
-            { name: 'Manzana', calories: 52, protein: 0.3, carbs: 14, fat: 0.2, type: 'unit' },
-            { name: 'Arándanos frescos', calories: 57, protein: 0.7, carbs: 14, fat: 0.3, type: 'g' },
-            { name: 'Fresas', calories: 32, protein: 0.7, carbs: 7.7, fat: 0.3, type: 'g' },
-            { name: 'Kiwi', calories: 61, protein: 1.1, carbs: 15, fat: 0.5, type: 'unit' },
-            { name: 'Mango', calories: 60, protein: 0.8, carbs: 15, fat: 0.4, type: 'g' },
-            { name: 'Frambuesas', calories: 52, protein: 1.2, carbs: 12, fat: 0.7, type: 'g' },
-            { name: 'Pera', calories: 57, protein: 0.4, carbs: 15, fat: 0.1, type: 'unit' },
-            { name: 'Piña natural', calories: 50, protein: 0.5, carbs: 13, fat: 0.1, type: 'g' },
-            { name: 'Melocotón', calories: 39, protein: 0.9, carbs: 9.5, fat: 0.3, type: 'unit' },
-            { name: 'Papaya', calories: 43, protein: 0.5, carbs: 11, fat: 0.3, type: 'g' },
-            { name: 'Higos frescos', calories: 74, protein: 0.8, carbs: 19, fat: 0.3, type: 'g' },
-            { name: 'Uvas rojas', calories: 67, protein: 0.6, carbs: 17, fat: 0.4, type: 'g' },
-            { name: 'Mandarina', calories: 53, protein: 0.8, carbs: 13, fat: 0.3, type: 'unit' },
-            { name: 'Proteína en polvo (Whey)', calories: 380, protein: 80, carbs: 5, fat: 4, type: 'g' },
-            { name: 'Miel de abejas', calories: 304, protein: 0.3, carbs: 82, fat: 0, type: 'g' },
-            { name: 'Dátil', calories: 282, protein: 2.5, carbs: 75, fat: 0.4, type: 'unit' },
-            { name: 'Cacao puro en polvo', calories: 228, protein: 20, carbs: 58, fat: 14, type: 'g' },
-            { name: 'Sirope de ágave', calories: 310, protein: 0, carbs: 78, fat: 0, type: 'g' },
-            { name: 'Salsa Pesto', calories: 529, protein: 5.2, carbs: 6, fat: 53, type: 'g' },
-            { name: 'Salsa de yogur light', calories: 80, protein: 3.5, carbs: 7, fat: 4, type: 'g' },
-            { name: 'Fruta contable', calories: 70, protein: 0.8, carbs: 16, fat: 0.3, type: 'unit' },
-            { name: 'Fruta incontable', calories: 50, protein: 0.7, carbs: 11, fat: 0.2, type: 'g' }
-        ];
+        const initialFoodsSeed = [];
 
         initialFoodsSeed.forEach(item => {
             const exists = data.foods.some(f => f.name.toLowerCase() === item.name.toLowerCase());
@@ -222,7 +325,7 @@ const getData = () => {
         const initialLen = data.media.length;
         data.media = data.media.filter(m => {
             if (m.category !== 'recipe') return true; 
-            return String(m.id).startsWith('sys-');
+            return String(m.id).startsWith('sys-') || m.userEdited === true;
         });
         if (data.media.length !== initialLen) {
             console.log("🧹 Purga de recetas no oficiales ejecutada.");
@@ -364,13 +467,319 @@ const getData = () => {
         }
     }
 
+    // Auto-sync clients with latest feedback in memory if needed
+    if (data.clients && data.feedbacks) {
+        let changed = false;
+        data.clients.forEach(client => {
+            if (syncClientWithLatestFeedback(client, data.feedbacks)) {
+                changed = true;
+            }
+        });
+        if (changed) {
+            try { localStorage.setItem(sKey, JSON.stringify(data)); } catch(e){}
+        }
+    }
+
     return data;
 
   } catch (e) { return defaults; }
 };
 window.getData = getData;
 
+const mergeLocalEdits = (localNew, cloudMerged, localPrev, isTrainer) => {
+    const collections = ['clients', 'routines', 'diets', 'foods', 'media', 'feedbacks', 'appointments', 'invoices', 'trainingBlocks', 'trainingLogs', 'habits', 'supplementationTemplates'];
+    const trainerCollections = ['routines', 'diets', 'foods', 'media', 'trainingBlocks', 'supplementationTemplates', 'invoices'];
+    const clientCollections = ['feedbacks', 'appointments', 'trainingLogs', 'habits'];
+    
+    const result = { ...cloudMerged };
+    
+    // 🛡️ CONCURRENCY SHIELD (PAGE-AWARE): Prevent stale browser tabs from overwriting collections they don't edit
+    const getEditableCollectionsForPage = () => {
+        if (typeof window === 'undefined') return null;
+        const pathname = window.location.pathname;
+        const page = pathname.split('/').pop() || '';
+        
+        if (page.includes('settings') || page.includes('asteam') || page.includes('subscription')) {
+            return ['brand', 'trainerSettings', 'paymentSettings', 'fiscalData']; 
+        }
+        if (page.includes('diets')) {
+            return ['diets', 'foods'];
+        }
+        if (page.includes('routines') && !page.includes('client')) {
+            return ['routines'];
+        }
+        if (page.includes('clients') && !page.includes('detail')) {
+            return ['clients'];
+        }
+        if (page.includes('appointments')) {
+            return ['appointments'];
+        }
+        if (page.includes('media')) {
+            return ['media'];
+        }
+        if (page.includes('feedback')) {
+            return ['feedbacks'];
+        }
+        if (page.includes('dashboard')) {
+            return ['appointments', 'feedbacks'];
+        }
+        if (page.includes('client-detail')) {
+            return ['clients', 'trainingBlocks', 'trainingLogs', 'feedbacks', 'appointments', 'diets', 'routines'];
+        }
+        return null;
+    };
+
+    const editableCols = getEditableCollectionsForPage();
+    
+    // Get the client ID if we are on a client-specific detail page
+    const getActiveClientIdFromUrl = () => {
+        if (typeof window === 'undefined') return null;
+        try {
+            const urlParams = new URLSearchParams(window.location.search);
+            return urlParams.get('id');
+        } catch (e) {
+            return null;
+        }
+    };
+    const activeClientId = getActiveClientIdFromUrl();
+
+    collections.forEach(col => {
+        const localItems = localNew[col] || [];
+        const mergedItems = cloudMerged[col] || [];
+        const prevItems = localPrev?.[col] || [];
+        
+        // Auto-assign IDs to habits if missing
+        if (col === 'habits') {
+            localItems.forEach(item => {
+                if (!item.id && item.clientId && item.date) {
+                    item.id = `${item.clientId}_
+${item.date}`.replace('\n', ''); // Safe compile
+                }
+            });
+            mergedItems.forEach(item => {
+                if (!item.id && item.clientId && item.date) {
+                    item.id = `${item.clientId}_
+${item.date}`.replace('\n', ''); // Safe compile
+                }
+            });
+            prevItems.forEach(item => {
+                if (!item.id && item.clientId && item.date) {
+                    item.id = `${item.clientId}_
+${item.date}`.replace('\n', ''); // Safe compile
+                }
+            });
+        }
+        
+        // 1. Page-level block: if the page is not allowed to edit this collection, preserve cloud
+        if (editableCols && !editableCols.includes(col)) {
+            result[col] = mergedItems;
+            return;
+        }
+        
+        if (col === 'clients') {
+            const localMap = new Map(localItems.map(c => [c.id, c]));
+            const cloudMap = new Map(mergedItems.map(c => [c.id, c]));
+            const prevClientsMap = new Map(prevItems.map(c => [c.id, c]));
+            
+            const allClientIds = new Set([...localMap.keys(), ...cloudMap.keys()]);
+            const finalClients = [];
+            
+            allClientIds.forEach(id => {
+                const localClient = localMap.get(id);
+                const cloudClient = cloudMap.get(id);
+                const prevClient = prevClientsMap.get(id);
+                
+                // Respect explicit deletions
+                const isExplicitlyDeleted = localNew.deletedIds && localNew.deletedIds.includes(id);
+                if (isExplicitlyDeleted) return;
+                
+                // If we are on client-detail for client A, never apply local edits for client B
+                if (activeClientId && id !== activeClientId) {
+                    if (cloudClient) finalClients.push(cloudClient);
+                    return;
+                }
+                
+                if (localClient && cloudClient) {
+                    const localChanged = !prevClient || JSON.stringify(localClient) !== JSON.stringify(prevClient);
+                    if (!localChanged) {
+                        finalClients.push(cloudClient);
+                        return;
+                    }
+                    
+                    const mergedClient = { ...cloudClient };
+                    if (isTrainer) {
+                        const trainerFields = ['email', 'phone', 'gender', 'status', 'reviewDay', 'monthlyFee', 'assignedDiet', 'assignedDiets', 'publishedDiets', 'dietPublished', 'assignedRoutine', 'activeBlockId', 'cardio', 'cardioUrl', 'cardioPublished', 'supplementation', 'supplementationPublished', 'supplementationUrl', 'supplementationUrlVisible', 'paymentStatus', 'paymentExpiry', 'subscriptionType', 'subscriptionAmount', 'reviewFrequency', 'reviewDaysOfMonth', 'specificReviewDate'];
+                        trainerFields.forEach(f => {
+                            if (localClient[f] !== undefined) mergedClient[f] = localClient[f];
+                        });
+                        if (localClient.technicalData) {
+                            if (!mergedClient.technicalData) mergedClient.technicalData = {};
+                            const trainerTechFields = ['targetMacros', 'skinfoldsEnabled', 'skinfolds'];
+                            trainerTechFields.forEach(f => {
+                                if (localClient.technicalData[f] !== undefined) mergedClient.technicalData[f] = localClient.technicalData[f];
+                            });
+                            const clientTechFields = ['age', 'height', 'goals', 'injuries', 'allergies', 'notes', 'weight', 'waist', 'glute', 'chest', 'arm', 'leg'];
+                            clientTechFields.forEach(f => {
+                                const localVal = localClient.technicalData[f];
+                                const prevVal = prevClient?.technicalData?.[f];
+                                if (localVal !== undefined) {
+                                    if (prevVal === undefined || localVal !== prevVal) {
+                                        mergedClient.technicalData[f] = localVal;
+                                    } else if (mergedClient.technicalData[f] === undefined) {
+                                        mergedClient.technicalData[f] = localVal;
+                                    }
+                                }
+                            });
+                        }
+                        if (localClient.name && localClient.name !== cloudClient.name && localClient.name !== (prevClient?.name)) {
+                            mergedClient.name = localClient.name;
+                        }
+                    } else {
+                        const clientFields = ['profilePhoto', 'weightHistory', 'feedbacks'];
+                        clientFields.forEach(f => {
+                            if (localClient[f] !== undefined) mergedClient[f] = localClient[f];
+                        });
+                        if (localClient.technicalData) {
+                            if (!mergedClient.technicalData) mergedClient.technicalData = {};
+                            const clientTechFields = ['age', 'height', 'goals', 'injuries', 'allergies', 'notes', 'weight', 'waist', 'glute', 'chest', 'arm', 'leg'];
+                            clientTechFields.forEach(f => {
+                                if (localClient.technicalData[f] !== undefined) mergedClient.technicalData[f] = localClient.technicalData[f];
+                            });
+                        }
+                        if (localClient.name && localClient.name !== cloudClient.name && localClient.name !== (prevClient?.name)) {
+                            mergedClient.name = localClient.name;
+                        }
+                    }
+                    finalClients.push(mergedClient);
+                } else if (localClient) {
+                    if (prevClient) {
+                        const localChanged = JSON.stringify(localClient) !== JSON.stringify(prevClient);
+                        if (localChanged) finalClients.push(localClient);
+                    } else {
+                        finalClients.push(localClient);
+                    }
+                } else if (cloudClient) {
+                    finalClients.push(cloudClient);
+                }
+            });
+            result.clients = finalClients;
+        } else {
+            // 3-WAY SMART ID-BASED MERGE for all other collections
+            const localMap = new Map(localItems.map(item => [item.id, item]));
+            const cloudMap = new Map(mergedItems.map(item => [item.id, item]));
+            const prevMap = new Map(prevItems.map(item => [item.id, item]));
+            
+            const allIds = new Set([...localMap.keys(), ...cloudMap.keys()]);
+            const finalItems = [];
+            
+            allIds.forEach(id => {
+                if (!id) return;
+                const localItem = localMap.get(id);
+                const cloudItem = cloudMap.get(id);
+                const prevItem = prevMap.get(id);
+                
+                // Respect explicit deletions
+                const isExplicitlyDeleted = localNew.deletedIds && localNew.deletedIds.includes(id);
+                if (isExplicitlyDeleted) return;
+                
+                // If we are on client-detail for client A, never apply local edits for items belonging to client B
+                const itemClientId = localItem?.clientId || cloudItem?.clientId || prevItem?.clientId;
+                if (activeClientId && itemClientId && itemClientId !== activeClientId) {
+                    if (cloudItem) finalItems.push(cloudItem);
+                    return;
+                }
+                
+                // Role role check: if isTrainer is true, trainer cannot edit client collections (unless specifically responding, e.g. feedbacks, appointments)
+                if (isTrainer && clientCollections.includes(col)) {
+                    if (col === 'feedbacks' && localItem && cloudItem) {
+                        const localChanged = !prevItem || localItem.trainerResponse !== prevItem.trainerResponse;
+                        if (localChanged) {
+                            const mergedFeedback = { ...cloudItem, trainerResponse: localItem.trainerResponse };
+                            finalItems.push(mergedFeedback);
+                            return;
+                        }
+                    }
+                    if (col === 'appointments' && localItem && cloudItem) {
+                        const localChanged = !prevItem || localItem.status !== prevItem.status || localItem.replyNotes !== prevItem.replyNotes;
+                        if (localChanged) {
+                            const mergedApp = { ...cloudItem, status: localItem.status, replyNotes: localItem.replyNotes };
+                            finalItems.push(mergedApp);
+                            return;
+                        }
+                    }
+                    if (cloudItem) finalItems.push(cloudItem);
+                    return;
+                }
+                
+                // Client role check: clients cannot edit trainer collections
+                if (!isTrainer && trainerCollections.includes(col)) {
+                    if (cloudItem) finalItems.push(cloudItem);
+                    return;
+                }
+                
+                if (localItem && cloudItem) {
+                    const localChanged = !prevItem || JSON.stringify(localItem) !== JSON.stringify(prevItem);
+                    if (localChanged) {
+                        finalItems.push(localItem);
+                    } else {
+                        finalItems.push(cloudItem);
+                    }
+                } else if (localItem) {
+                    if (prevItem) {
+                        const localChanged = JSON.stringify(localItem) !== JSON.stringify(prevItem);
+                        if (localChanged) {
+                            finalItems.push(localItem);
+                        } else {
+                            // Check if it's a new local item created after the last sync
+                            const currentId = window.activeTrainerId || localStorage.getItem('activeTrainerId') || 'default';
+                            const lastSyncTime = getLastSyncTime(currentId);
+                            const itemCreatedAt = localItem.createdAt ? new Date(localItem.createdAt).getTime() : 0;
+                            const isNewLocal = itemCreatedAt >= lastSyncTime || lastSyncTime === 0 || itemCreatedAt === 0;
+                            
+                            if (isNewLocal) {
+                                finalItems.push(localItem);
+                            }
+                        }
+                    } else {
+                        finalItems.push(localItem);
+                    }
+                } else if (cloudItem) {
+                    const isExplicit = localNew.deletedIds && localNew.deletedIds.includes(id);
+                    if (!isExplicit) {
+                        finalItems.push(cloudItem);
+                    }
+                }
+            });
+
+            result[col] = finalItems;
+        }
+    });
+    // Merge non-array config fields
+    const currentId = window.activeTrainerId || localStorage.getItem('activeTrainerId') || 'default';
+    const configFields = ['brand', 'trainerSettings', 'paymentSettings', 'fiscalData'];
+    configFields.forEach(field => {
+        if (localNew[field] !== undefined) {
+            if (editableCols && editableCols.includes(field)) {
+                result[field] = localNew[field];
+            } else {
+                result[field] = cloudMerged[field] !== undefined ? cloudMerged[field] : localNew[field];
+            }
+        }
+    });
+
+    return result;
+};
+
+let saveQueuePromise = Promise.resolve();
+
 const saveData = (data) => {
+  // Sync clients with latest feedback metrics before saving
+  if (data && data.clients && data.feedbacks) {
+    data.clients.forEach(client => {
+      syncClientWithLatestFeedback(client, data.feedbacks);
+    });
+  }
+
   // 🛡️ BLINDAJE TOTAL: Nunca guardar datos vacíos que destruirían datos reales
   const isDataDangerous = (
     (!data.clients || data.clients.length === 0) &&
@@ -380,78 +789,109 @@ const saveData = (data) => {
   
   // Comprobar si hay datos reales en el local storage que no debemos perder
   const currentRaw = localStorage.getItem(getStorageKey());
-  if (isDataDangerous && currentRaw) {
-    try {
-      const currentSaved = JSON.parse(currentRaw);
-      const savedHasData = (
-        (currentSaved.clients && currentSaved.clients.length > 0) ||
-        (currentSaved.routines && currentSaved.routines.length > 0) ||
-        (currentSaved.trainingBlocks && currentSaved.trainingBlocks.length > 0)
-      );
-      if (savedHasData) {
-        console.error('🚨 [BLINDAJE] BLOQUEADO: Intento de guardar datos vacíos cuando ya existen datos reales. Protegiendo datos del usuario.');
-        return; // Bloquear guardado destructivo
-      }
-    } catch(e) {}
+  let prevData = null;
+  if (currentRaw) {
+    try { prevData = JSON.parse(currentRaw); } catch(e) {}
+  }
+  
+  if (isDataDangerous && prevData) {
+    const savedHasData = (
+      (prevData.clients && prevData.clients.length > 0) ||
+      (prevData.routines && prevData.routines.length > 0) ||
+      (prevData.trainingBlocks && prevData.trainingBlocks.length > 0)
+    );
+    if (savedHasData) {
+      console.error('🚨 [BLINDAJE] BLOQUEADO: Intento de guardar datos vacíos cuando ya existen datos reales. Protegiendo datos del usuario.');
+      return; // Bloquear guardado destructivo
+    }
+  }
+
+  const localPrevModified = prevData ? prevData.lastModified : null;
+  const isTrainer = typeof localStorage !== 'undefined' && localStorage.getItem('_trainerAuthed') === '1';
+  
+  // Merge page changes with the current local storage state (to preserve other tabs' edits)
+  let mergedWithLocal = data;
+  if (prevData) {
+      mergedWithLocal = mergeLocalEdits(data, prevData, prevData, isTrainer);
   }
 
   const saveTime = new Date().toISOString();
-  data.lastModified = saveTime;
+  mergedWithLocal.lastModified = saveTime;
   
   // 💾 Crear backup automático antes de guardar
   try {
     const backupKey = getStorageKey() + '_backup';
-    const prevData = localStorage.getItem(getStorageKey());
-    if (prevData) {
-      const prevParsed = JSON.parse(prevData);
+    if (currentRaw && prevData) {
       const hasRealData = (
-        (prevParsed.clients && prevParsed.clients.length > 0) ||
-        (prevParsed.routines && prevParsed.routines.length > 0) ||
-        (prevParsed.trainingBlocks && prevParsed.trainingBlocks.length > 0)
+        (prevData.clients && prevData.clients.length > 0) ||
+        (prevData.routines && prevData.routines.length > 0) ||
+        (prevData.trainingBlocks && prevData.trainingBlocks.length > 0)
       );
       if (hasRealData) {
-        localStorage.setItem(backupKey, prevData);
+        localStorage.setItem(backupKey, currentRaw);
         localStorage.setItem(backupKey + '_ts', new Date().toISOString());
       }
     }
   } catch(e) {}
 
-  localStorage.setItem(getStorageKey(), JSON.stringify(data));
+  localStorage.setItem(getStorageKey(), JSON.stringify(mergedWithLocal));
   if (window.SupabaseService) {
     const currentId = window.activeTrainerId || localStorage.getItem('activeTrainerId') || 'default';
     if (currentId !== 'default') {
       // Evitar sobrescrituras accidentales por pestañas abiertas con caché local obsoleta.
       // Verificamos si la nube tiene datos más nuevos antes de subir.
-      (async () => {
+      saveQueuePromise = saveQueuePromise.then(async () => {
           try {
               const cloudData = await window.SupabaseService.getTrainerData(currentId);
               if (cloudData && cloudData.lastModified) {
                   const cloudTime = new Date(cloudData.lastModified).getTime();
-                  const localPrevTime = new Date(saveTime).getTime() - 2500; // Margen de holgura
+                  const localTime = localPrevModified ? new Date(localPrevModified).getTime() : 0;
                   
-                  if (cloudTime > localPrevTime) {
+                  if (cloudTime > localTime + 2500) {
                       console.log("🔄 Se detectaron cambios externos más nuevos en la nube. Fusionando antes de subir...");
+                      
+                      // Temporarily restore local lastModified to localPrevModified for syncFromCloud comparison
+                      const tempSaved = JSON.parse(localStorage.getItem(getStorageKey()) || '{}');
+                      tempSaved.lastModified = localPrevModified;
+                      localStorage.setItem(getStorageKey(), JSON.stringify(tempSaved));
+
                       const freshData = await window.syncFromCloud();
                       if (freshData) {
                           // Obtenemos los datos recién fusionados en local storage
                           const mergedLocal = JSON.parse(localStorage.getItem(getStorageKey()) || '{}');
-                          mergedLocal.lastModified = new Date().toISOString();
-                          localStorage.setItem(getStorageKey(), JSON.stringify(mergedLocal));
-                          await window.SupabaseService.saveTrainerData(currentId, mergedLocal);
+                          
+                          // Aplicamos de forma segura los cambios locales sobre los datos fusionados de la nube
+                          const finalData = mergeLocalEdits(mergedWithLocal, mergedLocal, prevData, isTrainer);
+                          finalData.lastModified = new Date().toISOString();
+                          
+                          localStorage.setItem(getStorageKey(), JSON.stringify(finalData));
+                          await window.SupabaseService.saveTrainerData(currentId, finalData);
                           return;
                       }
                   }
               }
-              await window.SupabaseService.saveTrainerData(currentId, data);
+              await window.SupabaseService.saveTrainerData(currentId, mergedWithLocal);
           } catch (e) {
               console.warn('Supabase DB Sync Error (Safe Merge failed, fallback directly):', e);
-              window.SupabaseService.saveTrainerData(currentId, data).catch(() => {});
+              await window.SupabaseService.saveTrainerData(currentId, mergedWithLocal).catch(() => {});
           }
-      })();
+      });
     }
   }
 };
 window.saveData = saveData;
+
+const getLastSyncTime = (trainerId) => {
+    if (typeof localStorage === 'undefined') return 0;
+    const key = 'lastSyncTimestamp_' + trainerId;
+    const val = localStorage.getItem(key);
+    return val ? new Date(val).getTime() : 0;
+};
+const setLastSyncTime = (trainerId) => {
+    if (typeof localStorage === 'undefined') return;
+    const key = 'lastSyncTimestamp_' + trainerId;
+    localStorage.setItem(key, new Date().toISOString());
+};
 
 window.syncFromCloud = async () => {
     const currentId = window.activeTrainerId || localStorage.getItem('activeTrainerId') || 'default';
@@ -468,7 +908,7 @@ window.syncFromCloud = async () => {
 
         if (cloudData) {
             // Garantizar que todos los arrays existen en la nube
-            const collections = ['clients', 'routines', 'diets', 'foods', 'media', 'feedbacks', 'appointments', 'invoices', 'trainingBlocks', 'trainingLogs', 'habits'];
+            const collections = ['clients', 'routines', 'diets', 'foods', 'media', 'feedbacks', 'appointments', 'invoices', 'trainingBlocks', 'trainingLogs', 'habits', 'supplementationTemplates'];
             collections.forEach(col => {
                 if (!cloudData[col]) cloudData[col] = [];
             });
@@ -516,6 +956,7 @@ window.syncFromCloud = async () => {
                     localStorage.removeItem(`brand_settings_${currentId}`);
                     localStorage.removeItem('brand_settings');
                     localStorage.setItem(getStorageKey(), JSON.stringify(cloudData));
+                    setLastSyncTime(currentId); // Update last sync time
                     return cloudData;
                 } else if ((isNewInstall || isLocalFreshlyInitialized) && cloudHasTrainerData && localBackupHasData) {
                     // Hay backup local válido - restaurarlo en vez de tratar como nueva instalación
@@ -532,8 +973,8 @@ window.syncFromCloud = async () => {
                 const isTrainer = typeof localStorage !== 'undefined' && localStorage.getItem('_trainerAuthed') === '1';
                 
                 // Categorizar colecciones según autoría
-                const trainerCollections = ['routines', 'diets', 'foods', 'media', 'trainingBlocks']; // clients se maneja aparte
-                const clientCollections = ['feedbacks', 'appointments', 'invoices', 'trainingLogs', 'habits'];
+                const trainerCollections = ['routines', 'diets', 'foods', 'media', 'trainingBlocks', 'supplementationTemplates', 'invoices']; // clients se maneja aparte
+                const clientCollections = ['feedbacks', 'appointments', 'trainingLogs', 'habits'];
 
                 let dataChanged = false;
                 const mergedData = { ...cloudData }; // Empezamos con copia de cloud
@@ -541,6 +982,22 @@ window.syncFromCloud = async () => {
                 collections.forEach(col => {
                     const localItems = localData[col] || [];
                     const cloudItems = cloudData[col] || [];
+                    
+                    // Auto-assign IDs to habits if missing
+                    if (col === 'habits') {
+                        localItems.forEach(item => {
+                            if (!item.id && item.clientId && item.date) {
+                                item.id = `${item.clientId}_
+${item.date}`.replace('\n', ''); // Safe compile
+                            }
+                        });
+                        cloudItems.forEach(item => {
+                            if (!item.id && item.clientId && item.date) {
+                                item.id = `${item.clientId}_
+${item.date}`.replace('\n', ''); // Safe compile
+                            }
+                        });
+                    }
                     
                     const localMap = new Map(localItems.map(item => [item.id, item]));
                     const cloudMap = new Map(cloudItems.map(item => [item.id, item]));
@@ -563,7 +1020,7 @@ window.syncFromCloud = async () => {
                                     // Campos del cliente controlados por el entrenador
                                     const trainerFields = [
                                         'email', 'phone', 'gender', 'status', 'reviewDay', 'monthlyFee', 
-                                        'assignedDiet', 'dietPublished', 'assignedRoutine', 'cardio', 'cardioUrl', 'cardioPublished', 
+                                        'assignedDiet', 'assignedDiets', 'publishedDiets', 'dietPublished', 'assignedRoutine', 'cardio', 'cardioUrl', 'cardioPublished', 
                                         'supplementation', 'supplementationPublished', 'supplementationUrl', 'supplementationUrlVisible', 
                                         'paymentStatus', 'paymentExpiry', 'subscriptionType', 'subscriptionAmount', 
                                         'reviewFrequency', 'reviewDaysOfMonth', 'specificReviewDate'
@@ -602,10 +1059,12 @@ window.syncFromCloud = async () => {
                                             }
                                         });
                                         
-                                        // campos de ficha del cliente (edad, altura, objetivos)
-                                        const clientTechFields = ['age', 'height', 'goals', 'injuries', 'allergies', 'notes'];
+                                        // campos de ficha del cliente (edad, altura, objetivos, peso, perímetros)
+                                        const clientTechFields = ['age', 'height', 'goals', 'injuries', 'allergies', 'notes', 'weight', 'waist', 'glute', 'chest', 'arm', 'leg'];
                                         clientTechFields.forEach(f => {
-                                            if (cloudTech[f] !== undefined) {
+                                            if (localTime > cloudTime && localTech[f] !== undefined) {
+                                                mergedTech[f] = localTech[f];
+                                            } else if (cloudTech[f] !== undefined) {
                                                 mergedTech[f] = cloudTech[f];
                                             }
                                         });
@@ -639,11 +1098,13 @@ window.syncFromCloud = async () => {
                                             }
                                         });
                                         
-                                        // campos de ficha del cliente (edad, altura, objetivos)
-                                        const clientTechFields = ['age', 'height', 'goals', 'injuries', 'allergies', 'notes'];
+                                        // campos de ficha del cliente (edad, altura, objetivos, peso, perímetros)
+                                        const clientTechFields = ['age', 'height', 'goals', 'injuries', 'allergies', 'notes', 'weight', 'waist', 'glute', 'chest', 'arm', 'leg'];
                                         clientTechFields.forEach(f => {
                                             if (localTime > cloudTime && localTech[f] !== undefined) {
                                                 mergedTech[f] = localTech[f];
+                                            } else if (cloudTech[f] !== undefined) {
+                                                mergedTech[f] = cloudTech[f];
                                             }
                                         });
                                         mergedClient.technicalData = mergedTech;
@@ -657,6 +1118,71 @@ window.syncFromCloud = async () => {
                                     }
 
                                     mergedItems.push(mergedClient);
+                                } else {
+                                    mergedItems.push(cloudItem);
+                                }
+                            } else if (localItem) {
+                                mergedItems.push(localItem);
+                            } else if (cloudItem) {
+                                const isExplicitlyDeleted = localData.deletedIds && localData.deletedIds.includes(cloudItem.id);
+                                if (!isExplicitlyDeleted) {
+                                    mergedItems.push(cloudItem);
+                                } else {
+                                    dataChanged = true;
+                                }
+                            }
+                        } else if (col === 'feedbacks') {
+                            // COLECCIÓN HÍBRIDA 'feedbacks': Fusión a nivel de campos para evitar pérdida de la respuesta del entrenador
+                            if (localItem && cloudItem) {
+                                const isDifferent = JSON.stringify(localItem) !== JSON.stringify(cloudItem);
+                                if (isDifferent) {
+                                    dataChanged = true;
+                                    const mergedFeedback = { ...cloudItem }; // Empezar con el del cloud
+                                    
+                                    // Fusión inteligente del trainerResponse
+                                    if (isTrainer) {
+                                        // Entrenador manda en su respuesta
+                                        mergedFeedback.trainerResponse = localItem.trainerResponse || cloudItem.trainerResponse || '';
+                                    } else {
+                                        // Cliente acepta la respuesta del entrenador desde la nube
+                                        mergedFeedback.trainerResponse = cloudItem.trainerResponse || localItem.trainerResponse || '';
+                                    }
+                                    mergedItems.push(mergedFeedback);
+                                } else {
+                                    mergedItems.push(cloudItem);
+                                }
+                            } else if (localItem) {
+                                mergedItems.push(localItem);
+                            } else if (cloudItem) {
+                                const isExplicitlyDeleted = localData.deletedIds && localData.deletedIds.includes(cloudItem.id);
+                                if (!isExplicitlyDeleted) {
+                                    mergedItems.push(cloudItem);
+                                } else {
+                                    dataChanged = true;
+                                }
+                            }
+                        } else if (col === 'appointments') {
+                            // COLECCIÓN HÍBRIDA 'appointments'
+                            if (localItem && cloudItem) {
+                                const isDifferent = JSON.stringify(localItem) !== JSON.stringify(cloudItem);
+                                if (isDifferent) {
+                                    dataChanged = true;
+                                    const mergedAppt = { ...cloudItem }; // Empezar con el del cloud
+                                    
+                                    if (isTrainer) {
+                                        // Entrenador es máster de status y replyNotes
+                                        mergedAppt.status = localItem.status || cloudItem.status;
+                                        mergedAppt.replyNotes = localItem.replyNotes || cloudItem.replyNotes;
+                                        if (localItem.date && localItem.date !== cloudItem.date) mergedAppt.date = localItem.date;
+                                        if (localItem.time && localItem.time !== cloudItem.time) mergedAppt.time = localItem.time;
+                                    } else {
+                                        // Cliente acepta la aprobación/rechazo de la nube (del entrenador)
+                                        mergedAppt.status = cloudItem.status || localItem.status;
+                                        mergedAppt.replyNotes = cloudItem.replyNotes || localItem.replyNotes;
+                                        if (localItem.status === 'cancelled') mergedAppt.status = 'cancelled';
+                                    }
+                                    
+                                    mergedItems.push(mergedAppt);
                                 } else {
                                     mergedItems.push(cloudItem);
                                 }
@@ -707,7 +1233,11 @@ window.syncFromCloud = async () => {
                             if (isTrainer) {
                                 // Si es Entrenador y fue creado localmente más recientemente que el último sync en la nube: conservarlo
                                 if (trainerCollections.includes(col)) {
-                                    if (localTime > cloudTime) {
+                                    const lastSyncTime = getLastSyncTime(currentId);
+                                    const itemCreatedAt = localItem.createdAt ? new Date(localItem.createdAt).getTime() : 0;
+                                    const isNewLocal = itemCreatedAt >= lastSyncTime || lastSyncTime === 0 || itemCreatedAt === 0;
+
+                                    if (localTime > cloudTime || isNewLocal) {
                                         mergedItems.push(localItem);
                                         dataChanged = true;
                                     }
@@ -792,6 +1322,7 @@ window.syncFromCloud = async () => {
 
                 mergedData.deletedIds = [];
                 localStorage.setItem(getStorageKey(), JSON.stringify(mergedData));
+                setLastSyncTime(currentId); // Update last sync time
                 
                 // 💾 Actualizar backup con datos frescos
                 const mergedHasRealData = (
@@ -811,6 +1342,7 @@ window.syncFromCloud = async () => {
             localStorage.removeItem(`brand_settings_${currentId}`);
             localStorage.removeItem('brand_settings');
             localStorage.setItem(getStorageKey(), JSON.stringify(cloudData));
+            setLastSyncTime(currentId); // Update last sync time
             return cloudData;
         } else if (localData) {
             // Si no hay datos en la nube pero sí locales, subirlos
@@ -825,6 +1357,24 @@ window.syncFromCloud = async () => {
 // BIBLIOTECA MAESTRA (100+ EJERCICIOS)
 // RECETAS A FUEGO (148)
 window.SYSTEM_RECIPES = [
+  {
+    "id": "sys-rec-merluza-patatas-huevo-v1",
+    "type": "image",
+    "category": "recipe",
+    "title": "Merluza al Horno con Patatas y Huevo",
+    "url": "img/merluza_patatas_huevo.png",
+    "ingredients": "Merluza, Patatas panadera, Aguacate, Huevo Entero (1 ud L), Verdura",
+    "description": "Plato completo y equilibrado de merluza al horno y patatas panadera, servido con aguacate, un huevo entero y verduras frescas al gusto."
+  },
+  {
+    "id": "sys-rec-tostada-aguacate-cottage-v1",
+    "type": "image",
+    "category": "recipe",
+    "title": "Tostada de Aguacate y Huevo con Cottage",
+    "url": "img/tostada_aguacate_huevo.png",
+    "ingredients": "Pan integral Ortiz, Queso cottage, Huevo Entero (1 ud L), Aguacate, Frutos Rojas (Mix)",
+    "description": "Una deliciosa y completa tostada gourmet con base de aguacate y queso cottage cremoso, coronada con huevo entero y acompañada de un refrescante mix de frutos rojos."
+  },
   {
     "id": "sys-rec-salmorejo-jamon-v1",
     "type": "image",
@@ -2191,9 +2741,9 @@ window.Media = {
         const isSysItem = String(m.id).startsWith('sys-') || (window.SYSTEM_RECIPES || []).some(r => r.id == m.id) || (window.SYSTEM_MEDIA || []).some(sm => sm.id == m.id);
         let finalItem = { ...m, isSystem: isSysItem, status: isHidden ? 'hidden' : 'active' };
         
-        // 🔥 BLINDAJE DE RECETAS: Forzar foto, título e ingredientes originales
+        // 🔥 BLINDAJE DE RECETAS: Forzar foto, título e ingredientes originales solo si no ha sido editada por el usuario
         const originalRecipe = (window.SYSTEM_RECIPES || []).find(r => r.id === m.id);
-        if (originalRecipe) {
+        if (originalRecipe && !m.userEdited) {
             finalItem.url = originalRecipe.url;
             finalItem.title = originalRecipe.title;
             finalItem.ingredients = originalRecipe.ingredients;
@@ -2240,6 +2790,7 @@ window.Media = {
       ingredients: mediaData.ingredients || '', // Para recetas
       muscleGroup: mediaData.muscleGroup || '', // Para ejercicios
       isSystem: false, // Forzar que es contenido de usuario
+      userEdited: true, // Proteger contra sobreescrituras automáticas
       createdAt: new Date().toISOString()
     };
     if (!data.media) data.media = [];
@@ -2273,11 +2824,11 @@ window.Media = {
     const isSysItem = String(id).startsWith('sys-') || (window.SYSTEM_RECIPES || []).some(r => r.id == id) || (window.SYSTEM_MEDIA || []).some(m => m.id == id);
     
     if (index >= 0) {
-        data.media[index] = { ...data.media[index], ...updates };
+        data.media[index] = { ...data.media[index], ...updates, userEdited: true };
     } else if (isSysItem) {
         const sysItem = (window.SYSTEM_RECIPES || []).find(m => m.id == id) || (window.SYSTEM_MEDIA || []).find(m => m.id == id);
         if (sysItem) {
-            data.media.push({ ...sysItem, ...updates, id: id });
+            data.media.push({ ...sysItem, ...updates, id: id, userEdited: true });
         }
     }
     saveData(data);
@@ -2332,9 +2883,19 @@ window.generateUUID = generateUUID;
 
 const generateAccessCode = () => {
   const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+  const data = typeof getData === 'function' ? getData() : { clients: [] };
+  const existingClients = data.clients || [];
+  
   let code = '';
-  for (let i = 0; i < 8; i++) {
-    code += chars.charAt(Math.floor(Math.random() * chars.length));
+  let isUnique = false;
+  let attempts = 0;
+  while (!isUnique && attempts < 100) {
+    attempts++;
+    code = '';
+    for (let i = 0; i < 8; i++) {
+      code += chars.charAt(Math.floor(Math.random() * chars.length));
+    }
+    isUnique = !existingClients.some(c => (c.accessCode || '').trim().toUpperCase() === code);
   }
   return code;
 };
@@ -2361,6 +2922,7 @@ const Clients = {
         paymentExpiry: row[7] || '',
         assignedRoutine: row[8] || null,
         assignedDiet: row[9] || null,
+        assignedDiets: row[9] ? [row[9]] : [],
         status: 'active'
     };
   },
@@ -2428,50 +2990,37 @@ const Clients = {
     if (client) return client;
 
     // Fallback: Buscar en otros perfiles locales si hubo migración de ID o pérdida de caché
-    try {
-        console.warn("⚠️ Client not found in active profile. Running local database recovery fallback...");
-        for (let i = 0; i < localStorage.length; i++) {
-            const key = localStorage.key(i);
-            if (key && key.startsWith('fitnessAppData_')) {
-                const raw = localStorage.getItem(key);
-                if (raw) {
+    console.warn("⚠️ Client not found in active profile. Running local database recovery fallback...");
+    for (let i = 0; i < localStorage.length; i++) {
+        const key = localStorage.key(i);
+        if (key && key.startsWith('fitnessAppData_') && !key.endsWith('_backup')) {
+            const raw = localStorage.getItem(key);
+            if (raw) {
+                try {
                     const parsed = JSON.parse(raw);
                     if (parsed && parsed.clients) {
                         const found = parsed.clients.find(c => c.id == id);
                         if (found) {
-                            console.log(`🎉 Recovered client from ${key}! Copying client to active database...`);
-                            // Copiar el cliente y sus datos al perfil activo para guardarlo localmente
-                            const activeKey = getStorageKey();
-                            const activeRaw = localStorage.getItem(activeKey);
-                            const activeData = activeRaw ? JSON.parse(activeRaw) : {};
-                            if (!activeData.clients) activeData.clients = [];
+                            const newTrainerId = key.replace('fitnessAppData_', '');
+                            console.log(`🎉 Client found in database of trainer ${newTrainerId}. Switching active trainer context...`);
                             
-                            // Evitar duplicados
-                            if (!activeData.clients.some(c => c.id == id)) {
-                                activeData.clients.push(found);
-                                // También migrar rutinas y dietas asociadas si existen en esa base
-                                if (parsed.routines) {
-                                    if (!activeData.routines) activeData.routines = [];
-                                    parsed.routines.filter(r => r.clientId === id).forEach(r => {
-                                        if (!activeData.routines.some(x => x.id === r.id)) activeData.routines.push(r);
-                                    });
-                                }
-                                if (parsed.diets) {
-                                    if (!activeData.diets) activeData.diets = [];
-                                    parsed.diets.filter(d => d.clientId === id).forEach(d => {
-                                        if (!activeData.diets.some(x => x.id === d.id)) activeData.diets.push(d);
-                                    });
-                                }
-                                localStorage.setItem(activeKey, JSON.stringify(activeData));
-                                console.log("✅ Client copied successfully!");
+                            localStorage.setItem('activeTrainerId', newTrainerId);
+                            window.activeTrainerId = newTrainerId;
+                            if (typeof updateActiveTrainerId === 'function') {
+                                updateActiveTrainerId(newTrainerId);
+                            }
+                            if (window.BrandConfig) {
+                                window.BrandConfig.applyTheme();
                             }
                             return found;
                         }
                     }
+                } catch (jsonErr) {
+                    // Ignorar errores de análisis JSON en claves corruptas (ej. backups binarios)
                 }
             }
         }
-    } catch(err) { console.warn("Error inside client recovery fallback:", err); }
+    }
     return null;
   },
 
@@ -2495,7 +3044,7 @@ const Clients = {
       reviewDaysOfMonth: clientData.reviewDaysOfMonth || '',
       specificReviewDate: clientData.specificReviewDate || '',
       technicalData: {
-        weight: clientData.weight || 0,
+        weight: clientData.weight ? Math.round(parseFloat(clientData.weight) * 100) / 100 : 0,
         height: clientData.height || 0,
         age: clientData.age || 0,
         goals: clientData.goals || '',
@@ -2506,6 +3055,7 @@ const Clients = {
       },
       assignedRoutine: null,
       assignedDiet: null,
+      assignedDiets: [],
       supplementation: '',
       supplementationPublished: true,
       supplementationUrl: '',
@@ -2602,6 +3152,11 @@ const Routines = {
       description: routineData.description || '',
       duration: routineData.duration || 'monthly',
       exercises: routineData.exercises || [],
+      days: routineData.days || [],
+      weeks: routineData.weeks || [],
+      goal: routineData.goal || '',
+      sourceBlockId: routineData.sourceBlockId || null,
+      isTemplate: routineData.isTemplate !== undefined ? routineData.isTemplate : true,
       createdAt: new Date().toISOString()
     };
     data.routines.push(newRoutine);
@@ -2646,12 +3201,37 @@ const Diets = {
 
   create: (dietData) => {
     const data = getData();
+    
+    let currentCalories = dietData.calories || 0;
+    let currentMacros = dietData.macros || { protein: 0, carbs: 0, fat: 0 };
+    if (dietData.meals && dietData.meals.length > 0) {
+      let sumCals = 0;
+      let sumMacros = { protein: 0, carbs: 0, fat: 0 };
+      dietData.meals.forEach(meal => {
+        const option1Foods = (meal.foods || []).filter(f => !f.option || Number(f.option) === 1);
+        option1Foods.forEach(food => {
+          sumCals += parseFloat(food.calories || 0);
+          sumMacros.protein += parseFloat(food.protein || 0);
+          sumMacros.carbs += parseFloat(food.carbs || 0);
+          sumMacros.fat += parseFloat(food.fat || 0);
+        });
+      });
+      if (sumCals > 0) {
+        currentCalories = Math.round(sumCals * 10) / 10;
+        currentMacros = {
+          protein: Math.round(sumMacros.protein * 10) / 10,
+          carbs: Math.round(sumMacros.carbs * 10) / 10,
+          fat: Math.round(sumMacros.fat * 10) / 10
+        };
+      }
+    }
+
     const newDiet = {
       id: generateUUID(),
       name: dietData.name,
       description: dietData.description || '',
-      calories: dietData.calories || 0,
-      macros: dietData.macros || { protein: 0, carbs: 0, fat: 0 },
+      calories: currentCalories,
+      macros: currentMacros,
       mealsCount: dietData.mealsCount || 4,
       meals: dietData.meals || [], // Critical fix: allow meals to be saved
       weeklyPlan: dietData.weeklyPlan || [],
@@ -2667,7 +3247,31 @@ const Diets = {
     const data = getData();
     const index = data.diets.findIndex(d => d.id === id);
     if (index !== -1) {
-      data.diets[index] = { ...data.diets[index], ...updates };
+      let merged = { ...data.diets[index], ...updates };
+      
+      // Auto-recalculate calories and macros if meals are being updated
+      if (updates.meals) {
+        let sumCals = 0;
+        let sumMacros = { protein: 0, carbs: 0, fat: 0 };
+        (merged.meals || []).forEach(meal => {
+          const option1Foods = (meal.foods || []).filter(f => !f.option || Number(f.option) === 1);
+          option1Foods.forEach(food => {
+            sumCals += parseFloat(food.calories || 0);
+            sumMacros.protein += parseFloat(food.protein || 0);
+            sumMacros.carbs += parseFloat(food.carbs || 0);
+            sumMacros.fat += parseFloat(food.fat || 0);
+          });
+        });
+        
+        merged.calories = Math.round(sumCals * 10) / 10;
+        merged.macros = {
+          protein: Math.round(sumMacros.protein * 10) / 10,
+          carbs: Math.round(sumMacros.carbs * 10) / 10,
+          fat: Math.round(sumMacros.fat * 10) / 10
+        };
+      }
+      
+      data.diets[index] = merged;
       saveData(data);
       return data.diets[index];
     }
@@ -2690,6 +3294,7 @@ const Diets = {
 const SYSTEM_FOODS = [
   // PROTEINAS
   { name: "Pechuga de Pollo", calories: 165, protein: 31, carbs: 0, fat: 3.6 },
+  { name: "Pollo a la plancha", calories: 165, protein: 31, carbs: 0, fat: 3.6 },
   { name: "Pavo (Solomillo/Pechuga)", calories: 105, protein: 24, carbs: 0, fat: 1 },
   { name: "Ternera Magra (Picada/Tiras)", calories: 170, protein: 26, carbs: 0, fat: 7 },
   { name: "Lomo de Cerdo (Cinta)", calories: 155, protein: 22, carbs: 0, fat: 7 },
@@ -2711,7 +3316,7 @@ const SYSTEM_FOODS = [
   { name: "Tofu Firme", calories: 83, protein: 10, carbs: 1, fat: 5 },
   { name: "Seitán", calories: 120, protein: 24, carbs: 4, fat: 2 },
   { name: "Edamame (sin vaina)", calories: 122, protein: 11, carbs: 10, fat: 5 },
-  { name: "Proteína en Polvo (Media)", calories: 370, protein: 80, carbs: 6, fat: 3 },
+
 
   // HUEVOS Y LÁCTEOS
   { name: "Huevo Entero (1 ud L)", calories: 75, protein: 6.5, carbs: 0.5, fat: 5, type: 'unit' },
@@ -2740,6 +3345,7 @@ const SYSTEM_FOODS = [
   { name: "Pimientos / Tomate", calories: 22, protein: 1, carbs: 4, fat: 0.2 },
   { name: "Berenjena / Calabacín", calories: 20, protein: 1.2, carbs: 3.5, fat: 0.2 },
   { name: "Champiñones / Setas", calories: 25, protein: 3, carbs: 3, fat: 0.3 },
+  { name: "Verdura", calories: 25, protein: 1.5, carbs: 4, fat: 0.2 },
 
   // GRASAS Y FRUTOS SECOS
   { name: "Aceite de Oliva / Coco", calories: 884, protein: 0, carbs: 0, fat: 100 },
@@ -2774,7 +3380,10 @@ const SYSTEM_FOODS = [
   { name: "Chocolate Negro  85% o Coco rallado", calories: 600, protein: 8, carbs: 20, fat: 50 },
   { name: "Salmorejo", calories: 70, protein: 1, carbs: 6, fat: 4.5 },
   { name: "Tostadas tipo Ortiz", calories: 380, protein: 11, carbs: 72, fat: 4 },
-  { name: "Salmón ahumado o Jamón serrano", calories: 200, protein: 25, carbs: 0.5, fat: 10 }
+  { name: "Salmón ahumado o Jamón serrano", calories: 200, protein: 25, carbs: 0.5, fat: 10 },
+  { name: "Cereales de maíz (cornflakes)", calories: 380, protein: 7, carbs: 84, fat: 1 },
+  { name: "Tortitas de arroz inflado", calories: 387, protein: 8, carbs: 82, fat: 2.8 },
+  { name: "Pan integral Ortiz", calories: 255, protein: 9.5, carbs: 45, fat: 2.5 }
 ];
 
 const Foods = {
@@ -2797,8 +3406,8 @@ const Foods = {
         finalFoods.push({
           ...localEdit,
           id: sysId, // Siempre forzar ID de sistema blindado
-          name: sys.name, // Siempre forzar nombre original
-          type: sys.type || 'g', // Siempre forzar tipo original
+          name: localEdit.name || sys.name,
+          type: localEdit.type || sys.type || 'g',
           isSystem: true
         });
       } else {
@@ -2867,7 +3476,7 @@ const Foods = {
     const isSys = String(id).startsWith('seed_');
     
     if (isSys) {
-      // Si es un alimento del sistema, el entrenador SOLO puede actualizar kcal y macros
+      // Si es un alimento del sistema, el entrenador puede actualizar kcal, macros, name y type
       const sysFood = SYSTEM_FOODS.find(sf => {
         const sysId = 'seed_food_' + sf.name.toLowerCase().replace(/[^a-z0-9]/g, '_');
         return sysId === id;
@@ -2880,8 +3489,8 @@ const Foods = {
         // Si aún no tenía edición local, la creamos a partir de los datos base del sistema
         const localCopy = {
           id: id,
-          name: sysFood.name,
-          type: sysFood.type || 'g',
+          name: updates.name !== undefined ? updates.name : sysFood.name,
+          type: updates.type !== undefined ? updates.type : (sysFood.type || 'g'),
           calories: updates.calories !== undefined ? updates.calories : sysFood.calories,
           protein: updates.protein !== undefined ? updates.protein : sysFood.protein,
           carbs: updates.carbs !== undefined ? updates.carbs : sysFood.carbs,
@@ -2892,15 +3501,15 @@ const Foods = {
         saveData(data);
         return localCopy;
       } else {
-        // Si ya tenía edición local, actualizamos solo kcal y macros, forzando name y type base
+        // Si ya tenía edición local, actualizamos kcal, macros, name y type
         data.foods[index] = {
           ...data.foods[index],
           calories: updates.calories !== undefined ? updates.calories : data.foods[index].calories,
           protein: updates.protein !== undefined ? updates.protein : data.foods[index].protein,
           carbs: updates.carbs !== undefined ? updates.carbs : data.foods[index].carbs,
           fat: updates.fat !== undefined ? updates.fat : data.foods[index].fat,
-          name: sysFood.name, // Forzado
-          type: sysFood.type || 'g' // Forzado
+          name: updates.name !== undefined ? updates.name : data.foods[index].name,
+          type: updates.type !== undefined ? updates.type : data.foods[index].type
         };
         saveData(data);
         return data.foods[index];
@@ -2958,7 +3567,7 @@ const Feedbacks = {
       energy: feedbackData.energy || 3,
       adherence: feedbackData.adherence || 3,
       satisfaction: feedbackData.satisfaction || 3,
-      weight: feedbackData.weight || null,
+      weight: feedbackData.weight ? Math.round(parseFloat(feedbackData.weight) * 100) / 100 : null,
       sleep: feedbackData.sleep || null,
       stress: feedbackData.stress || null,
       answers: feedbackData.answers || [], // Array of { question, answer }
@@ -3077,12 +3686,14 @@ const MuscleGroups = {
                 url: videoUrl,
                 muscleGroup: group,
                 isSystem: false,
+                userEdited: true,
                 updatedAt: new Date().toISOString()
             });
         } else {
             // Actualizar personal
             data.media[personalIdx].url = videoUrl;
             data.media[personalIdx].muscleGroup = group;
+            data.media[personalIdx].userEdited = true;
             data.media[personalIdx].updatedAt = new Date().toISOString();
         }
     } else if (videoUrl) {
@@ -3095,6 +3706,7 @@ const MuscleGroups = {
             url: videoUrl,
             muscleGroup: group,
             isSystem: false,
+            userEdited: true,
             createdAt: new Date().toISOString()
         });
     }
@@ -3107,35 +3719,104 @@ const MuscleGroups = {
 const TrainingLogs = {
   getAll: () => {
     const data = getData();
-    return data.trainingLogs || [];
+    return (data.trainingLogs || []).filter(l => l.completed !== false);
   },
 
   getByClientId: (clientId) => {
     const data = getData();
-    return (data.trainingLogs || []).filter(l => l.clientId == clientId);
+    return (data.trainingLogs || []).filter(l => l.clientId == clientId && l.completed !== false);
+  },
+
+  getDraft: (clientId, routineId, dayNumber) => {
+    const data = getData();
+    return (data.trainingLogs || []).find(l => 
+        l.clientId == clientId && 
+        l.routineId === routineId && 
+        l.dayNumber === dayNumber && 
+        l.completed === false
+    );
+  },
+
+  saveDraft: (logData) => {
+    const data = getData();
+    if (!data.trainingLogs) data.trainingLogs = [];
+    
+    // Find active block for this client
+    const activeBlock = (data.trainingBlocks || []).find(b => b.clientId == logData.clientId && b.status === 'active');
+
+    // Find if a draft already exists for this client, routine, and day
+    let draft = data.trainingLogs.find(l => 
+        l.clientId == logData.clientId && 
+        l.routineId === logData.routineId && 
+        l.dayNumber === logData.dayNumber && 
+        l.completed === false
+    );
+
+    if (draft) {
+        // Update existing draft
+        draft.exercises = logData.exercises || [];
+        draft.comment = logData.comment || '';
+        draft.lastModified = new Date().toISOString();
+    } else {
+        // Create new draft
+        draft = {
+            id: generateUUID(),
+            clientId: logData.clientId,
+            routineId: logData.routineId,
+            dayNumber: logData.dayNumber,
+            blockId: activeBlock ? activeBlock.id : null,
+            date: logData.date || new Date().toISOString(),
+            exercises: logData.exercises || [],
+            comment: logData.comment || '',
+            completed: false, // Explicitly false for drafts
+            createdAt: new Date().toISOString(),
+            lastModified: new Date().toISOString()
+        };
+        data.trainingLogs.push(draft);
+    }
+    
+    saveData(data);
+    return draft;
   },
 
   create: (logData) => {
     const data = getData();
-
-    // Find active block for this client
-    const activeBlock = (data.trainingBlocks || []).find(b => b.clientId == logData.clientId && b.status === 'active');
-
-    const newLog = {
-      id: generateUUID(),
-      clientId: logData.clientId,
-      routineId: logData.routineId,
-      dayNumber: logData.dayNumber,
-      blockId: activeBlock ? activeBlock.id : null,
-      date: logData.date || new Date().toISOString(),
-      exercises: logData.exercises || [], // array of { name, sets: [{ weight, reps, rir }] }
-      completed: true, // Mark as completed when saved
-      createdAt: new Date().toISOString()
-    };
     if (!data.trainingLogs) data.trainingLogs = [];
-    data.trainingLogs.push(newLog);
+
+    // Find and update the existing draft if it exists
+    let existingLog = data.trainingLogs.find(l => 
+        l.clientId == logData.clientId && 
+        l.routineId === logData.routineId && 
+        l.dayNumber === logData.dayNumber && 
+        l.completed === false
+    );
+
+    if (existingLog) {
+        existingLog.exercises = logData.exercises || [];
+        existingLog.comment = logData.comment || '';
+        existingLog.completed = true;
+        existingLog.date = new Date().toISOString();
+        existingLog.lastModified = new Date().toISOString();
+    } else {
+        const activeBlock = (data.trainingBlocks || []).find(b => b.clientId == logData.clientId && b.status === 'active');
+        existingLog = {
+          id: generateUUID(),
+          clientId: logData.clientId,
+          routineId: logData.routineId,
+          dayNumber: logData.dayNumber,
+          blockId: activeBlock ? activeBlock.id : null,
+          date: logData.date || new Date().toISOString(),
+          exercises: logData.exercises || [],
+          comment: logData.comment || '',
+          completed: true,
+          createdAt: new Date().toISOString(),
+          lastModified: new Date().toISOString()
+        };
+        data.trainingLogs.push(existingLog);
+    }
+
     saveData(data);
-    return newLog;
+    return existingLog;
   },
 
   update: (id, updates) => {
@@ -3193,27 +3874,31 @@ const Habits = {
   },
 
   getByClientId: (clientId) => {
-    return Habits.getAll().filter(h => h.clientId == clientId);
+    return Habits.getAll().filter(h => String(h.clientId) === String(clientId));
   },
 
   getToday: (clientId) => {
-    const today = new Date().toLocaleDateString('en-CA'); // YYYY-MM-DD
-    return (Habits.getAll() || []).find(h => h.clientId === clientId && h.date === today);
+    const now = new Date();
+    const today = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
+    return (Habits.getAll() || []).find(h => String(h.clientId) === String(clientId) && h.date === today);
   },
 
   save: (clientId, habitsData) => {
     const data = getData();
     if (!data.habits) data.habits = [];
     
-    const today = new Date().toLocaleDateString('en-CA');
-    const index = data.habits.findIndex(h => h.clientId === clientId && h.date === today);
+    const now = new Date();
+    const today = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
+    const index = data.habits.findIndex(h => String(h.clientId) === String(clientId) && h.date === today);
     
     const entry = {
-      clientId,
+      id: `${clientId}_${today}`,
+      clientId: String(clientId),
       date: today,
       water: parseFloat(habitsData.water) || 0,
       steps: parseInt(habitsData.steps) || 0,
       sleep: parseFloat(habitsData.sleep) || 0,
+      weight: habitsData.weight ? Math.round(parseFloat(habitsData.weight) * 100) / 100 : 0,
       updatedAt: new Date().toISOString()
     };
 
@@ -3367,6 +4052,52 @@ const Invoices = {
   }
 };
 
+const SupplementationTemplates = {
+  getAll: () => {
+    const data = getData();
+    if (!data.supplementationTemplates) data.supplementationTemplates = [];
+    return data.supplementationTemplates;
+  },
+  getById: (id) => {
+    const data = getData();
+    if (!data.supplementationTemplates) data.supplementationTemplates = [];
+    return data.supplementationTemplates.find(t => t.id === id);
+  },
+  create: (templateData) => {
+    const data = getData();
+    if (!data.supplementationTemplates) data.supplementationTemplates = [];
+    const newTemplate = {
+      id: generateUUID(),
+      name: templateData.name,
+      content: templateData.content || '',
+      url: templateData.url || '',
+      urlVisible: templateData.urlVisible !== undefined ? templateData.urlVisible : true,
+      createdAt: new Date().toISOString()
+    };
+    data.supplementationTemplates.push(newTemplate);
+    saveData(data);
+    return newTemplate;
+  },
+  update: (id, updates) => {
+    const data = getData();
+    if (!data.supplementationTemplates) data.supplementationTemplates = [];
+    const index = data.supplementationTemplates.findIndex(t => t.id === id);
+    if (index !== -1) {
+      data.supplementationTemplates[index] = { ...data.supplementationTemplates[index], ...updates };
+      saveData(data);
+      return data.supplementationTemplates[index];
+    }
+    return null;
+  },
+  delete: (id) => {
+    const data = getData();
+    if (!data.supplementationTemplates) data.supplementationTemplates = [];
+    data.supplementationTemplates = data.supplementationTemplates.filter(t => t.id !== id);
+    saveData(data);
+  }
+};
+
+window.SupplementationTemplates = SupplementationTemplates;
 window.Clients = Clients;
 window.Routines = Routines;
 window.Diets = Diets;
@@ -3387,12 +4118,20 @@ const BrandConfig = {
     
     // Check if the active trainer is Alejandra
     let isAlejandra = false;
-    if (typeof window !== 'undefined' && 
-        (window.activeTrainerId === 't-w0iybl7qb' || 
-         window.activeTrainerId === 'alejandra_asteam_gmail_com' || 
-         localStorage.getItem('activeTrainerId') === 't-w0iybl7qb' ||
-         localStorage.getItem('activeTrainerId') === 'alejandra_asteam_gmail_com')) {
-        isAlejandra = true;
+    let isToledo = false;
+    if (typeof window !== 'undefined') {
+        const activeId = window.activeTrainerId || localStorage.getItem('activeTrainerId') || '';
+        const trainerEmail = localStorage.getItem('_trainerEmail') || '';
+        if (activeId.includes('t-w0iybl7qb') || 
+            activeId.includes('t-zum04ds2n') || 
+            activeId.includes('alejandra_asteam_gmail_com') ||
+            (trainerEmail && (trainerEmail.toLowerCase() === 'ingenia@ingeniaia.es' || trainerEmail.toLowerCase() === 'alejandra.asteam@gmail.com'))) {
+            isAlejandra = true;
+        }
+        if (activeId.includes('t-8umeizyns') || (trainerEmail && trainerEmail.toLowerCase() === 'vtoledonutrition@gmail.com')) {
+            isToledo = true;
+        }
+        console.log(`[BrandConfig] activeId="${activeId}" trainerEmail="${trainerEmail}" => isAlejandra=${isAlejandra}, isToledo=${isToledo}`);
     }
 
     // Default brand settings
@@ -3413,6 +4152,14 @@ const BrandConfig = {
             colors: { primary: '#fdbfec', secondary: '#1a1a2e', accent: '#ff6b6b' },
             whatsapp: '615760338',
             fiscalData: { invoiceSeries: 'FAST' + new Date().getFullYear() }
+        };
+    } else if (isToledo) {
+        defaultBrand = {
+            name: 'Toledo The Bull',
+            logo: 'https://bieeydhacavxymoosasx.supabase.co/storage/v1/object/public/Media/1781711106755_toledo_the_bull.png',
+            configured: true,
+            colors: { primary: '#E60026', secondary: '#0A0A0E', accent: '#FFFFFF', themeMode: 'dark', bgDark: '#0A0A0E' },
+            fiscalData: { invoiceSeries: 'FIT-VT-' + new Date().getFullYear() }
         };
     }
 
@@ -3484,8 +4231,14 @@ const BrandConfig = {
             saveData(data);
         }
     }
-    if (res && (!res.logo || res.logo.length < 5)) {
+    let logoChanged = false;
+    if (res && (!res.logo || res.logo.length < 5 || res.logo === 'img/logo-infinite-marble.png')) {
         res.logo = 'img/logo-infinite-coach.png';
+        logoChanged = true;
+    }
+    if (logoChanged && typeof saveData === 'function') {
+        data.brand = res;
+        saveData(data);
     }
     return res;
   },
@@ -3541,10 +4294,41 @@ const BrandConfig = {
       document.documentElement.style.setProperty('--primary-color-rgb', hexToRgb(brand.colors.primary));
       
       // Dynamic Theme Light/Dark Class
-      const isLight = brand.colors.themeMode === 'light';
+      const isClientPage = window.location.pathname.includes('client-') || 
+                           (document.body && document.body.classList.contains('theme-client'));
+      const clientTheme = isClientPage ? (localStorage.getItem('clientThemeMode') || 'default') : 'default';
+      let isLight = false;
+      if (clientTheme === 'light') {
+          isLight = true;
+      } else if (clientTheme === 'dark') {
+          isLight = false;
+      } else {
+          isLight = brand.colors.themeMode === 'light';
+      }
       document.documentElement.classList.toggle('theme-light', isLight);
       if (document.body) {
           document.body.classList.toggle('theme-light', isLight);
+      }
+
+      // Apply custom background color depending on theme mode
+      const applyColorsToDom = () => {
+          if (!isLight) {
+              const darkBg = brand.colors.bgDark || '#0F0F1E';
+              document.documentElement.style.setProperty('--bg-dark', darkBg);
+              if (document.body) {
+                  document.body.style.setProperty('--bg-dark', darkBg);
+              }
+          } else {
+              const lightBg = brand.colors.bgLight || '#E2E8F0';
+              document.documentElement.style.setProperty('--bg-dark', lightBg);
+              if (document.body) {
+                  document.body.style.setProperty('--bg-dark', lightBg);
+              }
+          }
+      };
+      applyColorsToDom();
+      if (typeof document !== 'undefined' && document.readyState === 'loading') {
+          document.addEventListener('DOMContentLoaded', applyColorsToDom);
       }
     }
 
@@ -3599,16 +4383,30 @@ const BrandConfig = {
             nameSpan.style.fontWeight = '800';
         }
         
-        // Actualizar título de la ventana
+        // Actualizar título de la ventana y meta de iOS Home Screen
         if (brand.name) {
             document.title = `${baseTitle} - ${brand.name}`;
+            
+            // Dynamic iOS Mobile Web App Title
+            try {
+                let appleTitleMeta = document.querySelector('meta[name="apple-mobile-web-app-title"]');
+                if (!appleTitleMeta) {
+                    appleTitleMeta = document.createElement('meta');
+                    appleTitleMeta.name = 'apple-mobile-web-app-title';
+                    document.head.appendChild(appleTitleMeta);
+                }
+                appleTitleMeta.content = brand.name;
+            } catch (e) {
+                console.warn("Could not set apple-mobile-web-app-title:", e);
+            }
         }
         
         // Favicon PWA
+        let absoluteLogo = '';
         try {
             const defaultLogo = 'img/logo-infinite-coach.png';
             const currentLogo = (brand && brand.logo && brand.logo.length > 5) ? brand.logo : defaultLogo;
-            const absoluteLogo = currentLogo.startsWith('http') || currentLogo.startsWith('data:')
+            absoluteLogo = currentLogo.startsWith('http') || currentLogo.startsWith('data:')
                 ? currentLogo
                 : new URL(currentLogo, window.location.origin).href;
             
@@ -3638,6 +4436,17 @@ const BrandConfig = {
             }
             appleIcon.href = absoluteLogo;
         } catch(e) {}
+
+        // Apuntar al manifest.json dinámico usando la URL de la API de Next.js
+        try {
+            let manifestLink = document.querySelector('link[rel="manifest"]');
+            if (manifestLink) {
+                const activeId = window.activeTrainerId || localStorage.getItem('activeTrainerId') || 'default';
+                manifestLink.href = 'manifest.json?t=' + encodeURIComponent(activeId);
+            }
+        } catch (e) {
+            console.warn("Could not set dynamic manifest URL:", e);
+        }
     }
   }
 };
@@ -3717,9 +4526,29 @@ console.log("🏁 v311 BLINDAJE TOTAL: Sistema Cargado con protección máxima d
 
             if (freshData) {
                 const freshDataStr = localStorage.getItem(getStorageKey());
-                // Si la cadena de datos en local storage ha cambiado, significa que la nube trajo novedades
+                let actualChange = false;
+                
                 if (prevDataStr !== freshDataStr) {
-                    console.log("🔔 [AutoSync] Se detectaron nuevos datos desde la nube. Actualizando interfaz...");
+                    try {
+                        const prevObj = JSON.parse(prevDataStr || '{}');
+                        const freshObj = JSON.parse(freshDataStr || '{}');
+                        const collections = ['clients', 'routines', 'diets', 'foods', 'media', 'feedbacks', 'appointments', 'invoices', 'trainingBlocks', 'trainingLogs', 'habits', 'supplementationTemplates'];
+                        for (const col of collections) {
+                            if (JSON.stringify(prevObj[col] || []) !== JSON.stringify(freshObj[col] || [])) {
+                                actualChange = true;
+                                break;
+                            }
+                        }
+                        if (JSON.stringify(prevObj.brand || {}) !== JSON.stringify(freshObj.brand || {})) {
+                            actualChange = true;
+                        }
+                    } catch (err) {
+                        actualChange = true;
+                    }
+                }
+
+                if (actualChange) {
+                    console.log("🔔 [AutoSync] Se detectaron nuevos datos reales desde la nube. Actualizando interfaz...");
 
                     // Comprobar si el usuario está escribiendo para no interrumpir su flujo
                     const activeElement = document.activeElement;
@@ -3740,14 +4569,27 @@ console.log("🏁 v311 BLINDAJE TOTAL: Sistema Cargado con protección máxima d
                                 console.warn("Error re-running initializeApp:", err);
                             }
                         }
-                        // Fallback: recarga limpia si no hay re-renderizador suave o falló
-                        console.log("⚡ [AutoSync] Recargando página para aplicar cambios frescos.");
-                        window.location.reload();
+
+                        // Evitamos recargar automáticamente la página para no perder el estado o progreso de edición
+                        const isTrainerPage = typeof window !== 'undefined' && window.location.pathname.includes('trainer-');
+                        if (isTrainerPage) {
+                            console.log("⚡ [AutoSync] Se detectaron cambios en la nube, pero evitamos recargar automáticamente la página del entrenador.");
+                            if (typeof showToast === 'function' && !window._hasShownNewDataToast) {
+                                showToast('Nuevos datos disponibles de la nube. Por favor, recarga la página para ver las actualizaciones.', 'info');
+                                window._hasShownNewDataToast = true;
+                            }
+                        } else {
+                            console.log("⚡ [AutoSync] Se detectaron cambios en la nube, pero evitamos recargar automáticamente la página del cliente.");
+                            if (typeof showToast === 'function' && !window._hasShownNewDataToast) {
+                                showToast('Tu entrenador ha actualizado tus planes. Por favor, recarga la página para ver los cambios.', 'info');
+                                window._hasShownNewDataToast = true;
+                            }
+                        }
                     } else {
-                        console.log("✍️ [AutoSync] El usuario está escribiendo. Sincronización guardada en caché local, se actualizará al terminar o cambiar de vista.");
+                        console.log("✍️ [AutoSync] El usuario está escribiendo o editando. Sincronización guardada en caché local, se actualizará al terminar o cambiar de vista.");
                     }
                 } else {
-                    console.log("➡️ [AutoSync] Sincronización completada. No hay cambios nuevos en la nube.");
+                    console.log("➡️ [AutoSync] Sincronización completada. No hay cambios nuevos o reales en la nube.");
                 }
             }
         } catch (e) {

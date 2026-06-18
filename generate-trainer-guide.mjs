@@ -322,7 +322,7 @@ const doc = new Document({
         bullet("Estado del Cliente (Activo / Inactivo)."),
 
         h2("Límite de Clientes en el Plan Basic (SaaS)"),
-        para("La plataforma implementa un control defensivo de negocio basado en tu nivel de suscripción SaaS. Si estás adscrito al 'Plan Basic', la base de datos limita estrictamente tu cupo a un máximo de 20 clientes activos de forma simultánea. Al intentar activar un alumno, el backend verifica tu consumo de licencias; de superar el límite de 20, la app bloqueará el guardado e invitará al entrenador a actualizar su plan en Configuración."),
+        para("La plataforma implementa un control defensivo de negocio basado en tu nivel de suscripción SaaS. Si estás adscrito al 'Plan Basic', la base de datos limita estrictamente tu cupo a un máximo de 15 clientes activos de forma simultánea. Al intentar activar un alumno, el backend verifica tu consumo de licencias; de superar el límite de 15, la app bloqueará el guardado e invitará al entrenador a actualizar su plan en Configuración."),
 
         new PageBreak(),
 
@@ -448,7 +448,7 @@ const doc = new Document({
         h1("12. PREGUNTAS FRECUENTES (FAQ)"),
         para("En esta sección recopilamos las respuestas detalladas a las preguntas y dudas más recurrentes sobre la gestión administrativa de la plataforma para entrenadores."),
 
-        h3("¿Qué ocurre exactamente cuando alcanzo el límite de 20 clientes en el Plan Basic?"),
+        h3("¿Qué ocurre exactamente cuando alcanzo el límite de 15 clientes en el Plan Basic?"),
         para("El sistema bloqueará cualquier intento de guardar un nuevo alumno como 'Activo'. Para dar de alta a un cliente nuevo, tienes dos opciones: o desactivar temporalmente a otro alumno de tu lista (cambiando su estado a 'Inactivo') o actualizar tu plan SaaS desde la sección de configuración a un plan ilimitado."),
 
         h3("¿Cómo funciona el cifrado y cumplimiento legal de VeriFactu?"),

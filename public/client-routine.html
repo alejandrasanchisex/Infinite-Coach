@@ -7,7 +7,7 @@
   <script>
       // Force PWA cache bust / reload
       (function() {
-          const CURRENT_VERSION = '365';
+          const CURRENT_VERSION = '457';
           const savedVersion = localStorage.getItem('app_version');
           if (savedVersion !== CURRENT_VERSION) {
               localStorage.setItem('app_version', CURRENT_VERSION);
@@ -31,12 +31,67 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="styles/theme.css?v=365">
-  <link rel="stylesheet" href="styles/components.css?v=365">
-  <link rel="stylesheet" href="styles/mobile.css?v=365">
-  <link rel="manifest" href="manifest.json">
+  <link rel="stylesheet" href="styles/theme.css?v=457">
+  <link rel="stylesheet" href="styles/components.css?v=457">
+  <link rel="stylesheet" href="styles/mobile.css?v=457">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <script>
+      (function() {
+          var params = new URLSearchParams(window.location.search);
+          var tid = params.get('t') || localStorage.getItem('activeTrainerId') || 'default';
+          if (tid) {
+              var lower = tid.toLowerCase().trim();
+              if (lower === 'asteam' || lower === 'alejandra') {
+                  tid = 't-w0iybl7qb';
+              } else if (lower === 'toledo' || lower === 'vtoledo') {
+                  tid = 't-8umeizyns';
+              }
+          }
+          
+          // Si el cliente está logueado, intentar deducir su entrenador para PWA
+          var clientId = localStorage.getItem('clientId') || sessionStorage.getItem('clientId');
+          if (clientId) {
+              for (var i = 0; i < localStorage.length; i++) {
+                  var key = localStorage.key(i);
+                  if (key && key.indexOf('fitnessAppData_') === 0 && key.indexOf('_backup') === -1) {
+                      var raw = localStorage.getItem(key);
+                      if (raw) {
+                          try {
+                              var parsed = JSON.parse(raw);
+                              if (parsed && parsed.clients) {
+                                  for (var j = 0; j < parsed.clients.length; j++) {
+                                      if (parsed.clients[j].id === clientId) {
+                                          var foundTid = key.replace('fitnessAppData_', '');
+                                          if (foundTid && foundTid !== 'default' && foundTid !== 'admin') {
+                                              tid = foundTid;
+                                              break;
+                                          }
+                                      }
+                                  }
+                              }
+                          } catch(e) {}
+                      }
+                  }
+                  if (tid && tid !== 'default' && tid !== 'admin') break;
+              }
+          }
+          
+          var brandName = 'Infinite Coach';
+          var iconUrl = 'img/logo-infinite-coach.png';
+          if (tid === 't-w0iybl7qb') {
+              brandName = 'ASTeam';
+              iconUrl = 'https://bieeydhacavxymoosasx.supabase.co/storage/v1/object/public/Media/1779724548154_Gemini_Generated_Image_vse84nvse84nvse8.png';
+          } else if (tid === 't-8umeizyns') {
+              brandName = 'Toledo The Bull';
+              iconUrl = 'https://bieeydhacavxymoosasx.supabase.co/storage/v1/object/public/Media/1781711106755_toledo_the_bull.png';
+          }
+          
+          document.write('<meta name="apple-mobile-web-app-title" content="' + brandName + '">');
+          document.write('<link rel="apple-touch-icon" href="' + iconUrl + '">');
+          document.write('<link rel="manifest" href="manifest.json?t=' + tid + '">');
+      })();
+  </script>
   <style>
     .exercise-card {
       background: var(--bg-input);
@@ -90,10 +145,10 @@
           <span id="brandName">Infinite Coach</span>
         </div>
         <ul class="nav-links" id="navLinks">
-          <li><a href="client-dashboard.html?v=365" class="nav-link">Inicio</a></li>
-          <li><a href="client-profile.html?v=365" class="nav-link">Ficha Técnica</a></li>
+          <li><a href="client-dashboard.html?v=457" class="nav-link">Inicio</a></li>
+          <li><a href="client-profile.html?v=457" class="nav-link">Ficha Técnica</a></li>
 
-          <li><a href="client-login.html?v=365" class="nav-link">Salir</a></li>
+          <li><a href="client-login.html?v=457" class="nav-link">Salir</a></li>
         </ul>
         <button class="menu-toggle" onclick="toggleMenu()" style="margin-left: auto;">☰</button>
       </nav>
@@ -103,14 +158,19 @@
   <!-- Main Content -->
   <main class="main-content">
     <div class="container">
-      <div class="flex-between mb-lg" style="gap: 20px; align-items: flex-start;">
+      <div class="flex-between mb-lg keep-flex-mobile" style="gap: 12px; align-items: center;">
         <div style="flex: 1; min-width: 0;">
-          <h1 style="font-size: 1.5rem; margin-bottom: 4px; line-height: 1.2;">Mi Rutina de Entrenamiento</h1>
-          <p class="text-muted" id="routineName" style="margin-bottom: 0; line-height: 1.3;">--</p>
+          <h1 style="font-size: 1.4rem; margin-bottom: 2px; line-height: 1.2;">Mi Rutina</h1>
+          <p class="text-muted" id="routineName" style="margin-bottom: 0; line-height: 1.3; font-size: 0.85rem;">--</p>
         </div>
-        <div id="cardioBtnContainer" style="display: none; flex-shrink: 0;">
-            <button class="btn btn-sm btn-outline" style="border-color: #ff9d00; color: #ff9d00; background: rgba(255,157,0,0.05); padding: 8px 16px; border-radius: 10px; font-weight: 700; font-size: 0.85rem; height: 38px; display: inline-flex; align-items: center; justify-content: center; white-space: nowrap;" onclick="openCardioModal()">
-                🏃 Cardio
+        <div style="display: flex; gap: 8px; flex-shrink: 0; align-items: center;">
+            <div id="cardioBtnContainer" style="display: none;">
+                <button class="btn btn-sm btn-outline" style="border-color: #ff9d00; color: #ff9d00; background: rgba(255,157,0,0.05); padding: 8px 16px; border-radius: 10px; font-weight: 700; font-size: 0.85rem; height: 38px; display: inline-flex; align-items: center; justify-content: center; white-space: nowrap;" onclick="openCardioModal()">
+                    🏃 Cardio
+                </button>
+            </div>
+            <button id="orderWorkoutBtn" class="btn btn-sm btn-outline" style="border-color: var(--primary-color); color: var(--primary-color); background: rgba(0,217,255,0.05); padding: 8px 16px; border-radius: 10px; font-weight: 700; font-size: 0.85rem; height: 38px; display: inline-flex; align-items: center; justify-content: center; white-space: nowrap;" onclick="openOrderModal()">
+                Estructura semanal
             </button>
         </div>
       </div>
@@ -147,26 +207,35 @@
 
   <!-- Supabase SDK & Service -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script src="js/supabase-service.js?v=365"></script>
+  <script src="js/supabase-service.js?v=457"></script>
 
-  <script src="js/config.js?v=365"></script>
-  <script src="js/data-models.js?v=365"></script>
-  <script src="js/custom-exercises.js?v=365"></script>
-  <script src="js/utils.js?v=365"></script>
+  <script src="js/config.js?v=457"></script>
+  <script src="js/data-models.js?v=457"></script>
+  <script src="js/custom-exercises.js?v=457"></script>
+  <script src="js/utils.js?v=457"></script>
   <script>
     // --- RESOLUCIÓN DE TRAINER ID (FALLBACK SEGURO) ---
     (function() {
         var tParam = new URLSearchParams(window.location.search).get('t');
         if (tParam) {
-            localStorage.setItem('activeTrainerId', tParam);
-            window.activeTrainerId = tParam;
-        } else {
-            var activeId = localStorage.getItem('activeTrainerId') || window.activeTrainerId;
-            if (!activeId || activeId === 'admin') {
-                localStorage.setItem('activeTrainerId', 'default');
-                window.activeTrainerId = 'default';
+            tParam = tParam.toLowerCase().trim();
+            if (tParam === 'asteam' || tParam === 'alejandra') {
+                tParam = 't-w0iybl7qb';
+            } else if (tParam === 'toledo' || tParam === 'vtoledo') {
+                tParam = 't-8umeizyns';
             }
         }
+        var storedTid = localStorage.getItem('activeTrainerId');
+        var tid = tParam;
+        if (!tid || tid === 'default' || tid === 'admin') {
+            if (storedTid && storedTid !== 'default' && storedTid !== 'admin') {
+                tid = storedTid;
+            } else {
+                tid = 'default';
+            }
+        }
+        localStorage.setItem('activeTrainerId', tid);
+        window.activeTrainerId = tid;
     })();
 
     // --- GESTIÓN DE ERRORES ---
@@ -187,6 +256,7 @@
     let isBlockBased = false;
     let publishedBlock = null;
     let currentWeekIdx = 0;
+    let currentDayNumber = null;
 
     function checkWeekCompletion(w, wIdx, userLogs) {
         if (!w) return false;
@@ -264,9 +334,8 @@
 
         client = Clients.getById(clientId);
         if (!client) {
-            localStorage.removeItem('clientId');
-            sessionStorage.removeItem('clientId');
-            window.location.replace('client-login.html');
+            const activeId = localStorage.getItem('activeTrainerId') || 'default';
+            window.location.replace('client-login.html?reauth=true&t=' + activeId);
             return;
         }
 
@@ -276,6 +345,17 @@
         if (isInactive || isUnpaid) {
             window.location.replace('client-dashboard.html');
             return;
+        }
+
+        // Attach input/change listener for autosave early
+        const container = document.getElementById('dayContent');
+        if (container) {
+            container.addEventListener('input', () => {
+                autosaveSessionDraft();
+            });
+            container.addEventListener('change', () => {
+                autosaveSessionDraft();
+            });
         }
 
         // Load Avatar
@@ -394,6 +474,11 @@
     }
 
     function loadRoutine() {
+      const orderBtn = document.getElementById('orderWorkoutBtn');
+      if (orderBtn) {
+        orderBtn.style.display = routine ? 'inline-flex' : 'none';
+      }
+
       if (!routine) return updateStatus("No hay rutina activa asignada");
 
       try {
@@ -454,6 +539,10 @@
         (routine.days[dayNumber - 1]?.exercises || []) :
         (routine.exercises || []).filter(e => e.day === dayNumber);
 
+      const dayObj = routine.days ? routine.days[dayNumber - 1] : null;
+      const customDayName = dayObj && dayObj.name ? dayObj.name.trim() : '';
+      const isDefaultName = customDayName.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "") === `dia ${dayNumber}`;
+
       const container = document.getElementById('dayContent');
 
       if (dayExercises.length === 0) {
@@ -501,6 +590,8 @@
         }
       }
 
+      currentDayNumber = dayNumber;
+
       // Check if this specific session has been completed
       let sessionCompleted = false;
       let completedLog = null;
@@ -514,6 +605,24 @@
           l.completed
       );
       if (completedLog) sessionCompleted = true;
+
+      // If not completed, try to load any autosaved draft
+      let draftLog = null;
+      if (!sessionCompleted) {
+          draftLog = TrainingLogs.getDraft(client.id, currentRoutineId, dayNumber);
+          if (!draftLog) {
+              // Fallback to local storage key in case they have an unsynced offline draft
+              const draftKey = `draft_training_log_${client.id}_${currentRoutineId}_${dayNumber}`;
+              const draftRaw = localStorage.getItem(draftKey);
+              if (draftRaw) {
+                  try {
+                      draftLog = JSON.parse(draftRaw);
+                  } catch (e) {
+                      console.error("Error parsing draft log:", e);
+                  }
+              }
+          }
+      }
       
       // Update tabs WITHOUT destroying internal HTML
       const tabs = document.querySelectorAll('#dayTabs .tab');
@@ -523,13 +632,20 @@
       });
 
       container.innerHTML = `
-        <div class="card mb-lg" style="${sessionCompleted ? 'border-color: var(--primary-color);' : ''}">
-          <div class="card-header flex-between">
-            <h3 class="card-title">Día ${dayNumber} - ${dayExercises.length} ejercicios</h3>
-            ${sessionCompleted ? `<span class="badge" style="background:var(--primary-color); color:#000;">Completado ✓</span>` : ''}
+        <div class="card mb-lg" style="padding: 12px 16px; ${sessionCompleted ? 'border-color: var(--primary-color);' : ''}">
+          <div class="card-header flex-between" style="margin-bottom: 8px; padding-bottom: 8px;">
+            <h3 class="card-title" style="font-size: 1.15rem; margin: 0;">Día ${dayNumber} - ${dayExercises.length} ejercicios</h3>
+            ${sessionCompleted ? `<span class="badge" style="background:var(--primary-color); color:#000; font-size: 0.7rem; padding: 2px 6px;">Completado ✓</span>` : ''}
           </div>
-          <div class="card-body">
-            <p class="text-muted">${routine.description || ''}</p>
+          <div class="card-body" style="padding: 0;">
+            ${customDayName && !isDefaultName ? `
+              <div style="display: inline-block; background: #ffffff; color: #000000; padding: 4px 12px; border-radius: 8px; font-weight: 700; font-size: 0.85rem; ${routine.description && routine.description.trim() ? 'margin-bottom: 6px;' : ''}">
+                ${customDayName}
+              </div>
+            ` : ''}
+            ${routine.description && routine.description.trim() ? `
+              <p class="text-muted" style="margin: 0; font-size: 0.9rem; line-height: 1.4;">${routine.description.trim()}</p>
+            ` : ''}
           </div>
         </div>
 
@@ -608,10 +724,10 @@
               ` : ''}
             </div>
 
-            <!-- ─── 2. Registro de Entrenamiento Real (Tabla de Columnas de Sets) ─── -->
+            <!-- ─── 2. Registro de Series Efectivas (Tabla de Columnas de Sets) ─── -->
             <div class="training-log-section mt-md" style="border-top: 1px solid rgba(255,255,255,0.05); padding-top: 15px;">
               <h5 style="margin-bottom: 12px; font-size: 0.8rem; text-transform: uppercase; color: var(--primary-color); letter-spacing: 0.05em;">
-                ${sessionCompleted ? 'Entrenamiento Registrado' : 'Registrar Entrenamiento Real'}
+                ${sessionCompleted ? 'Series Efectivas Registradas' : 'Registrar Series Efectivas'}
               </h5>
               
               <!-- Encabezado de la tabla para mobile (siempre en columnas) -->
@@ -628,11 +744,14 @@
                   let loggedWeight = '';
                   let loggedReps = '';
                   let loggedRir = '';
-                  if (sessionCompleted && completedLog && completedLog.exercises[index] && completedLog.exercises[index].sets[setIdx]) {
-                      const sData = completedLog.exercises[index].sets[setIdx];
-                      loggedWeight = sData.weight;
-                      loggedReps = sData.reps;
-                      loggedRir = sData.rir;
+                  if (sessionCompleted && completedLog && completedLog.exercises) {
+                      const compEx = completedLog.exercises.find(e => e.name === exercise.name) || completedLog.exercises[index];
+                      if (compEx && compEx.sets && compEx.sets[setIdx]) {
+                          const sData = compEx.sets[setIdx];
+                          loggedWeight = sData.weight;
+                          loggedReps = sData.reps;
+                          loggedRir = sData.rir;
+                      }
                   }
 
                   const targetSetObj = Array.isArray(exercise.sets) ? exercise.sets[setIdx] : null;
@@ -653,15 +772,28 @@
                       </div>
                       `;
                   } else {
+                      let draftWeight = '';
+                      let draftReps = '';
+                      let draftRir = '';
+                      if (draftLog && draftLog.exercises) {
+                          const draftEx = draftLog.exercises.find(e => e.name === exercise.name) || draftLog.exercises[index];
+                          if (draftEx && draftEx.sets && draftEx.sets[setIdx]) {
+                              const sData = draftEx.sets[setIdx];
+                              draftWeight = sData.weight !== undefined && sData.weight !== null && sData.weight !== '' ? sData.weight : '';
+                              draftReps = sData.reps !== undefined && sData.reps !== null && sData.reps !== '' ? sData.reps : '';
+                              draftRir = sData.rir !== undefined && sData.rir !== null && sData.rir !== '' ? sData.rir : '';
+                          }
+                      }
+
                       return `
                       <div style="display: grid; grid-template-columns: ${showRIR ? '65px 1fr 1fr 1fr' : '65px 1fr 1fr'}; gap: 8px; align-items: center;">
                         <div style="text-align: left; padding-left: 4px;">
                           <span style="font-weight: 700; font-size: 0.85rem; color: var(--primary-color);">Set ${setIdx + 1}</span>
                         </div>
-                        <input type="number" inputmode="decimal" class="form-input form-input-sm text-center" placeholder="Kg" id="weight_${index}_${setIdx}" style="height: 38px; padding: 0; font-weight: 700; font-size: 0.95rem; background: rgba(255,255,255,0.05); border: 1.5px solid rgba(255,255,255,0.08); border-radius: 8px; color: #fff;" onfocus="this.style.borderColor='var(--primary-color)';" onblur="this.style.borderColor='transparent';">
-                        <input type="number" inputmode="numeric" class="form-input form-input-sm text-center" placeholder="Reps" id="reps_${index}_${setIdx}" style="height: 38px; padding: 0; font-weight: 700; font-size: 0.95rem; background: rgba(255,255,255,0.05); border: 1.5px solid rgba(255,255,255,0.08); border-radius: 8px; color: #fff;" onfocus="this.style.borderColor='var(--primary-color)';" onblur="this.style.borderColor='transparent';">
+                        <input type="number" inputmode="decimal" class="form-input form-input-sm text-center" placeholder="Kg" id="weight_${index}_${setIdx}" value="${draftWeight}" style="height: 38px; padding: 0; font-weight: 700; font-size: 0.95rem; background: rgba(255,255,255,0.05); border: 1.5px solid rgba(255,255,255,0.08); border-radius: 8px; color: #fff;" onfocus="this.style.borderColor='var(--primary-color)';" onblur="this.style.borderColor='transparent';">
+                        <input type="number" inputmode="numeric" class="form-input form-input-sm text-center" placeholder="Reps" id="reps_${index}_${setIdx}" value="${draftReps}" style="height: 38px; padding: 0; font-weight: 700; font-size: 0.95rem; background: rgba(255,255,255,0.05); border: 1.5px solid rgba(255,255,255,0.08); border-radius: 8px; color: #fff;" onfocus="this.style.borderColor='var(--primary-color)';" onblur="this.style.borderColor='transparent';">
                         ${showRIR ? `
-                        <input type="number" inputmode="numeric" class="form-input form-input-sm text-center" placeholder="${targetRir !== undefined && targetRir !== '' ? targetRir : 'RIR'}" id="rir_${index}_${setIdx}" min="0" max="10" style="height: 38px; padding: 0; font-weight: 700; font-size: 0.95rem; background: rgba(255,255,255,0.05); border: 1.5px solid rgba(255,255,255,0.08); border-radius: 8px; color: #fff;" onfocus="this.style.borderColor='var(--primary-color)';" onblur="this.style.borderColor='transparent';">
+                        <input type="number" inputmode="numeric" class="form-input form-input-sm text-center" placeholder="${targetRir !== undefined && targetRir !== '' ? targetRir : 'RIR'}" id="rir_${index}_${setIdx}" min="0" max="10" value="${draftRir}" style="height: 38px; padding: 0; font-weight: 700; font-size: 0.95rem; background: rgba(255,255,255,0.05); border: 1.5px solid rgba(255,255,255,0.08); border-radius: 8px; color: #fff;" onfocus="this.style.borderColor='var(--primary-color)';" onblur="this.style.borderColor='transparent';">
                         ` : ''}
                       </div>
                       `;
@@ -673,27 +805,91 @@
         `;
       }).join('')}
         
+        ${sessionCompleted && completedLog && completedLog.comment ? `
+        <div class="card mt-lg" style="background: rgba(255,255,255,0.02); border: 1.5px solid rgba(255,255,255,0.08); border-radius: 12px; padding: 16px;">
+            <div style="font-size: 0.8rem; font-weight: 700; color: var(--primary-color); margin-bottom: 6px; text-transform: uppercase;">Comentario de la sesión</div>
+            <div style="font-size: 0.95rem; color: #fff; line-height: 1.4; opacity: 0.9;">"${completedLog.comment}"</div>
+        </div>
+        ` : ''}
+
         ${!sessionCompleted ? `
+        <div class="card mt-lg" style="background: rgba(255,255,255,0.02); border: 1.5px solid rgba(255,255,255,0.08); border-radius: 12px; padding: 16px; margin-bottom: 16px;">
+            <label class="form-label" style="font-size: 0.8rem; font-weight: 700; color: var(--primary-color); margin-bottom: 8px; text-transform: uppercase; display: block;">Comentarios / Notas de la sesión</label>
+            <textarea id="sessionComment" class="form-input" style="background: rgba(255,255,255,0.05); border: 1.5px solid rgba(255,255,255,0.08); border-radius: 8px; color: #fff; resize: vertical; min-height: 80px; font-size: 0.9rem; padding: 10px; width: 100%; box-sizing: border-box;" placeholder="¿Cómo te has sentido? ¿Pesos, sensaciones, fatiga...?">${draftLog && draftLog.comment ? draftLog.comment : ''}</textarea>
+        </div>
         <button class="btn btn-primary btn-full mt-lg" onclick="saveTrainingSession(${dayNumber})">
-            Guardar Sesión de Hoy
+            Sesión completada
         </button>
         ` : ''}
       `;
     }
 
+    let autosaveTimeout = null;
+
+    function autosaveSessionDraft() {
+        if (!client || !routine || currentDayNumber === null) return;
+        const currentRoutineId = routine.id || (isBlockBased ? `block_${publishedBlock.id}_week_${currentWeekIdx}` : 'standalone');
+        
+        const dayExercises = routine.days ?
+          (routine.days[currentDayNumber - 1]?.exercises || []) :
+          (routine.exercises || []).filter(e => e.day === currentDayNumber);
+          
+        const commentVal = document.getElementById('sessionComment') ? document.getElementById('sessionComment').value.trim() : '';
+
+        const draftLog = {
+          clientId: client.id,
+          routineId: currentRoutineId,
+          dayNumber: currentDayNumber,
+          comment: commentVal,
+          exercises: dayExercises.map((ex, exIdx) => {
+            const numSets = Array.isArray(ex.sets) ? ex.sets.length : (parseInt(ex.sets) || 1);
+            const setsData = [];
+            for (let s = 0; s < numSets; s++) {
+              const weightEl = document.getElementById(`weight_${exIdx}_${s}`);
+              const repsEl = document.getElementById(`reps_${exIdx}_${s}`);
+              const rirEl = document.getElementById(`rir_${exIdx}_${s}`);
+              
+              setsData.push({
+                weight: weightEl ? weightEl.value : '',
+                reps: repsEl ? repsEl.value : '',
+                rir: rirEl ? rirEl.value : ''
+              });
+            }
+            return {
+              name: ex.name,
+              sets: setsData
+            };
+          })
+        };
+
+        const draftKey = `draft_training_log_${client.id}_${currentRoutineId}_${currentDayNumber}`;
+        localStorage.setItem(draftKey, JSON.stringify(draftLog));
+
+        // Debounced autosave directly to TrainingLogs (local storage and Supabase sync)
+        if (autosaveTimeout) clearTimeout(autosaveTimeout);
+        autosaveTimeout = setTimeout(async () => {
+            console.log("⏱️ Auto-guardando borrador de entrenamiento en base de datos local y Supabase...");
+            TrainingLogs.saveDraft(draftLog);
+        }, 1000);
+    }
+
     async function saveTrainingSession(dayNumber) {
+      if (autosaveTimeout) clearTimeout(autosaveTimeout); // Cancel pending autosave to avoid race conditions
+      
       const dayExercises = routine.days ?
         (routine.days[dayNumber - 1]?.exercises || []) :
         (routine.exercises || []).filter(e => e.day === dayNumber);
 
       const currentRoutineId = routine.id || (isBlockBased ? `block_${publishedBlock.id}_week_${currentWeekIdx}` : 'standalone');
+      const commentVal = document.getElementById('sessionComment') ? document.getElementById('sessionComment').value.trim() : '';
 
       const sessionLog = {
         clientId: client.id,
         routineId: currentRoutineId,
         dayNumber: dayNumber,
+        comment: commentVal,
         exercises: dayExercises.map((ex, exIdx) => {
-          const numSets = parseInt(ex.sets) || 1;
+          const numSets = Array.isArray(ex.sets) ? ex.sets.length : (parseInt(ex.sets) || 1);
           const setsData = [];
           for (let s = 0; s < numSets; s++) {
             setsData.push({
@@ -710,6 +906,10 @@
       };
 
       TrainingLogs.create(sessionLog);
+
+      // Clear autosave draft
+      const draftKey = `draft_training_log_${client.id}_${currentRoutineId}_${dayNumber}`;
+      localStorage.removeItem(draftKey);
       
       // PR Detection
       sessionLog.exercises.forEach(ex => {
@@ -727,7 +927,6 @@
       });
 
       // ── SINCRONIZACIÓN GARANTIZADA CON SUPABASE ──────────────────
-      // El log de entrenamiento sube a la nube para que el entrenador vea el progreso.
       const _tid = window.activeTrainerId || localStorage.getItem('activeTrainerId');
       console.log('📤 Subiendo log de entrenamiento a Supabase para trainerId:', _tid);
       if (window.SupabaseService && _tid && _tid !== 'default' && _tid !== 'admin') {
@@ -761,7 +960,7 @@
         
         let content = `
             <div style="padding: 10px;">
-                <div class="card bg-secondary p-md rounded-md mb-md" style="font-size: 0.95rem; line-height: 1.6; border: 1px solid rgba(255,255,255,0.05); background: rgba(0,0,0,0.2);">
+                <div id="cardioContentBody" class="card bg-secondary p-md rounded-md mb-md" style="font-size: 0.95rem; line-height: 1.6; border: 1px solid rgba(255,255,255,0.05); background: rgba(0,0,0,0.2);">
                     ${client.cardio || '<p class="text-secondary text-center">No hay notas específicas de cardio todavía.</p>'}
                 </div>
         `;
@@ -787,11 +986,144 @@
         }
     }
 
+    window.openOrderModal = function() {
+      // Find total number of training days
+      const numDays = routine.days ? 
+        routine.days.length : 
+        [...new Set((routine.exercises || []).map(e => e.day))].length;
+
+      if (!numDays || numDays === 0) {
+        alert("Asigna días a tu rutina para poder organizarlos.");
+        return;
+      }
+
+      // Helper to get day name
+      function getDayDisplayName(dNum) {
+        if (routine.days && routine.days[dNum - 1]) {
+          const dObj = routine.days[dNum - 1];
+          const customName = dObj.name ? dObj.name.trim() : '';
+          const isDefault = customName.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "") === `dia ${dNum}`;
+          return isDefault ? `Día ${dNum}` : customName;
+        }
+        return `Día ${dNum}`;
+      }
+
+      // Define structures for different numbers of days
+      let structures = [];
+
+      if (numDays === 1) {
+        structures = [
+          { name: "Estructura Semanal 1", pattern: [1, "descanso", "descanso", "descanso", "descanso", "descanso", "descanso"] },
+          { name: "Estructura Semanal 2", pattern: ["descanso", "descanso", "descanso", 1, "descanso", "descanso", "descanso"] },
+          { name: "Estructura Semanal 3", pattern: ["descanso", "descanso", "descanso", "descanso", "descanso", 1, "descanso"] }
+        ];
+      } else if (numDays === 2) {
+        structures = [
+          { name: "Estructura Semanal 1", pattern: [1, "descanso", "descanso", 2, "descanso", "descanso", "descanso"] },
+          { name: "Estructura Semanal 2", pattern: ["descanso", 1, "descanso", "descanso", 2, "descanso", "descanso"] },
+          { name: "Estructura Semanal 3", pattern: ["descanso", "descanso", 1, "descanso", "descanso", 2, "descanso"] }
+        ];
+      } else if (numDays === 3) {
+        structures = [
+          { name: "Estructura Semanal 1", pattern: [1, "descanso", 2, "descanso", 3, "descanso", "descanso"] },
+          { name: "Estructura Semanal 2", pattern: ["descanso", 1, "descanso", 2, "descanso", 3, "descanso"] },
+          { name: "Estructura Semanal 3", pattern: [1, "descanso", "descanso", 2, "descanso", 3, "descanso"] }
+        ];
+      } else if (numDays === 4) {
+        structures = [
+          { name: "Estructura Semanal 1", pattern: [1, 2, "descanso", 3, 4, "descanso", "descanso"] },
+          { name: "Estructura Semanal 2", pattern: ["descanso", 1, 2, "descanso", 3, 4, "descanso"] },
+          { name: "Estructura Semanal 3", pattern: ["descanso", "descanso", 1, 2, "descanso", 3, 4] }
+        ];
+      } else if (numDays === 5) {
+        structures = [
+          { name: "Estructura Semanal 1", pattern: [1, 2, "descanso", 3, 4, 5, "descanso"] },
+          { name: "Estructura Semanal 2", pattern: [1, 2, 3, "descanso", 4, 5, "descanso"] },
+          { name: "Estructura Semanal 3", pattern: ["descanso", 1, 2, 3, "descanso", 4, 5] }
+        ];
+      } else if (numDays === 6) {
+        structures = [
+          { name: "Estructura Semanal 1", pattern: [1, 2, 3, "descanso", 4, 5, 6] },
+          { name: "Estructura Semanal 2", pattern: [1, 2, 3, 4, 5, 6, "descanso"] },
+          { name: "Estructura Semanal 3", pattern: ["descanso", 1, 2, 3, 4, 5, 6] }
+        ];
+      } else {
+        // 7 days
+        structures = [
+          { name: "Estructura Semanal 1", pattern: [1, 2, 3, 4, 5, 6, 7] }
+        ];
+      }
+
+      // Build HTML content for structures
+      let html = `
+        <div style="font-family: 'Inter', sans-serif; padding: 4px;">
+          <p style="color: var(--text-secondary); margin-bottom: 20px; font-size: 0.9rem; line-height: 1.5;">
+            Aquí tienes combinaciones sugeridas para distribuir tus <strong>${numDays} días</strong> de entrenamiento y descanso a lo largo de la semana:
+          </p>
+          <div style="display: flex; flex-direction: column; gap: 20px;">
+      `;
+
+      structures.forEach(struct => {
+        html += `
+          <div>
+            <h4 style="color: var(--primary-color); font-size: 0.85rem; margin-bottom: 8px; font-weight: 700; border-left: 3px solid var(--primary-color); padding-left: 8px; text-transform: uppercase; letter-spacing: 0.5px;">
+              ${struct.name}
+            </h4>
+            <div style="display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; border: 1px solid rgba(255,255,255,0.08); border-radius: 8px; overflow: hidden; background: rgba(26, 26, 46, 0.4);">
+        `;
+
+        const weekDays = ["L", "M", "X", "J", "V", "S", "D"];
+
+        // Header Row (L, M, X...)
+        weekDays.forEach(day => {
+          html += `
+            <div style="text-align: center; font-weight: bold; background: rgba(255,255,255,0.05); padding: 6px 2px; font-size: 0.7rem; border-bottom: 1px solid rgba(255,255,255,0.08); color: var(--text-secondary);">
+              ${day}
+            </div>
+          `;
+        });
+
+        // Data Row
+        struct.pattern.forEach(cell => {
+          if (cell === "descanso") {
+            html += `
+              <div style="text-align: center; padding: 6px 2px; display: flex; align-items: center; justify-content: center; min-height: 50px;">
+                <span style="font-size: 0.65rem; color: #ffeb3b; font-weight: 500; line-height: 1.2; text-transform: lowercase;">
+                  descanso
+                </span>
+              </div>
+            `;
+          } else {
+            const displayName = getDayDisplayName(cell);
+            html += `
+              <div style="text-align: center; padding: 6px 2px; background: rgba(0, 217, 255, 0.08); color: var(--primary-color); display: flex; align-items: center; justify-content: center; min-height: 50px; border: 1px solid rgba(0, 217, 255, 0.15); border-radius: 6px; margin: 1px;" title="${displayName}">
+                <span style="font-size: 0.65rem; font-weight: 700; line-height: 1.2; word-break: break-word; overflow: hidden; text-overflow: ellipsis; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; text-transform: uppercase;">
+                  ${displayName}
+                </span>
+              </div>
+            `;
+          }
+        });
+
+        html += `
+            </div>
+          </div>
+        `;
+      });
+
+      html += `
+          </div>
+        </div>
+      `;
+
+      showModal("Distribución Semanal Recomendada", html, [{ text: "Entendido", class: "btn-primary", onclick: "window.closeModal()" }], "modal-lg");
+    }
+
     
 
     // Trigger App Initialization
     initializeApp();
   </script>
-    <script src="js/custom-recipes.js?v=365"></script></body>
+    <script src="js/custom-recipes.js?v=457"></script></body>
 
 </html>

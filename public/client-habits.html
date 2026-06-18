@@ -7,7 +7,7 @@
     <script>
         // Force PWA cache bust / reload
         (function() {
-            const CURRENT_VERSION = '365';
+            const CURRENT_VERSION = '457';
             const savedVersion = localStorage.getItem('app_version');
             if (savedVersion !== CURRENT_VERSION) {
                 localStorage.setItem('app_version', CURRENT_VERSION);
@@ -31,12 +31,67 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="styles/theme.css?v=365">
-    <link rel="stylesheet" href="styles/components.css?v=365">
-    <link rel="stylesheet" href="styles/mobile.css?v=365">
-    <link rel="manifest" href="manifest.json">
+    <link rel="stylesheet" href="styles/theme.css?v=457">
+    <link rel="stylesheet" href="styles/components.css?v=457">
+    <link rel="stylesheet" href="styles/mobile.css?v=457">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <script>
+        (function() {
+            var params = new URLSearchParams(window.location.search);
+            var tid = params.get('t') || localStorage.getItem('activeTrainerId') || 'default';
+            if (tid) {
+                var lower = tid.toLowerCase().trim();
+                if (lower === 'asteam' || lower === 'alejandra') {
+                    tid = 't-w0iybl7qb';
+                } else if (lower === 'toledo' || lower === 'vtoledo') {
+                    tid = 't-8umeizyns';
+                }
+            }
+            
+            // Si el cliente está logueado, intentar deducir su entrenador para PWA
+            var clientId = localStorage.getItem('clientId') || sessionStorage.getItem('clientId');
+            if (clientId) {
+                for (var i = 0; i < localStorage.length; i++) {
+                    var key = localStorage.key(i);
+                    if (key && key.indexOf('fitnessAppData_') === 0 && key.indexOf('_backup') === -1) {
+                        var raw = localStorage.getItem(key);
+                        if (raw) {
+                            try {
+                                var parsed = JSON.parse(raw);
+                                if (parsed && parsed.clients) {
+                                    for (var j = 0; j < parsed.clients.length; j++) {
+                                        if (parsed.clients[j].id === clientId) {
+                                            var foundTid = key.replace('fitnessAppData_', '');
+                                            if (foundTid && foundTid !== 'default' && foundTid !== 'admin') {
+                                                tid = foundTid;
+                                                break;
+                                            }
+                                        }
+                                    }
+                                }
+                            } catch(e) {}
+                        }
+                    }
+                    if (tid && tid !== 'default' && tid !== 'admin') break;
+                }
+            }
+            
+            var brandName = 'Infinite Coach';
+            var iconUrl = 'img/logo-infinite-coach.png';
+            if (tid === 't-w0iybl7qb') {
+                brandName = 'ASTeam';
+                iconUrl = 'https://bieeydhacavxymoosasx.supabase.co/storage/v1/object/public/Media/1779724548154_Gemini_Generated_Image_vse84nvse84nvse8.png';
+            } else if (tid === 't-8umeizyns') {
+                brandName = 'Toledo The Bull';
+                iconUrl = 'https://bieeydhacavxymoosasx.supabase.co/storage/v1/object/public/Media/1781711106755_toledo_the_bull.png';
+            }
+            
+            document.write('<meta name="apple-mobile-web-app-title" content="' + brandName + '">');
+            document.write('<link rel="apple-touch-icon" href="' + iconUrl + '">');
+            document.write('<link rel="manifest" href="manifest.json?t=' + tid + '">');
+        })();
+    </script>
     <style>
         .habit-card {
             background: rgba(255, 255, 255, 0.03);
@@ -113,10 +168,10 @@
                     <span id="brandName">Infinite Coach</span>
                 </div>
                 <ul class="nav-links" id="navLinks">
-                    <li><a href="client-dashboard.html?v=365" class="nav-link">Inicio</a></li>
-                    <li><a href="client-profile.html?v=365" class="nav-link">Ficha Técnica</a></li>
+                    <li><a href="client-dashboard.html?v=457" class="nav-link">Inicio</a></li>
+                    <li><a href="client-profile.html?v=457" class="nav-link">Ficha Técnica</a></li>
 
-                    <li><a href="client-login.html?v=365" class="nav-link">Salir</a></li>
+                    <li><a href="client-login.html?v=457" class="nav-link">Salir</a></li>
                 </ul>
                 <button class="menu-toggle" onclick="toggleMenu()" style="margin-left: auto;">☰</button>
             </nav>
@@ -127,7 +182,7 @@
     <main class="main-content">
         <div class="container">
             <div class="flex-between align-center mb-lg">
-                <a href="client-dashboard.html?v=365" class="btn btn-sm btn-secondary" style="border-radius: 50px; padding: 8px 15px;">
+                <a href="client-dashboard.html?v=457" class="btn btn-sm btn-secondary" style="border-radius: 50px; padding: 8px 15px;">
                     ← Volver
                 </a>
                 <h1 style="margin: 0; font-size: 1.5rem;">Hábitos Diarios</h1>
@@ -147,7 +202,7 @@
                     <h2 id="todayDateLabel" style="font-size: 1.3rem;">-- de --</h2>
                 </div>
 
-                <div class="grid grid-1 gap-md">
+                <div class="grid grid-2 gap-md">
                     <div class="habit-card" onclick="openHabitModal('water')" style="border-left: 4px solid #00d9ff;">
                         <div class="habit-icon">💧</div>
                         <div class="habit-name">Agua</div>
@@ -163,6 +218,11 @@
                         <div class="habit-name">Sueño</div>
                         <div class="habit-value" id="val-sleep" style="color: #9C27B0;">0.0 <span class="habit-unit">h</span></div>
                     </div>
+                    <div id="card-weight" class="habit-card" onclick="openHabitModal('weight')" style="border-left: 4px solid #FF9800;">
+                        <div class="habit-icon">⚖️</div>
+                        <div class="habit-name">Peso</div>
+                        <div class="habit-value" id="val-weight" style="color: #FF9800;">0.0 <span class="habit-unit">kg</span></div>
+                    </div>
                 </div>
             </div>
 
@@ -175,6 +235,7 @@
                         <button class="filter-btn" id="f-water" onclick="setHabitFilter('water')">💧</button>
                         <button class="filter-btn" id="f-steps" onclick="setHabitFilter('steps')">👟</button>
                         <button class="filter-btn" id="f-sleep" onclick="setHabitFilter('sleep')">😴</button>
+                        <button class="filter-btn" id="f-weight" onclick="setHabitFilter('weight')">⚖️</button>
                     </div>
                     <div class="flex gap-xs" style="background: rgba(255,255,255,0.05); padding: 4px; border-radius: 10px; border: 1px solid rgba(255,255,255,0.05);">
                         <button class="period-btn active" id="p-7" onclick="setPeriodFilter(7)">7 días</button>
@@ -212,15 +273,42 @@
 
     <!-- Supabase SDK & Service -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="js/supabase-service.js?v=365"></script>
+    <script src="js/supabase-service.js?v=457"></script>
 
-    <script src="js/config.js?v=365"></script>
-    <script src="js/data-models.js?v=365"></script>
-    <script src="js/utils.js?v=365"></script>
+    <script src="js/config.js?v=457"></script>
+    <script src="js/data-models.js?v=457"></script>
+    <script src="js/utils.js?v=457"></script>
     <script>
+        const params = new URLSearchParams(window.location.search);
+        const urlClientId = params.get('c') || params.get('client');
+        const urlTrainerId = params.get('t') || params.get('trainer');
+        if (urlClientId) {
+            localStorage.setItem('clientId', urlClientId);
+            sessionStorage.setItem('clientId', urlClientId);
+        }
+        if (urlTrainerId) {
+            const lower = urlTrainerId.toLowerCase().trim();
+            if (lower === 'asteam' || lower === 'alejandra') {
+                urlTrainerId = 't-w0iybl7qb';
+            } else if (lower === 'toledo' || lower === 'vtoledo') {
+                urlTrainerId = 't-8umeizyns';
+            }
+        }
+        const storedTid = localStorage.getItem('activeTrainerId');
+        let finalTid = urlTrainerId;
+        if (!finalTid || finalTid === 'default' || finalTid === 'admin') {
+            if (storedTid && storedTid !== 'default' && storedTid !== 'admin') {
+                finalTid = storedTid;
+            } else {
+                finalTid = 'default';
+            }
+        }
+        localStorage.setItem('activeTrainerId', finalTid);
+        window.activeTrainerId = finalTid;
+
         const clientId = sessionStorage.getItem('clientId') || localStorage.getItem('clientId');
         if (!clientId) { 
-            window.location.replace('client-login.html'); 
+            window.location.replace('client-login.html' + window.location.search); 
         } else {
             sessionStorage.setItem('clientId', clientId);
             localStorage.setItem('clientId', clientId);
@@ -243,9 +331,8 @@
 
             const client = Clients.getById(clientId);
             if (!client) {
-                localStorage.removeItem('clientId');
-                sessionStorage.removeItem('clientId');
-                window.location.replace('client-login.html');
+                const activeId = localStorage.getItem('activeTrainerId') || 'default';
+                window.location.replace('client-login.html?reauth=true&t=' + activeId);
                 return;
             }
 
@@ -266,6 +353,13 @@
                 document.getElementById('brandLogo').style.display = 'block';
             }
 
+            if (brand.clientSettings && brand.clientSettings.showWeightHabit === false) {
+                const cardWeight = document.getElementById('card-weight');
+                if (cardWeight) cardWeight.style.display = 'none';
+                const filterWeight = document.getElementById('f-weight');
+                if (filterWeight) filterWeight.style.display = 'none';
+            }
+
             // Date Display
             try {
                 const dateOptions = { weekday: 'long', day: 'numeric', month: 'long' };
@@ -280,42 +374,14 @@
             } catch(e) { console.warn('Error setting habits date label:', e); }
 
             loadHabits();
-
-            // Auto-sincronización de pasos desde URL (para la integración con Atajos de iOS / Google Fit)
-            const params = new URLSearchParams(window.location.search);
-            const stepsParam = params.get('steps') || params.get('pasos');
-            if (stepsParam) {
-                const parsedSteps = parseInt(stepsParam, 10);
-                if (!isNaN(parsedSteps) && parsedSteps > 0) {
-                    const todayHabits = Habits.getToday(clientId) || { water: 0, steps: 0, sleep: 0 };
-                    todayHabits.steps = parsedSteps;
-                    Habits.save(clientId, todayHabits);
-                    loadHabits();
-                    
-                    // Sincronizar pasos con Supabase
-                    const _tid = window.activeTrainerId || localStorage.getItem('activeTrainerId');
-                    if (window.SupabaseService && _tid && _tid !== 'default' && _tid !== 'admin') {
-                        window.SupabaseService.init();
-                        window.SupabaseService.saveTrainerData(_tid, window.getData())
-                            .catch(e => console.warn('Supabase sync error (steps):', e));
-                    }
-
-                    // Si se está mostrando el historial, recargarlo
-                    if (typeof loadHistory === 'function') loadHistory();
-                    
-                    // Notificar con un alert elegante
-                    setTimeout(() => {
-                        alert('👟 ¡Pasos sincronizados correctamente!\nSe han registrado ' + parsedSteps.toLocaleString() + ' pasos para hoy.');
-                    }, 500);
-                }
-            }
         });
 
         function loadHabits() {
-            const h = Habits.getToday(clientId) || { water: 0, steps: 0, sleep: 0 };
+            const h = Habits.getToday(clientId) || { water: 0, steps: 0, sleep: 0, weight: 0 };
             document.getElementById('val-water').innerHTML = `${h.water.toFixed(1)} <span class="habit-unit">L</span>`;
             document.getElementById('val-steps').textContent = h.steps.toLocaleString();
             document.getElementById('val-sleep').innerHTML = `${h.sleep.toFixed(1)} <span class="habit-unit">h</span>`;
+            document.getElementById('val-weight').innerHTML = `${h.weight ? Math.round(parseFloat(h.weight) * 100) / 100 : 0} <span class="habit-unit">kg</span>`;
         }
 
         window.setHabitFilter = function(filter) {
@@ -378,16 +444,22 @@
             }
 
             // Averages
-            let sumWater = 0, sumSteps = 0, sumSleep = 0;
+            let sumWater = 0, sumSteps = 0, sumSleep = 0, sumWeight = 0;
+            let weightDaysCount = 0;
             history.forEach(day => {
                 sumWater += (day.water || 0);
                 sumSteps += (day.steps || 0);
                 sumSleep += (day.sleep || 0);
+                if (day.weight) {
+                    sumWeight += day.weight;
+                    weightDaysCount++;
+                }
             });
 
             const avgWater = sumWater / history.length;
             const avgSteps = sumSteps / history.length;
             const avgSleep = sumSleep / history.length;
+            const avgWeight = weightDaysCount > 0 ? (sumWeight / weightDaysCount) : 0;
 
             const badge = document.getElementById('overallStatusBadge');
             const text = document.getElementById('overallStatusText');
@@ -398,7 +470,8 @@
             if (currentHabitFilter === 'all') {
                 isFavorable = avgWater >= 1.5 && avgSteps >= 6000 && avgSleep >= 6.5;
                 text.innerHTML = isFavorable ? '✨ Tus promedios generales son excelentes.' : '💪 Puedes mejorar la constancia en tus hábitos.';
-                mini.innerHTML = `<span>💧 ${avgWater.toFixed(1)}L</span> <span>👟 ${Math.round(avgSteps)}</span> <span>😴 ${avgSleep.toFixed(1)}h</span>`;
+                const showWeight = !(brand.clientSettings && brand.clientSettings.showWeightHabit === false);
+                mini.innerHTML = `<span>💧 ${avgWater.toFixed(1)}L</span> <span>👟 ${Math.round(avgSteps)}</span> <span>😴 ${avgSleep.toFixed(1)}h</span>${(showWeight && avgWeight > 0) ? ` <span>⚖️ ${Math.round(avgWeight * 100) / 100}kg</span>` : ''}`;
             } else if (currentHabitFilter === 'water') {
                 isFavorable = avgWater >= 2;
                 text.innerHTML = `Promedio diario: <span style="color:#00d9ff">${avgWater.toFixed(1)}L</span>`;
@@ -411,6 +484,10 @@
                 isFavorable = avgSleep >= 7.5;
                 text.innerHTML = `Promedio diario: <span style="color:#9C27B0">${avgSleep.toFixed(1)}h</span>`;
                 mini.innerHTML = isFavorable ? '🛌 ¡Tu descanso es de calidad!' : '😴 Intenta regularizar tus horas de sueño.';
+            } else if (currentHabitFilter === 'weight') {
+                isFavorable = true;
+                text.innerHTML = avgWeight > 0 ? `Peso promedio: <span style="color:#FF9800">${Math.round(avgWeight * 100) / 100} kg</span>` : 'Sin registros de peso en este periodo.';
+                mini.innerHTML = avgWeight > 0 ? '⚖️ Monitorear tu peso a diario te ayuda a ver tendencias.' : '⚖️ Registra tu peso diario para ver el promedio.';
             }
 
             badge.className = `badge ${isFavorable ? 'badge-success' : 'badge-error'}`;
@@ -430,20 +507,30 @@
                 }
                 let detail = '';
                 if (currentHabitFilter === 'all') {
-                    detail = `<div class="flex gap-sm"><span>💧${day.water.toFixed(1)}</span> <span>👟${day.steps}</span> <span>😴${day.sleep.toFixed(1)}h</span></div>`;
+                    const showWeight = !(brand.clientSettings && brand.clientSettings.showWeightHabit === false);
+                    detail = `<div class="flex gap-sm"><span>💧${(day.water || 0).toFixed(1)}</span> <span>👟${day.steps || 0}</span> <span>😴${(day.sleep || 0).toFixed(1)}h</span>${(showWeight && day.weight) ? ` <span>⚖️${Math.round(day.weight * 100) / 100}kg</span>` : ''}</div>`;
                 } else {
                     let val = 0, target = 1, color = '#fff';
-                    if (currentHabitFilter === 'water') { val = day.water; target = 3; color = '#00d9ff'; }
-                    else if (currentHabitFilter === 'steps') { val = day.steps; target = 12000; color = '#4CAF50'; }
-                    else if (currentHabitFilter === 'sleep') { val = day.sleep; target = 10; color = '#9C27B0'; }
+                    if (currentHabitFilter === 'water') { val = day.water || 0; target = 3; color = '#00d9ff'; }
+                    else if (currentHabitFilter === 'steps') { val = day.steps || 0; target = 12000; color = '#4CAF50'; }
+                    else if (currentHabitFilter === 'sleep') { val = day.sleep || 0; target = 10; color = '#9C27B0'; }
+                    else if (currentHabitFilter === 'weight') { val = day.weight || 0; target = 150; color = '#FF9800'; }
                     
-                    const pct = Math.min(100, (val / target) * 100);
-                    detail = `
-                        <div class="flex align-center gap-md">
-                            <div class="progress-bar-mini"><div style="width:${pct}%; background:${color};"></div></div>
-                            <span style="font-weight:700; color:${color}; min-width:35px; text-align:right;">${currentHabitFilter === 'steps' ? val : val.toFixed(1)}</span>
-                        </div>
-                    `;
+                    if (currentHabitFilter === 'weight') {
+                        detail = `
+                            <div class="flex align-center gap-md">
+                                <span style="font-weight:700; color:${color}; min-width:35px; text-align:right;">${val > 0 ? (Math.round(val * 100) / 100) + ' kg' : '---'}</span>
+                            </div>
+                        `;
+                    } else {
+                        const pct = Math.min(100, (val / target) * 100);
+                        detail = `
+                            <div class="flex align-center gap-md">
+                                <div class="progress-bar-mini"><div style="width:${pct}%; background:${color};"></div></div>
+                                <span style="font-weight:700; color:${color}; min-width:35px; text-align:right;">${currentHabitFilter === 'steps' ? val : (currentHabitFilter === 'weight' ? Math.round(val * 100) / 100 : val.toFixed(1))}</span>
+                            </div>
+                        `;
+                    }
                 }
 
                 return `
@@ -461,12 +548,27 @@
         }
 
         window.openHabitModal = function(type) {
-            const h = Habits.getToday(clientId) || { water: 0, steps: 0, sleep: 0 };
+            const h = Habits.getToday(clientId) || { water: 0, steps: 0, sleep: 0, weight: 0 };
             let title = '', icon = '', unit = '', current = 0, step = 1;
 
             if (type === 'water') { title = 'Agua'; icon = '💧'; unit = 'Litros'; current = h.water; step = 0.5; }
             else if (type === 'steps') { title = 'Pasos'; icon = '👟'; unit = 'Pasos'; current = h.steps; step = 500; }
             else if (type === 'sleep') { title = 'Sueño'; icon = '😴'; unit = 'Horas'; current = h.sleep; step = 0.5; }
+            else if (type === 'weight') {
+                title = 'Peso';
+                icon = '⚖️';
+                unit = 'kg';
+                const client = typeof Clients !== 'undefined' ? Clients.getById(clientId) : null;
+                const lastRegisteredWeight = (() => {
+                    const allHistory = Habits.getByClientId(clientId).filter(day => day.weight > 0);
+                    if (allHistory.length > 0) {
+                        return allHistory[allHistory.length - 1].weight;
+                    }
+                    return null;
+                })();
+                current = h.weight || lastRegisteredWeight || (client && client.technicalData && client.technicalData.weight) || 70;
+                step = 0.1;
+            }
 
             let extraUI = '';
             if (type === 'steps') {
@@ -476,16 +578,14 @@
                         <button class="btn btn-outline" style="font-size:0.75rem; padding: 6px 12px; height: auto;" onclick="window.adjustHabitValue(5000)">+5K</button>
                         <button class="btn btn-outline" style="font-size:0.75rem; padding: 6px 12px; height: auto;" onclick="window.adjustHabitValue(10000)">+10K</button>
                     </div>
-                    <div style="margin-top: 20px; border-top: 1px solid rgba(255,255,255,0.08); padding-top: 15px; text-align: center;">
-                        <a href="shortcuts://run-shortcut?name=Sincronizar%20Pasos" class="btn btn-outline" style="display: inline-flex; align-items: center; gap: 8px; font-size: 0.8rem; border-color: #ff2d55; color: #ff2d55; background: rgba(255, 45, 85, 0.05); padding: 8px 12px; height: auto; text-decoration: none; border-radius: 8px; font-weight: 600;">
-                            <span style="font-size: 1rem;">🍎</span> Sincronizar Apple Health
-                        </a>
-                        <p style="font-size: 0.7rem; color: var(--text-secondary); margin-top: 8px; line-height: 1.3;">
-                            Se abrirá el Atajo de iOS para leer tus pasos diarios e importarlos automáticamente.
-                        </p>
-                        <span style="font-size: 0.72rem; color: var(--primary-color); text-decoration: underline; cursor: pointer; display: block; margin-top: 6px;" onclick="alert('Cómo configurar el Atajo en tu iPhone:\\n\\n1. Abre la app Atajos (Shortcuts) de iOS y crea un nuevo atajo llamado \\'Sincronizar Pasos\\'.\\n2. Añade la acción \\'Buscar muestras de salud\\' filtrando por pasos de las últimas 24 horas y sumándolos.\\n3. Añade la acción \\'Abrir URL\\' apuntando a: \\nhttps://infinite-coach.vercel.app/client-habits.html?steps=&#123;Suma de pasos&#125;\\n\\n¡Y listo! Ya podrás sincronizar tus pasos automáticamente con un solo toque.')">
-                            ¿Cómo configurar el Atajo de iOS?
-                        </span>
+                `;
+            } else if (type === 'weight') {
+                extraUI = `
+                    <div style="display: flex; gap: 8px; justify-content: center; margin-top: 15px; flex-wrap: wrap;">
+                        <button class="btn btn-outline" style="font-size:0.75rem; padding: 6px 12px; height: auto;" onclick="window.adjustHabitValue(-1)">-1 kg</button>
+                        <button class="btn btn-outline" style="font-size:0.75rem; padding: 6px 12px; height: auto;" onclick="window.adjustHabitValue(-0.5)">-0.5 kg</button>
+                        <button class="btn btn-outline" style="font-size:0.75rem; padding: 6px 12px; height: auto;" onclick="window.adjustHabitValue(0.5)">+0.5 kg</button>
+                        <button class="btn btn-outline" style="font-size:0.75rem; padding: 6px 12px; height: auto;" onclick="window.adjustHabitValue(1)">+1 kg</button>
                     </div>
                 `;
             }
@@ -521,7 +621,7 @@
 
         window.saveHabit = async function(type) {
             const val = parseFloat(document.getElementById('habitInput').value) || 0;
-            const h = Habits.getToday(clientId) || { water: 0, steps: 0, sleep: 0 };
+            const h = Habits.getToday(clientId) || { water: 0, steps: 0, sleep: 0, weight: 0 };
             h[type] = val;
             Habits.save(clientId, h);
             loadHabits();
@@ -540,7 +640,7 @@
             showToast('¡Registro guardado!', 'success');
         }
 
-        
+
     </script>
-    <script src="js/custom-recipes.js?v=365"></script></body>
+    <script src="js/custom-recipes.js?v=457"></script></body>
 </html>

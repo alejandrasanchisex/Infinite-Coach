@@ -37,7 +37,7 @@
             try {
                 const eb = JSON.parse(existingBrand);
                 if (eb.logo && !_isValidLogo(eb.logo)) {
-                    eb.logo = 'img/logo-infinite-marble.png';
+                    eb.logo = 'img/logo-infinite-coach.png';
                     localStorage.setItem('_trainerBrand', JSON.stringify(eb));
                     console.log('🧹 Logo corrupto eliminado de _trainerBrand');
                 }
@@ -52,7 +52,7 @@
                     const parsed = JSON.parse(legacy);
                     // Solo migrar si tiene un nombre real (no el default hardcodeado)
                     if (parsed && parsed.name && parsed.name !== 'Infinite Coach') {
-                        parsed.logo = _isValidLogo(parsed.logo) ? parsed.logo : 'img/logo-infinite-marble.png';
+                        parsed.logo = _isValidLogo(parsed.logo) ? parsed.logo : 'img/logo-infinite-coach.png';
                         localStorage.setItem('_trainerBrand', JSON.stringify(parsed));
                         console.log('✅ Brand migrado a clave protegida:', parsed.name);
                     }
@@ -74,7 +74,7 @@ if (typeof window !== 'undefined' && !window.BrandConfig) {
         get: function() {
             return {
                 name: 'Infinite Coach',
-                logo: 'img/logo-infinite-marble.png',
+                logo: 'img/logo-infinite-coach.png',
                 primaryColor: '#00D9FF',
                 secondaryColor: '#8B5CF6',
                 whatsapp: '+34000000000',
@@ -86,7 +86,7 @@ if (typeof window !== 'undefined' && !window.BrandConfig) {
             return brandData;
         },
         applyTheme: function() {
-            if (window.location.pathname.includes('admin-dashboard.html') || window.location.pathname.includes('admin-login.html') || window.location.hostname.includes('licencias.ingeniaia.es')) {
+            if (window.location.pathname.includes('admin-dashboard') || window.location.pathname.includes('admin-login') || window.location.hostname.includes('licencias.ingeniaia.es')) {
                 try {
                     const platformRaw = localStorage.getItem('saasFitnessPlatform');
                     let adminLogo = 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj48ZGVmcz48bGluZWFyR3JhZGllbnQgaWQ9ImciIHgxPSIwJSIgeTE9IjAlIiB4Mj0iMTAwJSIgeTI9IjEwMCUiPjxzdG9wIG9mZnNldD0iMCUiIHN0b3AtY29sb3I9IiM4QjVDRjYiIC8+PHN0b3Agb2Zmc2V0PSIxMDAlIiBzdG9wLWNvbG9yPSIjRDk0NkVGIiAvPjwvbGluZWFyR3JhZGllbnQ+PC9kZWZzPjxyZWN0IHdpZHRoPSIxMDAiIGhlaWdodD0iMTAwIiByeD0iMjAiIGZpbGw9IiMwNTA1MTAiIC8+PGNpcmNsZSBjeD0iNTAiIGN5PSI1MCIgcj0iMzUiIGZpbGw9Im5vbmUiIHN0cm9rZT0idXJsKCNnKSIgc3Ryb2tlLXdpZHRoPSI2IiAvPjxwYXRoIGQ9Ik00MyAzMCBoMTQgTTUwIDMwIHY0MCBNNDMgNzAgaDE0IiBmaWxsPSJub25lIiBzdHJva2U9InVybCgjZykiIHN0cm9rZS13aWR0aD0iOCIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIiAvPjwvc3ZnPg==';
@@ -123,7 +123,19 @@ if (typeof window !== 'undefined' && !window.BrandConfig) {
 
 // Auto-apply on load
 if (typeof document !== 'undefined') {
-    document.addEventListener('DOMContentLoaded', () => window.BrandConfig.applyTheme());
+    document.addEventListener('DOMContentLoaded', () => {
+        window.BrandConfig.applyTheme();
+        checkAndInjectDemoUI();
+        
+        // Actualizar dinámicamente el manifiesto PWA con el entrenador activo
+        try {
+            const tid = localStorage.getItem('activeTrainerId') || window.activeTrainerId || 'default';
+            const manifestLink = document.querySelector('link[rel="manifest"]');
+            if (manifestLink && tid && tid !== 'default' && tid !== 'admin') {
+                manifestLink.setAttribute('href', 'manifest.json?t=' + tid);
+            }
+        } catch(e) { console.warn("Error actualizando enlace de manifiesto:", e); }
+    });
 
     // Interceptar clicks en links de "Salir" (login) para limpiar sesión local
     document.addEventListener('click', function(e) {
@@ -137,6 +149,101 @@ if (typeof document !== 'undefined') {
             }
         }
     });
+}
+
+function checkAndInjectDemoUI() {
+    try {
+        if (localStorage.getItem('activeTrainerId') === 'demo') {
+            // 0. Inject CSS for the badge to be responsive
+            if (!document.getElementById('demo-badge-styles')) {
+                const style = document.createElement('style');
+                style.id = 'demo-badge-styles';
+                style.innerHTML = `
+                    #demo-active-badge {
+                        background: #10B981;
+                        color: #0B0B1A;
+                        font-size: 0.75rem;
+                        font-weight: bold;
+                        padding: 4px 10px;
+                        border-radius: 50px;
+                        margin-left: 10px;
+                        white-space: nowrap;
+                        display: inline-block;
+                    }
+                    @media (max-width: 768px) {
+                        #demo-active-badge {
+                            font-size: 0.65rem;
+                            padding: 2px 8px;
+                            margin-left: 6px;
+                        }
+                    }
+                `;
+                document.head.appendChild(style);
+            }
+
+            // 1. Inject the badge in the nav logo
+            const logoWrap = document.querySelector('.nav .logo');
+            if (logoWrap && !document.getElementById('demo-active-badge')) {
+                const badge = document.createElement('span');
+                badge.id = 'demo-active-badge';
+                badge.innerHTML = `DEMO ACTIVA`;
+                logoWrap.appendChild(badge);
+            }
+
+            // 2. Inject the purple banner in trainer-dashboard.html
+            if (window.location.pathname.includes('trainer-dashboard')) {
+                const container = document.querySelector('.main-content .container');
+                if (container && !document.getElementById('demo-temp-banner')) {
+                    const banner = document.createElement('div');
+                    banner.id = 'demo-temp-banner';
+                    banner.className = 'card mb-lg';
+                    banner.style.background = 'rgba(139, 92, 246, 0.15)';
+                    banner.style.borderColor = '#8B5CF6';
+                    banner.style.padding = '1.25rem 1.5rem';
+                    banner.style.borderRadius = '16px';
+                    banner.style.color = '#fff';
+                    banner.style.fontSize = '0.9rem';
+                    banner.style.display = 'flex';
+                    banner.style.alignItems = 'center';
+                    banner.style.gap = '14px';
+                    banner.style.marginBottom = '2rem';
+                    banner.style.border = '1px solid rgba(139, 92, 246, 0.3)';
+                    
+                    let callDate = 'Lunes a las 09:00 - 09:15';
+                    try {
+                        const mockData = JSON.parse(localStorage.getItem('fitnessAppData_demo') || '{}');
+                        if (mockData.appointments && mockData.appointments[0]) {
+                            const notes = mockData.appointments[0].notes || '';
+                            if (notes.includes('agendada para:')) {
+                                callDate = notes.split('agendada para:')[1].trim();
+                            }
+                        }
+                    } catch(e) {}
+                    
+                    banner.innerHTML = `
+                        <span style="font-size: 1.5rem;">🚀</span>
+                        <div>
+                            <div style="font-weight: 600; color: #a78bfa; margin-bottom: 4px; font-size: 0.95rem;">Acceso Demo Temporal</div>
+                            <div style="color: rgba(255,255,255,0.85); line-height: 1.4;">
+                                Este entorno de pruebas de Infinite Coach está activo hasta tu Welcome Call programada para el <strong>${callDate}</strong>.<br>
+                                <span style="color: #F59E0B; font-weight: 500;">💻 Recomendación:</span> Para una experiencia de gestión más cómoda y completa, <strong>te recomendamos abrir este panel desde tu ordenador</strong>.<br>
+                                <span style="color: #00D9FF; font-weight: 500;">💡 Tip:</span> Puedes personalizar esta plataforma con tu propio <strong>logo, colores corporativos y modo Día/Noche</strong> en la pestaña de <a href="trainer-settings.html" style="color: #00D9FF; text-decoration: underline; font-weight: 600;">Configuración</a>.
+                            </div>
+                        </div>
+                    `;
+                    
+                    const pageHeader = container.querySelector('.flex-between');
+                    if (pageHeader) {
+                        pageHeader.parentNode.insertBefore(banner, pageHeader.nextSibling);
+                    } else {
+                        container.prepend(banner);
+                    }
+                }
+            }
+        }
+    } catch(e) {
+        console.warn('Error applying demo UI:', e);
+    }
 }
 
 // Safe translation/fallback for toLocaleDateString

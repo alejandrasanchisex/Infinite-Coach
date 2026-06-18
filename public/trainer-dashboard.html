@@ -5,7 +5,7 @@
     <script>
         // Force PWA cache bust / reload
         (function() {
-            const CURRENT_VERSION = '365';
+            const CURRENT_VERSION = '457';
             const savedVersion = localStorage.getItem('app_version');
             if (savedVersion !== CURRENT_VERSION) {
                 localStorage.setItem('app_version', CURRENT_VERSION);
@@ -31,8 +31,8 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="styles/theme.css?v=365">
-    <link rel="stylesheet" href="styles/components.css">
+    <link rel="stylesheet" href="styles/theme.css?v=457">
+    <link rel="stylesheet" href="styles/components.css?v=457">
 </head>
 
 <body>
@@ -61,14 +61,14 @@
                     </div>
                     <button class="menu-toggle" onclick="toggleMenu()">☰</button>
                     <ul class="nav-links" id="navLinks">
-                        <li><a href="trainer-dashboard.html?v=365" class="nav-link active">Dashboard</a></li>
-                        <li><a href="trainer-clients.html?v=365" class="nav-link">Clientes</a></li>
-                        <li><a href="trainer-routines.html?v=365" class="nav-link">Rutinas</a></li>
-                        <li><a href="trainer-diets.html?v=365" class="nav-link">Dietas</a></li>
-                        <li><a href="trainer-feedbacks.html?v=365" class="nav-link">Revisiones</a></li>
-                        <li><a href="trainer-media.html?v=365" class="nav-link">Biblioteca</a></li>
-                        <li><a href="trainer-appointments.html?v=365" class="nav-link">Agenda</a></li>
-                        <li><a href="trainer-settings.html?v=365" class="nav-link">Configuración</a></li>
+                        <li><a href="trainer-dashboard.html?v=457" class="nav-link active">Dashboard</a></li>
+                        <li><a href="trainer-clients.html?v=457" class="nav-link">Clientes</a></li>
+                        <li><a href="trainer-routines.html?v=457" class="nav-link">Rutinas</a></li>
+                        <li><a href="trainer-diets.html?v=457" class="nav-link">Dietas</a></li>
+                        <li><a href="trainer-feedbacks.html?v=457" class="nav-link">Revisiones</a></li>
+                        <li><a href="trainer-media.html?v=457" class="nav-link">Biblioteca</a></li>
+                        <li><a href="trainer-appointments.html?v=457" class="nav-link">Agenda</a></li>
+                        <li><a href="trainer-settings.html?v=457" class="nav-link">Configuración</a></li>
                         <li><a href="#" onclick="if(typeof AUTH !== 'undefined') { AUTH.signOut() } else { window.location.reload() }; return false;" class="nav-link" style="color:var(--error-color)">🚪 Salir</a></li>
                     </ul>
                 </nav>
@@ -79,15 +79,18 @@
         <main class="main-content">
             <div class="container">
                 <!-- Page Header -->
-                    <div class="flex-between">
+                    <div class="flex-between align-center mb-lg">
                         <div>
                             <h1>Dashboard</h1>
                             <p class="text-muted">Resumen de tu negocio fitness</p>
                         </div>
+                        <button id="syncBtn" class="btn btn-secondary" onclick="syncAndRefreshDashboard(this)" style="border-radius: 50px; display: inline-flex; align-items: center; gap: 8px; font-weight: 600; font-size: 0.85rem; padding: 10px 18px;">
+                            🔄 Sincronizar
+                        </button>
                     </div>
 
                 <!-- Stats Grid -->
-                <div class="grid grid-5 mb-lg">
+                <div class="grid grid-6 mb-lg">
                     <div class="card stat-card" onclick="showActiveClientsModal()" style="cursor: pointer;"
                         role="button" tabindex="0">
                         <div class="stat-value" id="activeClients">0</div>
@@ -112,6 +115,18 @@
                         style="cursor: pointer;" role="button" tabindex="0">
                         <div class="stat-value" id="callsToday">0</div>
                         <div class="stat-label">Llamadas Hoy</div>
+                    </div>
+                    <div class="card stat-card" onclick="showRenewalsModal()" style="cursor: pointer; position: relative;" role="button"
+                        tabindex="0">
+                        <div class="forecast-switch-container" onclick="event.stopPropagation();" style="position: absolute; top: var(--spacing-sm); right: var(--spacing-sm); display: flex; gap: 4px; background: rgba(255,255,255,0.08); border-radius: 20px; padding: 2px;">
+                            <button id="switch-7d" onclick="window.toggleForecastPeriod(7)" style="background: none; border: none; font-size: 0.75rem; color: var(--text-secondary); padding: 2px 8px; border-radius: 12px; cursor: pointer; transition: all 0.2s; font-weight: 500; line-height: 1;">7d</button>
+                            <button id="switch-30d" onclick="window.toggleForecastPeriod(30)" style="background: none; border: none; font-size: 0.75rem; color: var(--text-secondary); padding: 2px 8px; border-radius: 12px; cursor: pointer; transition: all 0.2s; font-weight: 500; line-height: 1;">30d</button>
+                        </div>
+                        <div class="stat-value" id="forecastRevenue">0€</div>
+                        <div class="stat-label" id="forecastLabel">
+                            Previsión
+                            <span id="forecastCount" style="display: block; text-transform: uppercase; white-space: nowrap; font-size: 0.8rem; margin-top: 4px; color: var(--text-secondary);">(0 renovaciones)</span>
+                        </div>
                     </div>
                 </div>
 
@@ -247,14 +262,14 @@
 
     <!-- Supabase SDK & Service -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="js/supabase-service.js?v=365"></script>
+    <script src="js/supabase-service.js?v=457"></script>
 
     <!-- UI Scripts -->
-    <script src="js/config.js?v=365"></script>
-    <script src="js/auth.js?v=365"></script>
-    <script src="js/sheets.js?v=365"></script>
-    <script src="js/data-models.js?v=365"></script>
-    <script src="js/utils.js?v=365"></script>
+    <script src="js/config.js?v=457"></script>
+    <script src="js/auth.js?v=457"></script>
+    <script src="js/sheets.js?v=457"></script>
+    <script src="js/data-models.js?v=457"></script>
+    <script src="js/utils.js?v=457"></script>
     <script>
         // Branding is handled via onGoogleAuthSuccess() and global listeners
 
@@ -313,6 +328,9 @@
             
             // KPI calculation
             calculateKPIs();
+
+            // Renewals Forecast
+            calculateRenewalsForecast(clients);
         }
 
         function calculateKPIs() {
@@ -340,6 +358,223 @@
             document.getElementById('avgLTV').textContent = formatCurrency(ltv);
             document.getElementById('businessStatusText').textContent = `Tracking sobre ${total} clientes totales`;
         }
+
+        function calculateRenewalsForecast(clients) {
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+
+            const getRenewalsForDays = (days) => {
+                const limitDate = new Date(today);
+                limitDate.setDate(limitDate.getDate() + days);
+                limitDate.setHours(23, 59, 59, 999);
+
+                const list = [];
+                clients.forEach(c => {
+                    if (c.status !== 'active') return;
+                    if (!c.paymentExpiry) return;
+
+                    const parts = c.paymentExpiry.split('/');
+                    if (parts.length === 3) {
+                        const day = parseInt(parts[0]);
+                        const month = parseInt(parts[1]) - 1;
+                        let year = parseInt(parts[2]);
+                        if (year < 100) year += 2000;
+                        const expiryDate = new Date(year, month, day);
+                        if (!isNaN(expiryDate)) {
+                            const expZero = new Date(expiryDate);
+                            expZero.setHours(0, 0, 0, 0);
+                            if (expZero >= today && expZero <= limitDate) {
+                                list.push({
+                                    client: c,
+                                    expiryDate: expZero,
+                                    expiryStr: c.paymentExpiry,
+                                    fee: parseFloat(c.monthlyFee) || 0
+                                });
+                            }
+                        }
+                    }
+                });
+                list.sort((a, b) => a.expiryDate - b.expiryDate);
+                return list;
+            };
+
+            window.renewalsList7 = getRenewalsForDays(7);
+            window.renewalsList30 = getRenewalsForDays(30);
+
+            updateForecastUI();
+        }
+
+        window.toggleForecastPeriod = function(days) {
+            localStorage.setItem('forecastPeriodPreference', days);
+            updateForecastUI();
+        };
+
+        function updateForecastUI() {
+            const days = parseInt(localStorage.getItem('forecastPeriodPreference') || '30');
+            const list = days === 7 ? (window.renewalsList7 || []) : (window.renewalsList30 || []);
+            const total = list.reduce((sum, item) => sum + item.fee, 0);
+
+            document.getElementById('forecastRevenue').textContent = formatCurrency(total);
+            
+            const countEl = document.getElementById('forecastCount');
+            if (countEl) {
+                countEl.textContent = list.length === 1 ? '(1 renovación)' : `(${list.length} renovaciones)`;
+            }
+
+            // Update switcher buttons UI
+            const btn7 = document.getElementById('switch-7d');
+            const btn30 = document.getElementById('switch-30d');
+            if (btn7 && btn30) {
+                if (days === 7) {
+                    btn7.style.background = 'var(--primary-color)';
+                    btn7.style.color = '#fff';
+                    btn7.style.fontWeight = '700';
+                    btn30.style.background = 'none';
+                    btn30.style.color = 'var(--text-secondary)';
+                    btn30.style.fontWeight = 'normal';
+                } else {
+                    btn30.style.background = 'var(--primary-color)';
+                    btn30.style.color = '#fff';
+                    btn30.style.fontWeight = '700';
+                    btn7.style.background = 'none';
+                    btn7.style.color = 'var(--text-secondary)';
+                    btn7.style.fontWeight = 'normal';
+                }
+            }
+        }
+
+        function showRenewalsModal() {
+            const generateRenewalListHTML = (list) => {
+                if (list.length === 0) {
+                    return `
+                        <div class="empty-state" style="padding: 40px 20px; text-align: center;">
+                            <div class="empty-state-icon" style="font-size: 3rem; margin-bottom: 15px;">💰</div>
+                            <div class="empty-state-title" style="font-size: 1.2rem; font-weight: 600; color: var(--text-muted);">No hay renovaciones previstas en este período</div>
+                        </div>
+                    `;
+                }
+
+                const today = new Date();
+                today.setHours(0, 0, 0, 0);
+
+                const totalAmount = list.reduce((sum, item) => sum + item.fee, 0);
+
+                return `
+                    <div class="mb-md p-md" style="background: rgba(255, 255, 255, 0.05); border-radius: 12px; display: flex; justify-content: space-around; text-align: center; margin-bottom: 20px; padding: 15px;">
+                        <div>
+                            <div style="font-size: 1.8rem; font-weight: 700; color: var(--primary-color);">${formatCurrency(totalAmount)}</div>
+                            <div class="text-muted" style="font-size: 0.85rem;">Ingresos Previstos</div>
+                        </div>
+                        <div style="border-left: 1px solid rgba(255, 255, 255, 0.1);"></div>
+                        <div>
+                            <div style="font-size: 1.8rem; font-weight: 700; color: var(--accent-color);">${list.length}</div>
+                            <div class="text-muted" style="font-size: 0.85rem;">Renovaciones</div>
+                        </div>
+                    </div>
+                    <div style="overflow-x: auto;">
+                        <table class="table" style="width: 100%; min-width: 600px;">
+                            <thead>
+                                <tr>
+                                    <th>Cliente</th>
+                                    <th>Vencimiento</th>
+                                    <th>Días Restantes</th>
+                                    <th>Cuota</th>
+                                    <th style="text-align: right;">Contacto</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                ${list.map(item => {
+                                    const c = item.client;
+                                    const daysRemaining = Math.ceil((item.expiryDate - today) / (1000 * 60 * 60 * 24));
+                                    let daysBadge = '';
+                                    if (daysRemaining === 0) {
+                                        daysBadge = '<span class="badge badge-warning">Hoy</span>';
+                                    } else if (daysRemaining === 1) {
+                                        daysBadge = '<span class="badge badge-info">Mañana</span>';
+                                    } else {
+                                        daysBadge = `<span class="badge badge-outline">En ${daysRemaining} días</span>`;
+                                    }
+
+                                    return `
+                                        <tr style="cursor: pointer;" onclick="window.location.href='trainer-client-detail.html?id=${c.id}'">
+                                            <td>
+                                                <strong style="color: var(--primary-color); text-decoration: underline;">${c.name}</strong>
+                                                <div class="text-muted" style="font-size: 0.8rem;">${c.email || '-'}</div>
+                                            </td>
+                                            <td>${item.expiryStr}</td>
+                                            <td>${daysBadge}</td>
+                                            <td><strong>${formatCurrency(item.fee)}</strong></td>
+                                            <td style="text-align: right;">
+                                                <button class="btn btn-xs btn-primary" onclick="event.stopPropagation(); window.contactClientForRenewal('${c.id}', '${item.expiryStr}')">📲 Recordar</button>
+                                            </td>
+                                        </tr>
+                                    `;
+                                }).join('')}
+                            </tbody>
+                        </table>
+                    </div>
+                `;
+            };
+
+            const content7HTML = generateRenewalListHTML(window.renewalsList7 || []);
+            const content30HTML = generateRenewalListHTML(window.renewalsList30 || []);
+
+            const content = `
+                <div class="tabs" style="margin-bottom: 20px;">
+                    <button class="tab active" id="btn-tab-7" onclick="window.switchRenewalTab(7)">Próximos 7 días</button>
+                    <button class="tab" id="btn-tab-30" onclick="window.switchRenewalTab(30)">Próximos 30 días</button>
+                </div>
+                <div id="renewal-tab-7" class="tab-content active" style="display: block;">
+                    ${content7HTML}
+                </div>
+                <div id="renewal-tab-30" class="tab-content" style="display: none;">
+                    ${content30HTML}
+                </div>
+            `;
+
+            showModal('Previsión de Renovaciones y Cobros', content, [
+                { text: 'Cerrar', class: 'btn-secondary', onclick: 'window.closeModal()' }
+            ], 'modal-lg');
+        }
+
+        window.switchRenewalTab = function(days) {
+            const tab7Btn = document.getElementById('btn-tab-7');
+            const tab30Btn = document.getElementById('btn-tab-30');
+            const content7 = document.getElementById('renewal-tab-7');
+            const content30 = document.getElementById('renewal-tab-30');
+            
+            if (days === 7) {
+                if (tab7Btn) tab7Btn.classList.add('active');
+                if (tab30Btn) tab30Btn.classList.remove('active');
+                if (content7) {
+                    content7.style.display = 'block';
+                    content7.classList.add('active');
+                }
+                if (content30) {
+                    content30.style.display = 'none';
+                    content30.classList.remove('active');
+                }
+            } else {
+                if (tab7Btn) tab7Btn.classList.remove('active');
+                if (tab30Btn) tab30Btn.classList.add('active');
+                if (content7) {
+                    content7.style.display = 'none';
+                    content7.classList.remove('active');
+                }
+                if (content30) {
+                    content30.style.display = 'block';
+                    content30.classList.add('active');
+                }
+            }
+        };
+
+        window.contactClientForRenewal = function(clientId, expiryStr) {
+            const client = Clients.getById(clientId);
+            const brand = BrandConfig.get();
+            const message = `Hola ${client.name}, te escribo para recordarte que tu suscripción se renovará el ${expiryStr}. El importe de tu cuota es de ${formatCurrency(client.monthlyFee)}. ¿Confirmamos la renovación para seguir a tope el próximo periodo? ¡Gracias!`;
+            const link = generateWhatsAppLink(brand.whatsapp, message);
+            window.open(link, '_blank');
+        };
 
         function loadUpcomingAppointments() {
             const appointments = Appointments.getUpcoming().slice(0, 5);
@@ -733,9 +968,9 @@
                 modal = document.createElement('div');
                 modal.id = 'diagnosticModal';
                 modal.className = 'modal-overlay';
-                modal.style.cssText = 'position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); backdrop-filter: blur(8px); display: none; align-items: center; justify-content: center; z-index: 9999; padding: 20px;';
+                modal.style.cssText = 'position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); backdrop-filter: blur(8px); display: none; justify-content: center; align-items: flex-start; z-index: 99999 !important; padding: 80px 20px 40px 20px; overflow-y: auto;';
                 modal.innerHTML = `
-                    <div class="modal-content" style="max-width: 500px; padding: 2.5rem; background: #161b22; border-radius: 24px; border: 1px solid rgba(255,255,255,0.1); color: white; display: block; box-shadow: 0 20px 40px rgba(0,0,0,0.5);">
+                    <div class="modal-content" style="max-width: 500px; padding: 2.5rem; background: #161b22; border-radius: 24px; border: 1px solid rgba(255,255,255,0.1); color: white; display: block; box-shadow: 0 20px 40px rgba(0,0,0,0.5); margin: 0 auto;">
                         <h2 style="margin-top:0; color: var(--primary-color); display: flex; align-items: center; gap: 8px; font-size: 1.5rem; font-weight:800;">
                             🔍 Diagnóstico de Carga
                         </h2>
@@ -781,9 +1016,19 @@
                     window.SupabaseService.init();
                     const cloudData = await window.SupabaseService.getTrainerData(activeId);
                     if (cloudData) {
-                        document.getElementById('diagCloudData').textContent = `Sí (${cloudData.clients ? cloudData.clients.length : 0} clientes encontrados)`;
-                        statusEl.textContent = 'Datos encontrados en la nube pero no cargados localmente. Haz clic en "Forzar Sincronización".';
-                        statusEl.style.color = '#3fb950';
+                        const cloudClientsCount = cloudData.clients ? cloudData.clients.length : 0;
+                        const cloudRoutinesCount = cloudData.routines ? cloudData.routines.length : 0;
+                        const cloudDietsCount = cloudData.diets ? cloudData.diets.length : 0;
+                        const cloudHasData = cloudClientsCount > 0 || cloudRoutinesCount > 0 || cloudDietsCount > 0;
+
+                        document.getElementById('diagCloudData').textContent = `Sí (${cloudClientsCount} clientes encontrados)`;
+                        if (cloudHasData) {
+                            statusEl.textContent = 'Datos encontrados en la nube pero no cargados localmente. Haz clic en "Forzar Sincronización".';
+                            statusEl.style.color = '#3fb950';
+                        } else {
+                            statusEl.textContent = 'Perfil nuevo y vacío en la nube. Haz clic en "Cerrar" y empieza a crear tus clientes y rutinas 🚀';
+                            statusEl.style.color = '#58a6ff';
+                        }
                     } else {
                         document.getElementById('diagCloudData').textContent = 'No (Vacío o perfil inexistente)';
                         statusEl.textContent = 'Error: No hay datos asociados a este ID de entrenador en la base de datos de la nube.';
@@ -797,10 +1042,21 @@
             }
         }
 
-        document.addEventListener('DOMContentLoaded', () => {
+        document.addEventListener('DOMContentLoaded', async () => {
             if (typeof BrandConfig !== 'undefined') {
                 BrandConfig.applyTheme();
             }
+
+            // Sync silencioso con Supabase al arrancar para ver revisiones y datos nuevos
+            if (window.SupabaseService) {
+                try {
+                    window.SupabaseService.init();
+                    await window.syncFromCloud();
+                } catch(e) {
+                    console.warn('Auto-sync al cargar dashboard falló (sin conexión):', e);
+                }
+            }
+
             loadDashboard();
             setTimeout(runDiagnostic, 2500);
         });
@@ -843,7 +1099,24 @@
             if (typeof loadDashboard === 'function') loadDashboard();
 
         }
+
+        async function syncAndRefreshDashboard(btn) {
+            if (btn) { btn.disabled = true; btn.textContent = '⏳ Sincronizando...'; }
+            try {
+                if (window.SupabaseService) {
+                    window.SupabaseService.init();
+                    await window.syncFromCloud();
+                }
+                loadDashboard();
+                showToast('✅ Datos actualizados', 'success');
+            } catch(e) {
+                showToast('Error al sincronizar', 'error');
+                console.error(e);
+            } finally {
+                if (btn) { btn.disabled = false; btn.innerHTML = '🔄 Sincronizar'; }
+            }
+        }
     </script>
-    <script src="js/custom-recipes.js?v=365"></script></body>
+    <script src="js/custom-recipes.js?v=457"></script></body>
 
 </html>

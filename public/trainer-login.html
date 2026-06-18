@@ -4,7 +4,7 @@
     <script>
         // Force PWA cache bust / reload
         (function() {
-            const CURRENT_VERSION = '365';
+            const CURRENT_VERSION = '457';
             const savedVersion = localStorage.getItem('app_version');
             if (savedVersion !== CURRENT_VERSION) {
                 localStorage.setItem('app_version', CURRENT_VERSION);
@@ -30,8 +30,8 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="styles/theme.css?v=365">
-    <link rel="stylesheet" href="styles/components.css">
+    <link rel="stylesheet" href="styles/theme.css?v=457">
+    <link rel="stylesheet" href="styles/components.css?v=457">
     <style>
         body {
             background-color: #0B0B1A;
@@ -191,7 +191,7 @@
                 ¿No tienes una licencia? <br> Contacta con <a href="https://ingeniaia.es" style="color: rgba(255,255,255,0.5); text-decoration: underline;">Ingenia</a>.
             </p>
             <p style="font-size: 0.8rem; font-weight: 600;">
-                <a href="client-login.html?v=365" style="color: var(--primary-color); text-decoration: none;">Acceso Clientes 📲</a>
+                <a href="client-login.html?v=457" style="color: var(--primary-color); text-decoration: none;">Acceso Clientes 📲</a>
             </p>
         </div>
     </div>
@@ -204,8 +204,8 @@
 
     <!-- Supabase SDK & Service -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="js/supabase-service.js?v=365"></script>
-    <script src="js/utils.js?v=365"></script>
+    <script src="js/supabase-service.js?v=457"></script>
+    <script src="js/utils.js?v=457"></script>
 
     <script>
         const PLATFORM_KEY = 'saasFitnessPlatform';
@@ -242,12 +242,169 @@
             }
         } catch(e) { console.warn('Error retrieving remembered credentials:', e); }
 
+        // Auto-completar datos si es el subdominio demo
+        try {
+            const isDemoHost = window.location.hostname === 'coachdemo.infinitecoach.es' || new URLSearchParams(window.location.search).get('mode') === 'demo';
+            if (isDemoHost) {
+                const urlParams = new URLSearchParams(window.location.search);
+                const adminEmail = urlParams.get('admin_email') || urlParams.get('email') || 'entrenador_demo@infinitecoach.es';
+                
+                // Only prefill if there are no remembered credentials
+                const rememberedEmail = localStorage.getItem('_rememberedTrainerEmail');
+                if (!rememberedEmail) {
+                    document.getElementById('email').value = adminEmail;
+                    document.getElementById('licenseKey').value = 'DEMO12345';
+                }
+                
+                // Mostrar banner de demo temporal
+                const callDate = urlParams.get('date') || 'Lunes a las 09:00 - 09:15';
+                const statusMsg = document.getElementById('statusMsg');
+                statusMsg.style.color = '#8B5CF6';
+                statusMsg.style.fontWeight = '600';
+                statusMsg.innerHTML = `🔒 <strong>Demo Temporal Activa</strong><br><span style="font-size:0.8rem; color:rgba(255,255,255,0.7)">Disponible hasta tu llamada del: ${callDate}</span>`;
+            }
+        } catch(e) { console.warn('Error pre-filling demo credentials:', e); }
+
         document.getElementById('loginForm').addEventListener('submit', async (e) => {
             e.preventDefault();
             const email = document.getElementById('email').value.trim().toLowerCase();
             const key = document.getElementById('licenseKey').value.trim().toUpperCase();
             const submitBtn = document.getElementById('submitBtn');
             const statusMsg = document.getElementById('statusMsg');
+
+            // Modo Demo Intercept
+            const isDemoHost = (window.location.hostname === 'coachdemo.infinitecoach.es' || new URLSearchParams(window.location.search).get('mode') === 'demo') &&
+                               (email === 'entrenador_demo@infinitecoach.es' || key === 'DEMO12345');
+            if (isDemoHost) {
+                submitBtn.disabled = true;
+                statusMsg.style.color = '#10B981';
+                statusMsg.textContent = 'Iniciando sesión en entorno demo...';
+                
+                // Parse params
+                const urlParams = new URLSearchParams(window.location.search);
+                const clientName = urlParams.get('name') || 'Alejandra Sanchis';
+                const clientEmail = urlParams.get('email') || 'alejandrasanchisex@gmail.com';
+                const clientGoal = urlParams.get('goal') || 'lose';
+                const callDate = urlParams.get('date') || 'Lunes a las 09:00 - 09:15';
+                const adminEmail = urlParams.get('admin_email') || email || 'entrenador_demo@infinitecoach.es';
+                const dateIso = urlParams.get('date_iso') || new Date().toISOString().split('T')[0];
+                
+                // Save session credentials
+                sessionStorage.setItem('_trainerAuthed', '1');
+                localStorage.setItem('_trainerAuthed', '1');
+                localStorage.setItem('activeTrainerId', 'demo');
+                localStorage.setItem('_trainerEmail', adminEmail);
+                
+                // Create mock data
+                const mockData = {
+                    version: '1.0.1',
+                    clients: [
+                        {
+                            id: 'demo-client-1',
+                            name: clientName,
+                            email: clientEmail,
+                            status: 'active',
+                            paymentStatus: 'paid',
+                            monthlyFee: 79,
+                            goal: clientGoal === 'lose' ? 'Pérdida de Peso' : (clientGoal === 'gain' ? 'Ganancia de Masa' : 'Salud y Rendimiento'),
+                            reviewDay: '1',
+                            technicalData: { weight: 68.5, height: 165 },
+                            weightHistory: [{ date: new Date().toISOString(), weight: 68.5 }],
+                            assignedRoutine: 'demo-routine-1',
+                            assignedDiet: 'demo-diet-1'
+                        }
+                    ],
+                    routines: [
+                        {
+                            id: 'demo-routine-1',
+                            name: clientGoal === 'lose' ? 'Cardio HIIT + Fuerza' : (clientGoal === 'gain' ? 'Fuerza Push/Pull/Legs' : 'Acondicionamiento Funcional'),
+                            exercises: clientGoal === 'lose' ? [
+                                { name: "🏃 HIIT Sprints", reps: "8 rondas x 30s esfuerzo / 30s descanso" },
+                                { name: "💪 Goblet Squats (Sentadillas)", reps: "4 series x 15 repeticiones" },
+                                { name: "🏋️ Flexiones de pecho (Pushups)", reps: "3 series x máx. repeticiones" },
+                                { name: "🔥 Kettlebell Swings", reps: "4 series x 20 repeticiones" },
+                                { name: " Plank (Plancha abdominal)", reps: "3 series x 45 segundos" }
+                            ] : (clientGoal === 'gain' ? [
+                                { name: "🏋️ Press de Banca (Bench Press)", reps: "4 series x 8 repeticiones" },
+                                { name: "💪 Remo con Barra (Barbell Rows)", reps: "4 series x 8 repeticiones" },
+                                { name: "🏋️ Sentadillas con Barra (Squats)", reps: "4 series x 10 repeticiones" },
+                                { name: "💪 Press Militar con Mancuernas", reps: "3 series x 8 repeticiones" },
+                                { name: "Leg Curl en Máquina", reps: "3 series x 12 repeticiones" }
+                            ] : [
+                                { name: "🧘 Movilidad articular completa", reps: "10 minutos de calentamiento" },
+                                { name: "💪 Zancadas inversas (Reverse lunges)", reps: "3 series x 12 por pierna" },
+                                { name: "🤸 Remo con bandas elásticas", reps: "3 series x 15 repeticiones" },
+                                { name: " Bird Dog (Estabilización lumbar)", reps: "3 series x 12 por lado" },
+                                { name: " Plank lateral", reps: "3 series x 30 segundos por lado" }
+                            ])
+                        }
+                    ],
+                    diets: [
+                        {
+                            id: 'demo-diet-1',
+                            name: clientGoal === 'lose' ? 'Déficit Controlado (1800 kcal)' : (clientGoal === 'gain' ? 'Volumen Limpio (2800 kcal)' : 'Mantenimiento (2200 kcal)'),
+                            meals: clientGoal === 'lose' ? [
+                                { name: "🍳 Desayuno", detail: "Tortilla de 3 claras y 1 huevo entero con espinacas + Café solo." },
+                                { name: "🍎 Media Mañana", detail: "1 manzana verde + 20g de almendras." },
+                                { name: "🍗 Almuerzo", detail: "180g de pechuga de pollo a la plancha con 150g de verduras al vapor." },
+                                { name: "🍓 Merienda", detail: "200g de yogur griego ligero con fresas frescas." },
+                                { name: "🐟 Cena", detail: "150g de merluza al horno con ensalada verde y 1 cucharadita de aceite de oliva." }
+                            ] : (clientGoal === 'gain' ? [
+                                { name: "🥞 Desayuno", detail: "Gachas de avena (80g) con leche entera, 1 plátano, 30g de proteína whey y crema de cacahuete." },
+                                { name: "🥪 Media Mañana", detail: "Sándwich integral de pavo con queso fresco and tomate." },
+                                { name: "🥩 Almuerzo", detail: "200g de filete de ternera con 200g de arroz integral y brócoli salteado." },
+                                { name: "🍌 Merienda", detail: "Batido de 1 plátano con 1 vaso de leche de avena y 30g de frutos secos." },
+                                { name: "🥑 Cena", detail: "180g de salmón al horno con 150g de patata dulce (boniato) y aguacate." }
+                            ] : [
+                                { name: "🍳 Desayuno", detail: "2 huevos revueltos con 2 tostadas de pan de centeno con tomate y aceite." },
+                                { name: "🍐 Media Mañana", detail: "1 pera + 15g de nueces." },
+                                { name: "🍛 Almuerzo", detail: "Guiso de lentejas con verduras + 150g de lomo de cerdo." },
+                                { name: "🍌 Merienda", detail: "Yogur natural con 1 plátano y semillas de chía." },
+                                { name: "🥗 Cena", detail: "Tortilla francesa de 2 huevos con ensalada de tomate, atún al natural y pepino." }
+                            ])
+                        }
+                    ],
+                    appointments: [
+                        {
+                            id: 'demo-apt-1',
+                            clientId: 'demo-client-1',
+                            date: (function() {
+                                let timeStr = '09:00:00';
+                                if (callDate && callDate.includes('a las ')) {
+                                    try {
+                                        const parts = callDate.split('a las ')[1].trim().split(' ')[0].trim();
+                                        if (parts.includes(':')) {
+                                            timeStr = parts + ':00';
+                                        }
+                                    } catch(e) {}
+                                }
+                                return `${dateIso}T${timeStr}`;
+                            })(),
+                            type: 'call',
+                            notes: `Welcome Call agendada para: ${callDate}`
+                        }
+                    ],
+                    invoices: [
+                        {
+                            id: 'demo-inv-1',
+                            clientId: 'demo-client-1',
+                            amount: 79,
+                            status: 'paid',
+                            date: new Date().toISOString()
+                        }
+                    ],
+                    feedbacks: [],
+                    brand: { name: 'Infinite Coach', logo: 'img/logo-infinite-coach.png', configured: true, colors: { primary: '#00D9FF', secondary: '#1A1A2E', accent: '#FF6B6B' } },
+                    settings: { adminEmail: adminEmail }
+                };
+                
+                localStorage.setItem('fitnessAppData_demo', JSON.stringify(mockData));
+                
+                setTimeout(() => {
+                    window.location.href = 'trainer-dashboard.html?t=demo';
+                }, 1000);
+                return;
+            }
 
             submitBtn.disabled = true;
             statusMsg.style.color = '#8B5CF6';
@@ -328,5 +485,5 @@
             }
         });
     </script>
-    <script src="js/custom-recipes.js?v=365"></script></body>
+    <script src="js/custom-recipes.js?v=457"></script></body>
 </html>

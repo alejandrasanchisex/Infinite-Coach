@@ -20,15 +20,24 @@ export default function TrainerDashboard() {
   React.useEffect(() => {
     if (typeof window !== 'undefined') {
       try {
-        if (window.location.hostname.includes('licencias.ingeniaia.es')) {
+        if (window.location.hostname === 'coachdemo.infinitecoach.es') {
+          if (window.location.search) {
+            window.location.replace('/trainer-login.html' + window.location.search);
+          } else if (localStorage.getItem('_trainerAuthed') === '1') {
+            const activeTrainerId = localStorage.getItem('activeTrainerId') || 'demo';
+            window.location.replace('/trainer-dashboard.html?t=' + activeTrainerId);
+          } else {
+            window.location.replace('/trainer-login.html');
+          }
+        } else if (window.location.hostname.includes('licencias.ingeniaia.es')) {
           window.location.replace('/admin-login.html');
         } else if (localStorage.getItem('_trainerAuthed') === '1') {
           const activeTrainerId = localStorage.getItem('activeTrainerId') || 'default';
           window.location.replace('/trainer-dashboard.html?t=' + activeTrainerId);
         } else if (localStorage.getItem('clientId')) {
-          window.location.replace('/client-dashboard.html?v=349');
+          window.location.replace('/client-dashboard.html?v=388');
         } else if (window.location.hostname.includes('infinitecoach.es')) {
-          window.location.replace('/client-login.html?v=349');
+          window.location.replace('/client-login.html?v=388');
         } else {
           window.location.replace('/trainer-login.html');
         }

@@ -5,7 +5,7 @@
     <script>
         // Force PWA cache bust / reload
         (function() {
-            const CURRENT_VERSION = '365';
+            const CURRENT_VERSION = '460';
             const savedVersion = localStorage.getItem('app_version');
             if (savedVersion !== CURRENT_VERSION) {
                 localStorage.setItem('app_version', CURRENT_VERSION);
@@ -31,8 +31,8 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="styles/theme.css?v=365">
-    <link rel="stylesheet" href="styles/components.css?v=365">
+    <link rel="stylesheet" href="styles/theme.css?v=457">
+    <link rel="stylesheet" href="styles/components.css?v=457">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <style>
         /* Bulletproof sizing override for routine editor and xl modals */
@@ -234,6 +234,52 @@
             div[style*="display: flex; flex-wrap: wrap; gap: 15px;"] {
                 justify-content: space-between !important;
             }
+
+            /* Mobile responsive fixes for client-header */
+            .client-header {
+                flex-direction: column !important;
+                text-align: center !important;
+                align-items: center !important;
+                padding: var(--spacing-lg) !important;
+                gap: var(--spacing-md) !important;
+            }
+            .client-header .client-info {
+                width: 100% !important;
+                display: flex !important;
+                flex-direction: column !important;
+                align-items: center !important;
+            }
+            .client-header .client-info h1 {
+                font-size: 1.5rem !important;
+            }
+            .client-header .client-info .flex {
+                flex-wrap: wrap !important;
+                justify-content: center !important;
+                gap: var(--spacing-xs) var(--spacing-sm) !important;
+            }
+            .client-header .client-info .flex span:nth-child(2) {
+                display: none !important; /* Hide separator bullet dot */
+            }
+            .client-header .client-info .mt-md {
+                display: flex !important;
+                flex-wrap: wrap !important;
+                justify-content: center !important;
+                gap: var(--spacing-xs) !important;
+                margin-top: var(--spacing-sm) !important;
+            }
+            .client-header .client-info .mt-md button {
+                width: 100% !important;
+                margin-top: 4px !important;
+            }
+            .client-header .flex.gap-sm {
+                width: 100% !important;
+                justify-content: center !important;
+                gap: var(--spacing-sm) !important;
+            }
+            .client-header .flex.gap-sm button {
+                flex: 1 !important;
+                max-width: 150px !important;
+            }
         }
     </style>
 </head>
@@ -253,14 +299,14 @@
                     </div>
                     <button class="menu-toggle" onclick="toggleMenu()">☰</button>
                     <ul class="nav-links" id="navLinks">
-                        <li><a href="trainer-dashboard.html?v=365" class="nav-link">Dashboard</a></li>
-                        <li><a href="trainer-clients.html?v=365" class="nav-link active">Clientes</a></li>
-                        <li><a href="trainer-routines.html?v=365" class="nav-link">Rutinas</a></li>
-                        <li><a href="trainer-diets.html?v=365" class="nav-link">Dietas</a></li>
-                        <li><a href="trainer-feedbacks.html?v=365" class="nav-link">Revisiones</a></li>
-                        <li><a href="trainer-media.html?v=365" class="nav-link">Biblioteca</a></li>
-                        <li><a href="trainer-appointments.html?v=365" class="nav-link">Agenda</a></li>
-                        <li><a href="trainer-settings.html?v=365" class="nav-link">Configuración</a></li>
+                        <li><a href="trainer-dashboard.html?v=457" class="nav-link">Dashboard</a></li>
+                        <li><a href="trainer-clients.html?v=457" class="nav-link active">Clientes</a></li>
+                        <li><a href="trainer-routines.html?v=457" class="nav-link">Rutinas</a></li>
+                        <li><a href="trainer-diets.html?v=457" class="nav-link">Dietas</a></li>
+                        <li><a href="trainer-feedbacks.html?v=457" class="nav-link">Revisiones</a></li>
+                        <li><a href="trainer-media.html?v=457" class="nav-link">Biblioteca</a></li>
+                        <li><a href="trainer-appointments.html?v=457" class="nav-link">Agenda</a></li>
+                        <li><a href="trainer-settings.html?v=457" class="nav-link">Configuración</a></li>
                         <li><a href="#" onclick="if(typeof AUTH !== 'undefined') { AUTH.signOut() } else { window.location.reload() }; return false;" class="nav-link" style="color:var(--error-color)">🚪 Salir</a></li>
                     </ul>
                 </nav>
@@ -459,7 +505,7 @@
                     <!-- Tab: Progress (NEW) -->
                     <div id="progressTab" class="tab-content">
                         <!-- Progress Sub-Tabs -->
-                        <div class="flex gap-md mb-lg" style="border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 10px;">
+                        <div class="flex gap-md mb-lg flex-scroll-mobile" style="border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 10px;">
                             <button id="btnProgCharts" class="btn btn-sm btn-primary" onclick="setProgressView('charts')">Gráficas y Datos</button>
                             <button id="btnProgPhotos" class="btn btn-sm btn-outline" onclick="setProgressView('photos')">Galería de Evolución 📸</button>
                             <button id="btnProgRecords" class="btn btn-sm btn-outline" onclick="setProgressView('records')">Récords Personales 🏆</button>
@@ -495,9 +541,9 @@
 
                         <!-- NUEV: Strength Progression Chart -->
                         <div class="card mt-lg">
-                            <div class="card-header flex-between">
+                            <div class="card-header flex-between flex-wrap gap-sm">
                                 <h3 class="card-title">Progresión de Fuerza</h3>
-                                <div class="flex gap-sm align-center">
+                                <div class="flex gap-sm align-center flex-wrap">
                                     <label style="font-size: 0.8rem; white-space: nowrap;">Filtrar:</label>
                                     <select id="chartBlockSelect" class="form-select form-select-sm"
                                         style="width: 180px;" onchange="renderExerciseProgression()">
@@ -527,9 +573,9 @@
 
                         <div id="progRecordsView" style="display: none;">
                             <div class="card">
-                                <div class="card-header flex-between">
+                                <div class="card-header flex-between flex-wrap gap-sm">
                                     <h3 class="card-title" style="color: #FFD700;">🏆 Mejores Marcas Personales</h3>
-                                    <div class="flex gap-sm">
+                                    <div class="flex gap-sm flex-wrap">
                                         <input type="text" id="prSearch" list="prSuggestions" class="form-input form-input-sm" style="width: 150px;" placeholder="Buscar ej..." oninput="renderPersonalRecords()">
                                         <datalist id="prSuggestions"></datalist>
                                         <select id="prMuscleFilter" class="form-select form-select-sm" style="width: 130px;" onchange="renderPersonalRecords()">
@@ -551,7 +597,7 @@
 
                         <div id="progHabitsView" style="display: none;">
                             <div class="card">
-                                <div class="card-header flex-between">
+                                <div class="card-header flex-between flex-wrap gap-sm">
                                     <h3 class="card-title">Seguimiento de Hábitos</h3>
                                     <select id="habitsTimeFilter" class="form-select form-select-sm" style="width: 180px;" onchange="renderDailyHabits()">
                                         <option value="all">Todo el historial</option>
@@ -568,6 +614,7 @@
                                                     <th>Agua (L)</th>
                                                     <th>Pasos</th>
                                                     <th>Sueño (h)</th>
+                                                    <th>Peso (kg)</th>
                                                     <th>Estado</th>
                                                 </tr>
                                             </thead>
@@ -581,7 +628,7 @@
 
                     <!-- Tab: Routine (Entrenamiento) -->
                     <div id="routineTab" class="tab-content">
-                        <div class="flex gap-md mb-md"
+                        <div class="flex gap-md mb-md flex-scroll-mobile"
                             style="border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 10px;">
                             <button id="btnSubPlan" class="btn btn-sm btn-primary" onclick="switchSubTab('planning')">
                                 Planificación</button>
@@ -740,13 +787,13 @@
 
                     <!-- Tab: Diet -->
                     <div id="dietTab" class="tab-content" style="display: none;">
-                        <div class="flex-between mb-md bg-secondary p-md rounded-md"
+                        <div class="flex-between flex-wrap gap-md mb-md bg-secondary p-md rounded-md"
                             style="border: 1px solid rgba(255,255,255,0.05);">
                             <div>
                                 <h3 class="mb-xs text-primary" style="font-size: 1.1rem;">Plan Nutricional</h3>
                                 <p class="text-muted text-sm">Gestión de dieta y macros</p>
                             </div>
-                            <div class="flex gap-sm">
+                            <div class="flex gap-sm flex-wrap">
                                 <button class="btn btn-sm btn-outline"
                                     onclick="window.openNutritionCalculator('calories')">Calc. Calorías</button>
                                 <button class="btn btn-sm btn-outline"
@@ -772,9 +819,11 @@
                         <input type="hidden" id="suppPublishedHidden" value="true">
                         <div class="grid grid-2 gap-lg">
                             <div class="card">
-                                <div class="card-header flex-between">
+                                <div class="card-header flex-between flex-wrap gap-sm">
                                     <h3 class="card-title">Editor de Suplementación</h3>
-                                    <div class="flex gap-sm align-center">
+                                    <div class="flex gap-sm align-center flex-wrap">
+                                        <button class="btn btn-secondary btn-sm" onclick="loadSuppTemplateModal()">📂 Cargar Plantilla</button>
+                                        <button class="btn btn-secondary btn-sm" onclick="saveSuppTemplateModal()">💾 Guardar como Plantilla</button>
                                         <div style="display: flex; align-items: center; gap: 8px; font-size: 0.8rem; background: rgba(255,255,255,0.05); padding: 5px 10px; border-radius: 20px; border: 1px solid rgba(255,255,255,0.1);">
                                             <span style="opacity: 0.7;">Visible:</span>
                                             <input type="checkbox" id="suppPublishedToggle" onchange="updateSuppVisibility()">
@@ -870,7 +919,7 @@
                                     </div>
                                     <div class="card-body">
                                         <div id="stripeNotConfigured" style="display: none;">
-                                            <p class="text-xs text-muted mb-md">Configura tus claves de Stripe en los <a href="trainer-settings.html?v=365" style="color: var(--primary-color);">Ajustes</a> para habilitar cobros automáticos.</p>
+                                            <p class="text-xs text-muted mb-md">Configura tus claves de Stripe en los <a href="trainer-settings.html?v=457" style="color: var(--primary-color);">Ajustes</a> para habilitar cobros automáticos.</p>
                                         </div>
                                         <div id="stripeActiveConfig">
                                             <p class="text-xs text-muted mb-md">Genera un enlace de pago recurrente para este cliente usando tus planes configurados.</p>
@@ -927,19 +976,19 @@
 
     <!-- Supabase SDK & Service -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="js/supabase-service.js?v=365"></script>
+    <script src="js/supabase-service.js?v=457"></script>
 
-    <script src="js/config.js?v=365"></script>
-    <script src="js/auth.js?v=365"></script>
-    <script src="js/sheets.js?v=365"></script>
-    <script src="js/data-models.js?v=365"></script>
-    <script src="js/utils.js?v=365"></script>
-    <script src="js/custom-recipes.js?v=365"></script>
-    <script src="js/custom-exercises.js?v=365"></script>
-    <script src="js/diet-editor-v3.js?v=365"></script>
+    <script src="js/config.js?v=457"></script>
+    <script src="js/auth.js?v=457"></script>
+    <script src="js/sheets.js?v=457"></script>
+    <script src="js/data-models.js?v=460"></script>
+    <script src="js/utils.js?v=457"></script>
+    <script src="js/custom-recipes.js?v=457"></script>
+    <script src="js/custom-exercises.js?v=457"></script>
+    <script src="js/diet-editor-v3.js?v=457"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.29/jspdf.plugin.autotable.min.js"></script>
-    <script src="js/export-utils.js?v=365"></script>
+    <script src="js/export-utils.js?v=457"></script>
     <script>
         const pageUrlParams = new URLSearchParams(window.location.search);
         const clientId = pageUrlParams.get('id');
@@ -962,6 +1011,7 @@
                     supplementationUrl: url,
                     supplementationUrlVisible: urlVisible
                 });
+                loadClientData(); // Sync currentClient state and UI
                 showToast('Suplementación guardada correctamente', 'success');
                 updateSuppPreview();
             } catch (e) {
@@ -983,6 +1033,193 @@
             const linkPreview = document.getElementById('suppPreviewLink');
             if (linkPreview) {
                 linkPreview.style.display = (url && urlVisible) ? 'block' : 'none';
+            }
+        }
+
+        async function saveSuppTemplateModal() {
+            const content = document.getElementById('supplementationEditor').innerHTML;
+            const url = document.getElementById('supplementationUrl').value;
+            const urlVisible = document.getElementById('suppUrlVisibleToggle').checked;
+
+            if (!content || content.trim() === '' || content === '<br>') {
+                showToast('Escribe algo en el editor antes de guardar como plantilla', 'warning');
+                return;
+            }
+
+            const name = prompt('Introduce un nombre para la plantilla de suplementación:');
+            if (!name) return;
+
+            try {
+                SupplementationTemplates.create({
+                    name: name.trim(),
+                    content: content,
+                    url: url,
+                    urlVisible: urlVisible
+                });
+                showToast('Plantilla guardada correctamente', 'success');
+            } catch (e) {
+                console.error(e);
+                showToast('Error al guardar plantilla', 'error');
+            }
+        }
+
+        window.loadSuppTemplateModal = function () {
+            const modalContent = `
+                <div class="mb-md">
+                    <input type="text" id="suppTemplateSearch" class="form-input" placeholder="🔍 Buscar plantilla por nombre..." oninput="filterSuppTemplates()">
+                </div>
+                <div id="suppTemplateListContainer" style="max-height: 400px; overflow-y: auto; display: flex; flex-direction: column; gap: 10px;">
+                    <!-- Se rellena por renderSuppTemplateList -->
+                </div>
+            `;
+            
+            showModal('Plantillas de Suplementación', modalContent, [
+                { text: 'Cerrar', class: 'btn-secondary', onclick: 'this.closest(".modal-overlay").remove()' }
+            ]);
+
+            renderSuppTemplateList();
+        }
+
+        window.filterSuppTemplates = function () {
+            const search = document.getElementById('suppTemplateSearch').value.toLowerCase();
+            const templates = SupplementationTemplates.getAll();
+            const filtered = templates.filter(t => t.name.toLowerCase().includes(search));
+            renderSuppTemplateListHTML(filtered);
+        }
+
+        window.renderSuppTemplateList = function () {
+            const templates = SupplementationTemplates.getAll();
+            renderSuppTemplateListHTML(templates);
+        }
+
+        window.renderSuppTemplateListHTML = function (templates) {
+            const container = document.getElementById('suppTemplateListContainer');
+            if (!container) return;
+
+            if (!templates || templates.length === 0) {
+                container.innerHTML = '<p class="text-center text-muted p-md">No hay plantillas guardadas.</p>';
+                return;
+            }
+
+            container.innerHTML = templates.map(t => {
+                // Obtener texto limpio para vista previa
+                const tempDiv = document.createElement('div');
+                tempDiv.innerHTML = t.content || '';
+                const plainText = tempDiv.textContent || tempDiv.innerText || '';
+                const previewText = plainText.length > 80 ? plainText.substring(0, 80) + '...' : plainText;
+
+                return `
+                    <div class="card p-sm flex-between align-center" style="border: 1px solid rgba(255,255,255,0.05); background: rgba(255,255,255,0.01);">
+                        <div style="flex: 1; min-width: 0; padding-right: 15px;">
+                            <div class="font-bold text-primary" style="font-size: 0.95rem;">${t.name}</div>
+                            <div class="text-xs text-muted text-truncate">${previewText || 'Sin contenido'}</div>
+                            ${t.url ? `<div class="text-xs text-info text-truncate" style="margin-top: 2px;">🛒 ${t.url}</div>` : ''}
+                        </div>
+                        <div class="flex gap-xs">
+                            <button class="btn btn-primary btn-xs" onclick="selectSuppTemplate('${t.id}')">Cargar</button>
+                            <button class="btn btn-secondary btn-xs" onclick="editSuppTemplate('${t.id}')">Editar</button>
+                            <button class="btn btn-danger btn-xs" onclick="deleteSuppTemplate('${t.id}')">Eliminar</button>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        window.selectSuppTemplate = function (id) {
+            const template = SupplementationTemplates.getById(id);
+            if (!template) {
+                showToast('Plantilla no encontrada', 'error');
+                return;
+            }
+
+            if (confirm(`¿Estás seguro de que quieres cargar la plantilla "${template.name}"? Se sobrescribirá el editor actual.`)) {
+                document.getElementById('supplementationEditor').innerHTML = template.content || '';
+                document.getElementById('supplementationUrl').value = template.url || '';
+                document.getElementById('suppUrlVisibleToggle').checked = template.urlVisible !== false;
+                
+                updateSuppPreview();
+                showToast('Plantilla cargada en el editor', 'success');
+                
+                // Cerrar modal
+                const modal = document.querySelector('.modal-overlay');
+                if (modal) modal.remove();
+            }
+        }
+
+        window.deleteSuppTemplate = function (id) {
+            const template = SupplementationTemplates.getById(id);
+            if (!template) return;
+
+            if (confirm(`¿Estás seguro de que quieres eliminar la plantilla "${template.name}"?`)) {
+                SupplementationTemplates.delete(id);
+                showToast('Plantilla eliminada', 'success');
+                window.filterSuppTemplates();
+            }
+        }
+
+        window.editSuppTemplate = function (id) {
+            const template = SupplementationTemplates.getById(id);
+            if (!template) return;
+
+            const editContent = `
+                <div style="display: flex; flex-direction: column; gap: 15px;">
+                    <div>
+                        <label class="form-label">Nombre de la Plantilla:</label>
+                        <input type="text" id="editSuppTemplateName" class="form-input" value="${template.name || ''}">
+                    </div>
+                    <div>
+                        <label class="form-label">Enlace de compra (URL):</label>
+                        <input type="url" id="editSuppTemplateUrl" class="form-input" value="${template.url || ''}">
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 10px;">
+                        <input type="checkbox" id="editSuppTemplateUrlVisible" ${template.urlVisible !== false ? 'checked' : ''}>
+                        <span class="text-sm">Enlace visible para el cliente</span>
+                    </div>
+                    <div>
+                        <label class="form-label">Contenido de Suplementación:</label>
+                        <div id="editSuppTemplateEditor" contenteditable="true" 
+                             style="min-height: 200px; padding: 15px; border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; background: rgba(0,0,0,0.2); line-height: 1.6; font-size: 0.95rem; color: #fff; overflow-y: auto;">
+                            ${template.content || ''}
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            showModal(`Editar Plantilla: ${template.name}`, editContent, [
+                { text: 'Cancelar', class: 'btn-secondary', onclick: 'this.closest(".modal-overlay").remove()' },
+                { text: 'Guardar Cambios', class: 'btn-primary', onclick: `saveEditedSuppTemplate('${id}')` }
+            ]);
+        }
+
+        window.saveEditedSuppTemplate = function (id) {
+            const name = document.getElementById('editSuppTemplateName').value;
+            const url = document.getElementById('editSuppTemplateUrl').value;
+            const urlVisible = document.getElementById('editSuppTemplateUrlVisible').checked;
+            const content = document.getElementById('editSuppTemplateEditor').innerHTML;
+
+            if (!name || name.trim() === '') {
+                showToast('Introduce un nombre para la plantilla', 'warning');
+                return;
+            }
+
+            try {
+                SupplementationTemplates.update(id, {
+                    name: name.trim(),
+                    url: url,
+                    urlVisible: urlVisible,
+                    content: content
+                });
+                showToast('Plantilla actualizada correctamente', 'success');
+                
+                const modals = document.querySelectorAll('.modal-overlay');
+                if (modals.length > 0) {
+                    modals[modals.length - 1].remove();
+                }
+                
+                window.filterSuppTemplates();
+            } catch (e) {
+                console.error(e);
+                showToast('Error al guardar cambios', 'error');
             }
         }
 
@@ -1028,6 +1265,7 @@
                     supplementationPublished: published,
                     supplementationUrlVisible: urlVisible
                 });
+                loadClientData(); // Sync currentClient state and UI
                 updateSuppPreview();
                 showToast('Visibilidad actualizada', 'info');
             } catch (err) { console.error(err); }
@@ -1107,7 +1345,7 @@
 
                 // Technical data
                 const tech = currentClient.technicalData || {};
-                const weight = tech.weight || currentClient.weight || 0;
+                const weight = (tech.weight || currentClient.weight) ? Math.round(parseFloat(tech.weight || currentClient.weight) * 100) / 100 : 0;
                 const height = tech.height || currentClient.height || 0;
                 const age = tech.age || currentClient.age || '-';
                 const goals = tech.goals || currentClient.goals || 'Sin objetivos definidos';
@@ -1189,20 +1427,62 @@
                 // Target Macros
                 const targetMacrosSection = document.getElementById('targetMacrosSection');
                 if (targetMacrosSection) {
-                    const activeDiet = (currentClient.assignedDiet && typeof Diets !== 'undefined') ? Diets.getById(currentClient.assignedDiet) : null;
-                    const displayData = activeDiet || tech.targetMacros;
+                    const tech = currentClient.technicalData || {};
+                    let assignedDietsList = [];
+                    if (currentClient.assignedDiets && Array.isArray(currentClient.assignedDiets)) {
+                        assignedDietsList = currentClient.assignedDiets.map(id => Diets.getById(id)).filter(Boolean);
+                    } else {
+                        const d = (currentClient.assignedDiet && typeof Diets !== 'undefined') ? Diets.getById(currentClient.assignedDiet) : null;
+                        if (d) assignedDietsList = [d];
+                    }
+
                     const macrosLabel = targetMacrosSection.querySelector('label');
 
-                    if (displayData) {
+                    if (assignedDietsList.length > 0) {
                         targetMacrosSection.style.display = 'block';
-                        if (macrosLabel) macrosLabel.textContent = activeDiet ? 'Plan Nutricional Activo' : 'Plan Nutricional Objetivo';
+                        if (macrosLabel) macrosLabel.textContent = 'Plan Nutricional Activo';
+                        
+                        // Eliminar filas de dietas renderizadas anteriormente
+                        const rows = targetMacrosSection.querySelectorAll('.diet-macros-row');
+                        rows.forEach(r => r.remove());
+                        
+                        // Ocultar contenedor por defecto
+                        const fallbackContainer = targetMacrosSection.querySelector('.flex');
+                        if (fallbackContainer) fallbackContainer.style.display = 'none';
+
+                        assignedDietsList.forEach(diet => {
+                            const row = document.createElement('div');
+                            row.className = 'diet-macros-row mb-xs';
+                            row.style.display = 'flex';
+                            row.style.flexDirection = 'column';
+                            row.style.gap = '2px';
+                            row.style.marginTop = '8px';
+                            row.innerHTML = `
+                                <span class="text-xs text-muted font-bold text-truncate" style="max-width: 100%; display: block; color: rgba(255,255,255,0.4);">${diet.name}</span>
+                                <div class="flex gap-sm align-center">
+                                    <span class="badge badge-primary" style="font-size: 0.75rem; padding: 2px 6px;">${diet.calories || 0} kcal</span>
+                                    <span class="text-xs" style="color: rgba(255,255,255,0.7); font-weight: 500;">P: ${diet.macros?.protein || 0}g | C: ${diet.macros?.carbs || 0}g | G: ${diet.macros?.fat || 0}g</span>
+                                </div>
+                            `;
+                            targetMacrosSection.appendChild(row);
+                        });
+                    } else if (tech.targetMacros) {
+                        targetMacrosSection.style.display = 'block';
+                        if (macrosLabel) macrosLabel.textContent = 'Plan Nutricional Objetivo';
+                        
+                        const rows = targetMacrosSection.querySelectorAll('.diet-macros-row');
+                        rows.forEach(r => r.remove());
+                        
+                        const fallbackContainer = targetMacrosSection.querySelector('.flex');
+                        if (fallbackContainer) fallbackContainer.style.display = 'flex';
+
                         const calsVal = document.getElementById('targetCalsVal');
-                        if (calsVal) calsVal.textContent = (displayData.calories || 0) + ' kcal';
+                        if (calsVal) calsVal.textContent = (tech.targetMacros.calories || 0) + ' kcal';
                         const macrosVal = document.getElementById('targetMacrosVal');
                         if (macrosVal) {
-                            const p = activeDiet ? (activeDiet.macros?.protein || 0) : (displayData.protein || 0);
-                            const c = activeDiet ? (activeDiet.macros?.carbs || 0) : (displayData.carbs || 0);
-                            const f = activeDiet ? (activeDiet.macros?.fat || 0) : (displayData.fat || 0);
+                            const p = tech.targetMacros.protein || 0;
+                            const c = tech.targetMacros.carbs || 0;
+                            const f = tech.targetMacros.fat || 0;
                             macrosVal.textContent = `P: ${p}g | C: ${c}g | G: ${f}g`;
                         }
                     } else {
@@ -1263,6 +1543,107 @@
                 if (typeof loadFeedbackHistory === 'function') loadFeedbackHistory();
                 if (typeof renderProgressCharts === 'function') renderProgressCharts();
                 if (typeof loadTrainingLogs === 'function') loadTrainingLogs();
+
+                // --- DETECT LOCAL BACKUPS FOR SELF-HEALING ---
+                const currentId = window.activeTrainerId || localStorage.getItem('activeTrainerId') || 'default';
+                console.log("[Backup Recovery] currentId:", currentId);
+                if (currentId !== 'default') {
+                    // Scan for any backup key in localStorage
+                    let backupRaw = localStorage.getItem(`fitnessAppData_${currentId}_backup`);
+                    if (!backupRaw) {
+                        backupRaw = localStorage.getItem('fitnessAppData_default_backup');
+                    }
+                    if (!backupRaw) {
+                        // Find any key ending in _backup that has data
+                        for (let i = 0; i < localStorage.length; i++) {
+                            const key = localStorage.key(i);
+                            if (key && key.endsWith('_backup')) {
+                                const val = localStorage.getItem(key);
+                                if (val && val.length > 100) {
+                                    backupRaw = val;
+                                    console.log("[Backup Recovery] Detected backup key fallback:", key);
+                                    break;
+                                }
+                            }
+                        }
+                    }
+
+                    if (backupRaw) {
+                        try {
+                            const backupData = JSON.parse(backupRaw);
+                            const backupBlocks = backupData.trainingBlocks || [];
+                            const localBlocks = TrainingBlocks.getByClientId(clientId);
+                            
+                            // Count live exercises for this client
+                            let liveExCount = 0;
+                            localBlocks.forEach(b => {
+                                if (b.weeks) {
+                                    b.weeks.forEach(w => {
+                                        if (w.days) {
+                                            w.days.forEach(d => {
+                                                if (d.exercises) {
+                                                    liveExCount += d.exercises.length;
+                                                }
+                                            });
+                                        }
+                                    });
+                                }
+                            });
+
+                            // Count backup exercises for this client (with fallback to name)
+                            let backupExCount = 0;
+                            let clientBackupBlocks = backupBlocks.filter(b => b.clientId === clientId);
+                            if (clientBackupBlocks.length === 0) {
+                                clientBackupBlocks = backupBlocks.filter(b => (b.name === 'PREP' || b.name === 'Planificación'));
+                            }
+
+                            clientBackupBlocks.forEach(b => {
+                                if (b.weeks) {
+                                    b.weeks.forEach(w => {
+                                        if (w.days) {
+                                            w.days.forEach(d => {
+                                                if (d.exercises) {
+                                                    backupExCount += d.exercises.length;
+                                                }
+                                            });
+                                        }
+                                    });
+                                }
+                            });
+
+                            console.log("[Backup Recovery] Client:", clientId, "Live Ex Count:", liveExCount, "Backup Ex Count:", backupExCount);
+
+                            // Check if any local block has 0 exercises, but the backup has exercises for that same block (by ID or Name)
+                            let hasEmptyBlockWithBackup = false;
+                            localBlocks.forEach(block => {
+                                const isEmpty = !block.weeks || block.weeks.length === 0 || block.weeks.every(w => !w.days || w.days.length === 0 || w.days.every(d => !d.exercises || d.exercises.length === 0));
+                                if (isEmpty) {
+                                    // Find same block in backup by ID or Name
+                                    const backupBlock = backupBlocks.find(b => (b.clientId === clientId || b.name === 'PREP') && (b.id === block.id || b.name === block.name));
+                                    if (backupBlock && backupBlock.weeks) {
+                                        const hasBackupExercises = backupBlock.weeks.some(w => w.days && w.days.some(d => d.exercises && d.exercises.length > 0));
+                                        if (hasBackupExercises) {
+                                            hasEmptyBlockWithBackup = true;
+                                        }
+                                    }
+                                }
+                            });
+
+                            // Auto-trigger recovery if backup contains client exercises and live database is empty/fewer exercises, or if an empty block exists
+                            const shouldAutoRestore = (backupExCount > 0 && (liveExCount === 0 || liveExCount < backupExCount)) || hasEmptyBlockWithBackup;
+                            console.log("[Backup Recovery] shouldAutoRestore:", shouldAutoRestore);
+                            
+                            if (shouldAutoRestore) {
+                                console.log("[Backup Recovery] Auto-triggering recovery...");
+                                window.restoreClientBlockFromBackup(true);
+                            }
+                        } catch (e) {
+                            console.warn("Error checking local backup status:", e);
+                        }
+                    } else {
+                        console.log("[Backup Recovery] No backup data found in localStorage keys.");
+                    }
+                }
 
             } catch (err) {
                 console.error("Error al cargar datos del cliente:", err);
@@ -1374,12 +1755,12 @@
                     datasets: [{
                         label: `Carga Máx (kg) - ${exerciseName}`,
                         data: chartData,
-                        borderColor: brand.colors.accent || '#FF6B6B',
-                        backgroundColor: (brand.colors.accent || '#FF6B6B') + '22',
+                        borderColor: brand.colors?.accent || '#FF6B6B',
+                        backgroundColor: (brand.colors?.accent || '#FF6B6B') + '22',
                         borderWidth: 3,
                         tension: 0.3,
                         fill: true,
-                        pointBackgroundColor: brand.colors.accent || '#FF6B6B',
+                        pointBackgroundColor: brand.colors?.accent || '#FF6B6B',
                         pointRadius: 4
                     }]
                 },
@@ -1818,6 +2199,11 @@
                             </tbody>
                         </table>
                     </div>
+                    ${log.comment ? `
+                    <div style="padding: 10px 20px; border-top: 1px solid rgba(255,255,255,0.03); background: rgba(0,0,0,0.1); font-size: 0.85rem; color: #E2E8F0;">
+                        <strong>Comentario:</strong> <span style="opacity: 0.85; font-style: italic;">"${log.comment}"</span>
+                    </div>
+                    ` : ''}
                 </div>
                 `;
             }).join('');
@@ -1893,7 +2279,7 @@
                     <tr>
                         <td style="font-size: 0.7rem;">${date.toLocaleDateString()}</td>
                         <td style="font-weight: 700; color: var(--primary-color);">${weekStr}</td>
-                        <td><strong>${h.weight}k</strong></td>
+                        <td><strong>${h.weight ? Math.round(parseFloat(h.weight) * 100) / 100 + 'k' : '-'}</strong></td>
                         ${perims.map(p => {
                             const fallbackMap = {'Cintura': h.waist, 'Cadera': h.glute, 'Pecho': h.chest, 'Brazo': h.arm, 'Muslo': h.leg};
                             let val = h.perimeters ? h.perimeters[p] : undefined;
@@ -1909,7 +2295,7 @@
             if (weightChart) weightChart.destroy();
 
             const labels = history.map(h => new Date(h.date).toLocaleDateString());
-            const data = history.map(h => h.weight);
+            const data = history.map(h => h.weight ? Math.round(parseFloat(h.weight) * 100) / 100 : null);
 
             weightChart = new Chart(ctx, {
                 type: 'line',
@@ -1918,12 +2304,12 @@
                     datasets: [{
                         label: 'Peso (kg)',
                         data: data,
-                        borderColor: brand.colors.primary,
-                        backgroundColor: brand.colors.primary + '22',
+                        borderColor: brand.colors?.primary || '#00D9FF',
+                        backgroundColor: (brand.colors?.primary || '#00D9FF') + '22',
                         borderWidth: 3,
                         tension: 0.4,
                         fill: true,
-                        pointBackgroundColor: brand.colors.primary,
+                        pointBackgroundColor: brand.colors?.primary || '#00D9FF',
                         pointRadius: 5
                     }]
                 },
@@ -2114,6 +2500,7 @@
                         <td>${h.water || 0} L</td>
                         <td>${h.steps || 0}</td>
                         <td>${h.sleep || 0} h</td>
+                        <td>${h.weight ? (Math.round(h.weight * 100) / 100) + ' kg' : '---'}</td>
                         <td>${isGood ? '<span class="badge" style="background: rgba(76,175,80,0.2); color: #4caf50;">Excelente</span>' : '<span class="badge" style="background: rgba(255,152,0,0.2); color: #ff9800;">Mejorable</span>'}</td>
                     </tr>
                 `;
@@ -2145,7 +2532,7 @@
                             <span class="badge badge-primary" style="font-weight: 800;">SEMANA ${fb.week}</span>
                             <span style="font-weight: 600; font-family: monospace;">${new Date(fb.date).toLocaleDateString()}</span>
                         </div>
-                        <div style="font-weight: 700; color: var(--primary-color);">${fb.weight ? fb.weight + ' kg' : '--- kg'}</div>
+                        <div style="font-weight: 700; color: var(--primary-color);">${fb.weight ? (Math.round(fb.weight * 100) / 100) + ' kg' : '--- kg'}</div>
                     </div>
                     <div class="card-body" style="padding: 20px;">
                         <div style="display: flex; flex-wrap: wrap; gap: 15px;">
@@ -2161,7 +2548,7 @@
 
         function saveEditClientInfo() {
             try {
-                const weight = parseFloat(document.getElementById('editWeight').value) || 0;
+                const weight = document.getElementById('editWeight').value ? Math.round(parseFloat(document.getElementById('editWeight').value) * 100) / 100 : 0;
                 const height = parseFloat(document.getElementById('editHeight').value) || 0;
                 const age = parseInt(document.getElementById('editAge').value) || 0;
 
@@ -2248,6 +2635,27 @@
                     weightHistory: history
                 };
 
+                const newStatus = document.getElementById('editStatus').value;
+                if (newStatus === 'active' && currentClient.status !== 'active') {
+                    const allClients = window.Clients ? window.Clients.getAll() : [];
+                    const activeCount = allClients.filter(c => c.status === 'active').length;
+                    
+                    const activeId = localStorage.getItem('activeTrainerId') || 'default';
+                    const platformRaw = localStorage.getItem('saasFitnessPlatform');
+                    let trainerPlan = null;
+                    if (platformRaw) {
+                        const platformData = JSON.parse(platformRaw);
+                        const trainers = platformData.trainers || [];
+                        const t = trainers.find(tr => tr.id === activeId);
+                        if (t) trainerPlan = t.plan;
+                    }
+
+                    if (trainerPlan === 'Plan Basic' && activeCount >= 15) {
+                        showToast('⚠️ Límite alcanzado: El Plan Basic está limitado a un máximo de 15 clientes activos. Por favor, actualiza tu plan a PRO o ELITE para activar más clientes.', 'error');
+                        return;
+                    }
+                }
+
                 Clients.update(clientId, updates);
                 showToast('Información actualizada e historial registrado', 'success');
                 window.closeModal();
@@ -2257,6 +2665,240 @@
                 showToast('Error al guardar: ' + e.message, 'error');
             }
         }
+
+        // --- AUTOSAVE IMPLEMENTATION ---
+        let autosaveClientTimeout = null;
+        window.triggerAutosaveClientInfo = function() {
+            if (autosaveClientTimeout) clearTimeout(autosaveClientTimeout);
+            autosaveClientTimeout = setTimeout(() => {
+                window.autosaveClientInfo(false);
+            }, 500);
+        };
+
+        window.autosaveClientInfo = function(forceHistory = false) {
+            if (!currentClient) return;
+            const editWeightEl = document.getElementById('editWeight');
+            if (!editWeightEl) return; // Modal not open
+            
+            try {
+                const weight = editWeightEl.value ? Math.round(parseFloat(editWeightEl.value) * 100) / 100 : 0;
+                const height = parseFloat(document.getElementById('editHeight').value) || 0;
+                const age = parseInt(document.getElementById('editAge').value) || 0;
+
+                const waist = parseFloat(document.getElementById('editWaist').value) || 0;
+                const glute = parseFloat(document.getElementById('editGlute').value) || 0;
+                const chest = parseFloat(document.getElementById('editChest').value) || 0;
+                const arm = parseFloat(document.getElementById('editArm').value) || 0;
+                const leg = parseFloat(document.getElementById('editLeg').value) || 0;
+
+                const bmi = (weight && height) ? (weight / ((height / 100) ** 2)).toFixed(1) : 0;
+
+                const techUpdates = {
+                    weight: weight,
+                    height: height,
+                    age: age,
+                    waist: waist,
+                    glute: glute,
+                    chest: chest,
+                    arm: arm,
+                    leg: leg,
+                    goals: document.getElementById('editGoals').value,
+                    injuries: document.getElementById('editInjuries').value,
+                    allergies: document.getElementById('editAllergies').value,
+                    notes: document.getElementById('editNotes').value,
+                    targetMacros: {
+                        calories: parseInt(document.getElementById('editPlanCals').value) || 0,
+                        protein: parseInt(document.getElementById('editPlanP').value) || 0,
+                        carbs: parseInt(document.getElementById('editPlanC').value) || 0,
+                        fat: parseInt(document.getElementById('editPlanF').value) || 0
+                    }
+                };
+
+                let history = [...(currentClient.weightHistory || [])];
+                
+                if (forceHistory) {
+                    const lastRecord = history[history.length - 1];
+                    const hasChanged = !lastRecord ||
+                        lastRecord.weight !== weight ||
+                        lastRecord.waist !== waist ||
+                        lastRecord.glute !== glute ||
+                        lastRecord.chest !== chest ||
+                        lastRecord.arm !== arm ||
+                        lastRecord.leg !== leg;
+
+                    if (hasChanged) {
+                        history.push({
+                            date: new Date().toISOString(),
+                            weight: weight,
+                            bmi: bmi,
+                            waist: waist,
+                            glute: glute,
+                            chest: chest,
+                            arm: arm,
+                            leg: leg
+                        });
+                    }
+                }
+
+                const updates = {
+                    name: document.getElementById('editName').value,
+                    email: document.getElementById('editEmail').value,
+                    phone: document.getElementById('editPhone').value,
+                    status: document.getElementById('editStatus').value,
+                    reviewDay: document.getElementById('editReviewDay').value,
+                    reviewFrequency: document.getElementById('editReviewFrequency').value,
+                    specificReviewDate: document.getElementById('editSpecificReviewDate') ? document.getElementById('editSpecificReviewDate').value : null,
+                    reviewDaysOfMonth: document.getElementById('editReviewDaysOfMonth') ? document.getElementById('editReviewDaysOfMonth').value : null,
+
+                    technicalData: {
+                        ...techUpdates,
+                        bodyFat: parseFloat(document.getElementById('calculatedBodyFat').textContent) || 0,
+                        skinfolds: {
+                            pec: parseFloat(document.getElementById('s_pec').value) || 0,
+                            axilla: parseFloat(document.getElementById('s_axilla').value) || 0,
+                            sub: parseFloat(document.getElementById('s_sub').value) || 0,
+                            tri: parseFloat(document.getElementById('s_tri').value) || 0,
+                            abd: parseFloat(document.getElementById('s_abd').value) || 0,
+                            supra: parseFloat(document.getElementById('s_supra').value) || 0,
+                            thigh: parseFloat(document.getElementById('s_thigh').value) || 0
+                        },
+                        skinfoldsEnabled: document.getElementById('editSkinfoldsEnabled').checked
+                    },
+                    gender: document.getElementById('editGender').value,
+                    weightHistory: history
+                };
+
+                Clients.update(clientId, updates);
+                currentClient = { ...currentClient, ...updates };
+            } catch (e) {
+                console.error("Autosave client info error:", e);
+            }
+        };
+
+        let cardioAutosaveTimeout = null;
+        window.triggerAutosaveCardio = function() {
+            if (cardioAutosaveTimeout) clearTimeout(cardioAutosaveTimeout);
+            cardioAutosaveTimeout = setTimeout(async () => {
+                const cardioEl = document.getElementById('cardioEditor');
+                if (!cardioEl) return;
+                const content = cardioEl.innerHTML;
+                const published = document.getElementById('cardioPublishedToggle').checked;
+                const url = document.getElementById('cardioUrl').value;
+                const urlVisible = document.getElementById('cardioUrlVisibleToggle').checked;
+                
+                try {
+                    await Clients.update(clientId, { 
+                        cardio: content,
+                        cardioPublished: published,
+                        cardioUrl: url,
+                        cardioUrlVisible: urlVisible
+                    });
+                    if (currentClient) {
+                        currentClient.cardio = content;
+                        currentClient.cardioPublished = published;
+                        currentClient.cardioUrl = url;
+                        currentClient.cardioUrlVisible = urlVisible;
+                    }
+                } catch (e) {
+                    console.error("Autosave cardio error:", e);
+                }
+            }, 1000);
+        };
+
+        let supplementationAutosaveTimeout = null;
+        window.triggerAutosaveSupplementation = function() {
+            if (supplementationAutosaveTimeout) clearTimeout(supplementationAutosaveTimeout);
+            supplementationAutosaveTimeout = setTimeout(async () => {
+                const suppEl = document.getElementById('supplementationEditor');
+                if (!suppEl) return;
+                const content = suppEl.innerHTML;
+                const published = document.getElementById('suppPublishedToggle').checked;
+                const url = document.getElementById('supplementationUrl').value;
+                const urlVisible = document.getElementById('suppUrlVisibleToggle').checked;
+                
+                try {
+                    await Clients.update(clientId, { 
+                        supplementation: content,
+                        supplementationPublished: published,
+                        supplementationUrl: url,
+                        supplementationUrlVisible: urlVisible
+                    });
+                    if (currentClient) {
+                        currentClient.supplementation = content;
+                        currentClient.supplementationPublished = published;
+                        currentClient.supplementationUrl = url;
+                        currentClient.supplementationUrlVisible = urlVisible;
+                    }
+                    if (typeof updateSuppPreview === 'function') updateSuppPreview();
+                } catch (e) {
+                    console.error("Autosave supplementation error:", e);
+                }
+            }, 1000);
+        };
+
+        // Global Event Delegation for autosaving client details, cardio, and supplementation
+        document.addEventListener('input', function(e) {
+            const id = e.target.id;
+            if (!id) return;
+            
+            if ([
+                'editName', 'editEmail', 'editPhone', 'editStatus',
+                'editReviewDay', 'editReviewFrequency', 'editReviewDaysOfMonth', 'editSpecificReviewDate',
+                'editWeight', 'editHeight', 'editAge', 'editGender', 'editSkinfoldsEnabled',
+                's_pec', 's_axilla', 's_sub', 's_tri', 's_abd', 's_supra', 's_thigh',
+                'editWaist', 'editGlute', 'editChest', 'editArm', 'editLeg',
+                'editPlanCals', 'editPlanP', 'editPlanC', 'editPlanF',
+                'editGoals', 'editInjuries', 'editAllergies', 'editNotes'
+            ].includes(id)) {
+                window.triggerAutosaveClientInfo();
+            }
+            if (id === 'cardioEditor' || id === 'cardioUrl') {
+                window.triggerAutosaveCardio();
+            }
+            if (id === 'supplementationEditor' || id === 'supplementationUrl') {
+                window.triggerAutosaveSupplementation();
+            }
+            if (id === 'inlineWeekName' || id === 'editRoutineName') {
+                if (typeof window.autosaveInlineWeek === 'function') window.autosaveInlineWeek();
+                if (typeof window.autosaveClientRoutine === 'function') window.autosaveClientRoutine();
+            }
+        });
+
+        document.addEventListener('change', function(e) {
+            const id = e.target.id;
+            if (!id) return;
+            
+            if ([
+                'editReviewDay', 'editReviewFrequency', 'editGender', 'editSkinfoldsEnabled', 'editStatus'
+            ].includes(id)) {
+                window.triggerAutosaveClientInfo();
+            }
+            if (id === 'cardioPublishedToggle' || id === 'cardioUrlVisibleToggle') {
+                window.triggerAutosaveCardio();
+            }
+            if (id === 'suppPublishedToggle' || id === 'suppUrlVisibleToggle') {
+                window.triggerAutosaveSupplementation();
+            }
+        });
+
+        document.addEventListener('blur', function(e) {
+            const id = e.target.id;
+            if (!id) return;
+            
+            if ([
+                'editWeight', 'editWaist', 'editGlute', 'editChest', 'editArm', 'editLeg'
+            ].includes(id)) {
+                window.autosaveClientInfo(true); // forceHistory = true
+            }
+        }, true); // Use capture phase for blur event
+
+        // Intercept closeModal to refresh UI in case modal closed without clicking "Guardar Cambios"
+        const originalCloseModal = window.closeModal;
+        window.closeModal = function(btnElement) {
+            if (originalCloseModal) originalCloseModal(btnElement);
+            if (typeof loadClientData === 'function') loadClientData();
+        };
+        // --- END OF AUTOSAVE IMPLEMENTATION ---
 
 
 
@@ -2268,6 +2910,8 @@
 
         function updateAssignedRoutineView() {
             const container = document.getElementById('assignedRoutineContent');
+            const brand = ((typeof BrandConfig !== 'undefined' && BrandConfig.get) ? BrandConfig.get() : null) || {};
+            const showVideosConfig = brand.clientSettings?.showExerciseVideos !== false;
             const blocks = TrainingBlocks.getByClientId(clientId).sort((a, b) => {
                 // Custom sort: Active first, then Planned (by date), then Completed (desc)
                 if (a.status === 'active') return -1;
@@ -2346,14 +2990,20 @@
                 } else {
                     // Function to categorize exercises by muscle group
                     const categorizeExercise = (exerciseName) => {
+                        const cleanName = (exerciseName || '').trim().toLowerCase();
+                        // 1. Search in Media library first (includes custom exercises)
+                        const media = (typeof Media !== 'undefined' && typeof Media.getAll === 'function' ? Media.getAll() : []).filter(m => m.category === 'exercise');
+                        const matchedMedia = media.find(m => (m.title || '').trim().toLowerCase() === cleanName);
+                        if (matchedMedia && matchedMedia.muscleGroup) return matchedMedia.muscleGroup;
+
+                        // 2. Search in muscleConfig
                         const data = getData();
                         const muscleConfig = data.muscleGroupsConfig;
                         if (muscleConfig && muscleConfig.exercises) {
-                            // Search which group contains this exercise (checking .name within objects)
                             for (const group in muscleConfig.exercises) {
                                 const found = (muscleConfig.exercises[group] || []).some(ex => {
                                     const exName = typeof ex === 'string' ? ex : ex.name;
-                                    return (exName || '').trim().toLowerCase() === (exerciseName || '').trim().toLowerCase();
+                                    return (exName || '').trim().toLowerCase() === cleanName;
                                 });
                                 if (found) return group;
                             }
@@ -2411,16 +3061,31 @@
                             const data = getData();
                             const muscleConfig = data.muscleGroupsConfig || { groups: [], exercises: {} };
                             
-                            let allExercisesList = [];
+                            const exercisesMap = new Map();
+                            
+                            // 1. Cargar desde configuración de grupos musculares (ejercicios del sistema/inyectados)
                             if (muscleConfig.exercises) {
                                 for (const group in muscleConfig.exercises) {
                                     (muscleConfig.exercises[group] || []).forEach(ex => {
-                                        const exName = (typeof ex === 'string') ? ex : (ex.name || 'Sin nombre');
-                                        allExercisesList.push({ name: exName, group: group });
+                                        const exName = typeof ex === 'string' ? ex : ex.name;
+                                        if (exName) {
+                                            const cleanName = exName.trim();
+                                            exercisesMap.set(cleanName.toLowerCase(), { name: cleanName, group: group });
+                                        }
                                     });
                                 }
                             }
-                            const parameterizedExercises = allExercisesList.sort((a,b) => (a.name || '').localeCompare(b.name || ''));
+                            
+                            // 2. Cargar desde la biblioteca multimedia (ejercicios personalizados del entrenador)
+                            const mediaExercises = (typeof Media !== 'undefined' && typeof Media.getAll === 'function' ? Media.getAll() : []).filter(m => m.category === 'exercise');
+                            mediaExercises.forEach(m => {
+                                if (m.title) {
+                                    const cleanName = m.title.trim();
+                                    exercisesMap.set(cleanName.toLowerCase(), { name: cleanName, group: m.muscleGroup || 'Otros' });
+                                }
+                            });
+                            
+                            const parameterizedExercises = Array.from(exercisesMap.values()).sort((a,b) => (a.name || '').localeCompare(b.name || ''));
 
                             const editingDays = editingRoutine.days || [];
 
@@ -2463,7 +3128,11 @@
                                                                     <span style="color: var(--accent-color); font-weight: 700; font-size: 0.9rem; white-space: nowrap;">Día ${dIdx + 1}</span>
                                                                     <input type="text" class="form-input" placeholder="Nombre (Ej: Piernas, Empuje...)" value="${day.name || ''}" onchange="updateInlineDayName(${dIdx}, this.value)" style="font-size: 0.85rem; font-weight: 600; padding: 6px 10px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); width: 100%;">
                                                                 </div>
-                                                                <button class="btn btn-xs btn-outline" onclick="removeInlineDay(${dIdx})" style="color: var(--error-color); border-color: rgba(239, 68, 68, 0.2); padding: 4px 10px;" title="Eliminar Día">🗑️ Eliminar Día</button>
+                                                                <div style="display: flex; align-items: center; gap: 4px;">
+                                                                    <button class="btn btn-xs btn-outline" onclick="moveInlineDay(${dIdx}, -1)" title="Subir Día" style="padding: 4px 8px; border: 1px solid rgba(255,255,255,0.1); border-radius: 4px; ${dIdx === 0 ? 'opacity: 0.3; pointer-events: none;' : ''}" ${dIdx === 0 ? 'disabled' : ''}>⬆️</button>
+                                                                    <button class="btn btn-xs btn-outline" onclick="moveInlineDay(${dIdx}, 1)" title="Bajar Día" style="padding: 4px 8px; border: 1px solid rgba(255,255,255,0.1); border-radius: 4px; ${dIdx === editingDays.length - 1 ? 'opacity: 0.3; pointer-events: none;' : ''}" ${dIdx === editingDays.length - 1 ? 'disabled' : ''}>⬇️</button>
+                                                                    <button class="btn btn-xs btn-outline" onclick="removeInlineDay(${dIdx})" style="color: var(--error-color); border-color: rgba(239, 68, 68, 0.2); padding: 4px 10px;" title="Eliminar Día">🗑️ Eliminar Día</button>
+                                                                </div>
                                                             </div>
                                                             
                                                             <div style="overflow-x: auto;">
@@ -2547,6 +3216,7 @@
                                             <div class="flex gap-xs">
                                                 <button class="btn-action" title="Editar Semana" onclick="editBlockWeek('${block.id}', ${idx})">✏️</button>
                                                 <button class="btn-action btn-action-danger" title="Eliminar Semana" onclick="window.deleteWeek('${block.id}', ${idx})">🗑️</button>
+                                                <button class="btn-action" title="Limpiar Semana (vaciar ejercicios)" onclick="window.clearWeek('${block.id}', ${idx})">🧹</button>
                                             </div>
                                         </div>
 
@@ -2577,9 +3247,9 @@
                                                                 <table class="table" style="width: 100%; border-collapse: collapse; font-size: 0.85rem;">
                                                                     <thead>
                                                                         <tr style="border-bottom: 1px solid rgba(255,255,255,0.1);">
-                                                                            <th style="text-align: left; padding: 6px; color: var(--text-muted); font-weight: 600; font-size: 0.75rem; width: 35%;">EJERCICIO</th>
+                                                                            <th style="text-align: left; padding: 6px; color: var(--text-muted); font-weight: 600; font-size: 0.75rem; width: ${showVideosConfig ? '35%' : '45%'};">EJERCICIO</th>
                                                                             <th style="text-align: left; padding: 6px; color: var(--text-muted); font-weight: 600; font-size: 0.75rem; width: 15%;">GRUPO</th>
-                                                                            <th style="text-align: center; padding: 6px; color: var(--text-muted); font-weight: 600; font-size: 0.75rem; width: 10%;">VIDEO</th>
+                                                                            ${showVideosConfig ? `<th style="text-align: center; padding: 6px; color: var(--text-muted); font-weight: 600; font-size: 0.75rem; width: 10%;">VIDEO</th>` : ''}
                                                                             <th style="text-align: center; padding: 6px; color: var(--text-muted); font-weight: 600; font-size: 0.75rem; width: 10%;">SERIES</th>
                                                                             <th style="text-align: center; padding: 6px; color: var(--text-muted); font-weight: 600; font-size: 0.75rem; width: 15%;">REPS</th>
                                                                             <th style="text-align: center; padding: 6px; color: var(--text-muted); font-weight: 600; font-size: 0.75rem; width: 15%;">RIR</th>
@@ -2623,13 +3293,15 @@
                                                                                     </div>
                                                                                 </td>
                                                                                 <td style="padding: 6px; font-size: 0.75rem; color: var(--text-muted);">${categorizeExercise(ex.name)}</td>
-                                                                                <td style="padding: 6px; text-align: center;">
-                                                                                    ${videoUrl ? `
-                                                                                        <button class="btn btn-xs btn-outline" onclick="window.open('${videoUrl}', '_blank')" title="Ver Video" style="padding: 4px 8px; font-size: 0.75rem; border: 1px solid rgba(255,255,255,0.15); width: auto; height: auto;">
-                                                                                            📹 Ver
-                                                                                        </button>
-                                                                                    ` : '<span style="opacity: 0.2">--</span>'}
-                                                                                </td>
+                                                                                ${showVideosConfig ? `
+                                                                                    <td style="padding: 6px; text-align: center;">
+                                                                                        ${videoUrl ? `
+                                                                                            <button class="btn btn-xs btn-outline" onclick="window.open('${videoUrl}', '_blank')" title="Ver Video" style="padding: 4px 8px; font-size: 0.75rem; border: 1px solid rgba(255,255,255,0.15); width: auto; height: auto;">
+                                                                                                📹 Ver
+                                                                                            </button>
+                                                                                        ` : '<span style="opacity: 0.2">--</span>'}
+                                                                                    </td>
+                                                                                ` : ''}
                                                                                 <td style="padding: 6px; text-align: center; color: var(--accent-color); font-weight: 600;">${Array.isArray(ex.sets) ? ex.sets.length : (ex.sets || 0)}</td>
                                                                                 <td style="padding: 6px; text-align: center;">${ex.reps || '-'}</td>
                                                                                 <td style="padding: 6px; text-align: center;">
@@ -2639,7 +3311,7 @@
                                                                             `;
                         }).join('')}
                                                                         ${(!day.exercises || day.exercises.length === 0) ? `
-                                                                            <tr><td colspan="5" style="padding: 12px; text-align: center; color: var(--text-muted); font-style: italic;">Sin ejercicios configurados</td></tr>
+                                                                            <tr><td colspan="${showVideosConfig ? 6 : 5}" style="padding: 12px; text-align: center; color: var(--text-muted); font-style: italic;">Sin ejercicios configurados</td></tr>
                                                                         ` : ''}
                                                                     </tbody>
                                                                 </table>
@@ -2699,6 +3371,9 @@
                                             onclick="toggleBlockPublish('${block.id}')">
                                         ${block.published ? 'Despublicar' : '📢 Publicar'}
                                     </button>
+                                    <button class="btn btn-sm btn-outline" style="padding: 6px 12px; font-size: 0.7rem; color: var(--primary-color); border-color: rgba(var(--primary-rgb,0,217,255),0.4);" title="Guardar bloque como plantilla reutilizable" onclick="saveBlockAsTemplate('${block.id}')">
+                                        📌 Plantilla
+                                    </button>
                                     <button class="btn btn-sm btn-outline" style="padding: 6px 10px; min-width: unset;" title="Editar Bloque" onclick="editBlock('${block.id}')">
                                         ✏️
                                     </button>
@@ -2745,6 +3420,77 @@
         let activeDayIndex = 0;
         let inlineEditingBlockId = null;
         let inlineEditingWeekIdx = null;
+
+        function saveBlockAsTemplate(blockId) {
+            const block = TrainingBlocks.getAll().find(b => b.id === blockId);
+            if (!block) return;
+
+            if (!block.weeks || block.weeks.length === 0) {
+                showToast('Este bloque no tiene semanas diseñadas todavía', 'error');
+                return;
+            }
+
+            // Build default name from block name
+            const defaultName = block.name ? `Plantilla: ${block.name}` : 'Plantilla sin nombre';
+
+            const content = `
+                <div class="form-group">
+                    <label class="form-label">Nombre de la Plantilla</label>
+                    <input type="text" id="templateNameInput" class="form-input" value="${defaultName}" placeholder="Ej: Mesociclo Glúteos 4 semanas">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Descripción (opcional)</label>
+                    <textarea id="templateDescInput" class="form-input" rows="2" placeholder="Notas sobre la plantilla..."></textarea>
+                </div>
+                <p style="font-size:0.78rem; color: var(--text-muted); margin-top: 4px;">
+                    Se guardarán las ${block.weeks.length} semana(s) con todos sus días y ejercicios.
+                    Podrás reutilizarla en cualquier cliente desde <strong>Rutinas</strong>.
+                </p>
+            `;
+
+            showModal('📌 Guardar como Plantilla', content, [
+                { text: 'Cancelar', class: 'btn-secondary', onclick: 'this.closest(".modal-overlay").remove()' },
+                { text: '💾 Guardar Plantilla', class: 'btn-primary', onclick: `doSaveBlockAsTemplate('${blockId}')` }
+            ]);
+        }
+
+        function doSaveBlockAsTemplate(blockId) {
+            const block = TrainingBlocks.getAll().find(b => b.id === blockId);
+            if (!block) return;
+
+            const nameInput = document.getElementById('templateNameInput');
+            const descInput = document.getElementById('templateDescInput');
+            const name = (nameInput ? nameInput.value.trim() : '') || block.name || 'Plantilla';
+            const description = descInput ? descInput.value.trim() : '';
+
+            // Flatten all weeks into days array for the Routines model
+            // We store weeks structure under a custom property too
+            const allDays = [];
+            (block.weeks || []).forEach((week, wIdx) => {
+                (week.days || []).forEach(day => {
+                    allDays.push({
+                        ...JSON.parse(JSON.stringify(day)),
+                        weekNumber: week.number || (wIdx + 1),
+                        weekName: week.name || `Semana ${wIdx + 1}`
+                    });
+                });
+            });
+
+            const newTemplate = Routines.create({
+                name,
+                description,
+                duration: `${block.weeks.length} semanas`,
+                days: allDays,
+                weeks: JSON.parse(JSON.stringify(block.weeks)), // store full structure
+                goal: block.goal || '',
+                sourceBlockId: block.id,
+                isTemplate: true,
+                createdAt: new Date().toISOString()
+            });
+
+            document.querySelector('.modal-overlay')?.remove();
+            showToast(`✅ Plantilla "${name}" guardada correctamente`, 'success');
+        }
 
         function importTemplateToBlock(blockId) {
             const routines = Routines.getAll();
@@ -2862,6 +3608,40 @@
                 showToast('Error al eliminar semana', 'error');
             }
         }
+        function clearWeek(blockId, weekIdx) {
+            if (!window.confirm('¿Seguro que deseas vaciar/limpiar todos los ejercicios de esta semana? Se mantendrán los días y su distribución.')) return;
+
+            // Force number
+            weekIdx = parseInt(weekIdx);
+
+            const blocks = TrainingBlocks.getAll();
+            const blockIndex = blocks.findIndex(b => b.id === blockId);
+
+            if (blockIndex === -1) {
+                console.error('Bloque no encontrado');
+                showToast('Error: Bloque no encontrado', 'error');
+                return;
+            }
+
+            const block = blocks[blockIndex];
+
+            if (block && block.weeks && block.weeks[weekIdx]) {
+                const week = block.weeks[weekIdx];
+                if (week.days) {
+                    week.days.forEach(day => {
+                        day.exercises = [];
+                    });
+                }
+
+                TrainingBlocks.update(blockId, { weeks: block.weeks });
+                loadClientData();
+                showToast('Semana vaciada correctamente', 'success');
+            } else {
+                console.error('No se pudo encontrar la semana', blockId, weekIdx);
+                showToast('Error al vaciar semana', 'error');
+            }
+        }
+        window.clearWeek = clearWeek;
         window.deleteWeek = deleteWeek;
 
         function toggleBlockPublish(blockId) {
@@ -2973,9 +3753,30 @@
         }
         window.editBlockWeek = editBlockWeek;
 
+        window.autosaveInlineWeek = function() {
+            if (!inlineEditingBlockId || inlineEditingWeekIdx === null || !editingRoutine) return;
+            const newNameEl = document.getElementById('inlineWeekName');
+            const newName = newNameEl ? newNameEl.value.trim() : '';
+            
+            try {
+                const blocks = TrainingBlocks.getAll();
+                const block = blocks.find(b => b.id === inlineEditingBlockId);
+                if (block) {
+                    block.weeks[inlineEditingWeekIdx].days = editingRoutine.days;
+                    if (newName) {
+                        block.weeks[inlineEditingWeekIdx].name = newName;
+                    }
+                    TrainingBlocks.update(inlineEditingBlockId, { weeks: block.weeks });
+                }
+            } catch(e) {
+                console.error("Autosave inline week error:", e);
+            }
+        };
+
         window.updateInlineDayName = function (dIdx, val) {
             if (editingRoutine && editingRoutine.days[dIdx]) {
                 editingRoutine.days[dIdx].name = val;
+                window.autosaveInlineWeek();
             }
         };
 
@@ -2984,6 +3785,7 @@
                 if (!editingRoutine.days) editingRoutine.days = [];
                 editingRoutine.days.push({ name: `Día ${editingRoutine.days.length + 1}`, exercises: [] });
                 updateAssignedRoutineView();
+                window.autosaveInlineWeek();
             }
         };
 
@@ -2992,13 +3794,29 @@
                 if (confirm('¿Seguro que quieres eliminar este día de entrenamiento y todos sus ejercicios?')) {
                     editingRoutine.days.splice(dIdx, 1);
                     updateAssignedRoutineView();
+                    window.autosaveInlineWeek();
                 }
             }
+        };
+
+        window.moveInlineDay = function (dIdx, direction) {
+            if (!editingRoutine || !editingRoutine.days) return;
+            const targetIdx = dIdx + direction;
+            if (targetIdx < 0 || targetIdx >= editingRoutine.days.length) return;
+            
+            // Swap days
+            const temp = editingRoutine.days[dIdx];
+            editingRoutine.days[dIdx] = editingRoutine.days[targetIdx];
+            editingRoutine.days[targetIdx] = temp;
+            
+            updateAssignedRoutineView();
+            window.autosaveInlineWeek();
         };
 
         window.updateInlineExercise = function (dIdx, exIdx, field, val) {
             if (editingRoutine && editingRoutine.days[dIdx] && editingRoutine.days[dIdx].exercises[exIdx]) {
                 editingRoutine.days[dIdx].exercises[exIdx][field] = val;
+                window.autosaveInlineWeek();
             }
         };
 
@@ -3007,6 +3825,7 @@
                 if (!editingRoutine.days[dIdx].exercises) editingRoutine.days[dIdx].exercises = [];
                 editingRoutine.days[dIdx].exercises.push({ name: '', sets: '', reps: '', intensity: '', notes: '' });
                 updateAssignedRoutineView();
+                window.autosaveInlineWeek();
             }
         };
 
@@ -3023,6 +3842,7 @@
             if (editingRoutine && editingRoutine.days[dIdx] && editingRoutine.days[dIdx].exercises) {
                 editingRoutine.days[dIdx].exercises.splice(exIdx, 1);
                 updateAssignedRoutineView();
+                window.autosaveInlineWeek();
             }
         };
 
@@ -3037,6 +3857,7 @@
                 exercises[exIdx] = exercises[targetIdx];
                 exercises[targetIdx] = temp;
                 updateAssignedRoutineView();
+                window.autosaveInlineWeek();
             }
         };
 
@@ -3189,17 +4010,31 @@
             const data = getData();
             const muscleConfig = data.muscleGroupsConfig || { groups: [], exercises: {} };
             
-            // Flatten exercises for datalist
-            let allExercises = [];
+            const exercisesMap = new Map();
+            
+            // 1. Cargar desde configuración de grupos musculares (ejercicios del sistema/inyectados)
             if (muscleConfig.exercises) {
                 for (const group in muscleConfig.exercises) {
-                    muscleConfig.exercises[group].forEach(ex => {
-                        const exName = (typeof ex === 'string') ? ex : (ex.name || 'Sin nombre');
-                        allExercises.push({ name: exName, group: group });
+                    (muscleConfig.exercises[group] || []).forEach(ex => {
+                        const exName = typeof ex === 'string' ? ex : ex.name;
+                        if (exName) {
+                            const cleanName = exName.trim();
+                            exercisesMap.set(cleanName.toLowerCase(), { name: cleanName, group: group });
+                        }
                     });
                 }
             }
-            const parameterizedExercises = allExercises.sort((a,b) => (a.name || '').localeCompare(b.name || ''));
+            
+            // 2. Cargar desde la biblioteca multimedia (ejercicios personalizados del entrenador)
+            const mediaExercises = (typeof Media !== 'undefined' && typeof Media.getAll === 'function' ? Media.getAll() : []).filter(m => m.category === 'exercise');
+            mediaExercises.forEach(m => {
+                if (m.title) {
+                    const cleanName = m.title.trim();
+                    exercisesMap.set(cleanName.toLowerCase(), { name: cleanName, group: m.muscleGroup || 'Otros' });
+                }
+            });
+            
+            const parameterizedExercises = Array.from(exercisesMap.values()).sort((a,b) => (a.name || '').localeCompare(b.name || ''));
 
             return `
                 <div class="day-details card p-md" style="background: rgba(var(--primary-color-rgb), 0.05); border: 1px solid rgba(var(--primary-color-rgb), 0.1);">
@@ -3207,7 +4042,11 @@
                         <div class="form-group mb-none" style="flex: 1; margin-right: 10px;">
                             <input type="text" class="form-input" placeholder="Nombre del día" value="${day.name || ''}" onchange="updateRoutineDayName(${activeDayIndex}, this.value)" style="font-size: 0.9rem; padding: 8px;">
                         </div>
-                        <button class="btn btn-sm btn-danger" onclick="removeRoutineDay(${activeDayIndex})" style="padding: 6px 12px;">×</button>
+                        <div class="flex gap-xs" style="display: flex; align-items: center; gap: 4px;">
+                             <button class="btn btn-sm btn-outline" onclick="moveRoutineDay(-1)" title="Mover Izquierda" style="padding: 6px 10px; ${activeDayIndex === 0 ? 'opacity: 0.3; pointer-events: none;' : ''}" ${activeDayIndex === 0 ? 'disabled' : ''}>◀</button>
+                             <button class="btn btn-sm btn-outline" onclick="moveRoutineDay(1)" title="Mover Derecha" style="padding: 6px 10px; ${activeDayIndex === editingRoutine.days.length - 1 ? 'opacity: 0.3; pointer-events: none;' : ''}" ${activeDayIndex === editingRoutine.days.length - 1 ? 'disabled' : ''}>▶</button>
+                             <button class="btn btn-sm btn-danger" onclick="removeRoutineDay(${activeDayIndex})" style="padding: 6px 12px;">×</button>
+                        </div>
                     </div>
 
                     ${parameterizedExercises.length > 0 ? `
@@ -3277,32 +4116,73 @@
                 editingRoutine.days.splice(idx, 1);
                 activeDayIndex = Math.max(0, activeDayIndex - 1);
                 renderRoutineEditor();
+                window.autosaveClientRoutine();
             }
         }
+
+        window.moveRoutineDay = function (direction) {
+            if (!editingRoutine || !editingRoutine.days) return;
+            const targetIdx = activeDayIndex + direction;
+            if (targetIdx < 0 || targetIdx >= editingRoutine.days.length) return;
+            
+            // Swap days
+            const temp = editingRoutine.days[activeDayIndex];
+            editingRoutine.days[activeDayIndex] = editingRoutine.days[targetIdx];
+            editingRoutine.days[targetIdx] = temp;
+            
+            activeDayIndex = targetIdx;
+            renderRoutineEditor();
+            window.autosaveClientRoutine();
+        };
 
         window.setEditorActiveDay = function (idx) {
             activeDayIndex = idx;
             renderRoutineEditor();
         }
 
+        window.autosaveClientRoutine = function() {
+            if (!editingRoutine) return;
+            const nameEl = document.getElementById('editRoutineName');
+            if (nameEl) editingRoutine.name = nameEl.value.trim() || editingRoutine.name;
+            
+            try {
+                if (editingContext && editingContext.type === 'block') {
+                    const blocks = TrainingBlocks.getAll();
+                    const block = blocks.find(b => b.id === editingContext.blockId);
+                    if (block) {
+                        block.weeks[editingContext.weekIdx].days = editingRoutine.days;
+                        TrainingBlocks.update(editingContext.blockId, { weeks: block.weeks });
+                    }
+                } else {
+                    Clients.update(clientId, { individualRoutine: editingRoutine });
+                }
+            } catch(e) {
+                console.error("Autosave client routine error:", e);
+            }
+        };
+
         window.updateRoutineDayName = function (idx, val) {
             editingRoutine.days[idx].name = val;
             renderRoutineEditor();
+            window.autosaveClientRoutine();
         }
 
         window.addRoutineExercise = function () {
             if (!editingRoutine.days[activeDayIndex].exercises) editingRoutine.days[activeDayIndex].exercises = [];
             editingRoutine.days[activeDayIndex].exercises.push({ name: '', sets: '', reps: '', intensity: '', notes: '' });
             renderRoutineEditor();
+            window.autosaveClientRoutine();
         }
 
         window.removeRoutineExercise = function (idx) {
             editingRoutine.days[activeDayIndex].exercises.splice(idx, 1);
             renderRoutineEditor();
+            window.autosaveClientRoutine();
         }
 
         window.updateRoutineExercise = function (exIdx, field, val) {
             editingRoutine.days[activeDayIndex].exercises[exIdx][field] = val;
+            window.autosaveClientRoutine();
         }
 
         window.saveClientRoutine = function () {
@@ -3411,43 +4291,99 @@
                     <div class="mt-lg pt-md" style="border-top: 1px solid rgba(255,255,255,0.1);">
                         <h4 class="text-muted mb-sm text-sm uppercase">Dietas Antiguas</h4>
                         <div class="grid gap-sm">
-                            ${currentClient.dietHistory.slice().reverse().map(h => `
-                                <div class="card p-sm flex-between" style="background: rgba(255,255,255,0.02);">
-                                    <div>
-                                        <div class="font-bold">${h.name.replace(/^(Copia\s*-\s*)+/gi, '').replace(/\s*\(Copia\)$/gi, '').replace(/\s*\(Archivada\)$/gi, '')}</div>
-                                        <div class="text-xs text-muted">Archivado: ${new Date(h.archivedDate).toLocaleDateString()}</div>
+                            ${currentClient.dietHistory.slice().reverse().map((h, idx) => {
+                                const originalIdx = currentClient.dietHistory.length - 1 - idx;
+                                const dietName = h.name || h.dietName || 'Dieta Archivada';
+                                const dateVal = h.archivedDate || h.archivedAt || new Date().toISOString();
+                                const formattedDate = new Date(dateVal).toLocaleDateString();
+                                const targetId = h.id || h.dietId;
+                                return `
+                                    <div class="card p-sm flex-between" style="background: rgba(255,255,255,0.02);">
+                                        <div>
+                                            <div class="font-bold">${dietName.replace(/^(Copia\s*-\s*)+/gi, '').replace(/\s*\(Copia\)$/gi, '').replace(/\s*\(Archivada\)$/gi, '')}</div>
+                                            <div class="text-xs text-muted">Archivado: ${formattedDate}</div>
+                                        </div>
+                                        <div style="display: flex; gap: 8px;">
+                                            <button class="btn btn-sm btn-outline" onclick="window.viewArchivedDiet('${targetId}')">Ver / Restaurar</button>
+                                            <button class="btn btn-sm btn-outline" style="border-color: rgba(255,100,100,0.3); color: #ff6b6b;" onclick="window.deleteArchivedDiet(${originalIdx})">✕</button>
+                                        </div>
                                     </div>
-                                    <button class="btn btn-sm btn-outline" onclick="window.viewArchivedDiet('${h.id}')">Ver / Restaurar</button>
-                                </div>
-                            `).join('')}
+                                `;
+                            }).join('')}
                         </div>
                     </div>
                 `;
             }
 
-            // 2. Handle empty states (No active diet)
-            if (!currentClient.assignedDiet) {
+            // 2. Retrieve all assigned diets
+            let assignedDietsList = [];
+            if (currentClient.assignedDiets && Array.isArray(currentClient.assignedDiets)) {
+                assignedDietsList = currentClient.assignedDiets.map(id => Diets.getById(id)).filter(Boolean);
+            } else if (currentClient.assignedDiet) {
+                const d = Diets.getById(currentClient.assignedDiet);
+                if (d) assignedDietsList = [d];
+            }
+
+            // Handle empty states (No active diet)
+            if (assignedDietsList.length === 0) {
                 container.innerHTML = `<div class="empty-state"><div class="empty-state-icon"></div><div class="empty-state-text">No hay dieta activa asignada</div></div>` + historyHtml;
                 return;
             }
-            const diet = Diets.getById(currentClient.assignedDiet);
-            if (!diet) {
-                container.innerHTML = `<div class="empty-state"><div class="empty-state-text">La dieta asignada ya no existe</div></div>` + historyHtml;
-                return;
+
+            // Guarantee window.editingDietId is one of the assigned diets
+            if (!window.editingDietId || !assignedDietsList.some(d => d.id === window.editingDietId)) {
+                window.editingDietId = assignedDietsList[0].id;
             }
 
-            // Set global editing ID for the diet-editor logic
-            window.editingDietId = currentClient.assignedDiet;
+            const activeDiet = Diets.getById(window.editingDietId);
 
-            // Render container for embedded editor + header actions
+            // Determine if activeDiet is published
+            let publishedDiets = currentClient.publishedDiets;
+            if (!Array.isArray(publishedDiets)) {
+                if (currentClient.dietPublished !== false) {
+                    publishedDiets = assignedDietsList.map(d => d.id);
+                } else {
+                    publishedDiets = [];
+                }
+            }
+            const isCurrentDietPublished = publishedDiets.includes(activeDiet.id);
+
+            // Render diet tabs / selector with status icons
+            let tabsHtml = `
+                <div class="flex flex-wrap gap-xs mb-md p-xs rounded-md" style="background: rgba(0,0,0,0.2); border: 1px solid rgba(255,255,255,0.05); align-items: center;">
+                    <span class="text-muted text-xs px-sm font-bold uppercase" style="letter-spacing: 0.05em;">Dietas asignadas (${assignedDietsList.length}):</span>
+                    ${assignedDietsList.map(d => {
+                        const isActive = d.id === window.editingDietId;
+                        const isPublishedBadge = publishedDiets.includes(d.id) ? '🟢' : '⚪';
+                        return `
+                            <button class="btn btn-xs ${isActive ? 'btn-primary' : 'btn-outline'}" 
+                                    style="font-size: 0.8rem; padding: 6px 12px; margin: 2px;"
+                                    onclick="window.selectEditingDiet('${d.id}')">
+                                ${isPublishedBadge} ${d.name}
+                            </button>
+                        `;
+                    }).join('')}
+                </div>
+            `;
+
+            // Actions block
             container.innerHTML = `
-                <div class="flex-end gap-sm mb-md">
-                   <button class="btn btn-sm ${currentClient.dietPublished ? 'btn-outline' : 'btn-primary'}" style="${currentClient.dietPublished ? 'border-color: #4cd137; color: #4cd137;' : ''}" onclick="window.toggleDietPublish()">
-                        ${currentClient.dietPublished ? '✅ Publicada' : '📢 Publicar al Cliente'}
-                   </button>
-                   <button class="btn btn-sm btn-outline" style="border-color: rgba(255,255,255,0.2); color: #aaa;" onclick="window.archiveCurrentDiet()">📦 Archivar</button>
-                   <button class="btn btn-sm btn-outline" style="border-color: rgba(255,100,100,0.3); color: #ff6b6b;" onclick="window.clearCurrentDiet()">🧹 Limpiar</button>
-                   <button class="btn btn-sm btn-outline" onclick="window.exportDietToPDF(Diets.getById(currentClient.assignedDiet), currentClient.name)">📄 PDF</button>
+                ${tabsHtml}
+                <div class="flex-between flex-wrap gap-sm mb-md p-sm rounded-md" style="background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.05);">
+                    <div class="flex align-center gap-xs">
+                        <span class="font-bold text-primary" style="font-size: 1.1rem;" id="currentDietEditorName">${activeDiet.name}</span>
+                        <button class="btn btn-xs btn-outline" style="padding: 2px 8px; font-size: 0.75rem;" onclick="window.renameEditingDiet()">📝 Renombrar</button>
+                    </div>
+                    <div class="flex gap-sm flex-wrap">
+                       <button class="btn btn-sm ${isCurrentDietPublished ? 'btn-outline' : 'btn-primary'}" style="${isCurrentDietPublished ? 'border-color: #4cd137; color: #4cd137;' : ''}" onclick="window.toggleDietPublish()">
+                            ${isCurrentDietPublished ? '✅ Publicada al Cliente' : '📢 Publicar al Cliente'}
+                       </button>
+                       <button class="btn btn-sm btn-outline" style="border-color: var(--primary-color); color: var(--primary-color);" onclick="window.saveCurrentDietAsTemplate()">💾 Guardar como Plantilla</button>
+                       <button class="btn btn-sm btn-outline" style="border-color: rgba(255,255,255,0.2); color: #aaa;" onclick="window.archiveCurrentDiet()">📦 Archivar</button>
+                       <button class="btn btn-sm btn-outline" style="border-color: rgba(255,100,100,0.3); color: #ff6b6b;" onclick="window.clearCurrentDiet()">🧹 Limpiar</button>
+                       <button class="btn btn-sm btn-outline" onclick="window.exportDietToPDF(Diets.getById(window.editingDietId), currentClient.name)">📄 PDF</button>
+                       <button class="btn btn-sm btn-outline" style="border-color: rgba(255,100,100,0.5); color: #ff6b6b;" onclick="window.unassignCurrentDiet()">❌ Quitar</button>
+                    </div>
                 </div>
                 <div id="embeddedDietEditor"></div>
                 ${historyHtml}
@@ -3459,23 +4395,121 @@
             }
         }
 
+        window.selectEditingDiet = function (dietId) {
+            window.editingDietId = dietId;
+            updateAssignedDietView();
+        };
+
+        window.saveCurrentDietAsTemplate = function () {
+            const dietId = window.editingDietId;
+            if (!dietId) return;
+            const diet = Diets.getById(dietId);
+            if (!diet) return;
+
+            const name = prompt('Introduce el nombre para la plantilla:', diet.name + ' - Plantilla');
+            if (name === null) return; // cancelado
+
+            const copy = JSON.parse(JSON.stringify(diet));
+            copy.id = null; // nuevo ID
+            copy.name = name.trim() || (diet.name + ' - Plantilla');
+            copy.isTemplate = true;
+            copy.createdAt = new Date().toISOString();
+
+            const newTemplate = Diets.create(copy);
+            if (newTemplate) {
+                showToast('Dieta guardada en la biblioteca de plantillas correctamente', 'success');
+            } else {
+                showToast('Error al guardar como plantilla', 'error');
+            }
+        };
+
+        window.renameEditingDiet = function () {
+            const diet = Diets.getById(window.editingDietId);
+            if (!diet) return;
+            const newName = prompt('Introduce el nuevo nombre para esta dieta:', diet.name);
+            if (newName && newName.trim()) {
+                Diets.update(diet.id, { name: newName.trim() });
+                showToast('Nombre de dieta actualizado', 'success');
+                updateAssignedDietView();
+            }
+        };
+
+        window.unassignCurrentDiet = function () {
+            if (!confirm('¿Estás seguro de desvincular esta dieta del cliente?')) return;
+            const dietId = window.editingDietId;
+            let assignedDiets = currentClient.assignedDiets || [];
+            if (!Array.isArray(assignedDiets)) {
+                assignedDiets = currentClient.assignedDiet ? [currentClient.assignedDiet] : [];
+            }
+            assignedDiets = assignedDiets.filter(id => id !== dietId);
+            
+            let publishedDiets = currentClient.publishedDiets || [];
+            if (Array.isArray(publishedDiets)) {
+                publishedDiets = publishedDiets.filter(id => id !== dietId);
+            }
+
+            let primaryDietId = currentClient.assignedDiet;
+            if (primaryDietId === dietId) {
+                primaryDietId = assignedDiets.length > 0 ? assignedDiets[0] : null;
+            }
+
+            Clients.update(clientId, {
+                assignedDiet: primaryDietId,
+                assignedDiets: assignedDiets,
+                publishedDiets: publishedDiets,
+                dietPublished: publishedDiets.length > 0
+            });
+
+            window.editingDietId = primaryDietId;
+            showToast('Dieta quitada del cliente', 'success');
+            loadClientData();
+        };
+
         window.toggleDietPublish = function () {
-            const isPublished = currentClient.dietPublished || false;
-            const newState = !isPublished;
-            Clients.update(currentClient.id, { dietPublished: newState });
-            showToast(newState ? 'Dieta visible para el cliente' : 'Dieta oculta (borrador)', 'success');
+            const dietId = window.editingDietId;
+            if (!dietId) return;
+
+            let publishedDiets = currentClient.publishedDiets;
+            if (!Array.isArray(publishedDiets)) {
+                if (currentClient.dietPublished !== false) {
+                    let assigned = currentClient.assignedDiets || [];
+                    if (!Array.isArray(assigned)) {
+                        assigned = currentClient.assignedDiet ? [currentClient.assignedDiet] : [];
+                    }
+                    publishedDiets = [...assigned];
+                } else {
+                    publishedDiets = [];
+                }
+            }
+
+            const index = publishedDiets.indexOf(dietId);
+            let isNowPublished = false;
+            if (index > -1) {
+                publishedDiets.splice(index, 1);
+            } else {
+                publishedDiets.push(dietId);
+                isNowPublished = true;
+            }
+
+            Clients.update(currentClient.id, { 
+                publishedDiets: publishedDiets,
+                dietPublished: publishedDiets.length > 0
+            });
+
+            showToast(isNowPublished ? 'Dieta publicada al cliente' : 'Dieta oculta (guardada como borrador)', 'success');
             loadClientData();
         };
 
         window.archiveCurrentDiet = function () {
-            if (!currentClient.assignedDiet) {
+            const activeId = window.editingDietId || currentClient.assignedDiet;
+            if (!activeId) {
                 showToast('No hay ninguna dieta asignada para archivar', 'warning');
                 return;
             }
             
-            if (confirm('¿Archivar la versión actual? Se guardará una copia exacta en el historial, y la dieta actual se despublicará del cliente para que solo tú la veas.')) {
+            if (confirm('¿Archivar la versión actual? Se guardará una copia exacta en el historial, y la dieta dejará de estar asignada como activa al cliente.')) {
                 try {
-                    const oldDiet = Diets.getById(currentClient.assignedDiet);
+                    const oldDiet = Diets.getById(activeId);
                     if (oldDiet) {
                         const archivedDietData = JSON.parse(JSON.stringify(oldDiet));
                         archivedDietData.name = oldDiet.name ? (oldDiet.name + ' (Archivada)') : 'Dieta Archivada';
@@ -3492,12 +4526,33 @@
                         });
                     }
 
+                    // Remove from assigned diets list
+                    let assignedDiets = currentClient.assignedDiets || [];
+                    if (!Array.isArray(assignedDiets)) {
+                        assignedDiets = currentClient.assignedDiet ? [currentClient.assignedDiet] : [];
+                    }
+                    assignedDiets = assignedDiets.filter(id => id !== activeId);
+
+                    let publishedDiets = currentClient.publishedDiets || [];
+                    if (Array.isArray(publishedDiets)) {
+                        publishedDiets = publishedDiets.filter(id => id !== activeId);
+                    }
+
+                    let primaryDietId = currentClient.assignedDiet;
+                    if (primaryDietId === activeId) {
+                        primaryDietId = assignedDiets.length > 0 ? assignedDiets[0] : null;
+                    }
+
                     Clients.update(currentClient.id, {
+                        assignedDiet: primaryDietId,
+                        assignedDiets: assignedDiets,
+                        publishedDiets: publishedDiets,
                         dietHistory: currentClient.dietHistory,
-                        dietPublished: false
+                        dietPublished: publishedDiets.length > 0
                     });
 
-                    showToast('Copia guardada en Dietas Antiguas. Dieta despublicada.', 'success');
+                    window.editingDietId = primaryDietId;
+                    showToast('Copia guardada en Dietas Antiguas y desvinculada de activas.', 'success');
                     loadClientData();
                 } catch (err) {
                     console.error("Error archivando dieta:", err);
@@ -3507,11 +4562,12 @@
         };
 
         window.clearCurrentDiet = function () {
-            if (!currentClient.assignedDiet) return;
+            const activeId = window.editingDietId || currentClient.assignedDiet;
+            if (!activeId) return;
             
             if (confirm('¿Limpiar dieta por completo? Se vaciarán TODOS los alimentos y opciones introducidas, dejando las comidas en blanco para empezar de cero. Esta acción es irreversible.')) {
                 try {
-                    const diet = Diets.getById(currentClient.assignedDiet);
+                    const diet = Diets.getById(activeId);
                     if (diet && diet.meals) {
                         diet.meals.forEach(meal => {
                             meal.foods = []; // vaciar todos los alimentos de todas las opciones
@@ -3565,7 +4621,7 @@
                         <div style="display: flex; flex-wrap: wrap; gap: 15px;">
                             <div>
                                 <div class="text-xs text-muted" style="text-transform: uppercase; font-weight: 600;">Peso</div>
-                                <div style="font-weight: 700; color: var(--primary-color);">${fb.weight || '--'} kg</div>
+                                <div style="font-weight: 700; color: var(--primary-color);">${fb.weight ? Math.round(fb.weight * 100) / 100 : '--'} kg</div>
                             </div>
                             ${fb.perimeters && Object.keys(fb.perimeters).length > 0 ? 
                                 Object.entries(fb.perimeters).filter(([_, val]) => val).map(([name, val]) => `
@@ -3888,7 +4944,7 @@
                         <div style="max-width: 800px; margin: 0 auto; border: 1px solid #eee; padding: 30px; border-radius: 8px;">
                             ${content}
                         </div>
-                        <script src="js/custom-recipes.js?v=365"><\/script></body>
+                        <script src="js/custom-recipes.js?v=457"><\/script></body>
                 </html>
             `);
             printWindow.document.close();
@@ -3994,6 +5050,7 @@
             setTimeout(() => renderAssignList('diet'), 50);
         }
 
+
         window.createAndAssignDiet = function () {
             const brand = BrandConfig.get();
             const autoSave = brand.trainerSettings && brand.trainerSettings.autoSaveDietTemplate;
@@ -4006,9 +5063,22 @@
                 isTemplate: !!autoSave
             });
 
-            Clients.update(clientId, { assignedDiet: newDiet.id, dietPublished: true });
-            showToast(autoSave ? 'Dieta creada y guardada como plantilla' : 'Dieta creada (Solo para este cliente)', 'success');
-            loadClientData();
+            if (newDiet) {
+                let assignedDiets = currentClient.assignedDiets || [];
+                if (!Array.isArray(assignedDiets)) {
+                    assignedDiets = currentClient.assignedDiet ? [currentClient.assignedDiet] : [];
+                }
+                assignedDiets.push(newDiet.id);
+
+                Clients.update(clientId, {
+                    assignedDiet: newDiet.id,
+                    assignedDiets: assignedDiets,
+                    dietPublished: true
+                });
+                window.editingDietId = newDiet.id;
+                showToast(autoSave ? 'Dieta creada y guardada como plantilla' : 'Dieta creada (Solo para este cliente)', 'success');
+                loadClientData();
+            }
         };
 
         window.renderAssignList = function (type) {
@@ -4047,7 +5117,7 @@
                     <div class="flex-grow">
                         <div class="font-bold flex gap-sm align-center">
                             ${item.name}
-                            ${type === 'diet' ? `<span class="badge badge-info text-xs">${item.calories} kcal</span>` : (item.days ? `<span class="badge badge-info text-xs">${item.days.length} días</span>` : '')}
+                            ${type === 'diet' ? `<span class="badge badge-info text-xs">${item.calories} kcal</span><span class="text-xs text-muted" style="margin-left: 5px;">P: ${item.macros?.protein || 0}g | C: ${item.macros?.carbs || 0}g | G: ${item.macros?.fat || 0}g</span>` : (item.days ? `<span class="badge badge-info text-xs">${item.days.length} días</span>` : '')}
                         </div>
                         <div class="text-xs text-muted text-truncate" style="max-width: 400px;">
                             ${item.description || 'Sin descripción'}
@@ -4056,12 +5126,12 @@
                     ${selectedId === item.id ? '<span class="text-primary font-bold">✔</span>' : ''}
                 </div>
             `).join('');
-        }
+        };
 
         window.selectAssignItem = function (id, type) {
             document.getElementById('selectedAssignId').value = id;
             renderAssignList(type);
-        }
+        };
 
         window.confirmAssign = function (type, forceId) {
             let id = forceId !== undefined ? forceId : document.getElementById('selectedAssignId').value;
@@ -4082,12 +5152,12 @@
                 if (id) {
                     assignClonedDiet(id);
                 } else {
-                    Clients.update(clientId, { assignedDiet: null, dietPublished: false });
-                    showToast('Dieta desvinculada', 'success');
+                    Clients.update(clientId, { assignedDiet: null, assignedDiets: [], dietPublished: false });
+                    showToast('Dietas desvinculadas', 'success');
                     loadClientData();
                 }
             }
-        }
+        };
 
         window.assignClonedDiet = function (templateId) {
             try {
@@ -4096,20 +5166,6 @@
                 if (!template) {
                     showToast('No se encontró la plantilla de la dieta', 'error');
                     return;
-                }
-
-                // Archive current diet index if exists
-                let history = currentClient.dietHistory || [];
-                if (currentClient.assignedDiet) {
-                    const oldDiet = Diets.getById(currentClient.assignedDiet);
-                    if (oldDiet) {
-                        history.push({
-                            id: oldDiet.id,
-                            name: oldDiet.name,
-                            assignedDate: currentClient.lastDietAssignmentDate || new Date().toISOString(),
-                            archivedDate: new Date().toISOString()
-                        });
-                    }
                 }
 
                 // Clone template data
@@ -4128,12 +5184,19 @@
                 });
 
                 if (newDiet) {
+                    let assignedDiets = currentClient.assignedDiets || [];
+                    if (!Array.isArray(assignedDiets)) {
+                        assignedDiets = currentClient.assignedDiet ? [currentClient.assignedDiet] : [];
+                    }
+                    assignedDiets.push(newDiet.id);
+
                     Clients.update(clientId, {
                         assignedDiet: newDiet.id,
+                        assignedDiets: assignedDiets,
                         dietPublished: true,
-                        lastDietAssignmentDate: new Date().toISOString(),
-                        dietHistory: history
+                        lastDietAssignmentDate: new Date().toISOString()
                     });
+                    window.editingDietId = newDiet.id;
                     showToast('Dieta asignada y clonada correctamente', 'success');
                     loadClientData();
                 } else {
@@ -4159,13 +5222,24 @@
                     { text: 'Cerrar', class: 'btn-secondary', onclick: 'window.closeModal(); loadClientData();' }, // reload to reset editingId
                     { text: 'Restaurar esta versión', class: 'btn-primary', onclick: `window.restoreArchivedDiet('${id}')` }
                 ], 'modal-xl modal-compact');
+            } else {
+                showToast('No se encontró el contenido detallado de esta dieta en la base de datos (posiblemente fue eliminada).', 'error');
             }
         };
 
         window.restoreArchivedDiet = function (id) {
-            if (!confirm('¿Restaurar esta versión? La dieta actual se archivará.')) return;
+            if (!confirm('¿Restaurar esta versión? Se añadirá a las dietas activas del cliente.')) return;
             window.assignClonedDiet(id);
             window.closeModal();
+        };
+
+        window.deleteArchivedDiet = function (index) {
+            if (!confirm('¿Eliminar esta dieta del historial del cliente?')) return;
+            let history = currentClient.dietHistory || [];
+            history.splice(index, 1);
+            Clients.update(clientId, { dietHistory: history });
+            showToast('Dieta eliminada del historial', 'success');
+            loadClientData();
         };
 
         function updatePaymentStatus() {
@@ -4191,6 +5265,156 @@
             const msg = `Hola ${currentClient.name}, te escribo de ${brand.name} para recordarte que el pago de tu cuota mensual (${formatCurrency(currentClient.monthlyFee)}) está pendiente. ¡Gracias!`;
             window.open(generateWhatsAppLink(currentClient.phone, msg), '_blank');
         }
+
+        window.restoreClientBlockFromBackup = async function(isAuto = false) {
+            const currentId = window.activeTrainerId || localStorage.getItem('activeTrainerId') || 'default';
+            if (currentId === 'default' || !window.SupabaseService) {
+                if (!isAuto) showToast('Error: Servicio de base de datos no disponible', 'error');
+                return;
+            }
+            
+            // Scan for any backup key in localStorage
+            let backupRaw = localStorage.getItem(`fitnessAppData_${currentId}_backup`);
+            let backupKeyUsed = `fitnessAppData_${currentId}_backup`;
+            if (!backupRaw) {
+                backupRaw = localStorage.getItem('fitnessAppData_default_backup');
+                backupKeyUsed = 'fitnessAppData_default_backup';
+            }
+            if (!backupRaw) {
+                for (let i = 0; i < localStorage.length; i++) {
+                    const key = localStorage.key(i);
+                    if (key && key.endsWith('_backup')) {
+                        const val = localStorage.getItem(key);
+                        if (val && val.length > 100) {
+                            backupRaw = val;
+                            backupKeyUsed = key;
+                            break;
+                        }
+                    }
+                }
+            }
+            
+            if (!backupRaw) {
+                if (!isAuto) showToast('No se encontró copia de seguridad local en este navegador', 'error');
+                return;
+            }
+            
+            if (!isAuto) {
+                if (!confirm(`¿Deseas restaurar la rutina desde la copia de seguridad local (Clave: ${backupKeyUsed})? Se recuperarán los ejercicios de los bloques respaldados.`)) {
+                    return;
+                }
+            }
+            
+            try {
+                const backupData = JSON.parse(backupRaw);
+                const backupBlocks = backupData.trainingBlocks || [];
+                
+                // Fetch latest data from Supabase
+                const liveData = await window.SupabaseService.getTrainerData(currentId);
+                if (!liveData) {
+                    if (!isAuto) showToast('Error al conectar con la nube', 'error');
+                    return;
+                }
+                
+                const liveBlocks = liveData.trainingBlocks || [];
+                let restoredCount = 0;
+                
+                // Get all backup blocks for this client that have exercises, using a cascading fallback strategy:
+                // 1. Match by clientId
+                let clientBackupBlocks = backupBlocks.filter(b => 
+                    b.clientId === clientId && 
+                    b.weeks && 
+                    b.weeks.some(w => w.days && w.days.some(d => d.exercises && d.exercises.length > 0))
+                );
+                
+                let fallbackUsed = "";
+                
+                if (clientBackupBlocks.length === 0) {
+                    // Fallback 1: Match by block name 'prep' or 'planificacion' case-insensitively and trimmed
+                    clientBackupBlocks = backupBlocks.filter(b => 
+                        b.name && 
+                        (b.name.toLowerCase().trim() === 'prep' || b.name.toLowerCase().trim() === 'planificacion' || b.name.toLowerCase().trim() === 'planificación') && 
+                        b.weeks && 
+                        b.weeks.some(w => w.days && w.days.some(d => d.exercises && d.exercises.length > 0))
+                    );
+                    
+                    if (clientBackupBlocks.length > 0) {
+                        fallbackUsed = "name";
+                        // Re-assign clientId to current client
+                        clientBackupBlocks.forEach(b => {
+                            b.clientId = clientId;
+                        });
+                    }
+                }
+                
+                if (clientBackupBlocks.length === 0) {
+                    // Fallback 2: Grab ANY block in the backup that contains exercises, clone, and map it to current client
+                    const anyBlocksWithEx = backupBlocks.filter(b => 
+                        b.weeks && 
+                        b.weeks.some(w => w.days && w.days.some(d => d.exercises && d.exercises.length > 0))
+                    );
+                    
+                    if (anyBlocksWithEx.length > 0) {
+                        fallbackUsed = "any";
+                        clientBackupBlocks = anyBlocksWithEx.map(b => {
+                            const clone = JSON.parse(JSON.stringify(b));
+                            clone.clientId = clientId;
+                            clone.id = 'block-' + Date.now() + '-' + Math.random().toString(36).substring(2, 11);
+                            return clone;
+                        });
+                    }
+                }
+                
+                if (clientBackupBlocks.length === 0) {
+                    if (!isAuto) showToast('No se encontró ninguna rutina con ejercicios en la copia de seguridad para este cliente', 'error');
+                    return;
+                }
+                
+                clientBackupBlocks.forEach(backupBlock => {
+                    let matchedLiveBlock = liveBlocks.find(b => b.clientId === clientId && b.id === backupBlock.id);
+                    
+                    if (!matchedLiveBlock) {
+                        // Try to find by name for the same client
+                        matchedLiveBlock = liveBlocks.find(b => b.clientId === clientId && b.name === backupBlock.name);
+                    }
+                    
+                    if (matchedLiveBlock) {
+                        // Restore weeks
+                        matchedLiveBlock.weeks = backupBlock.weeks;
+                        restoredCount++;
+                    } else {
+                        // Insert the backup block back entirely!
+                        liveBlocks.push(backupBlock);
+                        restoredCount++;
+                    }
+                });
+                
+                if (restoredCount === 0) {
+                    if (!isAuto) showToast('No se encontró ninguna rutina con ejercicios compatible en la copia de seguridad', 'error');
+                    return;
+                }
+                
+                liveData.trainingBlocks = liveBlocks;
+                liveData.lastModified = new Date().toISOString();
+                
+                const success = await window.SupabaseService.saveTrainerData(currentId, liveData);
+                if (success) {
+                    // Update localStorage
+                    localStorage.setItem(`fitnessAppData_${currentId}`, JSON.stringify(liveData));
+                    if (isAuto) {
+                        showToast('¡Copia de seguridad local recuperada automáticamente!', 'success');
+                    } else {
+                        showToast('¡Rutina restaurada correctamente!', 'success');
+                    }
+                    setTimeout(() => location.reload(), 1500);
+                } else {
+                    if (!isAuto) showToast('Error al guardar los datos en la nube', 'error');
+                }
+            } catch (e) {
+                console.error(e);
+                if (!isAuto) showToast('Error al procesar la copia de seguridad', 'error');
+            }
+        };
 
         function editClientInfo() {
             const tech = currentClient.technicalData || {};
@@ -4558,14 +5782,14 @@
 
         window.openNutritionCalculator = function (mode) {
             const tech = (currentClient && currentClient.technicalData) || {};
-            const defWeight = tech.weight || currentClient.weight || '';
+            const defWeight = (tech.weight || currentClient.weight) ? Math.round(parseFloat(tech.weight || currentClient.weight) * 100) / 100 : '';
             const defHeight = tech.height || currentClient.height || '';
             const defAge = tech.age || currentClient.age || '';
 
             const content = `
                 <div class="tabs mb-md" style="display: flex; gap: 10px; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 10px;">
-                    <button class="btn btn-sm ${mode === 'calories' ? 'btn-primary' : 'btn-outline'}" onclick="window.switchCalculatorTab('calories', this)">🔥 Calorías (H-B)</button>
-                    <button class="btn btn-sm ${mode === 'macros' ? 'btn-primary' : 'btn-outline'}" onclick="window.switchCalculatorTab('macros', this)">🥩 Macros Diarios</button>
+                    <button id="calcTabBtnCalories" class="btn btn-sm ${mode === 'calories' ? 'btn-primary' : 'btn-outline'}" onclick="window.switchCalculatorTab('calories', this)">🔥 Calorías (H-B)</button>
+                    <button id="calcTabBtnMacros" class="btn btn-sm ${mode === 'macros' ? 'btn-primary' : 'btn-outline'}" onclick="window.switchCalculatorTab('macros', this)">🥩 Macros Diarios</button>
                 </div>
 
                 <!-- CALORIES TAB -->
@@ -4713,7 +5937,7 @@
 
         window.useCaloriesForMacros = function () {
             if (window.lastCalculatedTDEE) {
-                const macrosBtn = document.querySelector('.tabs button:nth-child(2)');
+                const macrosBtn = document.getElementById('calcTabBtnMacros');
                 if (macrosBtn) macrosBtn.click();
 
                 setTimeout(() => {
@@ -4868,6 +6092,8 @@
                     cardioUrl: url,
                     cardioUrlVisible: urlVisible
                 });
+                loadClientData(); // Sync currentClient state and UI
+                loadCardioData(); // Sync cardio editor elements
                 showToast('Cardio guardado correctamente', 'success');
             } catch (e) {
                 console.error(e);
@@ -4887,6 +6113,8 @@
             const published = document.getElementById('cardioPublishedToggle').checked;
             try {
                 await Clients.update(clientId, { cardioPublished: published });
+                loadClientData(); // Sync currentClient state and UI
+                loadCardioData(); // Sync cardio editor elements
                 showToast('Visibilidad actualizada', 'info');
             } catch (e) { console.error(e); }
         }
@@ -5030,10 +6258,16 @@
             if (currentClient.assignedDiet) {
                 const oldDiet = Diets.getById(currentClient.assignedDiet);
                 if (oldDiet) {
+                    const archivedDietData = JSON.parse(JSON.stringify(oldDiet));
+                    archivedDietData.name = oldDiet.name ? (oldDiet.name + ' (Archivada)') : 'Dieta Archivada';
+                    archivedDietData.isTemplate = false;
+                    
+                    const newArchivedDiet = Diets.create(archivedDietData);
+
                     if (!currentClient.dietHistory) currentClient.dietHistory = [];
                     currentClient.dietHistory.push({
-                        id: oldDiet.id,
-                        name: oldDiet.name,
+                        id: newArchivedDiet.id,
+                        name: newArchivedDiet.name,
                         assignedDate: currentClient.lastDietAssignmentDate || new Date().toISOString(),
                         archivedDate: new Date().toISOString()
                     });
@@ -5067,9 +6301,18 @@
             });
 
             if (newDiet) {
+                let assignedDiets = currentClient.assignedDiets || [];
+                if (!Array.isArray(assignedDiets)) {
+                    assignedDiets = currentClient.assignedDiet ? [currentClient.assignedDiet] : [];
+                }
+                if (!assignedDiets.includes(newDiet.id)) {
+                    assignedDiets.push(newDiet.id);
+                }
+
                 // Assign to client
                 Clients.update(currentClient.id, {
                     assignedDiet: newDiet.id,
+                    assignedDiets: assignedDiets,
                     lastDietAssignmentDate: new Date().toISOString(),
                     dietHistory: currentClient.dietHistory,
                     dietPublished: true
@@ -5085,7 +6328,7 @@
             // Usar siempre el ID real del entrenador para garantizar sincronización con Supabase
             const realTrainerId = window.activeTrainerId || localStorage.getItem('activeTrainerId') || 't-w0iybl7qb';
             const baseUrl = window.location.origin + '/client-login.html';
-            const fullUrl = `${baseUrl}?t=${realTrainerId}&v=365`;
+            const fullUrl = `${baseUrl}?t=${realTrainerId}&v=402`;
             copyToClipboard(fullUrl);
             showToast('¡Link copiado! Envíalo a tu cliente.', 'success');
         };
@@ -5225,11 +6468,13 @@
                     await window.syncFromCloud();
                     if (typeof BrandConfig !== 'undefined') BrandConfig.applyTheme();
                 }
+                // Recargar datos tras sync
+                if (typeof loadClientData === 'function') loadClientData();
+            } else {
+                if (typeof loadClientData === 'function') loadClientData();
             }
-
-            if (typeof loadClientData === 'function') loadClientData();
         });
     </script>
-    <script src="js/custom-recipes.js?v=365"></script></body>
+    <script src="js/custom-recipes.js?v=457"></script></body>
 
 </html>

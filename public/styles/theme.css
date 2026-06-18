@@ -188,8 +188,13 @@ a:hover {
   grid-template-columns: repeat(5, 1fr);
 }
 
+.grid-6 {
+  grid-template-columns: repeat(6, 1fr);
+}
+
 @media (max-width: 1024px) {
 
+  .grid-6,
   .grid-5,
   .grid-4,
   .grid-3 {
@@ -221,6 +226,10 @@ a:hover {
   display: flex;
   align-items: center;
   justify-content: space-between;
+}
+
+.flex-wrap {
+  flex-wrap: wrap !important;
 }
 
 .flex-col {
@@ -716,19 +725,123 @@ border-radius: 50%;
    LIGHT MODE OVERRIDES (MODO DÍA)
    ============================================ */
 :root {
-  --light-bg-dark: #F4F6F9;
+  --light-bg-dark: #E2E8F0;
   --light-bg-card: #FFFFFF;
   --light-bg-input: #FFFFFF;
-  --light-text-primary: #1E293B;
-  --light-text-secondary: #475569;
-  --light-text-muted: #64748B;
-  --light-border: rgba(0, 0, 0, 0.08);
+  --light-text-primary: #0F172A;
+  --light-text-secondary: #334155;
+  --light-text-muted: #475569;
+  --light-border: rgba(0, 0, 0, 0.12);
 }
 
 html.theme-light,
 body.theme-light {
-  background: var(--light-bg-dark) !important;
-  color: var(--light-text-primary) !important;
+  --bg-dark: #E2E8F0;
+  --bg-card: #FFFFFF;
+  --bg-input: #FFFFFF;
+  --text-primary: #0F172A;
+  --text-secondary: #334155;
+  --text-muted: #475569;
+  --border-color: rgba(0, 0, 0, 0.12);
+  --secondary-color: #CBD5E1;
+
+  background: var(--bg-dark) !important;
+  color: var(--text-primary) !important;
+}
+
+/* Global Light Mode Safety Overrides for Inline Styles & Hardcoded Text */
+html.theme-light [style*="color: #fff"],
+html.theme-light [style*="color: #ffffff"],
+html.theme-light [style*="color:#fff"],
+html.theme-light [style*="color:#ffffff"],
+html.theme-light [style*="color: white"],
+html.theme-light [style*="color:white"],
+html.theme-light [style*="color: var(--text-primary)"],
+html.theme-light [style*="color:var(--text-primary)"],
+html.theme-light [style*="rgb(255, 255, 255)"],
+html.theme-light [style*="rgb(255,255,255)"],
+html.theme-light #suppPreviewContent,
+html.theme-light #suppListBody,
+html.theme-light #cardioContentBody,
+html.theme-light #saasExpiryVal,
+html.theme-light #saasClientLimitVal,
+html.theme-light #saasLicenseCard span,
+html.theme-light #saasLicenseCard div,
+html.theme-light #suppPreviewContent *,
+html.theme-light #suppListBody *,
+html.theme-light #cardioContentBody *,
+html.theme-light .text-white,
+html.theme-light strong[style*="color"] {
+  color: var(--text-primary) !important;
+}
+
+/* Force opacity labels to be fully visible and readable secondary color */
+html.theme-light #saasLicenseCard span[style*="opacity"],
+html.theme-light #saasLicenseCard .opacity-70 {
+  opacity: 1 !important;
+  color: var(--text-secondary) !important;
+}
+
+html.theme-light [style*="color: rgba(255, 255, 255"],
+html.theme-light [style*="color:rgba(255,255,255"],
+html.theme-light [style*="color: rgba(255,255,255"],
+html.theme-light [style*="color:rgba(255, 255, 255"] {
+  color: var(--text-secondary) !important;
+}
+
+html.theme-light [style*="color: rgba(255,255,255,0.5)"],
+html.theme-light [style*="color:rgba(255,255,255,0.5)"],
+html.theme-light [style*="color: rgba(255, 255, 255, 0.5)"],
+html.theme-light [style*="color: rgba(255, 255, 255, 0.6)"],
+html.theme-light [style*="color: rgba(255, 255, 255, 0.7)"],
+html.theme-light [style*="color: rgba(255, 255, 255, 0.8)"],
+html.theme-light [style*="color: rgba(255, 255, 255, 0.9)"] {
+  color: var(--text-secondary) !important;
+}
+
+html.theme-light [style*="color: rgba(255,255,255,0.3)"],
+html.theme-light [style*="color:rgba(255,255,255,0.3)"],
+html.theme-light [style*="color: rgba(255, 255, 255, 0.3)"],
+html.theme-light [style*="color: rgba(255, 255, 255, 0.4)"] {
+  color: var(--text-muted) !important;
+}
+
+/* Hardcoded background inline styles overrides for light mode */
+html.theme-light [style*="background: rgba(255,255,255"],
+html.theme-light [style*="background:rgba(255,255,255"],
+html.theme-light [style*="background: rgba(255, 255, 255"],
+html.theme-light [style*="background:rgba(255, 255, 255"] {
+  background: rgba(0, 0, 0, 0.04) !important;
+}
+
+html.theme-light [style*="background:rgba(0,0,0,0.2)"],
+html.theme-light [style*="background:rgba(0,0,0,0.3)"],
+html.theme-light [style*="background: rgba(0,0,0,0.2)"],
+html.theme-light [style*="background: rgba(0,0,0,0.3)"],
+html.theme-light [style*="background: rgba(0, 0, 0, 0.2)"],
+html.theme-light [style*="background: rgba(0, 0, 0, 0.3)"],
+html.theme-light [style*="background:rgba(0, 0, 0, 0.2)"],
+html.theme-light [style*="background:rgba(0, 0, 0, 0.3)"] {
+  background: rgba(0, 0, 0, 0.05) !important;
+}
+
+html.theme-light [style*="background: linear-gradient(135deg, #1e1e1e"],
+html.theme-light [style*="background:linear-gradient(135deg, #1e1e1e"],
+html.theme-light [style*="background: linear-gradient"],
+html.theme-light [style*="background:linear-gradient"] {
+  background: linear-gradient(135deg, #E2E8F0 0%, #FFFFFF 100%) !important;
+}
+
+/* Inline border overrides */
+html.theme-light [style*="border: 1px solid rgba(255"],
+html.theme-light [style*="border: 1px solid rgba(255,255,255"],
+html.theme-light [style*="border:1px solid rgba(255,255,255"],
+html.theme-light [style*="border-bottom: 1px solid rgba(255"],
+html.theme-light [style*="border-top: 1px solid rgba(255"],
+html.theme-light [style*="border-bottom: 1.5px solid rgba(255"],
+html.theme-light [style*="border: 1.5px solid rgba(255"],
+html.theme-light [style*="border:1px solid rgba(255"] {
+  border-color: rgba(0, 0, 0, 0.08) !important;
 }
 
 html.theme-light .card,
@@ -843,6 +956,92 @@ body.theme-light .nav-link.active {
 }
 
 /* Specific component fixes for light mode */
+html.theme-light .meal-name-row,
+html.theme-light .meal-name-row span,
+html.theme-light .meal-title,
+html.theme-light .food-name,
+html.theme-light .macro-mini-val,
+html.theme-light .option-label,
+html.theme-light .option-counter,
+html.theme-light .swipe-indicator,
+html.theme-light .shopping-item div,
+html.theme-light .modal-content h3 {
+  color: var(--text-primary) !important;
+}
+
+html.theme-light .option-counter {
+  background: rgba(0, 217, 255, 0.08) !important;
+  border-color: rgba(0, 217, 255, 0.25) !important;
+}
+
+html.theme-light .food-item {
+  background: var(--light-bg-card) !important;
+  color: var(--text-primary) !important;
+  border-color: var(--light-border) !important;
+}
+
+html.theme-light .meal-card {
+  background: var(--light-bg-card) !important;
+  border: 1px solid var(--light-border) !important;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03) !important;
+}
+
+html.theme-light .meal-tabs-container {
+  background: rgba(226, 232, 240, 0.95) !important;
+  border-bottom: 1px solid var(--light-border) !important;
+}
+
+html.theme-light .meal-tab {
+  background: rgba(0, 0, 0, 0.05) !important;
+  color: var(--text-secondary) !important;
+}
+
+html.theme-light .meal-tab.active {
+  background: var(--primary-color) !important;
+  color: #000000 !important;
+}
+
+html.theme-light .shopping-item {
+  background: rgba(0, 0, 0, 0.02) !important;
+  border-color: var(--light-border) !important;
+}
+
+html.theme-light .shopping-item.checked {
+  background: rgba(0, 0, 0, 0.01) !important;
+}
+
+html.theme-light .modal-content {
+  background: var(--light-bg-card) !important;
+  border: 1px solid var(--light-border) !important;
+  color: var(--text-primary) !important;
+}
+
+html.theme-light .btn-outline {
+  color: var(--text-primary) !important;
+  border-color: var(--primary-color) !important;
+}
+
+/* Routine client logger overrides for light mode */
+html.theme-light [id^="weight_"],
+html.theme-light [id^="reps_"],
+html.theme-light [id^="rir_"] {
+  background: var(--light-bg-input) !important;
+  color: var(--text-primary) !important;
+  border-color: var(--light-border) !important;
+}
+
+html.theme-light .card div[style*="background: rgba(255,255,255,0.03)"],
+html.theme-light .card div[style*="background:rgba(255,255,255,0.03)"] {
+  background: rgba(0, 0, 0, 0.03) !important;
+  border-color: var(--light-border) !important;
+  color: var(--text-primary) !important;
+}
+
+html.theme-light .card span[style*="color: #ffeb3b"],
+html.theme-light .card span[style*="color:#ffeb3b"] {
+  color: #B45309 !important;
+}
+
 html.theme-light .table th,
 body.theme-light .table th {
   background: rgba(0, 0, 0, 0.02) !important;
@@ -1039,6 +1238,7 @@ a:hover, a:active,
    ============================================ */
 
 @media (max-width: 1024px) {
+    .grid-6,
     .grid-5 {
         grid-template-columns: repeat(3, 1fr) !important;
     }
@@ -1076,6 +1276,7 @@ a:hover, a:active,
     .grid-2, .grid-3, .grid-4 {
         grid-template-columns: 1fr !important;
     }
+    .grid-6,
     .grid-5 {
         grid-template-columns: repeat(2, 1fr) !important;
     }
@@ -1214,13 +1415,13 @@ a:hover, a:active,
 
     /* 9. Premium Modals (Sheet-like layouts on mobile) */
     .modal-overlay {
-        padding: 10px !important;
+        padding: 80px 10px 20px 10px !important;
     }
 
     .modal {
         max-width: 100% !important;
         width: 100% !important;
-        max-height: 94vh !important;
+        max-height: calc(100vh - 100px) !important;
         border-radius: var(--radius-lg) !important;
     }
 
@@ -1253,15 +1454,48 @@ a:hover, a:active,
         width: 54px !important;
         height: 54px !important;
     }
+
+    /* Search Input mobile optimization (remove magnifying glass) */
+    .search-icon-span {
+        display: none !important;
+    }
+    input#searchInput.search-input-mobile {
+        padding-left: 12px !important;
+    }
+
+    /* Sub-tabs horizontal scrolling on mobile */
+    .flex-scroll-mobile {
+        flex-wrap: nowrap !important;
+        overflow-x: auto !important;
+        -webkit-overflow-scrolling: touch !important;
+        padding-bottom: 8px !important;
+        width: 100% !important;
+    }
+    .flex-scroll-mobile .btn, .flex-scroll-mobile button {
+        white-space: nowrap !important;
+        flex-shrink: 0 !important;
+    }
 }
 
 @media (max-width: 480px) {
+    .grid-6,
     .grid-5 {
         grid-template-columns: 1fr !important;
     }
     
     .logo {
         font-size: 1.05rem !important;
+    }
+}
+
+/* Intermediate screen size optimizations for responsive header nav */
+@media (min-width: 769px) and (max-width: 1200px) {
+    .nav-links {
+        gap: var(--spacing-sm) !important;
+    }
+    .nav-link {
+        padding: var(--spacing-sm) 8px !important;
+        font-size: 0.85rem !important;
     }
 }
 

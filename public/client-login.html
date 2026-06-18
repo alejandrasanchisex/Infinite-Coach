@@ -7,7 +7,7 @@
     <script>
         // Force PWA cache bust / reload
         (function() {
-            const CURRENT_VERSION = '365';
+            const CURRENT_VERSION = '457';
             const savedVersion = localStorage.getItem('app_version');
             if (savedVersion !== CURRENT_VERSION) {
                 localStorage.setItem('app_version', CURRENT_VERSION);
@@ -28,8 +28,63 @@
         })();
     </script>
     <meta name="apple-mobile-web-app-capable" content="yes">
+    <script>
+        (function() {
+            var params = new URLSearchParams(window.location.search);
+            var tid = params.get('t') || localStorage.getItem('activeTrainerId') || 'default';
+            if (tid) {
+                var lower = tid.toLowerCase().trim();
+                if (lower === 'asteam' || lower === 'alejandra') {
+                    tid = 't-w0iybl7qb';
+                } else if (lower === 'toledo' || lower === 'vtoledo') {
+                    tid = 't-8umeizyns';
+                }
+            }
+            
+            // Si el cliente está logueado, intentar deducir su entrenador para PWA
+            var clientId = localStorage.getItem('clientId') || sessionStorage.getItem('clientId');
+            if (clientId) {
+                for (var i = 0; i < localStorage.length; i++) {
+                    var key = localStorage.key(i);
+                    if (key && key.indexOf('fitnessAppData_') === 0 && key.indexOf('_backup') === -1) {
+                        var raw = localStorage.getItem(key);
+                        if (raw) {
+                            try {
+                                var parsed = JSON.parse(raw);
+                                if (parsed && parsed.clients) {
+                                    for (var j = 0; j < parsed.clients.length; j++) {
+                                        if (parsed.clients[j].id === clientId) {
+                                            var foundTid = key.replace('fitnessAppData_', '');
+                                            if (foundTid && foundTid !== 'default' && foundTid !== 'admin') {
+                                                tid = foundTid;
+                                                break;
+                                            }
+                                        }
+                                    }
+                                }
+                            } catch(e) {}
+                        }
+                    }
+                    if (tid && tid !== 'default' && tid !== 'admin') break;
+                }
+            }
+            
+            var brandName = 'Infinite Coach';
+            var iconUrl = 'img/logo-infinite-coach.png';
+            if (tid === 't-w0iybl7qb') {
+                brandName = 'ASTeam';
+                iconUrl = 'https://bieeydhacavxymoosasx.supabase.co/storage/v1/object/public/Media/1779724548154_Gemini_Generated_Image_vse84nvse84nvse8.png';
+            } else if (tid === 't-8umeizyns') {
+                brandName = 'Toledo The Bull';
+                iconUrl = 'https://bieeydhacavxymoosasx.supabase.co/storage/v1/object/public/Media/1781711106755_toledo_the_bull.png';
+            }
+            
+            document.write('<meta id="appleAppTitle" name="apple-mobile-web-app-title" content="' + brandName + '">');
+            document.write('<link id="appleTouchIcon" rel="apple-touch-icon" href="' + iconUrl + '">');
+            document.write('<link rel="manifest" href="manifest.json?t=' + tid + '">');
+        })();
+    </script>
     <title>Acceso Cliente</title>
-    <link rel="manifest" href="manifest.json">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
@@ -37,9 +92,12 @@
         *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
         :root {
-            --gold:       #C9A84C;
-            --gold-light: #E8C97A;
-            --bg:         #0D0D0F;
+            --primary-color: #C9A84C;
+            --primary-color-rgb: 201, 168, 76;
+            --gold:       var(--primary-color);
+            --gold-light: color-mix(in srgb, var(--primary-color) 85%, white);
+            --gold-dark:  color-mix(in srgb, var(--primary-color) 85%, black);
+            --bg:         var(--bg-dark, #0D0D0F);
             --text:       #F0EDE8;
             --muted:      #6B6865;
             --soft:       #9E9B97;
@@ -57,22 +115,22 @@
         .bg {
             position: fixed; inset: 0; z-index: 0; overflow: hidden;
             background:
-                radial-gradient(ellipse 90% 70% at 15% 5%,  rgba(201,168,76,.08) 0%, transparent 55%),
-                radial-gradient(ellipse 70% 80% at 85% 95%, rgba(201,168,76,.05) 0%, transparent 55%),
-                #0D0D0F;
+                radial-gradient(ellipse 90% 70% at 15% 5%,  rgba(var(--primary-color-rgb),.08) 0%, transparent 55%),
+                radial-gradient(ellipse 70% 80% at 85% 95%, rgba(var(--primary-color-rgb),.05) 0%, transparent 55%),
+                var(--bg);
         }
         .bg-grid {
             position: absolute; inset: 0;
             background-image:
-                linear-gradient(rgba(201,168,76,.035) 1px, transparent 1px),
-                linear-gradient(90deg, rgba(201,168,76,.035) 1px, transparent 1px);
+                linear-gradient(rgba(var(--primary-color-rgb),.035) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(var(--primary-color-rgb),.035) 1px, transparent 1px);
             background-size: 55px 55px;
             mask-image: radial-gradient(ellipse 65% 65% at 50% 50%, black 20%, transparent 100%);
         }
         .orb { position: absolute; border-radius: 50%; filter: blur(70px); pointer-events: none; }
-        .orb-1 { width:400px;height:400px;background:rgba(201,168,76,.06);top:-15%;left:-10%;
+        .orb-1 { width:400px;height:400px;background:rgba(var(--primary-color-rgb),.06);top:-15%;left:-10%;
                   animation: drift 20s ease-in-out infinite; }
-        .orb-2 { width:280px;height:280px;background:rgba(201,168,76,.04);bottom:0;right:-5%;
+        .orb-2 { width:280px;height:280px;background:rgba(var(--primary-color-rgb),.04);bottom:0;right:-5%;
                   animation: drift 25s ease-in-out infinite reverse; }
         @keyframes drift { 0%,100%{transform:translate(0,0)} 50%{transform:translate(25px,-35px)} }
 
@@ -86,7 +144,7 @@
         .card {
             width: 100%; max-width: 400px;
             background: rgba(20,20,22,.92);
-            border: 1px solid rgba(201,168,76,.2);
+            border: 1px solid rgba(var(--primary-color-rgb),.2);
             border-radius: 24px;
             padding: 44px 36px 36px;
             backdrop-filter: blur(20px);
@@ -102,8 +160,8 @@
         .logo-wrap { text-align: center; margin-bottom: 32px; }
         .logo-box {
             width: 76px; height: 76px; border-radius: 20px;
-            background: rgba(201,168,76,.1);
-            border: 1px solid rgba(201,168,76,.22);
+            background: rgba(var(--primary-color-rgb),.1);
+            border: 1px solid rgba(var(--primary-color-rgb),.22);
             display: inline-flex; align-items: center; justify-content: center;
             font-size: 2.2rem; margin-bottom: 18px; overflow: hidden;
         }
@@ -153,15 +211,15 @@
         }
         #accessCode:focus {
             border-color: var(--gold);
-            background: rgba(201,168,76,.07);
-            box-shadow: 0 0 0 3px rgba(201,168,76,.12);
+            background: rgba(var(--primary-color-rgb),.07);
+            box-shadow: 0 0 0 3px rgba(var(--primary-color-rgb),.12);
         }
 
         .field-hint { margin-top:8px;margin-bottom:24px;font-size:.72rem;color:var(--muted);line-height:1.5; }
 
         .btn-submit {
             width: 100%; height: 52px;
-            background: linear-gradient(110deg, #B8922E 0%, #E8C97A 50%, #B8922E 100%);
+            background: linear-gradient(110deg, var(--gold-dark) 0%, var(--gold-light) 50%, var(--gold-dark) 100%);
             background-size: 200% 100%;
             border: none; border-radius: 12px;
             color: #0D0D0F;
@@ -169,7 +227,7 @@
             font-size: .9rem; font-weight: 700; letter-spacing: .04em;
             cursor: pointer;
             transition: background-position .4s, transform .15s, box-shadow .2s, opacity .2s;
-            box-shadow: 0 4px 20px rgba(201,168,76,.28);
+            box-shadow: 0 4px 20px rgba(var(--primary-color-rgb),.28);
             display: flex; align-items: center; justify-content: center; gap: 8px;
             -webkit-tap-highlight-color: transparent;
             touch-action: manipulation;
@@ -252,7 +310,7 @@
 
         <p class="footer">¿No tienes código?<br>Contacta con tu entrenador personal.</p>
         <p class="footer" style="margin-top: 15px; border-top: 1px solid rgba(255,255,255,0.05); padding-top: 15px;">
-            <a href="trainer-login.html?v=365" style="color: var(--gold-light); text-decoration: none; font-size: 0.8rem; font-weight: 600;">Acceso Entrenadores 🔐</a>
+            <a href="trainer-login.html?v=457" style="color: var(--gold-light); text-decoration: none; font-size: 0.8rem; font-weight: 600;">Acceso Entrenadores 🔐</a>
         </p>
     </div>
 </div>
@@ -261,18 +319,18 @@
 
 <!-- ── Scripts ──────────────────────────────────────────────────── -->
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="js/supabase-service.js?v=365"></script>
-<script src="js/config.js?v=365"></script>
-<script src="js/data-models.js?v=365"></script>
-<script src="js/utils.js?v=365"></script>
+<script src="js/supabase-service.js?v=457"></script>
+<script src="js/config.js?v=457"></script>
+<script src="js/data-models.js?v=457"></script>
+<script src="js/utils.js?v=457"></script>
 <script>
 
 // ── Auto-Redirección (Mantener sesión activa) ─────────────────────
 (function() {
     var storedClientId = localStorage.getItem('clientId') || sessionStorage.getItem('clientId');
     var params = new URLSearchParams(window.location.search);
-    if (storedClientId && params.get('logout') !== 'true') {
-        window.location.replace('client-dashboard.html?v=365');
+    if (storedClientId && params.get('logout') !== 'true' && params.get('reauth') !== 'true') {
+        window.location.replace('client-dashboard.html?v=457');
     }
 })();
 
@@ -301,19 +359,49 @@ document.getElementById('accessCode').addEventListener('keydown', function(e) {
 // ── Trainer ID from URL ──────────────────────────────────────────
 (function() {
     var params = new URLSearchParams(window.location.search);
-    var tid = params.get('t') || localStorage.getItem('activeTrainerId');
-    if (tid) {
-        var lower = tid.toLowerCase().trim();
-        if (lower === 'asteam' || lower === 'alejandra') {
-            tid = 't-w0iybl7qb';
+    var tParam = params.get('t');
+    if (tParam) {
+        tParam = tParam.toLowerCase().trim();
+        if (tParam === 'asteam' || tParam === 'alejandra') {
+            tParam = 't-w0iybl7qb';
+        } else if (tParam === 'toledo' || tParam === 'vtoledo') {
+            tParam = 't-8umeizyns';
         }
     }
-    if (!tid || tid === 'admin' || tid === 'default') {
-        tid = 'default';
+    
+    var storedTid = localStorage.getItem('activeTrainerId');
+    var tid = tParam;
+    
+    // Si no hay tParam o es genérico, pero hay un entrenador específico guardado, lo preservamos
+    if (!tid || tid === 'default' || tid === 'admin') {
+        if (storedTid && storedTid !== 'default' && storedTid !== 'admin') {
+            tid = storedTid;
+        } else {
+            tid = 'default';
+        }
     }
+    
     localStorage.setItem('activeTrainerId', tid);
     window.activeTrainerId = tid;
     if (typeof updateActiveTrainerId === 'function') updateActiveTrainerId(tid);
+
+    // Apply brand theme instantly on page load
+    try {
+        if (window.BrandConfig) {
+            window.BrandConfig.applyTheme();
+            var brand = window.BrandConfig.get();
+            if (brand && brand.name) {
+                var nameEl = document.getElementById('brandName');
+                if (nameEl) nameEl.textContent = brand.name;
+            }
+            if (brand && brand.logo) {
+                var logoEl = document.getElementById('brandLogoContainer');
+                if (logoEl) {
+                    logoEl.innerHTML = '<img src="' + brand.logo + '" alt="' + (brand.name||'') + '" style="width: 100%; height: 100%; object-fit: contain; border-radius: 19px;">';
+                }
+            }
+        }
+    } catch(e) {}
 })();
 
 // ── Cloud sync on load (background) ─────────────────────────────
@@ -485,7 +573,7 @@ async function doLogin() {
             content.textContent = '✓';
             btn.style.background = 'linear-gradient(110deg,#22c55e,#4ade80)';
             setTimeout(function(){ 
-                window.location.replace('client-dashboard.html?t=' + foundTrainerId + '&v=365'); 
+                window.location.replace('client-dashboard.html?t=' + foundTrainerId + '&v=453'); 
             }, 400);
         } else {
             showMsg('Código de acceso incorrecto. Por favor, verifícalo.');
@@ -502,7 +590,7 @@ async function doLogin() {
     }
 }
 </script>
-<script src="js/custom-recipes.js?v=365"></script>
-<script src="js/pwa-install.js?v=365"></script>
+<script src="js/custom-recipes.js?v=457"></script>
+<script src="js/pwa-install.js?v=457"></script>
 </body>
 </html>
