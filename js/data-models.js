@@ -116,6 +116,35 @@ const getStorageKey = () => `fitnessAppData_${window.activeTrainerId || 'default
     }
 })();
 
+// 🧹 MOCK DATA CLEANUP FOR DEMO 2 (PREVENT SPILLOVER RE-UPLOAD FOR t-vdyrwk7dt)
+(function() {
+    try {
+        const sKey = 'fitnessAppData_t-vdyrwk7dt';
+        const raw = localStorage.getItem(sKey);
+        if (raw) {
+            const data = JSON.parse(raw);
+            const invoices = data.invoices || [];
+            
+            // Check if invoices contain any invoice starting with 'inv-demo2-' that does not have a number or hash
+            const hasLegacyMockInvoices = invoices.some(i => String(i.id).startsWith('inv-demo2-') && (!i.number || !i.hash));
+            
+            // Or if stripeSettings is not configured in brand
+            const brand = data.brand || {};
+            const stripe = brand.stripeSettings || {};
+            const noStripe = !stripe.publicKey || !stripe.plans || stripe.plans.length === 0;
+            
+            if (hasLegacyMockInvoices || noStripe) {
+                console.warn("🧹 [DEMO 2 CLEANUP] Legacy uncertified mock invoices or missing Stripe configuration detected in local storage. Wiping key to download fresh certified data...");
+                localStorage.removeItem(sKey);
+                localStorage.removeItem(sKey + '_backup');
+                localStorage.setItem('isNewInstall_t-vdyrwk7dt', 'true');
+            }
+        }
+    } catch(e) {
+        console.error("[DEMO 2 CLEANUP] Error checking local storage:", e);
+    }
+})();
+
 const updateActiveTrainerId = (newId) => {
     let targetId = newId;
     if (targetId === 'alejandra_asteam_gmail_com') {
@@ -3881,18 +3910,25 @@ const Habits = {
     return (Habits.getAll() || []).find(h => String(h.clientId) === String(clientId) && h.date === today);
   },
 
-  save: (clientId, habitsData) => {
+  getByDate: (clientId, date) => {
+    return (Habits.getAll() || []).find(h => String(h.clientId) === String(clientId) && h.date === date);
+  },
+
+  save: (clientId, habitsData, customDate = null) => {
     const data = getData();
     if (!data.habits) data.habits = [];
     
-    const now = new Date();
-    const today = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
-    const index = data.habits.findIndex(h => String(h.clientId) === String(clientId) && h.date === today);
+    let targetDate = customDate;
+    if (!targetDate) {
+      const now = new Date();
+      targetDate = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
+    }
+    const index = data.habits.findIndex(h => String(h.clientId) === String(clientId) && h.date === targetDate);
     
     const entry = {
-      id: `${clientId}_${today}`,
+      id: `${clientId}_${targetDate}`,
       clientId: String(clientId),
-      date: today,
+      date: targetDate,
       water: parseFloat(habitsData.water) || 0,
       steps: parseInt(habitsData.steps) || 0,
       sleep: parseFloat(habitsData.sleep) || 0,

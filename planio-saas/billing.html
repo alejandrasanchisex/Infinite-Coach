@@ -250,14 +250,14 @@
                         <tbody>
                             ${invoices.slice().reverse().map(inv => `
                                 <tr>
-                                    <td><strong>${inv.number}</strong></td>
-                                    <td>${inv.clientName}</td>
+                                    <td><strong>${inv.number || 'Sin Nro.'}</strong></td>
+                                    <td>${inv.clientName || 'Cliente'}</td>
                                     <td>${new Date(inv.date).toLocaleDateString()}</td>
                                     <td class="font-bold">${formatCurrency(inv.amount)}</td>
                                     <td>
                                         <div class="flex items-center gap-sm">
-                                            <div title="Hash: ${inv.hash}" style="width: 10px; height: 10px; border-radius: 50%; background: var(--success); box-shadow: 0 0 8px var(--success);"></div>
-                                            <span class="text-xs text-muted" style="font-family: monospace;">${inv.hash.substring(0, 8)}...</span>
+                                            <div title="Hash: ${inv.hash || 'No certificado'}" style="width: 10px; height: 10px; border-radius: 50%; background: ${inv.hash ? 'var(--success)' : 'var(--error, #e74c3c)'}; box-shadow: 0 0 8px ${inv.hash ? 'var(--success)' : 'var(--error, #e74c3c)'};"></div>
+                                            <span class="text-xs text-muted" style="font-family: monospace;">${inv.hash ? inv.hash.substring(0, 8) : 'No Cert'}</span>
                                         </div>
                                     </td>
                                     <td style="text-align: right;">

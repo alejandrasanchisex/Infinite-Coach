@@ -7,7 +7,7 @@
     <script>
         // Force PWA cache bust / reload
         (function() {
-            const CURRENT_VERSION = '457';
+            const CURRENT_VERSION = '465';
             const savedVersion = localStorage.getItem('app_version');
             if (savedVersion !== CURRENT_VERSION) {
                 localStorage.setItem('app_version', CURRENT_VERSION);
@@ -31,9 +31,9 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="styles/theme.css?v=457">
-    <link rel="stylesheet" href="styles/components.css?v=457">
-    <link rel="stylesheet" href="styles/mobile.css?v=457">
+    <link rel="stylesheet" href="styles/theme.css?v=465">
+    <link rel="stylesheet" href="styles/components.css?v=465">
+    <link rel="stylesheet" href="styles/mobile.css?v=465">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <script>
@@ -155,6 +155,59 @@
             width: 70px; height: 6px; background: rgba(255,255,255,0.05); border-radius: 10px; overflow: hidden;
         }
         .progress-bar-mini > div { height: 100%; border-radius: 10px; }
+
+        /* Day Selector Carousel Styles */
+        .day-select-carousel {
+            display: flex;
+            gap: 8px;
+            overflow-x: auto;
+            padding: 5px 0 15px 0;
+            margin-bottom: 20px;
+            -webkit-overflow-scrolling: touch;
+            scrollbar-width: none; /* Firefox */
+        }
+        .day-select-carousel::-webkit-scrollbar {
+            display: none; /* Safari and Chrome */
+        }
+        .day-select-item {
+            flex: 1;
+            min-width: 45px;
+            text-align: center;
+            padding: 10px 6px;
+            border-radius: 14px;
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            cursor: pointer;
+            transition: all 0.2s ease;
+            user-select: none;
+        }
+        .day-select-item:active {
+            transform: scale(0.92);
+        }
+        .day-select-item.active {
+            background: rgba(var(--primary-color-rgb), 0.15);
+            border-color: var(--primary-color);
+        }
+        .day-select-item .day-name {
+            font-size: 0.68rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: var(--text-muted);
+            font-weight: 600;
+        }
+        .day-select-item.active .day-name {
+            color: var(--primary-color);
+            opacity: 0.9;
+        }
+        .day-select-item .day-num {
+            font-size: 1.15rem;
+            font-weight: 700;
+            margin-top: 3px;
+            color: var(--text-secondary);
+        }
+        .day-select-item.active .day-num {
+            color: var(--primary-color);
+        }
     </style>
 </head>
 
@@ -168,10 +221,10 @@
                     <span id="brandName">Infinite Coach</span>
                 </div>
                 <ul class="nav-links" id="navLinks">
-                    <li><a href="client-dashboard.html?v=457" class="nav-link">Inicio</a></li>
-                    <li><a href="client-profile.html?v=457" class="nav-link">Ficha Técnica</a></li>
+                    <li><a href="client-dashboard.html?v=465" class="nav-link">Inicio</a></li>
+                    <li><a href="client-profile.html?v=465" class="nav-link">Ficha Técnica</a></li>
 
-                    <li><a href="client-login.html?v=457" class="nav-link">Salir</a></li>
+                    <li><a href="client-login.html?v=465" class="nav-link">Salir</a></li>
                 </ul>
                 <button class="menu-toggle" onclick="toggleMenu()" style="margin-left: auto;">☰</button>
             </nav>
@@ -182,7 +235,7 @@
     <main class="main-content">
         <div class="container">
             <div class="flex-between align-center mb-lg">
-                <a href="client-dashboard.html?v=457" class="btn btn-sm btn-secondary" style="border-radius: 50px; padding: 8px 15px;">
+                <a href="client-dashboard.html?v=465" class="btn btn-sm btn-secondary" style="border-radius: 50px; padding: 8px 15px;">
                     ← Volver
                 </a>
                 <h1 style="margin: 0; font-size: 1.5rem;">Hábitos Diarios</h1>
@@ -197,8 +250,13 @@
 
             <!-- TAB: TODAY -->
             <div id="section-today">
+                <!-- Selector de Día (7 días vista) -->
+                <div id="daySelectorCarousel" class="day-select-carousel">
+                    <!-- Rellenado dinámicamente por JS -->
+                </div>
+
                 <div class="stats-summary text-center">
-                    <p class="text-muted text-xs uppercase letter-spacing-1 mb-xs">Fecha Actual</p>
+                    <p class="text-muted text-xs uppercase letter-spacing-1 mb-xs">Fecha Seleccionada</p>
                     <h2 id="todayDateLabel" style="font-size: 1.3rem;">-- de --</h2>
                 </div>
 
@@ -273,11 +331,11 @@
 
     <!-- Supabase SDK & Service -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="js/supabase-service.js?v=457"></script>
+    <script src="js/supabase-service.js?v=465"></script>
 
-    <script src="js/config.js?v=457"></script>
-    <script src="js/data-models.js?v=457"></script>
-    <script src="js/utils.js?v=457"></script>
+    <script src="js/config.js?v=465"></script>
+    <script src="js/data-models.js?v=465"></script>
+    <script src="js/utils.js?v=465"></script>
     <script>
         const params = new URLSearchParams(window.location.search);
         const urlClientId = params.get('c') || params.get('client');
@@ -317,6 +375,64 @@
         // State filters
         let currentHabitFilter = 'all';
         let currentPeriod = 7;
+
+        function getFormattedDate(d) {
+            return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+        }
+
+        let selectedDate = getFormattedDate(new Date());
+
+        function renderDaySelector() {
+            const container = document.getElementById('daySelectorCarousel');
+            if (!container) return;
+
+            const dates = [];
+            for (let i = 6; i >= 0; i--) {
+                const d = new Date();
+                d.setDate(d.getDate() - i);
+                dates.push(d);
+            }
+
+            container.innerHTML = dates.map(d => {
+                const dateStr = getFormattedDate(d);
+                const isActive = dateStr === selectedDate;
+                let dayName = d.toLocaleDateString('es-ES', { weekday: 'short' }).replace('.', '');
+                const dayNum = d.getDate();
+                
+                const isToday = getFormattedDate(new Date()) === dateStr;
+                if (isToday) {
+                    dayName = "Hoy";
+                }
+
+                return `
+                    <div class="day-select-item ${isActive ? 'active' : ''}" onclick="selectDate('${dateStr}')">
+                        <div class="day-name">${dayName}</div>
+                        <div class="day-num">${dayNum}</div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        window.selectDate = function(dateStr) {
+            selectedDate = dateStr;
+            renderDaySelector();
+            updateDateLabel(dateStr);
+            loadHabits(dateStr);
+        };
+
+        function updateDateLabel(dateStr) {
+            const todayDateLabelEl = document.getElementById('todayDateLabel');
+            if (todayDateLabelEl) {
+                const dateOptions = { weekday: 'long', day: 'numeric', month: 'long' };
+                const parts = dateStr.split('-');
+                const d = new Date(parts[0], parts[1] - 1, parts[2]);
+                if (window.safeLocaleDateString) {
+                    todayDateLabelEl.textContent = window.safeLocaleDateString(d, dateOptions);
+                } else {
+                    todayDateLabelEl.textContent = d.toLocaleDateString('es-ES', dateOptions);
+                }
+            }
+        }
 
         document.addEventListener('DOMContentLoaded', async () => {
             if (!clientId) return;
@@ -362,22 +478,15 @@
 
             // Date Display
             try {
-                const dateOptions = { weekday: 'long', day: 'numeric', month: 'long' };
-                const todayDateLabelEl = document.getElementById('todayDateLabel');
-                if (todayDateLabelEl) {
-                    if (window.safeLocaleDateString) {
-                        todayDateLabelEl.textContent = window.safeLocaleDateString(new Date(), dateOptions);
-                    } else {
-                        todayDateLabelEl.textContent = new Date().toLocaleDateString('es-ES', dateOptions);
-                    }
-                }
+                updateDateLabel(selectedDate);
+                renderDaySelector();
             } catch(e) { console.warn('Error setting habits date label:', e); }
 
-            loadHabits();
+            loadHabits(selectedDate);
         });
 
-        function loadHabits() {
-            const h = Habits.getToday(clientId) || { water: 0, steps: 0, sleep: 0, weight: 0 };
+        function loadHabits(dateStr = selectedDate) {
+            const h = Habits.getByDate(clientId, dateStr) || { water: 0, steps: 0, sleep: 0, weight: 0 };
             document.getElementById('val-water').innerHTML = `${h.water.toFixed(1)} <span class="habit-unit">L</span>`;
             document.getElementById('val-steps').textContent = h.steps.toLocaleString();
             document.getElementById('val-sleep').innerHTML = `${h.sleep.toFixed(1)} <span class="habit-unit">h</span>`;
@@ -548,7 +657,7 @@
         }
 
         window.openHabitModal = function(type) {
-            const h = Habits.getToday(clientId) || { water: 0, steps: 0, sleep: 0, weight: 0 };
+            const h = Habits.getByDate(clientId, selectedDate) || { water: 0, steps: 0, sleep: 0, weight: 0 };
             let title = '', icon = '', unit = '', current = 0, step = 1;
 
             if (type === 'water') { title = 'Agua'; icon = '💧'; unit = 'Litros'; current = h.water; step = 0.5; }
@@ -590,10 +699,12 @@
                 `;
             }
 
+            const formattedDay = new Date(selectedDate.split('-')[0], selectedDate.split('-')[1] - 1, selectedDate.split('-')[2]).toLocaleDateString('es-ES', { day: 'numeric', month: 'short' });
+
             const content = `
                 <div style="text-align: center; padding: 10px;">
                     <div style="font-size: 4rem; margin-bottom: 20px;">${icon}</div>
-                    <h3 style="margin-bottom: 20px;">Registrar ${title}</h3>
+                    <h3 style="margin-bottom: 20px;">Registrar ${title} (${formattedDay})</h3>
                     <div style="background: rgba(var(--primary-color-rgb), 0.05); padding: 25px; border-radius: 15px; border: 1px solid rgba(var(--primary-color-rgb), 0.1); margin-bottom: 20px;">
                         <label class="text-xs text-muted uppercase block mb-md">Cantidad actual</label>
                         <div style="display: flex; align-items: center; justify-content: center; gap: 20px;">
@@ -621,10 +732,10 @@
 
         window.saveHabit = async function(type) {
             const val = parseFloat(document.getElementById('habitInput').value) || 0;
-            const h = Habits.getToday(clientId) || { water: 0, steps: 0, sleep: 0, weight: 0 };
+            const h = Habits.getByDate(clientId, selectedDate) || { water: 0, steps: 0, sleep: 0, weight: 0 };
             h[type] = val;
-            Habits.save(clientId, h);
-            loadHabits();
+            Habits.save(clientId, h, selectedDate);
+            loadHabits(selectedDate);
             window.closeModal();
 
             // Sincronizar con Supabase garantizado
@@ -642,5 +753,5 @@
 
 
     </script>
-    <script src="js/custom-recipes.js?v=457"></script></body>
+    <script src="js/custom-recipes.js?v=465"></script></body>
 </html>

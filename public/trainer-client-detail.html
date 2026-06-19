@@ -5,7 +5,7 @@
     <script>
         // Force PWA cache bust / reload
         (function() {
-            const CURRENT_VERSION = '461';
+            const CURRENT_VERSION = '465';
             const savedVersion = localStorage.getItem('app_version');
             if (savedVersion !== CURRENT_VERSION) {
                 localStorage.setItem('app_version', CURRENT_VERSION);
@@ -31,8 +31,8 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="styles/theme.css?v=457">
-    <link rel="stylesheet" href="styles/components.css?v=457">
+    <link rel="stylesheet" href="styles/theme.css?v=465">
+    <link rel="stylesheet" href="styles/components.css?v=465">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <style>
         /* Bulletproof sizing override for routine editor and xl modals */
@@ -299,14 +299,14 @@
                     </div>
                     <button class="menu-toggle" onclick="toggleMenu()">☰</button>
                     <ul class="nav-links" id="navLinks">
-                        <li><a href="trainer-dashboard.html?v=457" class="nav-link">Dashboard</a></li>
-                        <li><a href="trainer-clients.html?v=457" class="nav-link active">Clientes</a></li>
-                        <li><a href="trainer-routines.html?v=457" class="nav-link">Rutinas</a></li>
-                        <li><a href="trainer-diets.html?v=457" class="nav-link">Dietas</a></li>
-                        <li><a href="trainer-feedbacks.html?v=457" class="nav-link">Revisiones</a></li>
-                        <li><a href="trainer-media.html?v=457" class="nav-link">Biblioteca</a></li>
-                        <li><a href="trainer-appointments.html?v=457" class="nav-link">Agenda</a></li>
-                        <li><a href="trainer-settings.html?v=457" class="nav-link">Configuración</a></li>
+                        <li><a href="trainer-dashboard.html?v=465" class="nav-link">Dashboard</a></li>
+                        <li><a href="trainer-clients.html?v=465" class="nav-link active">Clientes</a></li>
+                        <li><a href="trainer-routines.html?v=465" class="nav-link">Rutinas</a></li>
+                        <li><a href="trainer-diets.html?v=465" class="nav-link">Dietas</a></li>
+                        <li><a href="trainer-feedbacks.html?v=465" class="nav-link">Revisiones</a></li>
+                        <li><a href="trainer-media.html?v=465" class="nav-link">Biblioteca</a></li>
+                        <li><a href="trainer-appointments.html?v=465" class="nav-link">Agenda</a></li>
+                        <li><a href="trainer-settings.html?v=465" class="nav-link">Configuración</a></li>
                         <li><a href="#" onclick="if(typeof AUTH !== 'undefined') { AUTH.signOut() } else { window.location.reload() }; return false;" class="nav-link" style="color:var(--error-color)">🚪 Salir</a></li>
                     </ul>
                 </nav>
@@ -919,7 +919,7 @@
                                     </div>
                                     <div class="card-body">
                                         <div id="stripeNotConfigured" style="display: none;">
-                                            <p class="text-xs text-muted mb-md">Configura tus claves de Stripe en los <a href="trainer-settings.html?v=457" style="color: var(--primary-color);">Ajustes</a> para habilitar cobros automáticos.</p>
+                                            <p class="text-xs text-muted mb-md">Configura tus claves de Stripe en los <a href="trainer-settings.html?v=465" style="color: var(--primary-color);">Ajustes</a> para habilitar cobros automáticos.</p>
                                         </div>
                                         <div id="stripeActiveConfig">
                                             <p class="text-xs text-muted mb-md">Genera un enlace de pago recurrente para este cliente usando tus planes configurados.</p>
@@ -976,19 +976,19 @@
 
     <!-- Supabase SDK & Service -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="js/supabase-service.js?v=457"></script>
+    <script src="js/supabase-service.js?v=465"></script>
 
-    <script src="js/config.js?v=457"></script>
-    <script src="js/auth.js?v=457"></script>
-    <script src="js/sheets.js?v=457"></script>
-    <script src="js/data-models.js?v=461"></script>
-    <script src="js/utils.js?v=457"></script>
-    <script src="js/custom-recipes.js?v=457"></script>
-    <script src="js/custom-exercises.js?v=457"></script>
-    <script src="js/diet-editor-v3.js?v=457"></script>
+    <script src="js/config.js?v=465"></script>
+    <script src="js/auth.js?v=465"></script>
+    <script src="js/sheets.js?v=465"></script>
+    <script src="js/data-models.js?v=465"></script>
+    <script src="js/utils.js?v=465"></script>
+    <script src="js/custom-recipes.js?v=465"></script>
+    <script src="js/custom-exercises.js?v=465"></script>
+    <script src="js/diet-editor-v3.js?v=465"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.29/jspdf.plugin.autotable.min.js"></script>
-    <script src="js/export-utils.js?v=457"></script>
+    <script src="js/export-utils.js?v=465"></script>
     <script>
         const pageUrlParams = new URLSearchParams(window.location.search);
         const clientId = pageUrlParams.get('id');
@@ -1287,12 +1287,14 @@
         }
 
 
-        function loadClientData() {
+        function loadClientData(allowRedirect = false) {
             try {
                 currentClient = Clients.getById(clientId);
                 if (!currentClient) {
-                    showToast('Cliente no encontrado', 'error');
-                    setTimeout(() => window.location.href = 'trainer-clients.html', 2000);
+                    if (allowRedirect) {
+                        showToast('Cliente no encontrado', 'error');
+                        setTimeout(() => window.location.href = 'trainer-clients.html', 2000);
+                    }
                     return;
                 }
 
@@ -4729,14 +4731,14 @@
                             <tbody>
                                 ${history.reverse().map(inv => `
                                     <tr>
-                                        <td><strong>${inv.number}</strong></td>
+                                        <td><strong>${inv.number || 'Sin Nro.'}</strong></td>
                                         <td>${new Date(inv.date).toLocaleDateString()}</td>
                                         <td>${formatCurrency(inv.amount)}</td>
-                                        <td>${inv.description}</td>
+                                        <td>${inv.description || inv.concept || 'Cuota'}</td>
                                         <td>
                                             <div class="flex items-center gap-sm">
-                                                <div title="Hash: ${inv.hash}" style="width: 10px; height: 10px; border-radius: 50%; background: #4cd137; box-shadow: 0 0 5px #4cd137;"></div>
-                                                <span class="text-xs text-muted" style="font-family: monospace;">${inv.hash.substring(0, 8)}...</span>
+                                                <div title="Hash: ${inv.hash || 'No certificado'}" style="width: 10px; height: 10px; border-radius: 50%; background: ${inv.hash ? '#4cd137' : '#e74c3c'}; box-shadow: 0 0 5px ${inv.hash ? '#4cd137' : '#e74c3c'};"></div>
+                                                <span class="text-xs text-muted" style="font-family: monospace;">${inv.hash ? inv.hash.substring(0, 8) : 'No Cert'}</span>
                                             </div>
                                         </td>
                                         <td>
@@ -4944,7 +4946,7 @@
                         <div style="max-width: 800px; margin: 0 auto; border: 1px solid #eee; padding: 30px; border-radius: 8px;">
                             ${content}
                         </div>
-                        <script src="js/custom-recipes.js?v=457"><\/script></body>
+                        <script src="js/custom-recipes.js?v=465"><\/script></body>
                 </html>
             `);
             printWindow.document.close();
@@ -6449,7 +6451,7 @@
             document.getElementById('app').style.display = 'block';
             
             // Recargar datos tras sync
-            if (typeof loadClientData === 'function') loadClientData();
+            if (typeof loadClientData === 'function') loadClientData(true);
         }
 
         // Cargar datos del cliente al arrancar
@@ -6469,12 +6471,12 @@
                     if (typeof BrandConfig !== 'undefined') BrandConfig.applyTheme();
                 }
                 // Recargar datos tras sync
-                if (typeof loadClientData === 'function') loadClientData();
+                if (typeof loadClientData === 'function') loadClientData(true);
             } else {
-                if (typeof loadClientData === 'function') loadClientData();
+                if (typeof loadClientData === 'function') loadClientData(true);
             }
         });
     </script>
-    <script src="js/custom-recipes.js?v=457"></script></body>
+    <script src="js/custom-recipes.js?v=465"></script></body>
 
 </html>
