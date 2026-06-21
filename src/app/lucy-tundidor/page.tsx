@@ -287,7 +287,7 @@ export default function LucyTundidorLanding() {
                 alt="Lucy Tundidor Logo Mini" 
                 className="w-10 h-10 rounded-lg object-contain bg-[#faf7f5] p-0.5 border border-gray-100"
               />
-              <h2 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-[#2b2520]">Postular a la Asesoría</h2>
+              <h2 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-[#2b2520]">Unirse a la Asesoría</h2>
             </div>
             <p className="text-[#615349] text-sm sm:text-base leading-relaxed">
               Completa el cuestionario a continuación de la forma más detallada posible. Analizaré personalmente tu caso y me pondré en contacto contigo para valorar tu admisión en el programa.
