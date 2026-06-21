@@ -1,0 +1,629 @@
+<!DOCTYPE html>
+<html lang="es" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lucy Tundidor | Asesorías</title>
+    
+    <!-- Favicon Lucy Tundidor -->
+    <link rel="icon" type="image/png" href="https://bieeydhacavxymoosasx.supabase.co/storage/v1/object/public/Media/lucy_logo_cropped.png?v=2">
+    <link rel="apple-touch-icon" href="https://bieeydhacavxymoosasx.supabase.co/storage/v1/object/public/Media/lucy_logo_cropped.png?v=2">
+    
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#816e61',
+                        primaryDark: '#6c5a4f',
+                        accent: '#a79788',
+                        bgLight: '#faf7f5',
+                        textColor: '#2b2520',
+                        mutedColor: '#615349',
+                        borderColor: '#f0e8e2'
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        /* Custom checkbox accent styling */
+        input[type="checkbox"]:checked, input[type="radio"]:checked {
+            background-color: #816e61 !important;
+            border-color: #816e61 !important;
+        }
+    </style>
+</head>
+<body class="bg-bgLight text-textColor min-h-screen relative antialiased overflow-x-hidden selection:bg-primary selection:text-white">
+
+    <!-- Background Orbs & Effects -->
+    <div class="absolute top-0 inset-x-0 h-full pointer-events-none overflow-hidden z-0">
+        <div class="absolute -top-[10%] -left-[10%] w-[600px] h-[600px] rounded-full bg-primary/5 blur-[120px]"></div>
+        <div class="absolute top-[30%] -right-[15%] w-[500px] h-[500px] rounded-full bg-accent/6 blur-[120px]"></div>
+        <div class="absolute bottom-[20%] left-[5%] w-[700px] h-[700px] rounded-full bg-primary/4 blur-[150px]"></div>
+        
+        <!-- Subtle grid lines background overlay -->
+        <div class="absolute inset-0 opacity-[0.02]" 
+             style="background-image: linear-gradient(rgba(129,110,97,0.15) 1px, transparent 1px), linear-gradient(90deg, rgba(129,110,97,0.15) 1px, transparent 1px); background-size: 40px 40px;">
+        </div>
+    </div>
+
+    <div class="relative z-10 max-w-6xl mx-auto px-4 py-8 md:py-16">
+        
+        <!-- Header / Logo -->
+        <header class="flex justify-between items-center mb-16 md:mb-24">
+            <div class="flex items-center gap-3">
+                <img 
+                  src="https://bieeydhacavxymoosasx.supabase.co/storage/v1/object/public/Media/lucy_logo_cropped.png?v=2" 
+                  alt="Lucy Tundidor Logo" 
+                  class="w-12 h-12 rounded-xl object-contain bg-white p-0.5 shadow-md shadow-primary/10 border border-primary/20"
+                />
+                <div>
+                    <span class="font-extrabold text-xl tracking-tight block">Lucy Tundidor</span>
+                    <span class="text-xs text-primary block font-bold tracking-widest uppercase">Coaching</span>
+                </div>
+            </div>
+            <a
+              href="#formulario"
+              class="hidden sm:inline-flex items-center gap-1.5 px-5 py-2.5 rounded-full border border-primary/20 bg-white text-sm font-semibold hover:bg-bgLight hover:border-primary transition-all text-primary shadow-sm"
+            >
+              Empezar Ahora <i class="fa-solid fa-chevron-right text-xs"></i>
+            </a>
+        </header>
+
+        <!-- Hero Section -->
+        <section class="text-center max-w-3xl mx-auto mb-20 md:mb-32">
+            <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-primary/10 text-primary text-xs font-bold uppercase tracking-wider mb-6 border border-primary/20">
+                <i class="fa-solid fa-sparkles"></i> Exclusivo Plan de Asesoría 1-a-1
+            </div>
+            
+            <h1 class="text-4xl sm:text-6xl font-black tracking-tight leading-tight mb-8 text-textColor">
+                Entrenamiento, nutrición y <span class="text-primary italic font-serif">desarrollo personal</span>
+            </h1>
+            
+            <!-- Prominent Slogan Block -->
+            <div class="bg-white/80 border border-primary/10 rounded-2xl p-6 mb-10 shadow-sm backdrop-blur-sm max-w-2xl mx-auto">
+                <p class="text-mutedColor text-lg sm:text-xl font-medium leading-relaxed italic">
+                    🌸 Entrenamiento | nutrición | desarrollo personal para mujeres cansadas de un fitness lleno de ruido.
+                </p>
+            </div>
+
+            <p class="text-mutedColor text-base sm:text-lg leading-relaxed mb-10 max-w-2xl mx-auto">
+                Únete a mi asesoría y accede a nuestra <strong>aplicación móvil privada</strong>. Todo tu plan de entrenamiento, nutrición, mentalidad y seguimiento diario estructurado de forma personalizada en la palma de tu mano.
+            </p>
+
+            <div class="flex flex-col sm:flex-row gap-4 justify-center">
+                <a
+                  href="#formulario"
+                  class="px-8 py-4 bg-primary text-white font-extrabold rounded-2xl hover:bg-primaryDark transition-all shadow-lg shadow-primary/25 flex items-center justify-center gap-2 text-base"
+                >
+                  Comenzar Asesoría <i class="fa-solid fa-arrow-right"></i>
+                </a>
+                <a
+                  href="#que-ofrecemos"
+                  class="px-8 py-4 bg-white hover:bg-gray-50 border border-gray-200 text-mutedColor font-bold rounded-2xl transition-all flex items-center justify-center shadow-sm"
+                >
+                  Descubrir la App Móvil
+                </a>
+            </div>
+        </section>
+
+        <!-- Mobile App Promo Banner -->
+        <section class="mb-24 md:mb-36">
+            <div class="bg-white rounded-3xl border border-primary/10 p-8 md:p-12 shadow-md flex flex-col md:flex-row items-center justify-between gap-8">
+                <div class="space-y-4 max-w-xl">
+                    <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-primary/10 text-primary text-xs font-bold uppercase tracking-wider">
+                        <i class="fa-solid fa-mobile-screen-button"></i> Todo en tu Móvil
+                    </span>
+                    <h2 class="text-2xl sm:text-3xl font-extrabold tracking-tight text-textColor">
+                        Tu plan de asesoría siempre contigo con nuestra App Móvil
+                    </h2>
+                    <p class="text-mutedColor text-sm sm:text-base leading-relaxed">
+                        Sin PDFs confusos ni mensajes perdidos. Accede a tus rutinas de ejercicios con vídeo explicativo, registra tus comidas, controla tus métricas diarias y mantén contacto directo conmigo a través del chat de la app.
+                    </p>
+                </div>
+                <div class="flex items-center justify-center bg-bgLight p-6 rounded-2xl border border-gray-100 w-full md:w-auto min-w-[240px]">
+                    <div class="text-center">
+                        <div class="w-12 h-12 rounded-xl bg-primary/10 text-primary flex items-center justify-center mx-auto mb-3">
+                            <i class="fa-solid fa-mobile-screen text-xl"></i>
+                        </div>
+                        <div class="font-extrabold text-textColor text-sm">Infinite Coach App</div>
+                        <div class="text-xs text-gray-500 mt-1">Disponible para iOS y Android</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- What Client Finds in the App Section -->
+        <section id="que-ofrecemos" class="mb-24 md:mb-36 scroll-mt-20">
+            <div class="text-center mb-16">
+                <h2 class="text-3xl font-extrabold tracking-tight mb-4 text-textColor">
+                    ¿Qué encontrarás dentro de mi <span class="text-primary">App Móvil</span>?
+                </h2>
+                <p class="text-mutedColor max-w-xl mx-auto">
+                    Todo lo que necesitas para tu transformación física y bienestar mental reunido en un solo ecosistema digital.
+                </p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <!-- Card 1: Rutinas -->
+                <div class="bg-white p-8 rounded-3xl border border-gray-100 hover:border-primary/30 transition-all group shadow-sm flex flex-col justify-between">
+                    <div>
+                        <div class="w-14 h-14 rounded-2xl bg-primary/10 text-primary flex items-center justify-center mb-6 group-hover:bg-primary group-hover:text-white transition-all">
+                            <i class="fa-solid fa-dumbbell text-2xl"></i>
+                        </div>
+                        <h3 class="text-xl font-bold mb-3 text-textColor">Rutinas de Entrenamiento Consciente</h3>
+                        <p class="text-mutedColor leading-relaxed text-sm">
+                            Planes adaptados a ti, a tu nivel y al material del que dispongas. Cada ejercicio cuenta con un vídeo explicativo en alta definición para asegurar una ejecución impecable, maximizar tus resultados y entrenar de forma segura.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Card 2: Nutrición -->
+                <div class="bg-white p-8 rounded-3xl border border-gray-100 hover:border-primary/30 transition-all group shadow-sm flex flex-col justify-between">
+                    <div>
+                        <div class="w-14 h-14 rounded-2xl bg-primary/10 text-primary flex items-center justify-center mb-6 group-hover:bg-primary group-hover:text-white transition-all">
+                            <i class="fa-solid fa-apple-whole text-2xl"></i>
+                        </div>
+                        <h3 class="text-xl font-bold mb-3 text-textColor">Plan de Nutrición Flexible</h3>
+                        <p class="text-mutedColor leading-relaxed text-sm">
+                            Planes de alimentación adaptados a tus necesidades energéticas, gustos y estilo de vida. Disfruta de recetas variadas, ricas y sencillas de cocinar que demuestran que comer saludable puede ser un placer diario.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Card 3: Evolución y Hábitos -->
+                <div class="bg-white p-8 rounded-3xl border border-gray-100 hover:border-primary/30 transition-all group shadow-sm flex flex-col justify-between">
+                    <div>
+                        <div class="w-14 h-14 rounded-2xl bg-accent/10 text-accent flex items-center justify-center mb-6 group-hover:bg-accent group-hover:text-white transition-all">
+                            <i class="fa-solid fa-heart text-2xl"></i>
+                        </div>
+                        <h3 class="text-xl font-bold mb-3 text-textColor">Hábitos, Bienestar y Ciclos</h3>
+                        <p class="text-mutedColor leading-relaxed text-sm">
+                            Registra de manera interactiva tus fotos de progreso, peso, nivel de energía, horas de sueño, hidratación y estado de ánimo. Analiza tus cambios a través de gráficos integrados directamente en la aplicación.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Card 4: Soporte -->
+                <div class="bg-white p-8 rounded-3xl border border-gray-100 hover:border-primary/30 transition-all group shadow-sm flex flex-col justify-between">
+                    <div>
+                        <div class="w-14 h-14 rounded-2xl bg-primary/10 text-primary flex items-center justify-center mb-6 group-hover:bg-primary group-hover:text-white transition-all">
+                            <i class="fa-solid fa-comments text-2xl"></i>
+                        </div>
+                        <h3 class="text-xl font-bold mb-3 text-textColor">Desarrollo Personal y Soporte Diario</h3>
+                        <p class="text-mutedColor leading-relaxed text-sm">
+                            Estaremos en contacto directo a través del chat privado de la app. Resolveremos todas tus dudas a diario y valoraremos tus avances periódicamente para garantizar que te mantengas motivada y alineada con tus objetivos.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Lead Form Section -->
+        <section id="formulario" class="max-w-3xl mx-auto scroll-mt-20">
+            
+            <!-- Header Card -->
+            <div class="relative bg-white rounded-t-3xl border-t-[6px] border-primary p-8 border-x border-b border-gray-100 shadow-sm">
+                <div class="absolute top-0 right-0 p-6 opacity-5 pointer-events-none text-primary">
+                    <i class="fa-solid fa-shield-halved text-8xl"></i>
+                </div>
+                <div class="flex items-center gap-4 mb-4">
+                    <img 
+                      src="https://bieeydhacavxymoosasx.supabase.co/storage/v1/object/public/Media/lucy_logo_cropped.png?v=2" 
+                      alt="Lucy Tundidor Logo Mini" 
+                      class="w-10 h-10 rounded-lg object-contain bg-bgLight p-0.5 border border-gray-100"
+                    />
+                    <h2 class="text-2xl sm:text-3xl font-extrabold tracking-tight text-textColor">Postular a la Asesoría</h2>
+                </div>
+                <p class="text-mutedColor text-sm sm:text-base leading-relaxed">
+                    Completa el cuestionario a continuación de la forma más detallada posible. Analizaré personalmente tu caso y nos pondremos en contacto contigo para valorar tu admisión en el programa.
+                </p>
+            </div>
+
+            <!-- Form Container -->
+            <div id="form-wrapper" class="bg-white border border-gray-100 rounded-b-3xl p-6 sm:p-8 shadow-sm">
+                <form id="contact-form" class="space-y-6">
+                    
+                    <!-- Question 1: Name -->
+                    <div class="space-y-4">
+                        <label class="block text-base font-bold text-textColor">
+                            Nombre y Apellidos <span class="text-primary">*</span>
+                        </label>
+                        <div class="relative">
+                            <i class="fa-solid fa-user absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"></i>
+                            <input
+                              type="text"
+                              name="Nombre_y_Apellidos"
+                              required
+                              placeholder="Escribe tu respuesta"
+                              class="w-full bg-bgLight border border-gray-200 rounded-xl py-4 pl-12 pr-4 text-textColor placeholder-gray-400 focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all"
+                            />
+                        </div>
+                    </div>
+
+                    <!-- Question 2: Age -->
+                    <div class="space-y-4 pt-4">
+                        <label class="block text-base font-bold text-textColor">
+                            Edad <span class="text-primary">*</span>
+                        </label>
+                        <div class="relative">
+                            <i class="fa-solid fa-calendar absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"></i>
+                            <input
+                              type="number"
+                              name="Edad"
+                              required
+                              min="1"
+                              max="120"
+                              placeholder="Escribe tu edad"
+                              class="w-full bg-bgLight border border-gray-200 rounded-xl py-4 pl-12 pr-4 text-textColor placeholder-gray-400 focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all"
+                            />
+                        </div>
+                    </div>
+
+                    <!-- Question 3: Goal (Multiselect) -->
+                    <div class="space-y-4 pt-4">
+                        <label class="block text-base font-bold text-textColor">
+                            ¿Cuál es tu objetivo? <span class="text-primary">*</span>
+                        </label>
+                        
+                        <div class="space-y-3">
+                            <label class="flex items-start gap-3 cursor-pointer group">
+                                <input
+                                  type="checkbox"
+                                  name="Objetivo[]"
+                                  value="Mejorar composición corporal y hábitos"
+                                  class="w-5 h-5 rounded bg-bgLight border-gray-300 text-primary focus:ring-primary/20 cursor-pointer transition-all mt-0.5 accent-primary"
+                                />
+                                <span class="text-mutedColor text-sm sm:text-base group-hover:text-textColor transition-colors">
+                                    Mejorar composición corporal y hábitos
+                                </span>
+                            </label>
+
+                            <label class="flex items-start gap-3 cursor-pointer group">
+                                <input
+                                  type="checkbox"
+                                  name="Objetivo[]"
+                                  value="Ganar fuerza y tonificar"
+                                  class="w-5 h-5 rounded bg-bgLight border-gray-300 text-primary focus:ring-primary/20 cursor-pointer transition-all mt-0.5 accent-primary"
+                                />
+                                <span class="text-mutedColor text-sm sm:text-base group-hover:text-textColor transition-colors">
+                                    Ganar fuerza y tonificar
+                                </span>
+                            </label>
+
+                            <label class="flex items-start gap-3 cursor-pointer group">
+                                <input
+                                  type="checkbox"
+                                  name="Objetivo[]"
+                                  value="Pérdida de grasa de forma saludable"
+                                  class="w-5 h-5 rounded bg-bgLight border-gray-300 text-primary focus:ring-primary/20 cursor-pointer transition-all mt-0.5 accent-primary"
+                                />
+                                <span class="text-mutedColor text-sm sm:text-base group-hover:text-textColor transition-colors">
+                                    Pérdida de grasa de forma saludable
+                                </span>
+                            </label>
+
+                            <label class="flex items-start gap-3 cursor-pointer group">
+                                <input
+                                  type="checkbox"
+                                  name="Objetivo[]"
+                                  value="Desarrollo personal y bienestar mental"
+                                  class="w-5 h-5 rounded bg-bgLight border-gray-300 text-primary focus:ring-primary/20 cursor-pointer transition-all mt-0.5 accent-primary"
+                                />
+                                <span class="text-mutedColor text-sm sm:text-base group-hover:text-textColor transition-colors">
+                                    Desarrollo personal y bienestar mental
+                                </span>
+                            </label>
+
+                            <!-- Custom Option "Otro" -->
+                            <div class="space-y-2 pt-2">
+                                <label class="flex items-center gap-3 cursor-pointer group">
+                                    <input
+                                      type="checkbox"
+                                      id="chk-otro"
+                                      class="w-5 h-5 rounded bg-bgLight border-gray-300 text-primary focus:ring-primary/20 cursor-pointer transition-all accent-primary"
+                                      onchange="toggleOtroInput()"
+                                    />
+                                    <span class="text-mutedColor text-sm sm:text-base group-hover:text-textColor transition-colors">
+                                        Otro:
+                                    </span>
+                                </label>
+                                <input
+                                  type="text"
+                                  id="input-otro"
+                                  name="Objetivo_Otro"
+                                  placeholder="Escribe tu otro objetivo aquí"
+                                  disabled
+                                  class="hidden w-[calc(100%-2rem)] ml-8 bg-bgLight border border-gray-200 rounded-xl py-3 px-4 text-textColor placeholder-gray-400 focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all"
+                                />
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Question 4: Attitude (Radio) -->
+                    <div class="space-y-4 pt-4">
+                        <label class="block text-base font-bold text-textColor">
+                            ¿Con qué nivel de compromiso entras a la asesoría? <span class="text-primary">*</span>
+                        </label>
+                        
+                        <div class="space-y-4">
+                            <label class="flex items-start gap-3 cursor-pointer group">
+                                <input
+                                  type="radio"
+                                  name="Actitud"
+                                  required
+                                  value="Quiero ver de qué se trata, no es mi prioridad actual"
+                                  class="w-5 h-5 rounded-full bg-bgLight border-gray-300 text-primary focus:ring-primary/20 cursor-pointer transition-all mt-0.5 accent-primary"
+                                />
+                                <span class="text-mutedColor text-sm sm:text-base group-hover:text-textColor transition-colors">
+                                    Quiero ver de qué se trata, no es mi prioridad actual
+                                </span>
+                            </label>
+
+                            <label class="flex items-start gap-3 cursor-pointer group">
+                                <input
+                                  type="radio"
+                                  name="Actitud"
+                                  value="¡Estoy al 100% y lista para darlo todo por mi cambio!"
+                                  class="w-5 h-5 rounded-full bg-bgLight border-gray-300 text-primary focus:ring-primary/20 cursor-pointer transition-all mt-0.5 accent-primary"
+                                />
+                                <span class="text-mutedColor text-sm sm:text-base group-hover:text-textColor transition-colors">
+                                    ¡Estoy al 100% y lista para darlo todo por mi cambio!
+                                </span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Question: Como Continuar (Radio) -->
+                    <div class="space-y-4 pt-4">
+                        <label class="block text-base font-bold text-textColor">
+                            ¿Cómo prefieres que continuemos? <span class="text-primary">*</span>
+                        </label>
+                        
+                        <div class="space-y-4">
+                            <label class="flex items-start gap-3 cursor-pointer group">
+                                <input
+                                  type="radio"
+                                  name="Como_Continuar"
+                                  required
+                                  value="Quiero más información general porque tengo algunas dudas"
+                                  class="w-5 h-5 rounded-full bg-bgLight border-gray-300 text-primary focus:ring-primary/20 cursor-pointer transition-all mt-0.5 accent-primary"
+                                />
+                                <span class="text-mutedColor text-sm sm:text-base group-hover:text-textColor transition-colors">
+                                    Quiero más información general porque tengo algunas dudas
+                                </span>
+                            </label>
+
+                            <label class="flex items-start gap-3 cursor-pointer group">
+                                <input
+                                  type="radio"
+                                  name="Como_Continuar"
+                                  value="¡Quiero que me envíes el formulario de admisión completo para empezar cuanto antes!"
+                                  class="w-5 h-5 rounded-full bg-bgLight border-gray-300 text-primary focus:ring-primary/20 cursor-pointer transition-all mt-0.5 accent-primary"
+                                />
+                                <span class="text-mutedColor text-sm sm:text-base group-hover:text-textColor transition-colors">
+                                    ¡Quiero que me envíes el formulario de admisión completo para empezar cuanto antes!
+                                </span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Question 5: Expectations (TextArea) -->
+                    <div class="space-y-4 pt-4">
+                        <label class="block text-base font-bold text-textColor">
+                            ¿Qué esperas conseguir y cómo crees que puedo ayudarte?
+                        </label>
+                        <textarea
+                          name="Expectativas"
+                          rows="4"
+                          placeholder="Escribe tu respuesta detalladamente"
+                          class="w-full bg-bgLight border border-gray-200 rounded-xl py-4 px-4 text-textColor placeholder-gray-400 focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all resize-none"
+                        ></textarea>
+                    </div>
+
+                    <!-- Question 6: Phone -->
+                    <div class="space-y-4 pt-4">
+                        <label class="block text-base font-bold text-textColor">
+                            Número de teléfono para contacto rápido (WhatsApp) <span class="text-primary">*</span>
+                        </label>
+                        <div class="relative">
+                            <i class="fa-solid fa-phone absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"></i>
+                            <input
+                              type="tel"
+                              name="Telefono"
+                              required
+                              placeholder="Escribe tu número de teléfono"
+                              class="w-full bg-bgLight border border-gray-200 rounded-xl py-4 pl-12 pr-4 text-textColor placeholder-gray-400 focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all"
+                            />
+                        </div>
+                    </div>
+
+                    <!-- Question 7: Email -->
+                    <div class="space-y-4 pt-4">
+                        <label class="block text-base font-bold text-textColor">
+                            Dirección de correo electrónico <span class="text-primary">*</span>
+                        </label>
+                        <div class="relative">
+                            <i class="fa-solid fa-envelope absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"></i>
+                            <input
+                              type="email"
+                              name="Email"
+                              required
+                              placeholder="Escribe tu correo electrónico"
+                              class="w-full bg-bgLight border border-gray-200 rounded-xl py-4 pl-12 pr-4 text-textColor placeholder-gray-400 focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all"
+                            />
+                        </div>
+                    </div>
+
+                    <!-- Submit Button & Loader -->
+                    <div id="error-message" class="hidden bg-red-50 border border-red-200 text-red-600 text-sm px-4 py-3 rounded-xl"></div>
+                    
+                    <button
+                      type="submit"
+                      id="submit-btn"
+                      class="w-full py-4 text-center bg-primary hover:bg-primaryDark text-white font-extrabold rounded-2xl shadow-xl shadow-primary/10 transition-all cursor-pointer flex items-center justify-center gap-2"
+                    >
+                      <span>Enviar Formulario</span>
+                      <i class="fa-solid fa-arrow-right"></i>
+                    </button>
+                </form>
+            </div>
+
+            <!-- Success State (hidden initially) -->
+            <div id="success-wrapper" class="hidden bg-white border border-gray-100 rounded-b-3xl p-12 text-center shadow-sm">
+                <div class="w-20 h-20 rounded-full bg-primary/10 text-primary flex items-center justify-center mx-auto mb-6">
+                    <i class="fa-solid fa-circle-check text-4xl"></i>
+                </div>
+                <h3 class="text-2xl font-bold mb-3 text-textColor">¡Cuestionario Enviado!</h3>
+                <p class="text-mutedColor max-w-md mx-auto mb-8 text-sm sm:text-base">
+                    Tus respuestas se han guardado con éxito. Lucy analizará tu perfil personalmente y se pondrá en contacto contigo en las próximas horas.
+                </p>
+                <button
+                  onclick="resetFormState()"
+                  class="px-6 py-3 bg-bgLight hover:bg-gray-100 border border-gray-200 rounded-xl text-sm font-semibold transition-all text-mutedColor"
+                >
+                  Volver a enviar
+                </button>
+            </div>
+
+            <!-- Footer branding -->
+            <div class="text-center text-gray-500 text-xs mt-16 mb-8">
+                © <span id="current-year"></span> Lucy Tundidor. Todos los derechos reservados.<br />
+                Impulsado por la plataforma premium <span class="text-primary font-semibold">Infinite Coach</span>.
+            </div>
+
+        </section>
+
+    </div>
+
+    <!-- Script section for handling logic -->
+    <script>
+        document.getElementById('current-year').textContent = new Date().getFullYear();
+
+        const form = document.getElementById('contact-form');
+        const formWrapper = document.getElementById('form-wrapper');
+        const successWrapper = document.getElementById('success-wrapper');
+        const submitBtn = document.getElementById('submit-btn');
+        const errorMessage = document.getElementById('error-message');
+        const chkOtro = document.getElementById('chk-otro');
+        const inputOtro = document.getElementById('input-otro');
+
+        function toggleOtroInput() {
+            if (chkOtro.checked) {
+                inputOtro.disabled = false;
+                inputOtro.classList.remove('hidden');
+                inputOtro.focus();
+            } else {
+                inputOtro.disabled = true;
+                inputOtro.classList.add('hidden');
+                inputOtro.value = '';
+            }
+        }
+
+        function resetFormState() {
+            successWrapper.classList.add('hidden');
+            formWrapper.classList.remove('hidden');
+            errorMessage.classList.add('hidden');
+            errorMessage.textContent = '';
+        }
+
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            errorMessage.classList.add('hidden');
+            errorMessage.textContent = '';
+
+            // Set loading state
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = `
+                <svg class="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                </svg>
+                <span>Enviando respuestas...</span>
+            `;
+
+            // Prepare Form Data
+            const formData = new FormData(form);
+            
+            const selectedGoals = [];
+            document.querySelectorAll('input[name="Objetivo[]"]:checked').forEach((el) => {
+                selectedGoals.push(el.value);
+            });
+            const customGoal = (chkOtro && chkOtro.checked) ? inputOtro.value.trim() : '';
+            
+            const attitudeEl = document.querySelector('input[name="Actitud"]:checked');
+            const attitude = attitudeEl ? attitudeEl.value : '';
+            
+            const comoContinuarEl = document.querySelector('input[name="Como_Continuar"]:checked');
+            const howToContinue = comoContinuarEl ? comoContinuarEl.value : '';
+            
+            const payload = {
+                name: formData.get('Nombre_y_Apellidos'),
+                age: formData.get('Edad'),
+                goals: selectedGoals,
+                customGoal: customGoal,
+                attitude: attitude,
+                howToContinue: howToContinue,
+                expectations: formData.get('Expectativas'),
+                phone: formData.get('Telefono'),
+                email: formData.get('Email'),
+                toEmail: "lucyy.tundidor@gmail.com",
+                brand: "Lucy Tundidor",
+                primaryColor: "#816e61",
+                subject: "Nuevo formulario - Web Lucy Tundidor"
+            };
+
+            try {
+                const response = await fetch('/api/contact', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json'
+                    },
+                    body: JSON.stringify(payload)
+                });
+                
+                const result = await response.json();
+                
+                if (response.status === 200 && result.success) {
+                    formWrapper.classList.add('hidden');
+                    successWrapper.classList.remove('hidden');
+                    form.reset();
+                    if (chkOtro) chkOtro.checked = false;
+                    toggleOtroInput();
+                } else {
+                    throw new Error(result.error || 'Ocurrió un error al enviar el formulario.');
+                }
+            } catch (err) {
+                console.error(err);
+                errorMessage.textContent = err.message || 'Error de red. Por favor, inténtalo de nuevo.';
+                errorMessage.classList.remove('hidden');
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = `
+                    <span>Enviar Formulario</span>
+                    <i class="fa-solid fa-arrow-right"></i>
+                `;
+            }
+        });
+    </script>
+</body>
+</html>
