@@ -158,7 +158,7 @@ export default function LucyTundidorLanding() {
           
           {/* Prominent Slogan Block */}
           <p className="text-[#615349] text-lg sm:text-xl font-medium leading-relaxed italic mb-10 max-w-2xl mx-auto">
-            🌸 Entrenamiento | nutrición | desarrollo personal para mujeres cansadas de un fitness lleno de ruido.
+            🌸 Para mujeres cansadas de un fitness lleno de ruido.
           </p>
 
           <p className="text-[#615349] text-base sm:text-lg leading-relaxed mb-10 max-w-2xl mx-auto">
