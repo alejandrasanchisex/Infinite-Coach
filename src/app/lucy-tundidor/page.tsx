@@ -162,7 +162,7 @@ export default function LucyTundidorLanding() {
           </p>
 
           <p className="text-[#615349] text-base sm:text-lg leading-relaxed mb-10 max-w-2xl mx-auto">
-            Únete a mi asesoría y accede a nuestra <strong>aplicación móvil privada</strong>. Todo tu plan de entrenamiento, nutrición, mentalidad y seguimiento diario estructurado de forma personalizada en la palma de tu mano.
+            Únete a mi asesoría y accede a mi <strong>aplicación móvil privada</strong>. Todo tu plan de entrenamiento, nutrición, mentalidad y seguimiento diario estructurado de forma personalizada en la palma de tu mano.
           </p>
 
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
@@ -189,7 +189,7 @@ export default function LucyTundidorLanding() {
                 <Smartphone size={14} /> Todo en tu Móvil
               </span>
               <h2 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-[#2b2520]">
-                Tu plan de asesoría siempre contigo con nuestra App Móvil
+                Tu plan de asesoría siempre contigo con mi App Móvil
               </h2>
               <p className="text-[#615349] text-sm sm:text-base leading-relaxed">
                 Sin PDFs confusos ni mensajes perdidos. Accede a tus rutinas de ejercicios, registra tus comidas, controla tus métricas diarias y mantén contacto directo conmigo para guiarte en todo momento.
@@ -290,7 +290,7 @@ export default function LucyTundidorLanding() {
               <h2 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-[#2b2520]">Postular a la Asesoría</h2>
             </div>
             <p className="text-[#615349] text-sm sm:text-base leading-relaxed">
-              Completa el cuestionario a continuación de la forma más detallada posible. Analizaré personalmente tu caso y nos pondremos en contacto contigo para valorar tu admisión en el programa.
+              Completa el cuestionario a continuación de la forma más detallada posible. Analizaré personalmente tu caso y me pondré en contacto contigo para valorar tu admisión en el programa.
             </p>
           </div>
 

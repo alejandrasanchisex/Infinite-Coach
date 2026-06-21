@@ -1,4 +1,4 @@
-// Service Worker Cache Buster v478
+// Service Worker Cache Buster v479
 self.addEventListener('install', (event) => {
     self.skipWaiting();
 });

@@ -4359,6 +4359,26 @@ const BrandConfig = {
             res.logo = defaultBrand.logo;
             changed = true;
         }
+        const expectedQuestions = [
+            "¿Qué tal te ves fisicamente?",
+            "Sensaciones sobre la dieta (mucha/poca comida, ansiedad, poco apetito...)",
+            "Comida/alimento que no te haya gustado y/o quieras cambiar de la dieta actual",
+            "Comida/alimento que quieras tener en tu próxima dieta a ser posible",
+            "¿Has realizado algún salto de dieta para tener en cuenta?",
+            "¿Qué tal han ido los entrenos? Cuéntame tus sensaciones",
+            "¿Has podido entrenar los días estipulados?",
+            "¿Te recuperas correctamente de los entrenos entre sesiones?",
+            "Del 1 al 10, ¿Cuál ha sido tu implicación en los entrenamientos? (Intensidad, realización de todas las series...)"
+        ];
+        if (!res.feedbackQuestions || res.feedbackQuestions.length < 5) {
+            res.feedbackQuestions = expectedQuestions;
+            changed = true;
+        }
+        const expectedPerimeters = ["Cintura", "Cadera", "Pecho", "Brazo", "Muslo"];
+        if (!res.trainerPerimeters || res.trainerPerimeters.length < 3) {
+            res.trainerPerimeters = expectedPerimeters;
+            changed = true;
+        }
         if (changed && typeof saveData === 'function') {
             data.brand = res;
             saveData(data);
