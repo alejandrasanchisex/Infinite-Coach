@@ -88,15 +88,6 @@ const getStorageKey = () => `fitnessAppData_${window.activeTrainerId || 'default
         const raw = localStorage.getItem(sKey);
         if (raw) {
             const data = JSON.parse(raw);
-            const clients = data.clients || [];
-            
-            // Check if there are any clients other than Amalia and Fernando
-            const hasMock = clients.some(c => c.id !== '0db0ea7a-c413-44cb-b99e-dfd9790383eb' && c.id !== '20f2e6c2-2699-4ccc-a982-1e9fb141b9bb');
-            
-            // Check if Amalia or Fernando have incorrect fees in local storage
-            const amalia = clients.find(c => c.id === '0db0ea7a-c413-44cb-b99e-dfd9790383eb');
-            const fernando = clients.find(c => c.id === '20f2e6c2-2699-4ccc-a982-1e9fb141b9bb');
-            const hasWrongFees = (amalia && amalia.monthlyFee !== 65) || (fernando && fernando.monthlyFee !== 0);
             
             // Check if there are mock feedbacks or invoices in local storage
             const feedbacks = data.feedbacks || [];
@@ -104,8 +95,8 @@ const getStorageKey = () => `fitnessAppData_${window.activeTrainerId || 'default
             const hasMockFeedbacks = feedbacks.some(f => f.id === 'fb-pending-1' || f.id === 'fb-pending-2' || String(f.id).startsWith('fb-pending-'));
             const hasMockInvoices = invoices.some(i => String(i.id).startsWith('inv-'));
             
-            if (hasMock || hasWrongFees || hasMockFeedbacks || hasMockInvoices) {
-                console.warn("🧹 [ASTEAM CLEANUP] Test data spillover, wrong fees, or mock feedbacks/invoices detected in local storage. Wiping key and forcing clean sync from cloud...");
+            if (hasMockFeedbacks || hasMockInvoices) {
+                console.warn("🧹 [ASTEAM CLEANUP] Mock feedbacks or invoices detected in local storage. Wiping key and forcing clean sync from cloud...");
                 localStorage.removeItem(sKey);
                 localStorage.removeItem(sKey + '_backup');
                 localStorage.setItem('isNewInstall_t-w0iybl7qb', 'true');
@@ -214,6 +205,18 @@ const syncClientWithLatestFeedback = (client, feedbacks) => {
     if (!client.weightHistory) {
         client.weightHistory = [];
         changed = true;
+    } else {
+        const originalLength = client.weightHistory.length;
+        client.weightHistory = client.weightHistory.filter(h => {
+            if (!h.isFeedback) return true; // Keep manual weight records
+            const hasMatchingFeedback = clientFeedbacks.some(fb => 
+                h.date && Math.abs(new Date(h.date) - new Date(fb.date)) < 1000 * 60 * 5
+            );
+            return hasMatchingFeedback;
+        });
+        if (client.weightHistory.length !== originalLength) {
+            changed = true;
+        }
     }
     
     clientFeedbacks.forEach(fb => {
@@ -274,6 +277,22 @@ const getData = () => {
     if (!data.invoices) data.invoices = [];
     if (!data.trainingLogs) data.trainingLogs = [];
     if (!data.supplementationTemplates) data.supplementationTemplates = [];
+
+    // 🛡️ SHIELD FOR ASTEAM FEES (AMALIA AND FERNANDO)
+    if (data.clients) {
+        let shielded = false;
+        data.clients.forEach(c => {
+            if (c.id === '20f2e6c2-2699-4ccc-a982-1e9fb141b9bb' || c.id === '0db0ea7a-c413-44cb-b99e-dfd9790383eb') {
+                const feeVal = parseFloat(c.monthlyFee);
+                const subVal = parseFloat(c.subscriptionAmount);
+                if (isNaN(feeVal) || feeVal === 0) { c.monthlyFee = 65; shielded = true; }
+                if (isNaN(subVal) || subVal === 0) { c.subscriptionAmount = 65; shielded = true; }
+            }
+        });
+        if (shielded) {
+            try { localStorage.setItem(sKey, JSON.stringify(data)); } catch(e){}
+        }
+    }
 
     // 🔥 MIGRACIÓN ÚNICA: Restaurar recetas ocultas a activas
     if (!localStorage.getItem('v310_unhide_recipes_done')) {
@@ -689,6 +708,16 @@ ${item.date}`.replace('\n', ''); // Safe compile
                     }
                 } else if (cloudClient) {
                     finalClients.push(cloudClient);
+                }
+            });
+            finalClients.forEach(c => {
+                if (c && (c.id === '20f2e6c2-2699-4ccc-a982-1e9fb141b9bb' || 
+                          c.id === '0db0ea7a-c413-44cb-b99e-dfd9790383eb' ||
+                          c.id === '94e6e268-245b-4e52-bcee-a0c93396ef1a' ||
+                          c.id === 'b2d4c948-3648-432d-97da-0d040c2d170b' ||
+                          c.id === '42d79738-c525-4c07-ba1b-3315f64b9b98')) {
+                    c.monthlyFee = 65;
+                    c.subscriptionAmount = 65;
                 }
             });
             result.clients = finalClients;
@@ -1319,6 +1348,18 @@ ${item.date}`.replace('\n', ''); // Safe compile
                             }
                         }
                     });
+                    if (col === 'clients') {
+                        mergedItems.forEach(c => {
+                            if (c && (c.id === '20f2e6c2-2699-4ccc-a982-1e9fb141b9bb' || 
+                                      c.id === '0db0ea7a-c413-44cb-b99e-dfd9790383eb' ||
+                                      c.id === '94e6e268-245b-4e52-bcee-a0c93396ef1a' ||
+                                      c.id === 'b2d4c948-3648-432d-97da-0d040c2d170b' ||
+                                      c.id === '42d79738-c525-4c07-ba1b-3315f64b9b98')) {
+                                c.monthlyFee = 65;
+                                c.subscriptionAmount = 65;
+                            }
+                        });
+                    }
 
                     mergedData[col] = mergedItems;
                 });
@@ -3825,21 +3866,36 @@ const TrainingLogs = {
         existingLog.date = new Date().toISOString();
         existingLog.lastModified = new Date().toISOString();
     } else {
-        const activeBlock = (data.trainingBlocks || []).find(b => b.clientId == logData.clientId && b.status === 'active');
-        existingLog = {
-          id: generateUUID(),
-          clientId: logData.clientId,
-          routineId: logData.routineId,
-          dayNumber: logData.dayNumber,
-          blockId: activeBlock ? activeBlock.id : null,
-          date: logData.date || new Date().toISOString(),
-          exercises: logData.exercises || [],
-          comment: logData.comment || '',
-          completed: true,
-          createdAt: new Date().toISOString(),
-          lastModified: new Date().toISOString()
-        };
-        data.trainingLogs.push(existingLog);
+        // Prevent duplication on double-submission by checking for already completed logs
+        let duplicateCompleted = data.trainingLogs.find(l => 
+            l.clientId == logData.clientId && 
+            l.routineId === logData.routineId && 
+            l.dayNumber === logData.dayNumber && 
+            l.completed === true
+        );
+        if (duplicateCompleted) {
+            console.warn("Duplicate completed log submission detected. Updating instead of duplicating.");
+            duplicateCompleted.exercises = logData.exercises || [];
+            duplicateCompleted.comment = logData.comment || '';
+            duplicateCompleted.lastModified = new Date().toISOString();
+            existingLog = duplicateCompleted;
+        } else {
+            const activeBlock = (data.trainingBlocks || []).find(b => b.clientId == logData.clientId && b.status === 'active');
+            existingLog = {
+              id: generateUUID(),
+              clientId: logData.clientId,
+              routineId: logData.routineId,
+              dayNumber: logData.dayNumber,
+              blockId: activeBlock ? activeBlock.id : null,
+              date: logData.date || new Date().toISOString(),
+              exercises: logData.exercises || [],
+              comment: logData.comment || '',
+              completed: true,
+              createdAt: new Date().toISOString(),
+              lastModified: new Date().toISOString()
+            };
+            data.trainingLogs.push(existingLog);
+        }
     }
 
     saveData(data);
@@ -4153,6 +4209,7 @@ const BrandConfig = {
     // Check if the active trainer is Alejandra
     let isAlejandra = false;
     let isToledo = false;
+    let isLucy = false;
     if (typeof window !== 'undefined') {
         const activeId = window.activeTrainerId || localStorage.getItem('activeTrainerId') || '';
         const trainerEmail = localStorage.getItem('_trainerEmail') || '';
@@ -4165,7 +4222,10 @@ const BrandConfig = {
         if (activeId.includes('t-8umeizyns') || (trainerEmail && trainerEmail.toLowerCase() === 'vtoledonutrition@gmail.com')) {
             isToledo = true;
         }
-        console.log(`[BrandConfig] activeId="${activeId}" trainerEmail="${trainerEmail}" => isAlejandra=${isAlejandra}, isToledo=${isToledo}`);
+        if (activeId.includes('t-udve3b1u3') || (trainerEmail && trainerEmail.toLowerCase() === 'lucyy.tundidor@gmail.com')) {
+            isLucy = true;
+        }
+        console.log(`[BrandConfig] activeId="${activeId}" trainerEmail="${trainerEmail}" => isAlejandra=${isAlejandra}, isToledo=${isToledo}, isLucy=${isLucy}`);
     }
 
     // Default brand settings
@@ -4195,6 +4255,21 @@ const BrandConfig = {
             colors: { primary: '#E60026', secondary: '#0A0A0E', accent: '#FFFFFF', themeMode: 'dark', bgDark: '#0A0A0E' },
             fiscalData: { invoiceSeries: 'FIT-VT-' + new Date().getFullYear() }
         };
+    } else if (isLucy) {
+        defaultBrand = {
+            name: 'Lucy Tundidor',
+            logo: 'https://bieeydhacavxymoosasx.supabase.co/storage/v1/object/public/Media/lucy_logo_cropped.png?v=2',
+            configured: true,
+            colors: { 
+                primary: '#816e61', 
+                secondary: '#a79788', 
+                accent: '#a79788', 
+                themeMode: 'light', 
+                bgLight: '#faf7f5', 
+                bgDark: '#1e1b18' 
+            },
+            fiscalData: { invoiceSeries: 'FLUCY' + new Date().getFullYear() }
+        };
     }
 
     let res = data.brand || defaultBrand;
@@ -4202,13 +4277,17 @@ const BrandConfig = {
     // If not Alejandra, ensure ASTeam config is cleared and default Infinite Coach is returned/configured
     if (!isAlejandra) {
         if (res && (res.name === 'ASTeam' || res.logo === 'https://bieeydhacavxymoosasx.supabase.co/storage/v1/object/public/Media/1779724548154_Gemini_Generated_Image_vse84nvse84nvse8.png' || (res.colors && res.colors.primary === '#fdbfec'))) {
-            res = {
-                name: 'Infinite Coach',
-                logo: 'img/logo-infinite-coach.png',
-                configured: true,
-                colors: { primary: '#00D9FF', secondary: '#1A1A2E', accent: '#FF6B6B' },
-                fiscalData: { invoiceSeries: 'F' + new Date().getFullYear() }
-            };
+            res = defaultBrand;
+            if (typeof saveData === 'function') {
+                data.brand = res;
+                saveData(data);
+            }
+        }
+    }
+    // If not Lucy, ensure Lucy config is cleared
+    if (!isLucy) {
+        if (res && (res.name === 'Lucy Tundidor' || res.logo === 'https://bieeydhacavxymoosasx.supabase.co/storage/v1/object/public/Media/lucy_logo_cropped.png' || res.logo === 'https://bieeydhacavxymoosasx.supabase.co/storage/v1/object/public/Media/lucy_logo_cropped.png?v=2' || (res.colors && res.colors.primary === '#816e61'))) {
+            res = defaultBrand;
             if (typeof saveData === 'function') {
                 data.brand = res;
                 saveData(data);
@@ -4216,7 +4295,7 @@ const BrandConfig = {
         }
     }
 
-    if (res && (res.name === 'MyFitness' || res.name === 'Fitness App' || (res.name === 'Infinite Coach' && defaultBrand.name === 'ASTeam'))) {
+    if (res && (res.name === 'MyFitness' || res.name === 'Fitness App' || (res.name === 'Infinite Coach' && defaultBrand.name === 'ASTeam') || (res.name === 'Infinite Coach' && defaultBrand.name === 'Lucy Tundidor'))) {
         res.name = defaultBrand.name;
         res.colors = defaultBrand.colors;
         res.logo = defaultBrand.logo;
@@ -4260,6 +4339,24 @@ const BrandConfig = {
             changed = true;
         }
 
+        if (changed && typeof saveData === 'function') {
+            data.brand = res;
+            saveData(data);
+        }
+    }
+
+    // Auto-correct stale or corrupted Lucy settings in local cache (forcing correct logo, colors)
+    if (isLucy && res && (res.name === 'Lucy Tundidor' || defaultBrand.name === 'Lucy Tundidor')) {
+        let changed = false;
+        res.name = 'Lucy Tundidor';
+        if (!res.colors || res.colors.primary === '#00d9ff' || res.colors.primary === '#00D9FF' || res.colors.primary === '#fdbfec') {
+            res.colors = defaultBrand.colors;
+            changed = true;
+        }
+        if (!res.logo || res.logo === 'img/logo-infinite-coach.png' || res.logo.includes('1779724548154') || res.logo.includes('lucy_logo_v1.png') || !res.logo.includes('lucy_logo_cropped.png?v=2')) {
+            res.logo = defaultBrand.logo;
+            changed = true;
+        }
         if (changed && typeof saveData === 'function') {
             data.brand = res;
             saveData(data);

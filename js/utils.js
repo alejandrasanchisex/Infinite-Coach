@@ -543,18 +543,81 @@ const NotificationManager = {
         if (Notification.permission !== 'granted') return;
         
         const today = new Date();
-        const dayStr = today.toLocaleDateString('es-ES', { weekday: 'long' }).toLowerCase();
+        const dateKey = today.toISOString().split('T')[0]; // "YYYY-MM-DD"
+        const clientId = client.id || sessionStorage.getItem('clientId') || localStorage.getItem('clientId') || 'client';
+        const sentKey = `sent_notifications_${clientId}`;
         
-        // Review Day Check
+        let sentLog = {};
+        try {
+            sentLog = JSON.parse(localStorage.getItem(sentKey) || '{}');
+        } catch(e) {}
+        
+        // Limpiar registros antiguos si cambiamos de día
+        if (sentLog.date !== dateKey) {
+            sentLog = { date: dateKey, types: [] };
+        }
+        
+        const dayStr = typeof safeLocaleDateString !== 'undefined' ? safeLocaleDateString(today, { weekday: 'long' }).toLowerCase() : today.toLocaleDateString('es-ES', { weekday: 'long' }).toLowerCase();
+        
+        // 1. Control del Día de Revisión
         if (client.reviewDay) {
             const daysMap = {'1':'lunes','2':'martes','3':'miércoles','4':'jueves','5':'viernes','6':'sábado','7':'domingo'};
             if (daysMap[client.reviewDay] === dayStr) {
-                this.send('📝 ¡Día de Revisión!', {
-                    body: `Hola ${client.name}, hoy toca reportar tus progresos. ¡No lo olvides!`,
-                    tag: 'review-reminder'
-                });
+                if (!sentLog.types.includes('review')) {
+                    this.send('📝 ¡Día de Revisión!', {
+                        body: `Hola ${client.name}, hoy toca reportar tus progresos. ¡No lo olvides!`,
+                        tag: 'review-reminder'
+                    });
+                    sentLog.types.push('review');
+                }
             }
         }
+
+        // 2. Control de Vencimiento de Pago / Suscripción
+        if (client.paymentExpiry) {
+            try {
+                const parts = client.paymentExpiry.split('/');
+                if (parts.length === 3) {
+                    const day = parseInt(parts[0]);
+                    const month = parseInt(parts[1]) - 1;
+                    let year = parseInt(parts[2]);
+                    if (year < 100) year += 2000;
+                    
+                    const expiryDate = new Date(year, month, day);
+                    if (!isNaN(expiryDate)) {
+                        const todayZero = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+                        const expiryZero = new Date(expiryDate.getFullYear(), expiryDate.getMonth(), expiryDate.getDate());
+                        
+                        const diffTime = expiryZero.getTime() - todayZero.getTime();
+                        const diffDays = Math.round(diffTime / (1000 * 60 * 60 * 24));
+                        
+                        if (diffDays > 0 && diffDays <= 3) {
+                            if (!sentLog.types.includes('payment-approaching')) {
+                                this.send('💳 Próximo Vencimiento', {
+                                    body: `Hola ${client.name}, tu suscripción vence en ${diffDays} ${diffDays === 1 ? 'día' : 'días'} (el ${client.paymentExpiry}). ¡Evita la suspensión del servicio!`,
+                                    tag: 'payment-expiry-reminder'
+                                });
+                                sentLog.types.push('payment-approaching');
+                            }
+                        } else if (diffDays === 0) {
+                            if (!sentLog.types.includes('payment-due')) {
+                                this.send('💳 Pago Vencido hoy', {
+                                    body: `Hola ${client.name}, hoy es el día de renovación de tu plan. ¡No olvides realizar el pago!`,
+                                    tag: 'payment-expiry-reminder'
+                                });
+                                sentLog.types.push('payment-due');
+                            }
+                        }
+                    }
+                }
+            } catch (e) {
+                console.warn('Error parsing paymentExpiry for notification:', e);
+            }
+        }
+        
+        try {
+            localStorage.setItem(sentKey, JSON.stringify(sentLog));
+        } catch(e) {}
     }
 };
 window.NotificationManager = NotificationManager;

@@ -36,7 +36,17 @@ const SupabaseService = {
                 if (error.code === 'PGRST116') return null; // No existe registro aún
                 throw error;
             }
-            return data.full_data;
+            
+            const fd = data.full_data;
+            if (trainerId === 't-w0iybl7qb' && fd && fd.clients) {
+                fd.clients.forEach(c => {
+                    if (c.id === '20f2e6c2-2699-4ccc-a982-1e9fb141b9bb' || c.id === '0db0ea7a-c413-44cb-b99e-dfd9790383eb') {
+                        if (!c.monthlyFee || c.monthlyFee === 0) c.monthlyFee = 65;
+                        if (!c.subscriptionAmount || c.subscriptionAmount === 0) c.subscriptionAmount = 65;
+                    }
+                });
+            }
+            return fd;
         } catch (error) {
             console.error("Error cargando desde Supabase:", error);
             return null;
@@ -52,48 +62,25 @@ const SupabaseService = {
             // 🛡️ CORTAFUEGOS ASTEAM: Evitar contaminación con datos de prueba
             if (trainerId === 't-w0iybl7qb' && fullData) {
                 console.log("🛡️ [ASTEAM CORTAFUEGOS] Aplicando sanitización estricta...");
-                const realClientIds = ['0db0ea7a-c413-44cb-b99e-dfd9790383eb', '20f2e6c2-2699-4ccc-a982-1e9fb141b9bb'];
                 
                 if (fullData.clients) {
-                    fullData.clients = fullData.clients.filter(c => realClientIds.includes(c.id));
+                    // 🛡️ ENFORCE FEES FOR ASTEAM CLIENTS (AMALIA AND FERNANDO)
                     fullData.clients.forEach(c => {
-                        if (c.id === '0db0ea7a-c413-44cb-b99e-dfd9790383eb') {
-                            c.monthlyFee = 65;
-                            c.subscriptionAmount = 65;
-                        } else if (c.id === '20f2e6c2-2699-4ccc-a982-1e9fb141b9bb') {
-                            c.monthlyFee = 0;
-                            c.subscriptionAmount = 0;
+                        if (c.id === '20f2e6c2-2699-4ccc-a982-1e9fb141b9bb' || c.id === '0db0ea7a-c413-44cb-b99e-dfd9790383eb') {
+                            const fee = parseFloat(c.monthlyFee);
+                            const sub = parseFloat(c.subscriptionAmount);
+                            if (isNaN(fee) || fee === 0) c.monthlyFee = 65;
+                            if (isNaN(sub) || sub === 0) c.subscriptionAmount = 65;
                         }
                     });
                 }
                 
-                const collectionsToFilter = ['feedbacks', 'appointments', 'invoices', 'trainingLogs', 'habits', 'trainingBlocks'];
-                collectionsToFilter.forEach(col => {
-                    if (fullData[col]) {
-                        fullData[col] = fullData[col].filter(item => realClientIds.includes(item.clientId));
-                    }
-                });
-                
-                // Filtrar revisiones y facturas de prueba específicamente
-                const realFeedbackIds = [
-                    'bafc9306-f61b-4279-b461-24844f9bcaad',
-                    '61428dc6-9fcb-4bb0-8e67-e15711020332',
-                    '5d1e18c9-1216-44ca-b674-092802512f90',
-                    '0f15956a-78f8-4f38-92e8-e7ffd49bfbf0',
-                    'f70cac01-4d9f-4c90-aacc-c32df25e7fab'
-                ];
+                // Filtrar revisiones de prueba específicamente (conservando las reales)
                 if (fullData.feedbacks) {
-                    fullData.feedbacks = fullData.feedbacks.filter(f => realFeedbackIds.includes(f.id));
+                    fullData.feedbacks = fullData.feedbacks.filter(f => !String(f.id).startsWith('fb-demo'));
                 }
                 if (fullData.invoices) {
                     fullData.invoices = fullData.invoices.filter(i => !String(i.id).startsWith('inv-'));
-                }
-                
-                if (fullData.diets) {
-                    fullData.diets = fullData.diets.filter(d => !d.clientId || realClientIds.includes(d.clientId) || d.isTemplate);
-                }
-                if (fullData.routines) {
-                    fullData.routines = fullData.routines.filter(r => !r.clientId || realClientIds.includes(r.clientId) || r.isTemplate);
                 }
             }
 

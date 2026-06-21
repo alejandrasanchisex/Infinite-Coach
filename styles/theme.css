@@ -751,19 +751,23 @@ html.theme-light [style*="color: var(--text-primary)"],
 html.theme-light [style*="color:var(--text-primary)"],
 html.theme-light [style*="rgb(255, 255, 255)"],
 html.theme-light [style*="rgb(255,255,255)"],
-html.theme-light #suppPreviewContent,
 html.theme-light #suppListBody,
 html.theme-light #cardioContentBody,
 html.theme-light #saasExpiryVal,
 html.theme-light #saasClientLimitVal,
 html.theme-light #saasLicenseCard span,
 html.theme-light #saasLicenseCard div,
-html.theme-light #suppPreviewContent *,
 html.theme-light #suppListBody *,
 html.theme-light #cardioContentBody *,
 html.theme-light .text-white,
 html.theme-light strong[style*="color"] {
   color: var(--text-primary) !important;
+}
+
+/* Enforce white text color for the dark supplementation preview card in light mode */
+html.theme-light #suppPreviewContent,
+html.theme-light #suppPreviewContent * {
+  color: #ffffff !important;
 }
 
 /* Force opacity labels to be fully visible and readable secondary color */

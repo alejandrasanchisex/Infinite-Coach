@@ -157,11 +157,9 @@ export default function LucyTundidorLanding() {
           </h1>
           
           {/* Prominent Slogan Block */}
-          <div className="bg-white/80 border border-[#816e61]/10 rounded-2xl p-6 mb-10 shadow-sm backdrop-blur-sm max-w-2xl mx-auto">
-            <p className="text-[#615349] text-lg sm:text-xl font-medium leading-relaxed italic">
-              🌸 Entrenamiento | nutrición | desarrollo personal para mujeres cansadas de un fitness lleno de ruido.
-            </p>
-          </div>
+          <p className="text-[#615349] text-lg sm:text-xl font-medium leading-relaxed italic mb-10 max-w-2xl mx-auto">
+            🌸 Entrenamiento | nutrición | desarrollo personal para mujeres cansadas de un fitness lleno de ruido.
+          </p>
 
           <p className="text-[#615349] text-base sm:text-lg leading-relaxed mb-10 max-w-2xl mx-auto">
             Únete a mi asesoría y accede a nuestra <strong>aplicación móvil privada</strong>. Todo tu plan de entrenamiento, nutrición, mentalidad y seguimiento diario estructurado de forma personalizada en la palma de tu mano.

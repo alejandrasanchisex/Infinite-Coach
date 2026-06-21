@@ -7,7 +7,7 @@
     <script>
         // Force PWA cache bust / reload
         (function() {
-            const CURRENT_VERSION = '465';
+            const CURRENT_VERSION = '478';
             const savedVersion = localStorage.getItem('app_version');
             if (savedVersion !== CURRENT_VERSION) {
                 localStorage.setItem('app_version', CURRENT_VERSION);
@@ -31,9 +31,9 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="styles/theme.css?v=465">
-    <link rel="stylesheet" href="styles/components.css?v=465">
-    <link rel="stylesheet" href="styles/mobile.css?v=465">
+    <link rel="stylesheet" href="styles/theme.css?v=478">
+    <link rel="stylesheet" href="styles/components.css?v=478">
+    <link rel="stylesheet" href="styles/mobile.css?v=478">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <script>
@@ -155,10 +155,10 @@
                     <span id="brandName">Infinite Coach</span>
                 </div>
                 <ul class="nav-links" id="navLinks">
-                    <li><a href="client-dashboard.html?v=465" class="nav-link">Inicio</a></li>
-                    <li><a href="client-profile.html?v=465" class="nav-link">Ficha Técnica</a></li>
+                    <li><a href="client-dashboard.html?v=478" class="nav-link">Inicio</a></li>
+                    <li><a href="client-profile.html?v=478" class="nav-link">Ficha Técnica</a></li>
 
-                    <li><a href="client-login.html?v=465" class="nav-link">Salir</a></li>
+                    <li><a href="client-login.html?v=478" class="nav-link">Salir</a></li>
                 </ul>
                 <button class="menu-toggle" onclick="toggleMenu()" style="margin-left: auto;">☰</button>
             </nav>
@@ -342,11 +342,11 @@
 
     <!-- Supabase SDK & Service -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="js/supabase-service.js?v=465"></script>
+    <script src="js/supabase-service.js?v=478"></script>
 
-    <script src="js/data-models.js?v=465"></script>
-    <script src="js/cloud-storage.js?v=465"></script>
-    <script src="js/utils.js?v=465"></script>
+    <script src="js/data-models.js?v=478"></script>
+    <script src="js/cloud-storage.js?v=478"></script>
+    <script src="js/utils.js?v=478"></script>
     <script>
         const clientId = sessionStorage.getItem('clientId') || localStorage.getItem('clientId');
         if (!clientId) {
@@ -552,6 +552,7 @@
                 });
 
                 const feedbackData = {
+                    id: generateUUID(),
                     clientId: clientId,
                     week: parseInt(document.getElementById('reviewNumberDisplay').value),
                     energy: parseInt(document.getElementById('energyRating').value),
@@ -563,55 +564,68 @@
                     answers: answers,
                     perimeters: perimeters,
                     photos: { front, back, side, extra },
-                    comments: document.getElementById('additionalComments').value.trim()
+                    comments: document.getElementById('additionalComments').value.trim(),
+                    date: new Date().toISOString()
                 };
 
-                Feedbacks.create(feedbackData);
+                const currentTrainerId = window.activeTrainerId || localStorage.getItem('activeTrainerId') || 'default';
+                
+                // 1. Obtener la última versión de los datos directamente de Supabase
+                let freshTrainerData = null;
+                if (window.SupabaseService && currentTrainerId !== 'default' && currentTrainerId !== 'admin') {
+                    try {
+                        window.SupabaseService.init();
+                        freshTrainerData = await window.SupabaseService.getTrainerData(currentTrainerId);
+                    } catch (errFetch) {
+                        console.warn("No se pudo obtener la última versión de la nube, usando copia local como fallback:", errFetch);
+                    }
+                }
 
-                // If weight or perimeters were provided, update client profile too
+                // Fallback local si no pudimos descargar de la nube
+                if (!freshTrainerData) {
+                    freshTrainerData = window.getData();
+                }
+
+                // 2. Insertar el feedback directamente en el array de feedbacks
+                if (!freshTrainerData.feedbacks) freshTrainerData.feedbacks = [];
+                freshTrainerData.feedbacks.push(feedbackData);
+
+                // 3. Actualizar la ficha y el historial de peso en el array de clientes
                 if (feedbackData.weight || Object.keys(feedbackData.perimeters).length > 0) {
-                    const currentClient = Clients.getById(clientId);
-                    if (currentClient) {
-                        const weightHistory = currentClient.weightHistory || [];
-                        weightHistory.push({ 
+                    const clientsList = freshTrainerData.clients || [];
+                    const clientIdx = clientsList.findIndex(c => c.id === clientId);
+                    if (clientIdx !== -1) {
+                        const amaliaClient = clientsList[clientIdx];
+                        if (!amaliaClient.weightHistory) amaliaClient.weightHistory = [];
+                        amaliaClient.weightHistory.push({ 
                             date: new Date().toISOString(), 
                             weight: feedbackData.weight,
                             perimeters: feedbackData.perimeters
                         });
                         
-                        const techUpdates = { ...currentClient.technicalData };
-                        if (feedbackData.weight) techUpdates.weight = feedbackData.weight;
-                        
-                        Clients.update(clientId, { 
-                            technicalData: techUpdates,
-                            weightHistory: weightHistory 
-                        });
+                        if (!amaliaClient.technicalData) amaliaClient.technicalData = {};
+                        if (feedbackData.weight) amaliaClient.technicalData.weight = feedbackData.weight;
                     }
                 }
 
-                // ── SINCRONIZACIÓN GARANTIZADA CON SUPABASE ──────────────────
-                // Esperamos a que los datos lleguen a la nube ANTES de mostrar éxito.
-                // Así el entrenador los verá en tiempo real en su panel de Revisiones.
-                const currentTrainerId = window.activeTrainerId || localStorage.getItem('activeTrainerId');
-                console.log('📤 Subiendo revisión a Supabase para trainerId:', currentTrainerId);
-
-                if (window.SupabaseService && currentTrainerId && currentTrainerId !== 'default' && currentTrainerId !== 'admin') {
+                // 4. Intentar guardar directamente en Supabase
+                let saveSuccess = false;
+                if (window.SupabaseService && currentTrainerId !== 'default' && currentTrainerId !== 'admin') {
                     try {
-                        window.SupabaseService.init();
-                        const latestData = window.getData();
-                        const ok = await window.SupabaseService.saveTrainerData(currentTrainerId, latestData);
-                        if (ok) {
-                            console.log('✅ Revisión sincronizada con Supabase correctamente.');
-                        } else {
-                            console.warn('⚠️ La revisión se guardó localmente pero no pudo subir a la nube.');
-                        }
-                    } catch (syncErr) {
-                        console.error('❌ Error sincronizando con Supabase:', syncErr);
+                        saveSuccess = await window.SupabaseService.saveTrainerData(currentTrainerId, freshTrainerData);
+                    } catch (errSave) {
+                        console.error("Error al guardar en Supabase:", errSave);
                     }
                 }
 
-                showToast('Revisión enviada correctamente', 'success');
-                renderSuccessState();
+                if (saveSuccess) {
+                    // Sincronizar almacenamiento local para que coincida con la nube
+                    localStorage.setItem(`fitnessAppData_${currentTrainerId}`, JSON.stringify(freshTrainerData));
+                    showToast('Revisión enviada y guardada en la nube correctamente', 'success');
+                    renderSuccessState();
+                } else {
+                    throw new Error("No se pudo confirmar el guardado en la base de datos de la nube. Reintenta el envío.");
+                }
 
             } catch (err) {
                 console.error(err);
@@ -811,6 +825,6 @@
         `;
         document.head.appendChild(style);
     </script>
-    <script src="js/custom-recipes.js?v=465"></script></body>
+    <script src="js/custom-recipes.js?v=478"></script></body>
 
 </html>
