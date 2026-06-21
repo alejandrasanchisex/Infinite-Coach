@@ -192,7 +192,7 @@ export default function LucyTundidorLanding() {
                 Tu plan de asesoría siempre contigo con nuestra App Móvil
               </h2>
               <p className="text-[#615349] text-sm sm:text-base leading-relaxed">
-                Sin PDFs confusos ni mensajes perdidos. Accede a tus rutinas de ejercicios con vídeo explicativo, registra tus comidas, controla tus métricas diarias y mantén contacto directo conmigo a través del chat de la app.
+                Sin PDFs confusos ni mensajes perdidos. Accede a tus rutinas de ejercicios, registra tus comidas, controla tus métricas diarias y mantén contacto directo conmigo para guiarte en todo momento.
               </p>
             </div>
             <div className="flex items-center justify-center bg-[#faf7f5] p-6 rounded-2xl border border-gray-100 w-full md:w-auto min-w-[240px]">
@@ -227,7 +227,7 @@ export default function LucyTundidorLanding() {
                 </div>
                 <h3 className="text-xl font-bold mb-3 text-[#2b2520]">Rutinas de Entrenamiento Consciente</h3>
                 <p className="text-[#615349] leading-relaxed text-sm">
-                  Planes adaptados a ti, a tu nivel y al material del que dispongas. Cada ejercicio cuenta con un vídeo explicativo en alta definición para asegurar una ejecución impecable, maximizar tus resultados y entrenar de forma segura.
+                  Planes adaptados a ti, a tu nivel y al material del que dispongas, estructurados de forma óptima para asegurar una ejecución impecable, maximizar tus resultados y entrenar de forma segura.
                 </p>
               </div>
             </div>
@@ -266,7 +266,7 @@ export default function LucyTundidorLanding() {
                 </div>
                 <h3 className="text-xl font-bold mb-3 text-[#2b2520]">Desarrollo Personal y Soporte Diario</h3>
                 <p className="text-[#615349] leading-relaxed text-sm">
-                  Estaremos en contacto directo a través del chat privado de la app. Resolveremos todas tus dudas a diario y valoraremos tus avances periódicamente para garantizar que te mantengas motivada y alineada con tus objetivos.
+                  Tendrás soporte directo conmigo para resolver todas tus dudas a diario y valorar tus avances periódicamente, garantizando que te mantengas motivada y alineada con tus objetivos.
                 </p>
               </div>
             </div>
