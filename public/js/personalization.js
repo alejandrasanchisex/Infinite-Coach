@@ -487,9 +487,9 @@ const PersonalizationManager = {
             const menu = document.createElement('div');
             menu.id = 'personalize-ctx-menu';
             menu.style.cssText = `
-                position: absolute;
-                top: ${e.pageY}px;
-                left: ${e.pageX}px;
+                position: fixed;
+                top: ${e.clientY}px;
+                left: ${e.clientX}px;
                 background: #1E293B !important;
                 color: white !important;
                 border: 1px solid #475569 !important;
@@ -541,7 +541,8 @@ const PersonalizationManager = {
 
             const showBtn = menu.querySelector('#ctx-show-btn');
             if (showBtn) {
-                showBtn.addEventListener('click', () => {
+                showBtn.addEventListener('click', (event) => {
+                    event.stopPropagation();
                     this.showElement(id);
                     menu.remove();
                 });
@@ -549,7 +550,8 @@ const PersonalizationManager = {
 
             const movePrevBtn = menu.querySelector('#ctx-move-prev-btn');
             if (movePrevBtn) {
-                movePrevBtn.addEventListener('click', () => {
+                movePrevBtn.addEventListener('click', (event) => {
+                    event.stopPropagation();
                     this.moveElement(id, 'prev');
                     menu.remove();
                 });
@@ -557,7 +559,8 @@ const PersonalizationManager = {
 
             const moveNextBtn = menu.querySelector('#ctx-move-next-btn');
             if (moveNextBtn) {
-                moveNextBtn.addEventListener('click', () => {
+                moveNextBtn.addEventListener('click', (event) => {
+                    event.stopPropagation();
                     this.moveElement(id, 'next');
                     menu.remove();
                 });
@@ -565,7 +568,8 @@ const PersonalizationManager = {
 
             const hideBtn = menu.querySelector('#ctx-hide-btn');
             if (hideBtn) {
-                hideBtn.addEventListener('click', () => {
+                hideBtn.addEventListener('click', (event) => {
+                    event.stopPropagation();
                     this.hideElement(id);
                     menu.remove();
                 });
@@ -573,7 +577,8 @@ const PersonalizationManager = {
 
             const personalizeBtn = menu.querySelector('#ctx-personalize-btn');
             if (personalizeBtn) {
-                personalizeBtn.addEventListener('click', () => {
+                personalizeBtn.addEventListener('click', (event) => {
+                    event.stopPropagation();
                     this.enterMode();
                     menu.remove();
                 });
@@ -581,10 +586,10 @@ const PersonalizationManager = {
 
             const rect = menu.getBoundingClientRect();
             if (rect.right > window.innerWidth) {
-                menu.style.left = `${e.pageX - rect.width}px`;
+                menu.style.left = `${e.clientX - rect.width}px`;
             }
             if (rect.bottom > window.innerHeight) {
-                menu.style.top = `${e.pageY - rect.height}px`;
+                menu.style.top = `${e.clientY - rect.height}px`;
             }
         });
 

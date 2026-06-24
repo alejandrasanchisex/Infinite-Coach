@@ -5,7 +5,7 @@
     <script>
         // Force PWA cache bust / reload
         (function() {
-            const CURRENT_VERSION = '504';
+            const CURRENT_VERSION = '507';
             const savedVersion = localStorage.getItem('app_version');
             if (savedVersion !== CURRENT_VERSION) {
                 localStorage.setItem('app_version', CURRENT_VERSION);
@@ -31,8 +31,8 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="styles/theme.css?v=504">
-    <link rel="stylesheet" href="styles/components.css?v=504">
+    <link rel="stylesheet" href="styles/theme.css?v=507">
+    <link rel="stylesheet" href="styles/components.css?v=507">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <style>
         /* Bulletproof sizing override for routine editor and xl modals */
@@ -299,14 +299,14 @@
                     </div>
                     <button class="menu-toggle" onclick="toggleMenu()">☰</button>
                     <ul class="nav-links" id="navLinks">
-                        <li><a href="trainer-dashboard.html?v=504" class="nav-link">Dashboard</a></li>
-                        <li><a href="trainer-clients.html?v=504" class="nav-link active">Clientes</a></li>
-                        <li><a href="trainer-routines.html?v=504" class="nav-link">Rutinas</a></li>
-                        <li><a href="trainer-diets.html?v=504" class="nav-link">Dietas</a></li>
-                        <li><a href="trainer-feedbacks.html?v=504" class="nav-link">Revisiones</a></li>
-                        <li><a href="trainer-media.html?v=504" class="nav-link">Biblioteca</a></li>
-                        <li><a href="trainer-appointments.html?v=504" class="nav-link">Agenda</a></li>
-                        <li><a href="trainer-settings.html?v=504" class="nav-link">Configuración</a></li>
+                        <li><a href="trainer-dashboard.html?v=507" class="nav-link">Dashboard</a></li>
+                        <li><a href="trainer-clients.html?v=507" class="nav-link active">Clientes</a></li>
+                        <li><a href="trainer-routines.html?v=507" class="nav-link">Rutinas</a></li>
+                        <li><a href="trainer-diets.html?v=507" class="nav-link">Dietas</a></li>
+                        <li><a href="trainer-feedbacks.html?v=507" class="nav-link">Revisiones</a></li>
+                        <li><a href="trainer-media.html?v=507" class="nav-link">Biblioteca</a></li>
+                        <li><a href="trainer-appointments.html?v=507" class="nav-link">Agenda</a></li>
+                        <li><a href="trainer-settings.html?v=507" class="nav-link">Configuración</a></li>
                         <li><a href="#" onclick="if(typeof AUTH !== 'undefined') { AUTH.signOut() } else { window.location.reload() }; return false;" class="nav-link" style="color:var(--error-color)">🚪 Salir</a></li>
                     </ul>
                 </nav>
@@ -330,11 +330,13 @@
                                 <span>•</span>
                                 <span id="clientPhoneDisplay">+34 000 000 000</span>
                             </div>
-                            <div class="mt-md flex gap-sm">
+                            <div class="mt-md flex gap-sm align-center flex-wrap" style="align-items: center; flex-wrap: wrap;">
                                 <span id="paymentStatusBadge" class="badge">Pagado</span>
                                 <span id="activeStatusBadge" class="badge">Activo</span>
-                                <span class="badge badge-info">Código: <strong
-                                        id="accessCodeDisplay">XXXXXX</strong></span>
+                                <span class="badge badge-info">Código: <strong id="accessCodeDisplay">XXXXXX</strong></span>
+                                <span id="assignedTrainerBadge" class="badge" style="background: rgba(168, 85, 247, 0.15); color: #c084fc; border: 1px solid rgba(168, 85, 247, 0.25); text-transform: none;">
+                                    👥 <span id="assignedTrainerNameDisplay">Administrador (Principal)</span>
+                                </span>
                                 <button class="btn btn-xs btn-outline" style="font-size: 0.65rem; padding: 2px 8px;" onclick="window.copyClientAccessLink()">🔗 Copiar Link App</button>
                             </div>
                         </div>
@@ -395,6 +397,13 @@
                                             <div class="text-muted" style="font-size: 0.75rem;">Día de Revisión</div>
                                             <div class="metric-mini-value" id="reviewDayVal"
                                                 style="font-size: 1.2rem; color: var(--primary-color);">No asignado
+                                            </div>
+                                        </div>
+                                        <div class="metric-mini-card"
+                                            style="grid-column: span 2; border: 1px dashed #c084fc;">
+                                            <div class="text-muted" style="font-size: 0.75rem;">Entrenador Responsable</div>
+                                            <div class="metric-mini-value" id="responsibleTrainerVal"
+                                                style="font-size: 1.2rem; color: #c084fc;">Administrador (Principal)
                                             </div>
                                         </div>
                                     </div>
@@ -925,7 +934,7 @@
                                     </div>
                                     <div class="card-body">
                                         <div id="stripeNotConfigured" style="display: none;">
-                                            <p class="text-xs text-muted mb-md">Configura tus claves de Stripe en los <a href="trainer-settings.html?v=504" style="color: var(--primary-color);">Ajustes</a> para habilitar cobros automáticos.</p>
+                                            <p class="text-xs text-muted mb-md">Configura tus claves de Stripe en los <a href="trainer-settings.html?v=507" style="color: var(--primary-color);">Ajustes</a> para habilitar cobros automáticos.</p>
                                         </div>
                                         <div id="stripeActiveConfig">
                                             <p class="text-xs text-muted mb-md">Genera un enlace de pago recurrente para este cliente usando tus planes configurados.</p>
@@ -982,19 +991,19 @@
 
     <!-- Supabase SDK & Service -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="js/supabase-service.js?v=504"></script>
+    <script src="js/supabase-service.js?v=507"></script>
 
-    <script src="js/config.js?v=504"></script>
-    <script src="js/auth.js?v=504"></script>
-    <script src="js/sheets.js?v=504"></script>
-    <script src="js/data-models.js?v=504"></script>
-    <script src="js/utils.js?v=504"></script>
-    <script src="js/custom-recipes.js?v=504"></script>
-    <script src="js/custom-exercises.js?v=504"></script>
-    <script src="js/diet-editor-v3.js?v=504"></script>
+    <script src="js/config.js?v=507"></script>
+    <script src="js/auth.js?v=507"></script>
+    <script src="js/sheets.js?v=507"></script>
+    <script src="js/data-models.js?v=507"></script>
+    <script src="js/utils.js?v=507"></script>
+    <script src="js/custom-recipes.js?v=507"></script>
+    <script src="js/custom-exercises.js?v=507"></script>
+    <script src="js/diet-editor-v3.js?v=507"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.29/jspdf.plugin.autotable.min.js"></script>
-    <script src="js/export-utils.js?v=504"></script>
+    <script src="js/export-utils.js?v=507"></script>
     <script>
         const pageUrlParams = new URLSearchParams(window.location.search);
         const clientId = pageUrlParams.get('id');
@@ -1346,6 +1355,29 @@
                 if (activeBadge) {
                     activeBadge.textContent = currentClient.status === 'active' ? 'Activo' : 'Inactivo';
                     activeBadge.className = 'badge ' + (currentClient.status === 'active' ? 'badge-success' : 'badge-error');
+                }
+
+                // Assigned trainer badge & mini-card
+                const trainerNameDisplay = document.getElementById('assignedTrainerNameDisplay');
+                const responsibleTrainerVal = document.getElementById('responsibleTrainerVal');
+                
+                let trainerName = 'Administrador (Principal)';
+                const trainerId = currentClient.assignedTrainerId;
+                if (trainerId) {
+                    const data = (window.getData && typeof window.getData === 'function') ? window.getData() : {};
+                    const teamMembers = data.teamMembers || [];
+                    const trainer = teamMembers.find(m => m.id === trainerId);
+                    if (trainer) {
+                        trainerName = trainer.name;
+                    } else {
+                        trainerName = `Colaborador (${trainerId})`;
+                    }
+                }
+                if (trainerNameDisplay) {
+                    trainerNameDisplay.textContent = trainerName;
+                }
+                if (responsibleTrainerVal) {
+                    responsibleTrainerVal.textContent = trainerName;
                 }
 
                 const paySelect = document.getElementById('paymentStatusSelect');
@@ -4982,7 +5014,7 @@
                         <div style="max-width: 800px; margin: 0 auto; border: 1px solid #eee; padding: 30px; border-radius: 8px;">
                             ${content}
                         </div>
-                        <script src="js/custom-recipes.js?v=504"><\/script></body>
+                        <script src="js/custom-recipes.js?v=507"><\/script></body>
                 </html>
             `);
             printWindow.document.close();
@@ -6537,7 +6569,7 @@
             // Usar siempre el ID real del entrenador para garantizar sincronización con Supabase
             const realTrainerId = window.activeTrainerId || localStorage.getItem('activeTrainerId') || 't-w0iybl7qb';
             const baseUrl = window.location.origin + '/client-login.html';
-            const fullUrl = `${baseUrl}?t=${realTrainerId}&v=504`;
+            const fullUrl = `${baseUrl}?t=${realTrainerId}&v=507`;
             copyToClipboard(fullUrl);
             showToast('¡Link copiado! Envíalo a tu cliente.', 'success');
         };
@@ -6684,6 +6716,6 @@
             }
         });
     </script>
-    <script src="js/custom-recipes.js?v=504"></script></body>
+    <script src="js/custom-recipes.js?v=507"></script></body>
 
 </html>
