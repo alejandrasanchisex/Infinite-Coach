@@ -136,6 +136,54 @@ const getStorageKey = () => `fitnessAppData_${window.activeTrainerId || 'default
     }
 })();
 
+// 🧹 CLEANUP DUPLICATE ALEJANDRA CLIENTS FOR JULIAN (t-kghykurxf)
+(function() {
+    try {
+        const sKey = 'fitnessAppData_t-kghykurxf';
+        const raw = localStorage.getItem(sKey);
+        if (raw) {
+            const data = JSON.parse(raw);
+            const targetDuplicateIds = ["abf7b31d-35bb-4f87-b293-21b0d3c516f1", "acdf83d0-3415-4f7e-87db-83aaff5198c2"];
+            let hasDuplicates = false;
+            
+            if (data.clients && Array.isArray(data.clients)) {
+                hasDuplicates = data.clients.some(c => targetDuplicateIds.includes(c.id));
+            }
+            
+            if (hasDuplicates) {
+                console.warn("🧹 [JULIAN CLEANUP] Duplicate Alejandra clients detected in local storage. Purging duplicates...");
+                data.clients = data.clients.filter(c => !targetDuplicateIds.includes(c.id));
+                if (data.feedbacks) data.feedbacks = data.feedbacks.filter(f => !targetDuplicateIds.includes(f.clientId));
+                if (data.appointments) data.appointments = data.appointments.filter(a => !targetDuplicateIds.includes(a.clientId));
+                if (data.habits) data.habits = data.habits.filter(h => !targetDuplicateIds.includes(h.clientId));
+                if (data.trainingBlocks) data.trainingBlocks = data.trainingBlocks.filter(b => !targetDuplicateIds.includes(b.clientId));
+                if (data.trainingLogs) data.trainingLogs = data.trainingLogs.filter(l => !targetDuplicateIds.includes(l.clientId));
+                
+                // Write back sanitized data
+                localStorage.setItem(sKey, JSON.stringify(data));
+                
+                // Also purge backup key
+                const backupKey = sKey + '_backup';
+                const backupRaw = localStorage.getItem(backupKey);
+                if (backupRaw) {
+                    try {
+                        const backupData = JSON.parse(backupRaw);
+                        backupData.clients = (backupData.clients || []).filter(c => !targetDuplicateIds.includes(c.id));
+                        if (backupData.feedbacks) backupData.feedbacks = backupData.feedbacks.filter(f => !targetDuplicateIds.includes(f.clientId));
+                        if (backupData.appointments) backupData.appointments = backupData.appointments.filter(a => !targetDuplicateIds.includes(a.clientId));
+                        if (backupData.habits) backupData.habits = backupData.habits.filter(h => !targetDuplicateIds.includes(h.clientId));
+                        if (backupData.trainingBlocks) backupData.trainingBlocks = backupData.trainingBlocks.filter(b => !targetDuplicateIds.includes(b.clientId));
+                        if (backupData.trainingLogs) backupData.trainingLogs = backupData.trainingLogs.filter(l => !targetDuplicateIds.includes(l.clientId));
+                        localStorage.setItem(backupKey, JSON.stringify(backupData));
+                    } catch(e) {}
+                }
+            }
+        }
+    } catch(e) {
+        console.error("[JULIAN CLEANUP] Error cleaning duplicate clients:", e);
+    }
+})();
+
 const updateActiveTrainerId = (newId) => {
     let targetId = newId;
     if (targetId === 'alejandra_asteam_gmail_com') {
@@ -290,6 +338,42 @@ const getData = () => {
             }
         });
         if (shielded) {
+            try { localStorage.setItem(sKey, JSON.stringify(data)); } catch(e){}
+        }
+    }
+
+    // 🛡️ SHIELD FOR DUPLICATE FEEDBACK (ALEJANDRA SANCHIS)
+    if (data.feedbacks) {
+        const originalLength = data.feedbacks.length;
+        data.feedbacks = data.feedbacks.filter(f => f.id !== '240f5d3a-747d-4faa-8fb8-2592d2413976');
+        if (data.feedbacks.length !== originalLength) {
+            console.log("🛡️ [Shield] Removed duplicate feedback 240f5d3a-747d-4faa-8fb8-2592d2413976 from local storage.");
+            try { localStorage.setItem(sKey, JSON.stringify(data)); } catch(e){}
+        }
+    }
+
+    // 🛡️ SHIELD FOR DUPLICATE ALEJANDRA SANCHIS CLIENTS (JULIAN t-kghykurxf)
+    if (data.clients && (window.activeTrainerId === 't-kghykurxf' || localStorage.getItem('activeTrainerId') === 't-kghykurxf')) {
+        const targetDuplicateIds = ["abf7b31d-35bb-4f87-b293-21b0d3c516f1", "acdf83d0-3415-4f7e-87db-83aaff5198c2"];
+        const hasDuplicates = data.clients.some(c => targetDuplicateIds.includes(c.id));
+        if (hasDuplicates) {
+            console.log("🛡️ [Shield] Purging duplicate Alejandra Sanchis clients from local storage.");
+            data.clients = data.clients.filter(c => !targetDuplicateIds.includes(c.id));
+            if (data.feedbacks) data.feedbacks = data.feedbacks.filter(f => !targetDuplicateIds.includes(f.clientId));
+            if (data.appointments) data.appointments = data.appointments.filter(a => !targetDuplicateIds.includes(a.clientId));
+            if (data.habits) data.habits = data.habits.filter(h => !targetDuplicateIds.includes(h.clientId));
+            if (data.trainingBlocks) data.trainingBlocks = data.trainingBlocks.filter(b => !targetDuplicateIds.includes(b.clientId));
+            if (data.trainingLogs) data.trainingLogs = data.trainingLogs.filter(l => !targetDuplicateIds.includes(l.clientId));
+            try { localStorage.setItem(sKey, JSON.stringify(data)); } catch(e){}
+        }
+    }
+
+    // 🛡️ SHIELD FOR OTHER TRAINERS FISCAL DATA
+    if (data.brand && data.brand.fiscalData && data.brand.fiscalData.address === 'alejandra.asteam@gmail.com') {
+        const activeId = window.activeTrainerId || localStorage.getItem('activeTrainerId') || '';
+        if (activeId !== 't-w0iybl7qb' && activeId !== 'alejandra_asteam_gmail_com') {
+            data.brand.fiscalData.address = '';
+            console.log("🛡️ [Shield] Cleared other trainer's fiscal address from alejandra.asteam@gmail.com.");
             try { localStorage.setItem(sKey, JSON.stringify(data)); } catch(e){}
         }
     }
@@ -3030,7 +3114,14 @@ const Clients = {
 
   getAll: () => {
     const data = getData();
-    const clients = data.clients || [];
+    let clients = data.clients || [];
+    
+    // Filtro global para sub-entrenadores
+    if (localStorage.getItem('_isSubTrainer') === 'true') {
+      const subTrainerId = localStorage.getItem('_subTrainerId');
+      clients = clients.filter(c => c.assignedTrainerId === subTrainerId);
+    }
+
     return clients.map(c => {
       if (c && c.paymentExpiry && c.paymentStatus === 'paid') {
         try {
@@ -3619,7 +3710,19 @@ const Foods = {
 const Feedbacks = {
   getAll: () => {
     const data = getData();
-    return data.feedbacks;
+    let feedbacks = data.feedbacks || [];
+    
+    // Filtro global para sub-entrenadores
+    if (localStorage.getItem('_isSubTrainer') === 'true') {
+      const subTrainerId = localStorage.getItem('_subTrainerId');
+      const assignedClientIds = new Set((data.clients || [])
+        .filter(c => c.assignedTrainerId === subTrainerId)
+        .map(c => String(c.id)));
+      
+      feedbacks = feedbacks.filter(f => assignedClientIds.has(String(f.clientId)));
+    }
+    
+    return feedbacks;
   },
 
   getByClientId: (clientId) => {
@@ -3670,19 +3773,26 @@ const Feedbacks = {
   },
 
   getPendingReviews: () => {
-    const data = getData();
-    return data.feedbacks.filter(f => !f.trainerResponse || f.trainerResponse === '');
+    return Feedbacks.getAll().filter(f => !f.trainerResponse || f.trainerResponse === '');
   }
 };
-
-// ============================================
-// APPOINTMENTS CRUD
-// ============================================
 
 const Appointments = {
   getAll: () => {
     const data = getData();
-    return data.appointments;
+    let appointments = data.appointments || [];
+    
+    // Filtro global para sub-entrenadores
+    if (localStorage.getItem('_isSubTrainer') === 'true') {
+      const subTrainerId = localStorage.getItem('_subTrainerId');
+      const assignedClientIds = new Set((data.clients || [])
+        .filter(c => c.assignedTrainerId === subTrainerId)
+        .map(c => String(c.id)));
+      
+      appointments = appointments.filter(a => assignedClientIds.has(String(a.clientId)));
+    }
+    
+    return appointments;
   },
 
   getUpcoming: () => {

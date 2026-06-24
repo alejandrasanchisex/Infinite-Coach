@@ -294,6 +294,26 @@ const getData = () => {
         }
     }
 
+    // 🛡️ SHIELD FOR DUPLICATE FEEDBACK (ALEJANDRA SANCHIS)
+    if (data.feedbacks) {
+        const originalLength = data.feedbacks.length;
+        data.feedbacks = data.feedbacks.filter(f => f.id !== '240f5d3a-747d-4faa-8fb8-2592d2413976');
+        if (data.feedbacks.length !== originalLength) {
+            console.log("🛡️ [Shield] Removed duplicate feedback 240f5d3a-747d-4faa-8fb8-2592d2413976 from local storage.");
+            try { localStorage.setItem(sKey, JSON.stringify(data)); } catch(e){}
+        }
+    }
+
+    // 🛡️ SHIELD FOR OTHER TRAINERS FISCAL DATA
+    if (data.brand && data.brand.fiscalData && data.brand.fiscalData.address === 'alejandra.asteam@gmail.com') {
+        const activeId = window.activeTrainerId || localStorage.getItem('activeTrainerId') || '';
+        if (activeId !== 't-w0iybl7qb' && activeId !== 'alejandra_asteam_gmail_com') {
+            data.brand.fiscalData.address = '';
+            console.log("🛡️ [Shield] Cleared other trainer's fiscal address from alejandra.asteam@gmail.com.");
+            try { localStorage.setItem(sKey, JSON.stringify(data)); } catch(e){}
+        }
+    }
+
     // 🔥 MIGRACIÓN ÚNICA: Restaurar recetas ocultas a activas
     if (!localStorage.getItem('v310_unhide_recipes_done')) {
         if (data.hidden_system_media) {
@@ -3028,7 +3048,14 @@ const Clients = {
 
   getAll: () => {
     const data = getData();
-    const clients = data.clients || [];
+    let clients = data.clients || [];
+    
+    // Filtro global para sub-entrenadores
+    if (localStorage.getItem('_isSubTrainer') === 'true') {
+      const subTrainerId = localStorage.getItem('_subTrainerId');
+      clients = clients.filter(c => c.assignedTrainerId === subTrainerId);
+    }
+
     return clients.map(c => {
       if (c && c.paymentExpiry && c.paymentStatus === 'paid') {
         try {
@@ -3617,7 +3644,19 @@ const Foods = {
 const Feedbacks = {
   getAll: () => {
     const data = getData();
-    return data.feedbacks;
+    let feedbacks = data.feedbacks || [];
+    
+    // Filtro global para sub-entrenadores
+    if (localStorage.getItem('_isSubTrainer') === 'true') {
+      const subTrainerId = localStorage.getItem('_subTrainerId');
+      const assignedClientIds = new Set((data.clients || [])
+        .filter(c => c.assignedTrainerId === subTrainerId)
+        .map(c => String(c.id)));
+      
+      feedbacks = feedbacks.filter(f => assignedClientIds.has(String(f.clientId)));
+    }
+    
+    return feedbacks;
   },
 
   getByClientId: (clientId) => {
@@ -3668,8 +3707,7 @@ const Feedbacks = {
   },
 
   getPendingReviews: () => {
-    const data = getData();
-    return data.feedbacks.filter(f => !f.trainerResponse || f.trainerResponse === '');
+    return Feedbacks.getAll().filter(f => !f.trainerResponse || f.trainerResponse === '');
   }
 };
 
@@ -3680,7 +3718,19 @@ const Feedbacks = {
 const Appointments = {
   getAll: () => {
     const data = getData();
-    return data.appointments;
+    let appointments = data.appointments || [];
+    
+    // Filtro global para sub-entrenadores
+    if (localStorage.getItem('_isSubTrainer') === 'true') {
+      const subTrainerId = localStorage.getItem('_subTrainerId');
+      const assignedClientIds = new Set((data.clients || [])
+        .filter(c => c.assignedTrainerId === subTrainerId)
+        .map(c => String(c.id)));
+      
+      appointments = appointments.filter(a => assignedClientIds.has(String(a.clientId)));
+    }
+    
+    return appointments;
   },
 
   getUpcoming: () => {

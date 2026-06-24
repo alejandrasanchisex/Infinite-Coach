@@ -5,7 +5,7 @@
     <script>
         // Force PWA cache bust / reload
         (function() {
-            const CURRENT_VERSION = '479';
+            const CURRENT_VERSION = '490';
             const savedVersion = localStorage.getItem('app_version');
             if (savedVersion !== CURRENT_VERSION) {
                 localStorage.setItem('app_version', CURRENT_VERSION);
@@ -31,8 +31,8 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="styles/theme.css?v=479">
-    <link rel="stylesheet" href="styles/components.css?v=479">
+    <link rel="stylesheet" href="styles/theme.css?v=490">
+    <link rel="stylesheet" href="styles/components.css?v=490">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <style>
         /* Bulletproof sizing override for routine editor and xl modals */
@@ -299,14 +299,14 @@
                     </div>
                     <button class="menu-toggle" onclick="toggleMenu()">☰</button>
                     <ul class="nav-links" id="navLinks">
-                        <li><a href="trainer-dashboard.html?v=479" class="nav-link">Dashboard</a></li>
-                        <li><a href="trainer-clients.html?v=479" class="nav-link active">Clientes</a></li>
-                        <li><a href="trainer-routines.html?v=479" class="nav-link">Rutinas</a></li>
-                        <li><a href="trainer-diets.html?v=479" class="nav-link">Dietas</a></li>
-                        <li><a href="trainer-feedbacks.html?v=479" class="nav-link">Revisiones</a></li>
-                        <li><a href="trainer-media.html?v=479" class="nav-link">Biblioteca</a></li>
-                        <li><a href="trainer-appointments.html?v=479" class="nav-link">Agenda</a></li>
-                        <li><a href="trainer-settings.html?v=479" class="nav-link">Configuración</a></li>
+                        <li><a href="trainer-dashboard.html?v=490" class="nav-link">Dashboard</a></li>
+                        <li><a href="trainer-clients.html?v=490" class="nav-link active">Clientes</a></li>
+                        <li><a href="trainer-routines.html?v=490" class="nav-link">Rutinas</a></li>
+                        <li><a href="trainer-diets.html?v=490" class="nav-link">Dietas</a></li>
+                        <li><a href="trainer-feedbacks.html?v=490" class="nav-link">Revisiones</a></li>
+                        <li><a href="trainer-media.html?v=490" class="nav-link">Biblioteca</a></li>
+                        <li><a href="trainer-appointments.html?v=490" class="nav-link">Agenda</a></li>
+                        <li><a href="trainer-settings.html?v=490" class="nav-link">Configuración</a></li>
                         <li><a href="#" onclick="if(typeof AUTH !== 'undefined') { AUTH.signOut() } else { window.location.reload() }; return false;" class="nav-link" style="color:var(--error-color)">🚪 Salir</a></li>
                     </ul>
                 </nav>
@@ -919,7 +919,7 @@
                                     </div>
                                     <div class="card-body">
                                         <div id="stripeNotConfigured" style="display: none;">
-                                            <p class="text-xs text-muted mb-md">Configura tus claves de Stripe en los <a href="trainer-settings.html?v=479" style="color: var(--primary-color);">Ajustes</a> para habilitar cobros automáticos.</p>
+                                            <p class="text-xs text-muted mb-md">Configura tus claves de Stripe en los <a href="trainer-settings.html?v=490" style="color: var(--primary-color);">Ajustes</a> para habilitar cobros automáticos.</p>
                                         </div>
                                         <div id="stripeActiveConfig">
                                             <p class="text-xs text-muted mb-md">Genera un enlace de pago recurrente para este cliente usando tus planes configurados.</p>
@@ -976,19 +976,19 @@
 
     <!-- Supabase SDK & Service -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="js/supabase-service.js?v=479"></script>
+    <script src="js/supabase-service.js?v=490"></script>
 
-    <script src="js/config.js?v=479"></script>
-    <script src="js/auth.js?v=479"></script>
-    <script src="js/sheets.js?v=479"></script>
-    <script src="js/data-models.js?v=479"></script>
-    <script src="js/utils.js?v=479"></script>
-    <script src="js/custom-recipes.js?v=479"></script>
-    <script src="js/custom-exercises.js?v=479"></script>
-    <script src="js/diet-editor-v3.js?v=479"></script>
+    <script src="js/config.js?v=490"></script>
+    <script src="js/auth.js?v=490"></script>
+    <script src="js/sheets.js?v=490"></script>
+    <script src="js/data-models.js?v=490"></script>
+    <script src="js/utils.js?v=490"></script>
+    <script src="js/custom-recipes.js?v=490"></script>
+    <script src="js/custom-exercises.js?v=490"></script>
+    <script src="js/diet-editor-v3.js?v=490"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.29/jspdf.plugin.autotable.min.js"></script>
-    <script src="js/export-utils.js?v=479"></script>
+    <script src="js/export-utils.js?v=490"></script>
     <script>
         const pageUrlParams = new URLSearchParams(window.location.search);
         const clientId = pageUrlParams.get('id');
@@ -2609,6 +2609,9 @@
                     });
                 }
 
+                const assignedTrainerSelect = document.getElementById('editAssignedTrainer');
+                const assignedTrainerId = assignedTrainerSelect ? assignedTrainerSelect.value : (currentClient.assignedTrainerId || '');
+
                 const updates = {
                     name: document.getElementById('editName').value,
                     email: document.getElementById('editEmail').value,
@@ -2618,6 +2621,7 @@
                     reviewFrequency: document.getElementById('editReviewFrequency').value,
                     specificReviewDate: document.getElementById('editSpecificReviewDate') ? document.getElementById('editSpecificReviewDate').value : null,
                     reviewDaysOfMonth: document.getElementById('editReviewDaysOfMonth') ? document.getElementById('editReviewDaysOfMonth').value : null,
+                    assignedTrainerId: assignedTrainerId,
 
                     technicalData: {
                         ...techUpdates,
@@ -4946,7 +4950,7 @@
                         <div style="max-width: 800px; margin: 0 auto; border: 1px solid #eee; padding: 30px; border-radius: 8px;">
                             ${content}
                         </div>
-                        <script src="js/custom-recipes.js?v=479"><\/script></body>
+                        <script src="js/custom-recipes.js?v=490"><\/script></body>
                 </html>
             `);
             printWindow.document.close();
@@ -5420,6 +5424,38 @@
 
         function editClientInfo() {
             const tech = currentClient.technicalData || {};
+
+            const activeId = localStorage.getItem('activeTrainerId') || 'default';
+            const platformRaw = localStorage.getItem('saasFitnessPlatform');
+            let isMultipleAccess = false;
+            if (platformRaw) {
+                const platformData = JSON.parse(platformRaw);
+                const trainers = platformData.trainers || [];
+                const t = trainers.find(tr => tr.id === activeId);
+                if (t && t.accessType === 'multiple') {
+                    isMultipleAccess = true;
+                }
+            }
+
+            let trainerSelectHtml = '';
+            if (isMultipleAccess) {
+                const data = (window.getData && typeof window.getData === 'function') ? window.getData() : {};
+                const teamMembers = data.teamMembers || [];
+                const options = [
+                    `<option value="" ${!currentClient.assignedTrainerId ? 'selected' : ''}>Administrador (Principal)</option>`,
+                    ...teamMembers.map(m => `<option value="${m.id}" ${currentClient.assignedTrainerId === m.id ? 'selected' : ''}>${m.name}</option>`)
+                ].join('');
+
+                trainerSelectHtml = `
+                    <div class="form-group" style="margin-top: 15px;">
+                        <label class="form-label">Entrenador Asignado</label>
+                        <select id="editAssignedTrainer" class="form-select" style="background: rgba(0,0,0,0.2);">
+                            ${options}
+                        </select>
+                    </div>
+                `;
+            }
+
             showModal('Editar Cliente', `
                 <div style="padding-right: 15px;">
                     <div class="form-group">
@@ -5530,7 +5566,7 @@
                         <label class="form-label" style="color: var(--accent-color);">Próxima Fecha de Revisión (Solo para frecuencia específica)</label>
                         <input type="date" id="editSpecificReviewDate" class="form-input" value="${currentClient.specificReviewDate || ''}">
                     </div>
-
+ 
                     <div style="background: rgba(0,217,255,0.05); padding: 15px; border-radius: 8px; margin-bottom: 20px;">
                         <label class="form-label" style="color: var(--primary-color);">Plan Nutricional Objetivo</label>
                         <div class="grid grid-4 gap-sm">
@@ -5565,12 +5601,13 @@
                             <option value="inactive" ${currentClient.status === 'inactive' ? 'selected' : ''}>Inactivo</option>
                         </select>
                     </div>
+                    ${trainerSelectHtml}
                 </div>
             `, [
                 { text: 'Cancelar', class: 'btn-secondary', onclick: 'window.closeModal(this)' },
                 { text: 'Guardar Cambios', class: 'btn-primary', onclick: 'saveEditClientInfo()' }
             ]);
-
+ 
             // Initial calculation and visibility
             if (window.updateSkinfoldVisibility) window.updateSkinfoldVisibility();
         }
@@ -6330,7 +6367,7 @@
             // Usar siempre el ID real del entrenador para garantizar sincronización con Supabase
             const realTrainerId = window.activeTrainerId || localStorage.getItem('activeTrainerId') || 't-w0iybl7qb';
             const baseUrl = window.location.origin + '/client-login.html';
-            const fullUrl = `${baseUrl}?t=${realTrainerId}&v=479`;
+            const fullUrl = `${baseUrl}?t=${realTrainerId}&v=490`;
             copyToClipboard(fullUrl);
             showToast('¡Link copiado! Envíalo a tu cliente.', 'success');
         };
@@ -6477,6 +6514,6 @@
             }
         });
     </script>
-    <script src="js/custom-recipes.js?v=479"></script></body>
+    <script src="js/custom-recipes.js?v=490"></script></body>
 
 </html>

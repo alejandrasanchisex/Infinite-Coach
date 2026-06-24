@@ -57,6 +57,10 @@ const AUTH = {
         localStorage.removeItem('_trainerAuthed');
         localStorage.removeItem('_trainerEmail');
         localStorage.removeItem('activeTrainerId');
+        localStorage.removeItem('_isSubTrainer');
+        localStorage.removeItem('_subTrainerId');
+        localStorage.removeItem('_subTrainerName');
+        localStorage.removeItem('_subTrainerEmail');
         window.location.reload();
     }
 };

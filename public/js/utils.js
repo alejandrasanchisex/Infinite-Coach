@@ -997,6 +997,42 @@ document.addEventListener('DOMContentLoaded', () => {
     if (typeof BrandConfig !== 'undefined' && typeof BrandConfig.applyTheme === 'function') {
         BrandConfig.applyTheme();
     }
+
+    // Restricciones para colaboradores (sub-entrenadores)
+    if (localStorage.getItem('_isSubTrainer') === 'true') {
+        // 1. Redirigir si intenta acceder a la página de configuración
+        if (window.location.pathname.includes('trainer-settings.html')) {
+            window.location.href = 'trainer-dashboard.html';
+            return;
+        }
+        // 2. Ocultar enlaces a configuración en los menús de navegación
+        document.querySelectorAll('a[href*="trainer-settings.html"]').forEach(a => {
+            const li = a.closest('li');
+            if (li) {
+                li.style.display = 'none';
+            } else {
+                a.style.display = 'none';
+            }
+        });
+    }
+
+    // Cargar e inicializar el Administrador de Personalización (solo en backend de entrenador)
+    const isTrainerPage = window.location.pathname.includes('trainer-') || window.location.pathname.includes('admin-dashboard.html');
+    const isLoginPage = window.location.pathname.includes('login');
+    if (isTrainerPage && !isLoginPage) {
+        if (typeof PersonalizationManager === 'undefined') {
+            const script = document.createElement('script');
+            script.src = 'js/personalization.js?v=489';
+            script.onload = () => {
+                if (window.PersonalizationManager) {
+                    window.PersonalizationManager.init();
+                }
+            };
+            document.head.appendChild(script);
+        } else {
+            PersonalizationManager.init();
+        }
+    }
 });
 
 // Global toggleMenu function for mobile navigation across all pages

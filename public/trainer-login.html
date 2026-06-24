@@ -4,7 +4,7 @@
     <script>
         // Force PWA cache bust / reload
         (function() {
-            const CURRENT_VERSION = '479';
+            const CURRENT_VERSION = '490';
             const savedVersion = localStorage.getItem('app_version');
             if (savedVersion !== CURRENT_VERSION) {
                 localStorage.setItem('app_version', CURRENT_VERSION);
@@ -30,8 +30,8 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="styles/theme.css?v=479">
-    <link rel="stylesheet" href="styles/components.css?v=479">
+    <link rel="stylesheet" href="styles/theme.css?v=490">
+    <link rel="stylesheet" href="styles/components.css?v=490">
     <style>
         body {
             background-color: #0B0B1A;
@@ -191,7 +191,7 @@
                 ¿No tienes una licencia? <br> Contacta con <a href="https://ingeniaia.es" style="color: rgba(255,255,255,0.5); text-decoration: underline;">Ingenia</a>.
             </p>
             <p style="font-size: 0.8rem; font-weight: 600;">
-                <a href="client-login.html?v=479" style="color: var(--primary-color); text-decoration: none;">Acceso Clientes 📲</a>
+                <a href="client-login.html?v=490" style="color: var(--primary-color); text-decoration: none;">Acceso Clientes 📲</a>
             </p>
         </div>
     </div>
@@ -204,8 +204,8 @@
 
     <!-- Supabase SDK & Service -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="js/supabase-service.js?v=479"></script>
-    <script src="js/utils.js?v=479"></script>
+    <script src="js/supabase-service.js?v=490"></script>
+    <script src="js/utils.js?v=490"></script>
 
     <script>
         const PLATFORM_KEY = 'saasFitnessPlatform';
@@ -451,6 +451,12 @@
                     localStorage.setItem('activeTrainerId', trainer.id);
                     localStorage.setItem('_trainerEmail', trainer.email);
                     localStorage.setItem(PLATFORM_KEY, JSON.stringify(platformData));
+
+                    // Limpiar sesión de sub-entrenador si existiera
+                    localStorage.removeItem('_isSubTrainer');
+                    localStorage.removeItem('_subTrainerId');
+                    localStorage.removeItem('_subTrainerName');
+                    localStorage.removeItem('_subTrainerEmail');
                     
                     // Guardar o eliminar credenciales recordadas
                     try {
@@ -475,7 +481,94 @@
                         }
                     }, 1000);
                 } else {
-                    throw new Error('Credenciales incorrectas o licencia no válida.');
+                    // 5. Buscar en los teamMembers de todos los perfiles de entrenador
+                    let foundSubTrainer = null;
+                    let parentTrainerId = null;
+                    let parentTrainerEmail = null;
+
+                    try {
+                        let allProfiles = [];
+                        if (window.SupabaseService) {
+                            window.SupabaseService.init();
+                            const { data, error } = await window.SupabaseService.client
+                                .from('trainer_profiles')
+                                .select('trainer_id, full_data');
+                            if (!error && data) {
+                                allProfiles = data;
+                            }
+                        }
+
+                        // Fallback: buscar en localStorage perfiles guardados localmente
+                        if (allProfiles.length === 0) {
+                            for (let i = 0; i < localStorage.length; i++) {
+                                const k = localStorage.key(i);
+                                if (k && k.startsWith('fitnessAppData_') && k !== 'fitnessAppData_demo') {
+                                    try {
+                                        const fd = JSON.parse(localStorage.getItem(k));
+                                        const tId = k.replace('fitnessAppData_', '');
+                                        allProfiles.push({ trainer_id: tId, full_data: fd });
+                                    } catch(e) {}
+                                }
+                            }
+                        }
+
+                        // Buscar en todos los perfiles cargados
+                        const rawKey = document.getElementById('licenseKey').value.trim();
+                        for (const profile of allProfiles) {
+                            const fd = profile.full_data || {};
+                            const teamMembers = fd.teamMembers || [];
+                            const member = teamMembers.find(m => 
+                                m.email.toLowerCase() === email && 
+                                m.password === rawKey
+                            );
+                            if (member) {
+                                foundSubTrainer = member;
+                                parentTrainerId = profile.trainer_id;
+                                const parentLic = platformData.trainers.find(t => t.id === profile.trainer_id);
+                                parentTrainerEmail = parentLic ? parentLic.email : '';
+                                break;
+                            }
+                        }
+                    } catch (subTrainerErr) {
+                        console.warn("Error buscando sub-entrenador:", subTrainerErr);
+                    }
+
+                    if (foundSubTrainer) {
+                        statusMsg.style.color = '#10B981';
+                        statusMsg.textContent = '¡Acceso de Colaborador concedido! Redirigiendo...';
+                        
+                        // Guardar localmente para la sesión
+                        sessionStorage.setItem('_trainerAuthed', '1');
+                        localStorage.setItem('_trainerAuthed', '1');
+                        localStorage.setItem('activeTrainerId', parentTrainerId);
+                        localStorage.setItem('_trainerEmail', parentTrainerEmail || '');
+                        
+                        // Guardar variables de sub-entrenador
+                        localStorage.setItem('_isSubTrainer', 'true');
+                        localStorage.setItem('_subTrainerId', foundSubTrainer.id);
+                        localStorage.setItem('_subTrainerName', foundSubTrainer.name);
+                        localStorage.setItem('_subTrainerEmail', foundSubTrainer.email);
+
+                        localStorage.setItem(PLATFORM_KEY, JSON.stringify(platformData));
+
+                        // Guardar o eliminar credenciales recordadas
+                        try {
+                            const rawKey = document.getElementById('licenseKey').value.trim();
+                            if (document.getElementById('rememberMe').checked) {
+                                localStorage.setItem('_rememberedTrainerEmail', email);
+                                localStorage.setItem('_rememberedTrainerKey', rawKey);
+                            } else {
+                                localStorage.removeItem('_rememberedTrainerEmail');
+                                localStorage.removeItem('_rememberedTrainerKey');
+                            }
+                        } catch(e) { console.warn('Error saving remembered credentials:', e); }
+
+                        setTimeout(() => {
+                            window.location.href = 'trainer-dashboard.html?t=' + parentTrainerId;
+                        }, 1000);
+                    } else {
+                        throw new Error('Credenciales incorrectas o licencia no válida.');
+                    }
                 }
 
             } catch (err) {
@@ -485,5 +578,5 @@
             }
         });
     </script>
-    <script src="js/custom-recipes.js?v=479"></script></body>
+    <script src="js/custom-recipes.js?v=490"></script></body>
 </html>

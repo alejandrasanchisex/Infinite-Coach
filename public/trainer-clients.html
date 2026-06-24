@@ -5,7 +5,7 @@
     <script>
         // Force PWA cache bust / reload
         (function() {
-            const CURRENT_VERSION = '479';
+            const CURRENT_VERSION = '490';
             const savedVersion = localStorage.getItem('app_version');
             if (savedVersion !== CURRENT_VERSION) {
                 localStorage.setItem('app_version', CURRENT_VERSION);
@@ -28,7 +28,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Gestión de Clientes - ASTeam</title>
-  <link rel="stylesheet" href="styles/theme.css?v=479">
+  <link rel="stylesheet" href="styles/theme.css?v=490">
   <link rel="stylesheet" href="styles/components.css">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 </head>
@@ -58,14 +58,14 @@
           </div>
           <button class="menu-toggle" onclick="toggleMenu()">☰</button>
           <ul class="nav-links" id="navLinks">
-            <li><a href="trainer-dashboard.html?v=479" class="nav-link">Dashboard</a></li>
-            <li><a href="trainer-clients.html?v=479" class="nav-link active">Clientes</a></li>
-            <li><a href="trainer-routines.html?v=479" class="nav-link">Rutinas</a></li>
-            <li><a href="trainer-diets.html?v=479" class="nav-link">Dietas</a></li>
-            <li><a href="trainer-feedbacks.html?v=479" class="nav-link">Revisiones</a></li>
-            <li><a href="trainer-media.html?v=479" class="nav-link">Biblioteca</a></li>
-            <li><a href="trainer-appointments.html?v=479" class="nav-link">Agenda</a></li>
-            <li><a href="trainer-settings.html?v=479" class="nav-link">Configuración</a></li>
+            <li><a href="trainer-dashboard.html?v=490" class="nav-link">Dashboard</a></li>
+            <li><a href="trainer-clients.html?v=490" class="nav-link active">Clientes</a></li>
+            <li><a href="trainer-routines.html?v=490" class="nav-link">Rutinas</a></li>
+            <li><a href="trainer-diets.html?v=490" class="nav-link">Dietas</a></li>
+            <li><a href="trainer-feedbacks.html?v=490" class="nav-link">Revisiones</a></li>
+            <li><a href="trainer-media.html?v=490" class="nav-link">Biblioteca</a></li>
+            <li><a href="trainer-appointments.html?v=490" class="nav-link">Agenda</a></li>
+            <li><a href="trainer-settings.html?v=490" class="nav-link">Configuración</a></li>
             <li><a href="#" onclick="if(typeof AUTH !== 'undefined') { AUTH.signOut() } else { window.location.reload() }; return false;" class="nav-link" style="color:var(--error-color)">🚪 Salir</a></li>
           </ul>
         </nav>
@@ -79,7 +79,7 @@
             <h1 class="mb-xs">Gestión de Clientes</h1>
             <p class="text-muted">Administra tu cartera de clientes y su progreso</p>
           </div>
-          <button class="btn btn-primary" onclick="console.log('Botón Nuevo Cliente clickeado'); window.abrirModalNuevo()">
+          <button id="addClientBtn" class="btn btn-primary" onclick="console.log('Botón Nuevo Cliente clickeado'); window.abrirModalNuevo()">
             ➕ Nuevo Cliente
           </button>
         </div>
@@ -156,14 +156,14 @@
 
   <!-- Supabase SDK & Service -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script src="js/supabase-service.js?v=479"></script>
+  <script src="js/supabase-service.js?v=490"></script>
 
-  <script src="js/config.js?v=479"></script>
-  <script src="js/auth.js?v=479"></script>
-  <script src="js/sheets.js?v=479"></script>
-  <script src="js/data-models.js?v=479"></script>
-  <script src="js/custom-exercises.js?v=479"></script>
-  <script src="js/utils.js?v=479"></script>
+  <script src="js/config.js?v=490"></script>
+  <script src="js/auth.js?v=490"></script>
+  <script src="js/sheets.js?v=490"></script>
+  <script src="js/data-models.js?v=490"></script>
+  <script src="js/custom-exercises.js?v=490"></script>
+  <script src="js/utils.js?v=490"></script>
   <script>
     const daysMapShort = { '1': 'Lun', '2': 'Mar', '3': 'Mié', '4': 'Jue', '5': 'Vie', '6': 'Sáb', '7': 'Dom' };
 
@@ -248,7 +248,7 @@
             <td style="text-align: right; padding-right: 15px;">
               <div class="flex gap-sm" style="justify-content: flex-end;">
                 <a href="trainer-client-detail.html?id=${c.id}" class="btn btn-sm btn-secondary" title="Ver Detalle">👁️</a>
-                <button class="btn btn-sm btn-danger" title="Eliminar Cliente" onclick="window.handleDeleteClient('${c.id}')">🗑️</button>
+                ${localStorage.getItem('_isSubTrainer') === 'true' ? '' : `<button class="btn btn-sm btn-danger" title="Eliminar Cliente" onclick="window.handleDeleteClient('${c.id}')">🗑️</button>`}
               </div>
             </td>
           </tr>
@@ -280,6 +280,37 @@
         console.warn('Error checking client limit:', err);
       }
 
+      const activeId = localStorage.getItem('activeTrainerId') || 'default';
+      const platformRaw = localStorage.getItem('saasFitnessPlatform');
+      let isMultipleAccess = false;
+      if (platformRaw) {
+          const platformData = JSON.parse(platformRaw);
+          const trainers = platformData.trainers || [];
+          const t = trainers.find(tr => tr.id === activeId);
+          if (t && t.accessType === 'multiple') {
+              isMultipleAccess = true;
+          }
+      }
+
+      let trainerSelectHtml = '';
+      if (isMultipleAccess) {
+          const data = (window.getData && typeof window.getData === 'function') ? window.getData() : {};
+          const teamMembers = data.teamMembers || [];
+          const options = [
+              `<option value="">Administrador (Principal)</option>`,
+              ...teamMembers.map(m => `<option value="${m.id}">${m.name}</option>`)
+          ].join('');
+
+          trainerSelectHtml = `
+            <div class="form-group" style="margin-top: 15px;">
+              <label class="form-label">Entrenador Asignado</label>
+              <select id="c_assignedTrainer" class="form-select" style="background: rgba(0,0,0,0.2);">
+                ${options}
+              </select>
+            </div>
+          `;
+      }
+
       console.log('Abriendo modal de nuevo cliente...');
       showModal('Añadir Nuevo Cliente', `
         <div class="form-group"><label class="form-label">Nombre Completo *</label><input type="text" id="c_name" class="form-input" placeholder="Nombre y apellidos"></div>
@@ -292,7 +323,7 @@
           <div class="form-group"><label class="form-label">Altura (cm)</label><input type="number" id="c_height" class="form-input" placeholder="175"></div>
         </div>
         <div class="form-group"><label class="form-label">Edad</label><input type="number" id="c_age" class="form-input" placeholder="25"></div>
-
+        ${trainerSelectHtml}
       `, [
         { text: 'Cancelar', class: 'btn-secondary', onclick: 'window.closeModal()' },
         { text: 'CREAR CLIENTE', class: 'btn-primary', onclick: 'window.procesarNuevo()' }
@@ -329,6 +360,9 @@
         console.warn('Error checking client limit:', err);
       }
 
+      const assignedTrainerSelect = document.getElementById('c_assignedTrainer');
+      const assignedTrainerId = assignedTrainerSelect ? assignedTrainerSelect.value : '';
+
       const clientData = {
         name: name,
         email: document.getElementById('c_email').value || '',
@@ -342,7 +376,8 @@
         reviewFrequency: 'weekly',
         reviewDay: '',
         status: 'active',
-        paymentStatus: 'pending'
+        paymentStatus: 'pending',
+        assignedTrainerId: assignedTrainerId
       };
 
       if (window.Clients) {
@@ -387,6 +422,11 @@
       if (typeof BrandConfig !== 'undefined') {
         BrandConfig.applyTheme();
       }
+
+      if (localStorage.getItem('_isSubTrainer') === 'true') {
+        const btn = document.getElementById('addClientBtn');
+        if (btn) btn.style.display = 'none';
+      }
       
       // Si la app ya es visible (bypass), forzar un dibujado inicial
       if (document.getElementById('app').style.display === 'block') {
@@ -397,7 +437,7 @@
     });
     // Check for quick actions
     const pageUrlParams = new URLSearchParams(window.location.search);
-    if (pageUrlParams.get('action') === 'new') {
+    if (pageUrlParams.get('action') === 'new' && localStorage.getItem('_isSubTrainer') !== 'true') {
       setTimeout(() => window.abrirModalNuevo(), 200);
     }
   </script>
@@ -418,12 +458,17 @@
           BrandConfig.applyTheme();
       }
 
+      if (localStorage.getItem('_isSubTrainer') === 'true') {
+        const btn = document.getElementById('addClientBtn');
+        if (btn) btn.style.display = 'none';
+      }
+
       document.getElementById('login-screen').style.display = 'none';
       document.getElementById('app').style.display = 'block';
 
       if (typeof window.dibujarTabla === 'function') window.dibujarTabla();
     }
   </script>
-    <script src="js/custom-recipes.js?v=479"></script></body>
+    <script src="js/custom-recipes.js?v=490"></script></body>
 
 </html>

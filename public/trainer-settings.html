@@ -31,7 +31,7 @@
 
         // Force PWA cache bust / reload
         (function() {
-            const CURRENT_VERSION = '479';
+            const CURRENT_VERSION = '490';
             const savedVersion = localStorage.getItem('app_version');
             if (savedVersion !== CURRENT_VERSION) {
                 localStorage.setItem('app_version', CURRENT_VERSION);
@@ -57,8 +57,8 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="styles/theme.css?v=479">
-    <link rel="stylesheet" href="styles/components.css?v=479">
+    <link rel="stylesheet" href="styles/theme.css?v=490">
+    <link rel="stylesheet" href="styles/components.css?v=490">
     <style>
         .settings-section {
             margin-bottom: var(--spacing-xl);
@@ -139,14 +139,14 @@
                 </div>
                 <button class="menu-toggle" onclick="toggleMenu()">☰</button>
                 <ul class="nav-links" id="navLinks">
-                    <li><a href="trainer-dashboard.html?v=479" class="nav-link">Dashboard</a></li>
-                    <li><a href="trainer-clients.html?v=479" class="nav-link">Clientes</a></li>
-                    <li><a href="trainer-routines.html?v=479" class="nav-link">Rutinas</a></li>
-                    <li><a href="trainer-diets.html?v=479" class="nav-link">Dietas</a></li>
-                    <li><a href="trainer-feedbacks.html?v=479" class="nav-link">Revisiones</a></li>
-                    <li><a href="trainer-media.html?v=479" class="nav-link">Biblioteca</a></li>
-                    <li><a href="trainer-appointments.html?v=479" class="nav-link">Agenda</a></li>
-                    <li><a href="trainer-settings.html?v=479" class="nav-link active">Configuración</a></li>
+                    <li><a href="trainer-dashboard.html?v=490" class="nav-link">Dashboard</a></li>
+                    <li><a href="trainer-clients.html?v=490" class="nav-link">Clientes</a></li>
+                    <li><a href="trainer-routines.html?v=490" class="nav-link">Rutinas</a></li>
+                    <li><a href="trainer-diets.html?v=490" class="nav-link">Dietas</a></li>
+                    <li><a href="trainer-feedbacks.html?v=490" class="nav-link">Revisiones</a></li>
+                    <li><a href="trainer-media.html?v=490" class="nav-link">Biblioteca</a></li>
+                    <li><a href="trainer-appointments.html?v=490" class="nav-link">Agenda</a></li>
+                    <li><a href="trainer-settings.html?v=490" class="nav-link active">Configuración</a></li>
                     <li><a href="#" onclick="if(typeof AUTH !== 'undefined') { AUTH.signOut() } else { window.location.reload() }; return false;" class="nav-link" style="color:var(--error-color)">🚪 Salir</a></li>
                 </ul>
             </nav>
@@ -532,13 +532,88 @@
                         </div>
                     </div>
 
+                    <!-- Personalización Visual -->
+                    <div class="card shadow-sm">
+                        <div class="card-header">
+                            <h2 class="card-title">🛠️ Personalización Visual</h2>
+                        </div>
+                        <div class="card-body">
+                            <p class="text-xs text-muted mb-md">Personaliza qué elementos se muestran en la plataforma y su orden de aparición. Se abrirá la pantalla principal con las herramientas de edición activa.</p>
+                            <div style="display: flex; flex-direction: column; gap: 8px;">
+                                <button class="btn btn-primary" style="width: 100%;" onclick="if(window.PersonalizationManager) { PersonalizationManager.enterMode() } else { showToast('El cargador no está listo aún', 'warning') }">
+                                    🎨 Personalizar Interfaz
+                                </button>
+                                <button class="btn btn-outline" style="width: 100%;" onclick="if(window.PersonalizationManager) { PersonalizationManager.resetAll() } else { showToast('El cargador no está listo aún', 'warning') }">
+                                    🔄 Restablecer Ajustes Visuales
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Gestión de Equipo -->
+                    <div id="teamSettingsCard" class="card shadow-sm" style="display: none;">
+                        <div class="card-header">
+                            <h2 class="card-title">👥 Gestión de Equipo</h2>
+                        </div>
+                        <div class="card-body">
+                            <p class="text-xs text-muted mb-lg">Añade y gestiona cuentas de entrenadores colaboradores para tu equipo. Puedes asignarles clientes específicos.</p>
+                            <button class="btn btn-primary btn-sm mb-md" onclick="window.openTeamMemberModal()" style="margin-bottom: 15px;">
+                                ➕ Añadir Entrenador Colaborador
+                            </button>
+                            <div style="overflow-x: auto;">
+                                <table class="table" style="width: 100%;">
+                                    <thead>
+                                        <tr>
+                                            <th>Nombre</th>
+                                            <th>Email</th>
+                                            <th>Clave</th>
+                                            <th>Acción</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="teamMembersList">
+                                        <!-- Cargar dinámicamente -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+
 
                 </div>
             </div>
-        </div>
-    </main>
+         </div>
+     </main>
 
-    </div>
+     <!-- Modal para Entrenador Colaborador -->
+     <div class="modal-overlay" id="teamMemberModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 1000; align-items: center; justify-content: center;">
+         <div class="modal-content" style="background: #15152E; border: 1px solid rgba(255,255,255,0.1); border-radius: 16px; padding: 25px; width: 90%; max-width: 400px; position: relative;">
+             <button class="modal-close-x" onclick="window.closeTeamMemberModal()" style="position: absolute; right: 15px; top: 15px; border: none; background: none; color: white; font-size: 1.5rem; cursor: pointer;">&times;</button>
+             <h3 id="teamMemberModalTitle" style="margin-top: 0; color: var(--primary-color);">Configurar Colaborador</h3>
+             
+             <form id="teamMemberForm">
+                 <input type="hidden" id="tmId">
+                 <div class="form-group mb-md" style="margin-bottom: 15px;">
+                     <label class="form-label" style="display: block; margin-bottom: 6px; font-size: 0.85rem;">Nombre *</label>
+                     <input type="text" id="tmName" class="form-input" required>
+                 </div>
+                 <div class="form-group mb-md" style="margin-bottom: 15px;">
+                     <label class="form-label" style="display: block; margin-bottom: 6px; font-size: 0.85rem;">Email de Acceso *</label>
+                     <input type="email" id="tmEmail" class="form-input" required>
+                 </div>
+                 <div class="form-group mb-md" style="margin-bottom: 15px;">
+                     <label class="form-label" style="display: block; margin-bottom: 6px; font-size: 0.85rem;">Contraseña / Clave *</label>
+                     <input type="text" id="tmPassword" class="form-input" placeholder="Ej: CLAVE-1234" required>
+                 </div>
+                 
+                 <div style="display: flex; gap: 12px; margin-top: 20px;">
+                     <button type="button" class="btn btn-secondary" style="flex:1" onclick="window.closeTeamMemberModal()">Cancelar</button>
+                     <button type="submit" class="btn btn-primary" style="flex:1">Guardar</button>
+                 </div>
+             </form>
+         </div>
+     </div>
+
+     </div>
 
     <!-- Firebase SDKs -->
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
@@ -550,17 +625,17 @@
 
     <!-- Supabase SDK & Service -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="js/supabase-service.js?v=479"></script>
+    <script src="js/supabase-service.js?v=490"></script>
 
     <!-- UI Scripts -->
-    <script src="js/config.js?v=479"></script>
-    <script src="js/auth.js?v=479"></script>
-    <script src="js/sheets.js?v=479"></script>
-    <script src="js/data-models.js?v=479"></script>
-    <script src="js/cloud-storage.js?v=479"></script>
-    <script src="js/utils.js?v=479"></script>
+    <script src="js/config.js?v=490"></script>
+    <script src="js/auth.js?v=490"></script>
+    <script src="js/sheets.js?v=490"></script>
+    <script src="js/data-models.js?v=490"></script>
+    <script src="js/cloud-storage.js?v=490"></script>
+    <script src="js/utils.js?v=490"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
-    <script src="js/excel-manager.js?v=479"></script>
+    <script src="js/excel-manager.js?v=490"></script>
     <script>
         // Global Variables
         let feedbackQuestions = [];
@@ -716,17 +791,144 @@
                     }
 
                     const licenseKeyVal = document.getElementById('saasLicenseKeyVal');
-                    if (licenseKeyVal) {
-                        licenseKeyVal.textContent = t.licenseKey || localStorage.getItem('_rememberedTrainerKey') || 'FIT-XXXX-26';
-                    }
-                }
-            } catch (err) {
-                console.warn('Error in renderSaaSPlanInfo:', err);
-            }
-        }
+                     if (licenseKeyVal) {
+                         licenseKeyVal.textContent = t.licenseKey || localStorage.getItem('_rememberedTrainerKey') || 'FIT-XXXX-26';
+                     }
+                     
+                     const accessType = t.accessType || 'unique';
+                     localStorage.setItem('trainerAccessType', accessType);
+                     
+                     const teamCard = document.getElementById('teamSettingsCard');
+                     if (teamCard) {
+                         if (accessType === 'multiple') {
+                             teamCard.style.display = 'block';
+                             window.renderTeamMembers();
+                         } else {
+                             teamCard.style.display = 'none';
+                         }
+                     }
+                 }
+             } catch (err) {
+                 console.warn('Error in renderSaaSPlanInfo:', err);
+             }
+         }
 
-        // Initialize on DOM load
-        document.addEventListener('DOMContentLoaded', initSettingsUI);
+        window.renderTeamMembers = function() {
+            const data = getData();
+            const members = data.teamMembers || [];
+            const tbody = document.getElementById('teamMembersList');
+            if (!tbody) return;
+            
+            if (members.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="4" style="text-align: center; opacity: 0.5; padding: 15px;">No hay colaboradores agregados.</td></tr>';
+                return;
+            }
+            
+            tbody.innerHTML = members.map(m => `
+                <tr>
+                    <td style="padding: 10px; border-bottom: 1px solid rgba(255,255,255,0.03);">${m.name}</td>
+                    <td style="padding: 10px; border-bottom: 1px solid rgba(255,255,255,0.03);">${m.email}</td>
+                    <td style="padding: 10px; border-bottom: 1px solid rgba(255,255,255,0.03); font-family: monospace;">${m.password}</td>
+                    <td style="padding: 10px; border-bottom: 1px solid rgba(255,255,255,0.03);">
+                        <button class="btn btn-xs btn-secondary" onclick="window.openTeamMemberModal('${m.id}')" style="padding: 4px 8px; font-size: 0.75rem;">✏️</button>
+                        <button class="btn btn-xs btn-danger" onclick="window.deleteTeamMember('${m.id}')" style="padding: 4px 8px; font-size: 0.75rem; margin-left: 5px;">🗑️</button>
+                    </td>
+                </tr>
+            `).join('');
+        };
+
+        window.openTeamMemberModal = function(id = null) {
+            const modal = document.getElementById('teamMemberModal');
+            const title = document.getElementById('teamMemberModalTitle');
+            const form = document.getElementById('teamMemberForm');
+            
+            document.getElementById('tmId').value = id || '';
+            document.getElementById('tmName').value = '';
+            document.getElementById('tmEmail').value = '';
+            document.getElementById('tmPassword').value = '';
+            
+            if (id) {
+                title.textContent = '✏️ Editar Colaborador';
+                const data = getData();
+                const member = (data.teamMembers || []).find(m => m.id === id);
+                if (member) {
+                    document.getElementById('tmName').value = member.name || '';
+                    document.getElementById('tmEmail').value = member.email || '';
+                    document.getElementById('tmPassword').value = member.password || '';
+                }
+            } else {
+                title.textContent = '➕ Añadir Colaborador';
+                const randPass = 'COLAB-' + Math.floor(1000 + Math.random() * 9000);
+                document.getElementById('tmPassword').value = randPass;
+            }
+            
+            modal.style.display = 'flex';
+        };
+
+        window.closeTeamMemberModal = function() {
+            document.getElementById('teamMemberModal').style.display = 'none';
+        };
+
+        window.deleteTeamMember = function(id) {
+            if (!confirm('¿Estás seguro de que quieres eliminar a este colaborador? El acceso de este usuario se revocará de inmediato.')) return;
+            const data = getData();
+            data.teamMembers = (data.teamMembers || []).filter(m => m.id !== id);
+            
+            if (data.clients) {
+                data.clients.forEach(c => {
+                    if (c.assignedTrainerId === id) {
+                        c.assignedTrainerId = null;
+                    }
+                });
+            }
+            
+            saveData(data);
+            window.renderTeamMembers();
+            showToast('Colaborador eliminado con éxito', 'success');
+        };
+        
+        document.addEventListener('DOMContentLoaded', () => {
+            const form = document.getElementById('teamMemberForm');
+            if (form) {
+                form.addEventListener('submit', (e) => {
+                    e.preventDefault();
+                    const id = document.getElementById('tmId').value;
+                    const name = document.getElementById('tmName').value.trim();
+                    const email = document.getElementById('tmEmail').value.trim().toLowerCase();
+                    const password = document.getElementById('tmPassword').value.trim();
+                    
+                    const data = getData();
+                    if (!data.teamMembers) data.teamMembers = [];
+                    
+                    const isDup = data.teamMembers.some(m => m.id !== id && m.email.toLowerCase() === email);
+                    if (isDup) {
+                        showToast('Este email ya está registrado para otro colaborador', 'error');
+                        return;
+                    }
+                    
+                    if (id) {
+                        const member = data.teamMembers.find(m => m.id === id);
+                        if (member) {
+                            member.name = name;
+                            member.email = email;
+                            member.password = password;
+                        }
+                    } else {
+                        data.teamMembers.push({
+                            id: generateUUID(),
+                            name,
+                            email,
+                            password
+                        });
+                    }
+                    
+                    saveData(data);
+                    window.closeTeamMemberModal();
+                    window.renderTeamMembers();
+                    showToast('Colaborador guardado con éxito', 'success');
+                });
+            }
+        });
 
         // Load current settings
         function loadSettings() {
@@ -1756,6 +1958,6 @@
             }, 2500);
         }
     </script>
-    <script src="js/custom-recipes.js?v=479"></script></body>
+    <script src="js/custom-recipes.js?v=490"></script></body>
 
 </html>
