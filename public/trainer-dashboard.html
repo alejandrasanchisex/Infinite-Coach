@@ -191,6 +191,13 @@
                                 <span id="paidCount" class="badge badge-info" style="cursor: pointer;" role="button"
                                     tabindex="0" onclick="showClientListModal('paid')" title="Ver listado">0</span>
                             </div>
+                            <!-- Trainer Breakdown (Only for Multiple Access) -->
+                            <div id="trainerBreakdownSection" style="display: none; border-top: 1px dashed rgba(255,255,255,0.1); margin-top: 15px; padding-top: 15px;">
+                                <span style="font-size: 0.75rem; font-weight: bold; color: var(--primary-color); opacity: 0.8; text-transform: uppercase; margin-bottom: 10px; display: block;">Asignación de Entrenadores</span>
+                                <div id="trainerBreakdownList" style="display: flex; flex-direction: column; gap: 8px;">
+                                    <!-- Injected dynamically -->
+                                </div>
+                            </div>
                         </div>
                     </div>
 
@@ -319,6 +326,100 @@
             document.getElementById('activeCount').textContent = activeCount;
             document.getElementById('inactiveCount').textContent = inactiveCount;
             document.getElementById('paidCount').textContent = paidCount;
+
+            // Render Trainer Assignment Breakdown (in case of multiple user setup)
+            const platformRaw = localStorage.getItem('saasFitnessPlatform');
+            let isMultipleAccess = localStorage.getItem('trainerAccessType') === 'multiple';
+            if (!isMultipleAccess && platformRaw) {
+                try {
+                    const platformData = JSON.parse(platformRaw);
+                    const activeId = localStorage.getItem('activeTrainerId') || 'default';
+                    const t = platformData.trainers?.find(tr => tr.id === activeId);
+                    if (t && t.accessType === 'multiple') {
+                        isMultipleAccess = true;
+                    }
+                } catch(e) {
+                    console.warn(e);
+                }
+            }
+
+            const breakdownSection = document.getElementById('trainerBreakdownSection');
+            const breakdownList = document.getElementById('trainerBreakdownList');
+
+            if (isMultipleAccess && breakdownSection && breakdownList) {
+                breakdownSection.style.display = 'block';
+                const data = (window.getData && typeof window.getData === 'function') ? window.getData() : {};
+                const teamMembers = data.teamMembers || [];
+
+                // Group clients by assignedTrainerId
+                const trainerMap = {};
+                // Initialize for Admin
+                trainerMap['admin'] = {
+                    name: 'Administrador (Principal)',
+                    clients: []
+                };
+                // Initialize for each team member
+                teamMembers.forEach(m => {
+                    trainerMap[m.id] = {
+                        name: m.name,
+                        clients: []
+                    };
+                });
+
+                // Populate map
+                clients.forEach(c => {
+                    const tId = c.assignedTrainerId || 'admin';
+                    if (!trainerMap[tId]) {
+                        trainerMap[tId] = {
+                            name: `Entrenador ID: ${tId}`,
+                            clients: []
+                        };
+                    }
+                    trainerMap[tId].clients.push(c);
+                });
+
+                // Render list
+                const htmlArray = [];
+                // Admin first
+                const adminTrainer = trainerMap['admin'];
+                if (adminTrainer.clients.length > 0 || teamMembers.length > 0) {
+                    const clientNames = adminTrainer.clients.map(c => `${c.name}${c.status === 'inactive' ? ' (Inactivo)' : ''}`).join(', ') || 'Ninguno';
+                    htmlArray.push(`
+                        <div style="font-size: 0.85rem; padding: 4px 0; border-bottom: 1px solid rgba(255,255,255,0.02);">
+                            <div style="display: flex; justify-content: space-between; font-weight: 600; color: #fff;">
+                                <span>👤 ${adminTrainer.name}</span>
+                                <span style="background: rgba(255,255,255,0.1); padding: 1px 6px; border-radius: 4px; font-size: 0.75rem; color: var(--primary-color);">${adminTrainer.clients.length} ${adminTrainer.clients.length === 1 ? 'cliente' : 'clientes'}</span>
+                            </div>
+                            <div style="font-size: 0.75rem; color: #aaa; margin-top: 4px; padding-left: 12px; line-height: 1.4;">
+                                ${clientNames}
+                            </div>
+                        </div>
+                    `);
+                }
+
+                // Team members next
+                teamMembers.forEach(m => {
+                    const t = trainerMap[m.id];
+                    if (t) {
+                        const clientNames = t.clients.map(c => `${c.name}${c.status === 'inactive' ? ' (Inactivo)' : ''}`).join(', ') || 'Ninguno';
+                        htmlArray.push(`
+                            <div style="font-size: 0.85rem; padding: 4px 0; border-bottom: 1px solid rgba(255,255,255,0.02);">
+                                <div style="display: flex; justify-content: space-between; font-weight: 600; color: #fff;">
+                                    <span>👤 ${t.name}</span>
+                                    <span style="background: rgba(255,255,255,0.1); padding: 1px 6px; border-radius: 4px; font-size: 0.75rem; color: var(--primary-color);">${t.clients.length} ${t.clients.length === 1 ? 'cliente' : 'clientes'}</span>
+                                </div>
+                                <div style="font-size: 0.75rem; color: #aaa; margin-top: 4px; padding-left: 12px; line-height: 1.4;">
+                                    ${clientNames}
+                                </div>
+                            </div>
+                        `);
+                    }
+                });
+
+                breakdownList.innerHTML = htmlArray.join('');
+            } else if (breakdownSection) {
+                breakdownSection.style.display = 'none';
+            }
 
             // Upcoming appointments
             loadUpcomingAppointments();

@@ -346,6 +346,89 @@
                         </div>
                     </div>
 
+                    <!-- Visibilidad de Secciones (Botón Derecho) -->
+                    <div class="card shadow-sm" style="margin-top: 1rem;">
+                        <div class="card-header">
+                            <h2 class="card-title">👁️ Visibilidad de Secciones</h2>
+                        </div>
+                        <div class="card-body">
+                            <p class="text-xs text-muted mb-md">Activa o desactiva la visibilidad de los elementos del menú y del panel de control principal, igual que si hicieras clic derecho y seleccionaras ocultar/mostrar.</p>
+                            
+                            <div class="mb-md">
+                                <span style="font-size: 0.75rem; font-weight: bold; color: var(--primary-color); opacity: 0.8; text-transform: uppercase; margin-bottom: 6px; display: block;">Menú de Navegación</span>
+                                <div class="checkbox-group flex-col gap-xs">
+                                    <label class="checkbox-label">
+                                        <input type="checkbox" id="vis-nav-dashboard" checked> Dashboard
+                                    </label>
+                                    <label class="checkbox-label">
+                                        <input type="checkbox" id="vis-nav-clients" checked> Clientes
+                                    </label>
+                                    <label class="checkbox-label">
+                                        <input type="checkbox" id="vis-nav-routines" checked> Rutinas
+                                    </label>
+                                    <label class="checkbox-label">
+                                        <input type="checkbox" id="vis-nav-diets" checked> Dietas
+                                    </label>
+                                    <label class="checkbox-label">
+                                        <input type="checkbox" id="vis-nav-feedbacks" checked> Revisiones
+                                    </label>
+                                    <label class="checkbox-label">
+                                        <input type="checkbox" id="vis-nav-media" checked> Biblioteca
+                                    </label>
+                                    <label class="checkbox-label">
+                                        <input type="checkbox" id="vis-nav-appointments" checked> Agenda
+                                    </label>
+                                </div>
+                            </div>
+
+                            <div class="mb-md" style="border-top: 1px dashed rgba(255,255,255,0.05); padding-top: 10px;">
+                                <span style="font-size: 0.75rem; font-weight: bold; color: var(--primary-color); opacity: 0.8; text-transform: uppercase; margin-bottom: 6px; display: block;">Métricas del Dashboard (KPIs)</span>
+                                <div class="checkbox-group flex-col gap-xs">
+                                    <label class="checkbox-label">
+                                        <input type="checkbox" id="vis-kpi-active-clients" checked> Clientes Activos
+                                    </label>
+                                    <label class="checkbox-label">
+                                        <input type="checkbox" id="vis-kpi-revenue" checked> Ingresos del Mes
+                                    </label>
+                                    <label class="checkbox-label">
+                                        <input type="checkbox" id="vis-kpi-pending-payments" checked> Pagos Pendientes
+                                    </label>
+                                    <label class="checkbox-label">
+                                        <input type="checkbox" id="vis-kpi-pending-feedbacks" checked> Revisiones Pendientes
+                                    </label>
+                                    <label class="checkbox-label">
+                                        <input type="checkbox" id="vis-kpi-calls-today" checked> Llamadas de Hoy
+                                    </label>
+                                    <label class="checkbox-label">
+                                        <input type="checkbox" id="vis-kpi-forecast" checked> Previsión Anual
+                                    </label>
+                                </div>
+                            </div>
+
+                            <div class="mb-lg" style="border-top: 1px dashed rgba(255,255,255,0.05); padding-top: 10px;">
+                                <span style="font-size: 0.75rem; font-weight: bold; color: var(--primary-color); opacity: 0.8; text-transform: uppercase; margin-bottom: 6px; display: block;">Tarjetas del Dashboard</span>
+                                <div class="checkbox-group flex-col gap-xs">
+                                    <label class="checkbox-label">
+                                        <input type="checkbox" id="vis-card-appointments" checked> Próximas Citas (Agenda)
+                                    </label>
+                                    <label class="checkbox-label">
+                                        <input type="checkbox" id="vis-card-feedbacks" checked> Revisiones Pendientes
+                                    </label>
+                                    <label class="checkbox-label">
+                                        <input type="checkbox" id="vis-card-status" checked> Estado de Clientes
+                                    </label>
+                                    <label class="checkbox-label">
+                                        <input type="checkbox" id="vis-card-health" checked> Salud del Negocio
+                                    </label>
+                                </div>
+                            </div>
+
+                            <button class="btn btn-primary" style="width: 100%;" onclick="savePersonalizationVisibility()">
+                                💾 Guardar Visibilidad
+                            </button>
+                        </div>
+                    </div>
+
                     <!-- Gestión de Equipo -->
                     <div id="teamSettingsCard" class="card shadow-sm" style="display: none; margin-top: 1rem;">
                         <div class="card-header">
@@ -1082,6 +1165,7 @@
             if (typeof renderPerimeters === 'function') renderPerimeters();
             if (typeof renderOnboardingQuestions === 'function') renderOnboardingQuestions();
             renderBatchStatus();
+            if (typeof loadPersonalizationVisibility === 'function') loadPersonalizationVisibility();
         }
 
         window.saveBrandSettings = function() {
@@ -1282,7 +1366,11 @@
         document.addEventListener('input', function(e) {
             const id = e.target.id;
             if (!id) return;
-            if ([
+            if (id.startsWith('vis-')) {
+                if (typeof window.savePersonalizationVisibility === 'function') {
+                    window.savePersonalizationVisibility(false);
+                }
+            } else if ([
                 'brandNameInput', 'whatsappInput', 'primaryColorInput', 'secondaryColorInput', 
                 'accentColorInput', 'themeModeInput', 'bgDarkColorInput', 'bgLightColorInput', 'autoSaveDietTemplate',
                 'pdfShowCalories', 'pdfShowMacros', 'clientShowVideos', 'clientShowCalories',
@@ -1303,7 +1391,11 @@
         document.addEventListener('change', function(e) {
             const id = e.target.id;
             if (!id) return;
-            if ([
+            if (id.startsWith('vis-')) {
+                if (typeof window.savePersonalizationVisibility === 'function') {
+                    window.savePersonalizationVisibility(false);
+                }
+            } else if ([
                 'brandNameInput', 'whatsappInput', 'primaryColorInput', 'secondaryColorInput', 
                 'accentColorInput', 'themeModeInput', 'bgDarkColorInput', 'bgLightColorInput', 'autoSaveDietTemplate',
                 'pdfShowCalories', 'pdfShowMacros', 'clientShowVideos', 'clientShowCalories',
@@ -1321,6 +1413,178 @@
             }
         });
         // --- END OF AUTOSAVE FOR SETTINGS ---
+
+        const trainerPages = [
+            'trainer-dashboard.html',
+            'trainer-clients.html',
+            'trainer-routines.html',
+            'trainer-diets.html',
+            'trainer-feedbacks.html',
+            'trainer-media.html',
+            'trainer-media-pro.html',
+            'trainer-appointments.html',
+            'trainer-settings.html',
+            'trainer-client-detail.html'
+        ];
+
+        window.loadPersonalizationVisibility = function() {
+            try {
+                const settingsKey = '_personalization_settings';
+                let settings = {};
+                try {
+                    settings = JSON.parse(localStorage.getItem(settingsKey)) || {};
+                } catch (e) {
+                    settings = {};
+                }
+
+                const pageName = window.location.pathname.split('/').pop() || 'index.html';
+                const pageSettings = settings[pageName] || {};
+                const hiddenNavs = pageSettings.hidden?.['nav-links-menu'] || [];
+
+                // Load Menu checkboxes
+                const navMapping = {
+                    'vis-nav-dashboard': 'nav-dashboard',
+                    'vis-nav-clients': 'nav-clients',
+                    'vis-nav-routines': 'nav-routines',
+                    'vis-nav-diets': 'nav-diets',
+                    'vis-nav-feedbacks': 'nav-feedbacks',
+                    'vis-nav-media': 'nav-media',
+                    'vis-nav-appointments': 'nav-appointments'
+                };
+                for (const [chkId, navId] of Object.entries(navMapping)) {
+                    const el = document.getElementById(chkId);
+                    if (el) {
+                        el.checked = !hiddenNavs.includes(navId);
+                    }
+                }
+
+                // Load Dashboard KPIs
+                const dbSettings = settings['trainer-dashboard.html'] || {};
+                const hiddenKPIs = dbSettings.hidden?.['db-stats-grid'] || [];
+                const kpiMapping = {
+                    'vis-kpi-active-clients': 'db-kpi-active-clients',
+                    'vis-kpi-revenue': 'db-kpi-revenue',
+                    'vis-kpi-pending-payments': 'db-kpi-pending-payments',
+                    'vis-kpi-pending-feedbacks': 'db-kpi-pending-feedbacks',
+                    'vis-kpi-calls-today': 'db-kpi-calls-today',
+                    'vis-kpi-forecast': 'db-kpi-forecast'
+                };
+                for (const [chkId, kpiId] of Object.entries(kpiMapping)) {
+                    const el = document.getElementById(chkId);
+                    if (el) {
+                        el.checked = !hiddenKPIs.includes(kpiId);
+                    }
+                }
+
+                // Load Dashboard Cards
+                const hiddenCards = dbSettings.hidden?.['db-main-grid'] || [];
+                const cardMapping = {
+                    'vis-card-appointments': 'db-card-appointments',
+                    'vis-card-feedbacks': 'db-card-feedbacks',
+                    'vis-card-status': 'db-card-status',
+                    'vis-card-health': 'db-card-health'
+                };
+                for (const [chkId, cardId] of Object.entries(cardMapping)) {
+                    const el = document.getElementById(chkId);
+                    if (el) {
+                        el.checked = !hiddenCards.includes(cardId);
+                    }
+                }
+            } catch (err) {
+                console.error("Error loading personalization visibility:", err);
+            }
+        };
+
+        window.savePersonalizationVisibility = function(showToastAlert = true) {
+            try {
+                const settingsKey = '_personalization_settings';
+                let settings = {};
+                try {
+                    settings = JSON.parse(localStorage.getItem(settingsKey)) || {};
+                } catch (e) {
+                    settings = {};
+                }
+
+                // Get Menu hidden ids
+                const hiddenNavs = [];
+                const navMapping = {
+                    'vis-nav-dashboard': 'nav-dashboard',
+                    'vis-nav-clients': 'nav-clients',
+                    'vis-nav-routines': 'nav-routines',
+                    'vis-nav-diets': 'nav-diets',
+                    'vis-nav-feedbacks': 'nav-feedbacks',
+                    'vis-nav-media': 'nav-media',
+                    'vis-nav-appointments': 'nav-appointments'
+                };
+                for (const [chkId, navId] of Object.entries(navMapping)) {
+                    const el = document.getElementById(chkId);
+                    if (el && !el.checked) {
+                        hiddenNavs.push(navId);
+                    }
+                }
+
+                // Apply navigation menu settings globally across all trainer pages
+                trainerPages.forEach(page => {
+                    if (!settings[page]) settings[page] = {};
+                    if (!settings[page].hidden) settings[page].hidden = {};
+                    settings[page].hidden['nav-links-menu'] = hiddenNavs;
+                });
+
+                // Get Dashboard KPIs hidden ids
+                const hiddenKPIs = [];
+                const kpiMapping = {
+                    'vis-kpi-active-clients': 'db-kpi-active-clients',
+                    'vis-kpi-revenue': 'db-kpi-revenue',
+                    'vis-kpi-pending-payments': 'db-kpi-pending-payments',
+                    'vis-kpi-pending-feedbacks': 'db-kpi-pending-feedbacks',
+                    'vis-kpi-calls-today': 'db-kpi-calls-today',
+                    'vis-kpi-forecast': 'db-kpi-forecast'
+                };
+                for (const [chkId, kpiId] of Object.entries(kpiMapping)) {
+                    const el = document.getElementById(chkId);
+                    if (el && !el.checked) {
+                        hiddenKPIs.push(kpiId);
+                    }
+                }
+
+                if (!settings['trainer-dashboard.html']) settings['trainer-dashboard.html'] = {};
+                if (!settings['trainer-dashboard.html'].hidden) settings['trainer-dashboard.html'].hidden = {};
+                settings['trainer-dashboard.html'].hidden['db-stats-grid'] = hiddenKPIs;
+
+                // Get Dashboard Cards hidden ids
+                const hiddenCards = [];
+                const cardMapping = {
+                    'vis-card-appointments': 'db-card-appointments',
+                    'vis-card-feedbacks': 'db-card-feedbacks',
+                    'vis-card-status': 'db-card-status',
+                    'vis-card-health': 'db-card-health'
+                };
+                for (const [chkId, cardId] of Object.entries(cardMapping)) {
+                    const el = document.getElementById(chkId);
+                    if (el && !el.checked) {
+                        hiddenCards.push(cardId);
+                    }
+                }
+                settings['trainer-dashboard.html'].hidden['db-main-grid'] = hiddenCards;
+
+                // Save to localStorage
+                localStorage.setItem(settingsKey, JSON.stringify(settings));
+
+                // Apply layout immediately on current page if PersonalizationManager exists
+                if (window.PersonalizationManager && typeof window.PersonalizationManager.applyLayout === 'function') {
+                    window.PersonalizationManager.applyLayout();
+                }
+
+                if (showToastAlert) {
+                    showToast('Visibilidad de secciones guardada con éxito', 'success');
+                }
+            } catch (err) {
+                console.error("Error saving personalization visibility:", err);
+                if (showToastAlert) {
+                    showToast('Error al guardar la visibilidad', 'error');
+                }
+            }
+        };
 
         // Las funciones saveFiscalSettings y savePaymentSettings completas están definidas más abajo en sus secciones correspondientes.
 
