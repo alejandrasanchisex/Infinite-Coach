@@ -5,7 +5,7 @@
     <script>
         // Force PWA cache bust / reload
         (function() {
-            const CURRENT_VERSION = '503';
+            const CURRENT_VERSION = '504';
             const savedVersion = localStorage.getItem('app_version');
             if (savedVersion !== CURRENT_VERSION) {
                 localStorage.setItem('app_version', CURRENT_VERSION);
@@ -31,8 +31,8 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="styles/theme.css?v=503">
-    <link rel="stylesheet" href="styles/components.css?v=503">
+    <link rel="stylesheet" href="styles/theme.css?v=504">
+    <link rel="stylesheet" href="styles/components.css?v=504">
 </head>
 
 <body>
@@ -61,14 +61,14 @@
                     </div>
                     <button class="menu-toggle" onclick="toggleMenu()">☰</button>
                     <ul class="nav-links" id="navLinks">
-                        <li><a href="trainer-dashboard.html?v=503" class="nav-link active">Dashboard</a></li>
-                        <li><a href="trainer-clients.html?v=503" class="nav-link">Clientes</a></li>
-                        <li><a href="trainer-routines.html?v=503" class="nav-link">Rutinas</a></li>
-                        <li><a href="trainer-diets.html?v=503" class="nav-link">Dietas</a></li>
-                        <li><a href="trainer-feedbacks.html?v=503" class="nav-link">Revisiones</a></li>
-                        <li><a href="trainer-media.html?v=503" class="nav-link">Biblioteca</a></li>
-                        <li><a href="trainer-appointments.html?v=503" class="nav-link">Agenda</a></li>
-                        <li><a href="trainer-settings.html?v=503" class="nav-link">Configuración</a></li>
+                        <li><a href="trainer-dashboard.html?v=504" class="nav-link active">Dashboard</a></li>
+                        <li><a href="trainer-clients.html?v=504" class="nav-link">Clientes</a></li>
+                        <li><a href="trainer-routines.html?v=504" class="nav-link">Rutinas</a></li>
+                        <li><a href="trainer-diets.html?v=504" class="nav-link">Dietas</a></li>
+                        <li><a href="trainer-feedbacks.html?v=504" class="nav-link">Revisiones</a></li>
+                        <li><a href="trainer-media.html?v=504" class="nav-link">Biblioteca</a></li>
+                        <li><a href="trainer-appointments.html?v=504" class="nav-link">Agenda</a></li>
+                        <li><a href="trainer-settings.html?v=504" class="nav-link">Configuración</a></li>
                         <li><a href="#" onclick="if(typeof AUTH !== 'undefined') { AUTH.signOut() } else { window.location.reload() }; return false;" class="nav-link" style="color:var(--error-color)">🚪 Salir</a></li>
                     </ul>
                 </nav>
@@ -269,14 +269,14 @@
 
     <!-- Supabase SDK & Service -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="js/supabase-service.js?v=503"></script>
+    <script src="js/supabase-service.js?v=504"></script>
 
     <!-- UI Scripts -->
-    <script src="js/config.js?v=503"></script>
-    <script src="js/auth.js?v=503"></script>
-    <script src="js/sheets.js?v=503"></script>
-    <script src="js/data-models.js?v=503"></script>
-    <script src="js/utils.js?v=503"></script>
+    <script src="js/config.js?v=504"></script>
+    <script src="js/auth.js?v=504"></script>
+    <script src="js/sheets.js?v=504"></script>
+    <script src="js/data-models.js?v=504"></script>
+    <script src="js/utils.js?v=504"></script>
     <script>
         // Branding is handled via onGoogleAuthSuccess() and global listeners
 
@@ -383,16 +383,12 @@
                 // Admin first
                 const adminTrainer = trainerMap['admin'];
                 if (adminTrainer.clients.length > 0 || teamMembers.length > 0) {
-                    const clientNames = adminTrainer.clients.map(c => `${c.name}${c.status === 'inactive' ? ' (Inactivo)' : ''}`).join(', ') || 'Ninguno';
                     htmlArray.push(`
-                        <div style="font-size: 0.85rem; padding: 4px 0; border-bottom: 1px solid rgba(255,255,255,0.02);">
-                            <div style="display: flex; justify-content: space-between; font-weight: 600; color: #fff;">
-                                <span>👤 ${adminTrainer.name}</span>
-                                <span style="background: rgba(255,255,255,0.1); padding: 1px 6px; border-radius: 4px; font-size: 0.75rem; color: var(--primary-color);">${adminTrainer.clients.length} ${adminTrainer.clients.length === 1 ? 'cliente' : 'clientes'}</span>
-                            </div>
-                            <div style="font-size: 0.75rem; color: #aaa; margin-top: 4px; padding-left: 12px; line-height: 1.4;">
-                                ${clientNames}
-                            </div>
+                        <div style="font-size: 0.85rem; padding: 6px 0; border-bottom: 1px solid rgba(255,255,255,0.03); display: flex; justify-content: space-between; align-items: center;">
+                            <span style="font-weight: 500; color: #fff;">👤 ${adminTrainer.name}</span>
+                            <span class="badge badge-info" style="cursor: pointer; font-size: 0.75rem; padding: 2px 8px; border-radius: 6px;"
+                                role="button" tabindex="0" onclick="showClientListModal('trainer-admin')"
+                                title="Ver listado">${adminTrainer.clients.length}</span>
                         </div>
                     `);
                 }
@@ -401,16 +397,12 @@
                 teamMembers.forEach(m => {
                     const t = trainerMap[m.id];
                     if (t) {
-                        const clientNames = t.clients.map(c => `${c.name}${c.status === 'inactive' ? ' (Inactivo)' : ''}`).join(', ') || 'Ninguno';
                         htmlArray.push(`
-                            <div style="font-size: 0.85rem; padding: 4px 0; border-bottom: 1px solid rgba(255,255,255,0.02);">
-                                <div style="display: flex; justify-content: space-between; font-weight: 600; color: #fff;">
-                                    <span>👤 ${t.name}</span>
-                                    <span style="background: rgba(255,255,255,0.1); padding: 1px 6px; border-radius: 4px; font-size: 0.75rem; color: var(--primary-color);">${t.clients.length} ${t.clients.length === 1 ? 'cliente' : 'clientes'}</span>
-                                </div>
-                                <div style="font-size: 0.75rem; color: #aaa; margin-top: 4px; padding-left: 12px; line-height: 1.4;">
-                                    ${clientNames}
-                                </div>
+                            <div style="font-size: 0.85rem; padding: 6px 0; border-bottom: 1px solid rgba(255,255,255,0.03); display: flex; justify-content: space-between; align-items: center;">
+                                <span style="font-weight: 500; color: #fff;">👤 ${t.name}</span>
+                                <span class="badge badge-info" style="cursor: pointer; font-size: 0.75rem; padding: 2px 8px; border-radius: 6px;"
+                                    role="button" tabindex="0" onclick="showClientListModal('trainer-${m.id}')"
+                                    title="Ver listado">${t.clients.length}</span>
                             </div>
                         `);
                     }
@@ -985,6 +977,19 @@
             } else if (type === 'paid') {
                 filtered = clients.filter(c => c.paymentStatus === 'paid');
                 title = 'Pagos al día';
+            } else if (type.startsWith('trainer-')) {
+                const trainerId = type.replace('trainer-', '');
+                if (trainerId === 'admin') {
+                    filtered = clients.filter(c => !c.assignedTrainerId || c.assignedTrainerId === '');
+                    title = 'Clientes - Administrador';
+                } else {
+                    const data = (window.getData && typeof window.getData === 'function') ? window.getData() : {};
+                    const teamMembers = data.teamMembers || [];
+                    const member = teamMembers.find(m => m.id === trainerId);
+                    const trainerName = member ? member.name : `Entrenador (${trainerId})`;
+                    filtered = clients.filter(c => c.assignedTrainerId === trainerId);
+                    title = `Clientes - ${trainerName}`;
+                }
             } else {
                 return;
             }
@@ -1218,6 +1223,6 @@
             }
         }
     </script>
-    <script src="js/custom-recipes.js?v=503"></script></body>
+    <script src="js/custom-recipes.js?v=504"></script></body>
 
 </html>

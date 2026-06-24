@@ -122,20 +122,18 @@ if (typeof window !== 'undefined' && !window.BrandConfig) {
 }
 
 // Auto-apply on load
-if (typeof document !== 'undefined') {
-    document.addEventListener('DOMContentLoaded', () => {
-        window.BrandConfig.applyTheme();
-        checkAndInjectDemoUI();
-        
-        // Actualizar dinámicamente el manifiesto PWA con el entrenador activo
-        try {
-            const tid = localStorage.getItem('activeTrainerId') || window.activeTrainerId || 'default';
-            const manifestLink = document.querySelector('link[rel="manifest"]');
-            if (manifestLink && tid && tid !== 'default' && tid !== 'admin') {
-                manifestLink.setAttribute('href', 'manifest.json?t=' + tid);
-            }
-        } catch(e) { console.warn("Error actualizando enlace de manifiesto:", e); }
-    });
+function initUtils() {
+    window.BrandConfig.applyTheme();
+    checkAndInjectDemoUI();
+    
+    // Actualizar dinámicamente el manifiesto PWA con el entrenador activo
+    try {
+        const tid = localStorage.getItem('activeTrainerId') || window.activeTrainerId || 'default';
+        const manifestLink = document.querySelector('link[rel="manifest"]');
+        if (manifestLink && tid && tid !== 'default' && tid !== 'admin') {
+            manifestLink.setAttribute('href', 'manifest.json?t=' + tid);
+        }
+    } catch(e) { console.warn("Error actualizando enlace de manifiesto:", e); }
 
     // Interceptar clicks en links de "Salir" (login) para limpiar sesión local
     document.addEventListener('click', function(e) {
@@ -149,6 +147,14 @@ if (typeof document !== 'undefined') {
             }
         }
     });
+}
+
+if (typeof document !== 'undefined') {
+    if (document.readyState === 'complete' || document.readyState === 'interactive') {
+        initUtils();
+    } else {
+        document.addEventListener('DOMContentLoaded', initUtils);
+    }
 }
 
 function checkAndInjectDemoUI() {

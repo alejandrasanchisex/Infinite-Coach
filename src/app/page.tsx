@@ -35,9 +35,9 @@ export default function TrainerDashboard() {
           const activeTrainerId = localStorage.getItem('activeTrainerId') || 'default';
           window.location.replace('/trainer-dashboard.html?t=' + activeTrainerId);
         } else if (localStorage.getItem('clientId')) {
-          window.location.replace('/client-dashboard.html?v=503');
+          window.location.replace('/client-dashboard.html?v=504');
         } else if (window.location.hostname.includes('infinitecoach.es')) {
-          window.location.replace('/client-login.html?v=503');
+          window.location.replace('/client-login.html?v=504');
         } else {
           window.location.replace('/trainer-login.html');
         }
