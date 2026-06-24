@@ -619,8 +619,8 @@ const getData = () => {
 window.getData = getData;
 
 const mergeLocalEdits = (localNew, cloudMerged, localPrev, isTrainer) => {
-    const collections = ['clients', 'routines', 'diets', 'foods', 'media', 'feedbacks', 'appointments', 'invoices', 'trainingBlocks', 'trainingLogs', 'habits', 'supplementationTemplates'];
-    const trainerCollections = ['routines', 'diets', 'foods', 'media', 'trainingBlocks', 'supplementationTemplates', 'invoices'];
+    const collections = ['clients', 'routines', 'diets', 'foods', 'media', 'feedbacks', 'appointments', 'invoices', 'trainingBlocks', 'trainingLogs', 'habits', 'supplementationTemplates', 'library'];
+    const trainerCollections = ['routines', 'diets', 'foods', 'media', 'trainingBlocks', 'supplementationTemplates', 'invoices', 'library'];
     const clientCollections = ['feedbacks', 'appointments', 'trainingLogs', 'habits'];
     
     const result = { ...cloudMerged };
@@ -647,7 +647,7 @@ const mergeLocalEdits = (localNew, cloudMerged, localPrev, isTrainer) => {
             return ['appointments'];
         }
         if (page.includes('media')) {
-            return ['media'];
+            return ['media', 'library'];
         }
         if (page.includes('feedback')) {
             return ['feedbacks'];
@@ -1115,7 +1115,7 @@ window.syncFromCloud = async () => {
                 const isTrainer = typeof localStorage !== 'undefined' && localStorage.getItem('_trainerAuthed') === '1';
                 
                 // Categorizar colecciones según autoría
-                const trainerCollections = ['routines', 'diets', 'foods', 'media', 'trainingBlocks', 'supplementationTemplates', 'invoices']; // clients se maneja aparte
+                const trainerCollections = ['routines', 'diets', 'foods', 'media', 'trainingBlocks', 'supplementationTemplates', 'invoices', 'library']; // clients se maneja aparte
                 const clientCollections = ['feedbacks', 'appointments', 'trainingLogs', 'habits'];
 
                 let dataChanged = false;
@@ -4753,10 +4753,10 @@ const BrandConfig = {
             console.warn("Could not set dynamic manifest URL:", e);
         }
 
-        // Dynamically inject the "Biblioteca" link in the client navigation menu if enabled
         const injectClientLibraryNav = () => {
-            const isClientPage = window.location.pathname.includes('client-') || 
-                                 (document.body && document.body.classList.contains('theme-client'));
+            const isClientPage = window.location.pathname.includes('client-') && 
+                                 !window.location.pathname.includes('trainer-') &&
+                                 !window.location.pathname.includes('admin-');
             if (!isClientPage) return;
             
             const navList = document.querySelector('#navLinks, .nav-links');

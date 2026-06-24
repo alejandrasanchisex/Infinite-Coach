@@ -453,12 +453,39 @@ window.calculateRecipeQuantities = function () {
 
     const targetMealCals = targetCals / diet.meals.length;
 
+    // Calcular la suma de calorías actuales de la Opción 1 de todas las comidas
+    const totalOption1Cals = diet.meals.reduce((sum, meal) => {
+        const opt1Foods = (meal.foods || []).filter(f => (f.option || 1) === 1);
+        const opt1Cals = opt1Foods.reduce((s, f) => s + (parseFloat(f.calories) || 0), 0);
+        return sum + opt1Cals;
+    }, 0);
+
+    // Consideramos que la dieta está alineada si la suma de todas las opción 1 es muy cercana o igual al targetCals.
+    // Esto significa que el entrenador ya tiene configuradas sus comidas de Opción 1 y quiere preservar su distribución de calorías
+    // (ya sea porque están repartidas de forma igual o con una distribución personalizada).
+    const keepExistingOption1 = Math.abs(totalOption1Cals - targetCals) < 15 && totalOption1Cals > 0;
+
     // Recorrer comidas y ajustar las cantidades de cada opción de alimento
     diet.meals.forEach((meal, mealIdx) => {
+        // Encontrar alimentos de la Opción 1 de esta comida
+        const opt1Foods = (meal.foods || []).filter(f => (f.option || 1) === 1);
+        const opt1Cals = opt1Foods.reduce((s, f) => s + (parseFloat(f.calories) || 0), 0);
+        
+        // Si optamos por mantener la Opción 1, y esta ya tiene calorías definidas,
+        // usamos esas calorías como objetivo para el resto de opciones de esta comida.
+        // De lo contrario, usamos el promedio targetMealCals.
+        const hasOpt1Configured = opt1Foods.length > 0 && opt1Cals > 0;
+        const mealTargetCals = (keepExistingOption1 && hasOpt1Configured) ? opt1Cals : targetMealCals;
+
         // Encontrar todas las opciones únicas en esta comida
         const optionNums = Array.from(new Set((meal.foods || []).map(f => f.option || 1)));
         
         optionNums.forEach(optNum => {
+            // Si debemos mantener Opción 1 intacta, saltamos el cálculo para la Opción 1
+            if (keepExistingOption1 && hasOpt1Configured && optNum === 1) {
+                return;
+            }
+
             const optFoods = (meal.foods || []).filter(f => (f.option || 1) === optNum);
             if (optFoods.length === 0) return;
 
@@ -561,7 +588,7 @@ window.calculateRecipeQuantities = function () {
 
             // 3. Aplicar escalado si es mayor que 0
             if (totalRefCals > 0) {
-                const S = targetMealCals / totalRefCals;
+                const S = mealTargetCals / totalRefCals;
                 optFoods.forEach(f => {
                     const newQty = f._refQty * S;
                     let finalQty = 0;
@@ -601,7 +628,11 @@ window.calculateRecipeQuantities = function () {
     window.recalculateDietTotals(window.editingDietId);
     window.renderDietEditor();
 
-    showToast('⚡ Cantidades y macros ajustados proporcionalmente', 'success');
+    if (keepExistingOption1) {
+        showToast('⚡ Opción secundaria ajustada a los macros de la Opción 1', 'success');
+    } else {
+        showToast('⚡ Cantidades y macros ajustados proporcionalmente', 'success');
+    }
 };
 
 window.toggleAddFoodForm = function (mealIdx, option) {
