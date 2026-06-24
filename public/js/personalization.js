@@ -24,12 +24,7 @@ const PersonalizationManager = {
 
     enterMode() {
         localStorage.setItem(this.modeKey, 'true');
-        const pageName = window.location.pathname.split('/').pop() || 'trainer-dashboard.html';
-        if (!pageName.includes('trainer-dashboard.html')) {
-            window.location.href = 'trainer-dashboard.html';
-        } else {
-            window.location.reload();
-        }
+        window.location.reload();
     },
 
     exitMode() {
@@ -474,11 +469,12 @@ const PersonalizationManager = {
             const el = e.target.closest('[data-personalize-id]');
             if (!el) return;
 
-            e.preventDefault();
             const id = el.getAttribute('data-personalize-id');
             const container = el.parentNode;
             const containerId = container ? container.getAttribute('data-personalize-container') : null;
             if (!containerId) return;
+
+            e.preventDefault();
 
             const pageName = window.location.pathname.split('/').pop() || 'index.html';
             const settings = this.getSettings();
