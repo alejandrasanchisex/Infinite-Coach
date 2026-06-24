@@ -304,6 +304,24 @@
                         </div>
                     </div>
 
+                    <!-- Personalización Visual -->
+                    <div class="card shadow-sm" style="margin-top: 1rem;">
+                        <div class="card-header">
+                            <h2 class="card-title">🛠️ Personalización Visual</h2>
+                        </div>
+                        <div class="card-body">
+                            <p class="text-xs text-muted mb-md">Personaliza qué elementos se muestran en la plataforma y su orden de aparición. Se abrirá la pantalla principal con las herramientas de edición activa.</p>
+                            <div style="display: flex; flex-direction: column; gap: 8px;">
+                                <button class="btn btn-primary" style="width: 100%;" onclick="if(window.PersonalizationManager) { PersonalizationManager.enterMode() } else { showToast('El cargador no está listo aún', 'warning') }">
+                                    🎨 Personalizar Interfaz
+                                </button>
+                                <button class="btn btn-outline" style="width: 100%;" onclick="if(window.PersonalizationManager) { PersonalizationManager.resetAll() } else { showToast('El cargador no está listo aún', 'warning') }">
+                                    🔄 Restablecer Ajustes Visuales
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
                     <!-- Zona de Peligro -->
                     <div class="card shadow-sm danger-zone" style="margin-top: 1rem; border-color: rgba(239, 68, 68, 0.2);">
                         <div class="card-header">
@@ -529,24 +547,6 @@
                             <button class="btn btn-outline" style="width: 100%;" onclick="exportMasterExcel()">
                                 📥 Descargar Backup Maestro (.xlsx)
                             </button>
-                        </div>
-                    </div>
-
-                    <!-- Personalización Visual -->
-                    <div class="card shadow-sm">
-                        <div class="card-header">
-                            <h2 class="card-title">🛠️ Personalización Visual</h2>
-                        </div>
-                        <div class="card-body">
-                            <p class="text-xs text-muted mb-md">Personaliza qué elementos se muestran en la plataforma y su orden de aparición. Se abrirá la pantalla principal con las herramientas de edición activa.</p>
-                            <div style="display: flex; flex-direction: column; gap: 8px;">
-                                <button class="btn btn-primary" style="width: 100%;" onclick="if(window.PersonalizationManager) { PersonalizationManager.enterMode() } else { showToast('El cargador no está listo aún', 'warning') }">
-                                    🎨 Personalizar Interfaz
-                                </button>
-                                <button class="btn btn-outline" style="width: 100%;" onclick="if(window.PersonalizationManager) { PersonalizationManager.resetAll() } else { showToast('El cargador no está listo aún', 'warning') }">
-                                    🔄 Restablecer Ajustes Visuales
-                                </button>
-                            </div>
                         </div>
                     </div>
 
