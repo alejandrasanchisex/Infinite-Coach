@@ -45,18 +45,49 @@ const PersonalizationManager = {
 
     init() {
         console.log("🛠️ PersonalizationManager initializing...");
+        this.injectStyles();
         this.identifyElements();
         this.applyLayout();
         
         if (this.isModeActive()) {
+            document.body.classList.add('personalizing-active');
             this.renderBanner();
-            this.enableEditorMode();
         } else {
+            document.body.classList.remove('personalizing-active');
             this.setupNormalMode();
         }
 
         this.setupContextMenu();
         this.setupObservers();
+    },
+
+    injectStyles() {
+        if (document.getElementById('personalization-styles')) return;
+        const style = document.createElement('style');
+        style.id = 'personalization-styles';
+        style.innerHTML = `
+            body.personalizing-active {
+                background-color: #f8fafc !important;
+            }
+            body.personalizing-active .main-content,
+            body.personalizing-active main,
+            body.personalizing-active .dashboard-container {
+                filter: contrast(92%) brightness(96%) !important;
+            }
+            /* Hover outline on customizable items during personalization */
+            body.personalizing-active [data-personalize-id]:hover {
+                outline: 2px dashed #EF4444 !important;
+                outline-offset: 2px !important;
+                position: relative;
+            }
+            /* Hidden items style in personalization mode */
+            .personalizing-hidden-item, 
+            .personalizing-hidden-item * {
+                font-style: italic !important;
+                opacity: 0.45 !important;
+            }
+        `;
+        document.head.appendChild(style);
     },
 
     identifyElements() {
@@ -187,14 +218,14 @@ const PersonalizationManager = {
             if (isHidden) {
                 if (isEditing) {
                     el.style.display = '';
-                    el.style.opacity = '0.4';
-                    el.style.filter = 'grayscale(50%)';
-                    el.style.border = '2px dashed #EF4444';
+                    el.classList.add('personalizing-hidden-item');
                 } else {
                     el.style.display = 'none';
+                    el.classList.remove('personalizing-hidden-item');
                 }
             } else {
                 el.style.display = '';
+                el.classList.remove('personalizing-hidden-item');
                 el.style.opacity = '';
                 el.style.filter = '';
                 el.style.border = '';
@@ -255,27 +286,34 @@ const PersonalizationManager = {
             if (shouldHide) {
                 if (isEditing) {
                     th.style.display = '';
-                    th.style.opacity = '0.4';
-                    th.style.filter = 'grayscale(50%)';
-                    th.style.border = '1px dashed #EF4444';
+                    th.classList.add('personalizing-hidden-item');
+                    th.style.opacity = '';
+                    th.style.filter = '';
+                    th.style.border = '';
                     
                     table.querySelectorAll('tbody tr').forEach(tr => {
                         const cell = tr.children[idx];
                         if (cell) {
                             cell.style.display = '';
-                            cell.style.opacity = '0.4';
-                            cell.style.filter = 'grayscale(50%)';
+                            cell.classList.add('personalizing-hidden-item');
+                            cell.style.opacity = '';
+                            cell.style.filter = '';
                         }
                     });
                 } else {
                     th.style.display = 'none';
+                    th.classList.remove('personalizing-hidden-item');
                     table.querySelectorAll('tr').forEach(tr => {
                         const cell = tr.children[idx];
-                        if (cell) cell.style.display = 'none';
+                        if (cell) {
+                            cell.style.display = 'none';
+                            cell.classList.remove('personalizing-hidden-item');
+                        }
                     });
                 }
             } else {
                 th.style.display = '';
+                th.classList.remove('personalizing-hidden-item');
                 th.style.opacity = '';
                 th.style.filter = '';
                 th.style.border = '';
@@ -284,6 +322,7 @@ const PersonalizationManager = {
                     const cell = tr.children[idx];
                     if (cell) {
                         cell.style.display = '';
+                        cell.classList.remove('personalizing-hidden-item');
                         cell.style.opacity = '';
                         cell.style.filter = '';
                     }
@@ -302,119 +341,42 @@ const PersonalizationManager = {
             top: 0;
             left: 0;
             width: 100%;
-            height: 50px;
-            background: #8B5CF6 !important;
-            color: white !important;
+            height: 45px;
+            background: #0F172A !important;
+            color: #E2E8F0 !important;
             display: flex;
             align-items: center;
             justify-content: space-between;
             padding: 0 20px;
             z-index: 100000;
-            font-weight: 600;
+            font-family: sans-serif;
+            font-size: 0.85rem;
             box-shadow: 0 2px 10px rgba(0,0,0,0.3);
-            border-bottom: 2px solid #a78bfa;
+            border-bottom: 2px solid #EF4444;
             box-sizing: border-box;
         `;
         banner.innerHTML = `
-            <div style="display: flex; align-items: center; gap: 8px; font-family: sans-serif; font-size: 0.9rem; color: white !important;">
-                <span style="color: white !important;">🛠️ <strong style="color: white !important;">Modo Personalización Activo</strong>. Haz clic derecho en elementos para ocultar, u ordena con las flechas.</span>
+            <div style="display: flex; align-items: center; gap: 12px; color: #E2E8F0 !important;">
+                <span style="background: #EF4444 !important; color: white !important; padding: 3px 8px; border-radius: 4px; font-weight: 800; font-size: 0.75rem; letter-spacing: 0.5px;">PERSONALIZANDO</span>
+                <span style="color: #94A3B8 !important; font-weight: 500;">Haz clic derecho en cualquier elemento para moverlo u ocultarlo.</span>
             </div>
-            <div style="display: flex; gap: 10px;">
-                <button onclick="PersonalizationManager.resetAll()" style="background: rgba(255,255,255,0.2) !important; color: white !important; border: none !important; font-weight: 600; cursor: pointer; padding: 6px 12px; border-radius: 4px; font-size: 0.8rem;">Restablecer</button>
-                <button onclick="PersonalizationManager.exitMode()" style="background: white !important; color: #8B5CF6 !important; border: none !important; font-weight: 700; cursor: pointer; padding: 6px 15px; border-radius: 4px; font-size: 0.8rem;">Guardar y Salir</button>
+            <div style="display: flex; gap: 10px; align-items: center;">
+                <button onclick="PersonalizationManager.resetAll()" style="background: transparent !important; color: #94A3B8 !important; border: 1px solid #475569 !important; font-weight: 600; cursor: pointer; padding: 5px 12px; border-radius: 4px; font-size: 0.78rem; transition: all 0.2s;" onmouseenter="this.style.color='white'; this.style.borderColor='white';" onmouseleave="this.style.color='#94A3B8'; this.style.borderColor='#475569';">Restablecer todo</button>
+                <button onclick="PersonalizationManager.exitMode()" style="background: #EF4444 !important; color: white !important; border: none !important; font-weight: 700; cursor: pointer; padding: 6px 15px; border-radius: 4px; font-size: 0.78rem; transition: background 0.2s;" onmouseenter="this.style.background='#DC2626' !important;" onmouseleave="this.style.background='#EF4444' !important;">Guardar y Salir</button>
             </div>
         `;
         document.body.appendChild(banner);
-        document.body.style.paddingTop = '50px';
+        document.body.style.paddingTop = '45px';
     },
 
-    enableEditorMode() {
-        const pageName = window.location.pathname.split('/').pop() || 'index.html';
-        const settings = this.getSettings();
-        const pageSettings = settings[pageName] || {};
-        const hiddenList = pageSettings.hidden || {};
-
-        document.querySelectorAll('[data-personalize-id]').forEach(el => {
-            const id = el.getAttribute('data-personalize-id');
-            const container = el.parentNode;
-            const containerId = container ? container.getAttribute('data-personalize-container') : null;
-            if (!containerId) return;
-
-            const isHidden = hiddenList[containerId] && hiddenList[containerId].includes(id);
-
-            if (el.tagName === 'TH') {
-                el.querySelectorAll('.personalize-th-controls').forEach(x => x.remove());
-                const controls = document.createElement('span');
-                controls.className = 'personalize-th-controls';
-                controls.style.cssText = `
-                    margin-left: 8px;
-                    display: inline-flex;
-                    gap: 3px;
-                    font-size: 0.75rem;
-                `;
-                if (isHidden) {
-                    controls.innerHTML = `<span onclick="PersonalizationManager.showElement('${id}'); event.stopPropagation();" style="cursor: pointer; background: #EF4444 !important; padding: 1px 5px; border-radius: 2px; color: white !important; font-size: 0.7rem; font-weight: bold;">👁️ Mostrar</span>`;
-                } else {
-                    controls.innerHTML = `
-                        <span onclick="PersonalizationManager.moveElement('${id}', 'prev'); event.stopPropagation();" style="cursor: pointer; background: #8B5CF6 !important; padding: 1px 3px; border-radius: 2px; color: white !important;">←</span>
-                        <span onclick="PersonalizationManager.moveElement('${id}', 'next'); event.stopPropagation();" style="cursor: pointer; background: #8B5CF6 !important; padding: 1px 3px; border-radius: 2px; color: white !important;">→</span>
-                        <span onclick="PersonalizationManager.hideElement('${id}'); event.stopPropagation();" style="cursor: pointer; background: #EF4444 !important; padding: 1px 3px; border-radius: 2px; color: white !important;">✖</span>
-                    `;
-                }
-                el.appendChild(controls);
-                return;
-            }
-
-            el.style.position = 'relative';
-            if (!isHidden) {
-                el.style.outline = '2px dashed #8B5CF6';
-                el.style.outlineOffset = '2px';
-            }
-
-            el.querySelectorAll('.personalize-control-bar').forEach(x => x.remove());
-
-            const controlBar = document.createElement('div');
-            controlBar.className = 'personalize-control-bar';
-            controlBar.style.cssText = `
-                position: absolute;
-                top: -12px;
-                right: 8px;
-                background: ${isHidden ? '#EF4444' : '#8B5CF6'} !important;
-                color: white !important;
-                border-radius: 4px;
-                padding: 3px 8px;
-                display: flex;
-                gap: 6px;
-                font-size: 0.72rem;
-                z-index: 9999;
-                box-shadow: 0 2px 5px rgba(0,0,0,0.3);
-                align-items: center;
-                font-family: sans-serif;
-                pointer-events: auto;
-            `;
-
-            if (isHidden) {
-                controlBar.innerHTML = `
-                    <span style="font-weight: bold; color: #FFD2D2 !important; margin-right: 4px;">[Oculto]</span>
-                    <button onclick="PersonalizationManager.showElement('${id}')" style="background: white !important; border: none !important; color: #EF4444 !important; border-radius: 2px; cursor: pointer; padding: 2px 6px; font-size: 0.7rem; font-weight: bold;">👁️ Mostrar</button>
-                `;
-            } else {
-                controlBar.innerHTML = `
-                    <span style="font-weight: bold; color: white !important; margin-right: 4px;">Mover:</span>
-                    <button onclick="PersonalizationManager.moveElement('${id}', 'prev')" style="background: none !important; border: none !important; color: white !important; cursor: pointer; font-size: 0.8rem; font-weight: bold; padding: 0 2px;">⬅️/⬆️</button>
-                    <button onclick="PersonalizationManager.moveElement('${id}', 'next')" style="background: none !important; border: none !important; color: white !important; cursor: pointer; font-size: 0.8rem; font-weight: bold; padding: 0 2px;">➡️/⬇️</button>
-                    <button onclick="PersonalizationManager.hideElement('${id}')" style="background: none !important; border: none !important; color: #FFA8A8 !important; cursor: pointer; font-size: 0.8rem; font-weight: bold; margin-left: 4px; padding: 0 2px;">✖ Ocultar</button>
-                `;
-            }
-            el.appendChild(controlBar);
-        });
-    },
+    enableEditorMode() {},
 
     setupNormalMode() {
         document.querySelectorAll('.personalize-control-bar, .personalize-th-controls').forEach(x => x.remove());
         document.querySelectorAll('[data-personalize-id]').forEach(el => {
             el.style.outline = '';
             el.style.outlineOffset = '';
+            el.classList.remove('personalizing-hidden-item');
         });
         const banner = document.getElementById('personalization-banner');
         if (banner) {
@@ -442,13 +404,9 @@ const PersonalizationManager = {
 
         this.saveSettings(settings);
         this.applyLayout();
-        
-        if (this.isModeActive()) {
-            this.enableEditorMode();
-        }
 
         if (typeof showToast === 'function') {
-            showToast('Elemento ocultado. Puedes volver a mostrarlo desde Personalizar.', 'success');
+            showToast('Elemento ocultado. Haz clic derecho y elige Mostrar para recuperarlo.', 'success');
         }
     },
 
@@ -467,10 +425,6 @@ const PersonalizationManager = {
 
         this.saveSettings(settings);
         this.applyLayout();
-        
-        if (this.isModeActive()) {
-            this.enableEditorMode();
-        }
 
         if (typeof showToast === 'function') {
             showToast('Elemento visible.', 'success');
@@ -508,11 +462,7 @@ const PersonalizationManager = {
         settings[pageName].order[containerId] = order;
 
         this.saveSettings(settings);
-        
         this.applyLayout();
-        if (this.isModeActive()) {
-            this.enableEditorMode();
-        }
 
         if (typeof showToast === 'function') {
             showToast('Posición actualizada.', 'success');
@@ -526,6 +476,14 @@ const PersonalizationManager = {
 
             e.preventDefault();
             const id = el.getAttribute('data-personalize-id');
+            const container = el.parentNode;
+            const containerId = container ? container.getAttribute('data-personalize-container') : null;
+            if (!containerId) return;
+
+            const pageName = window.location.pathname.split('/').pop() || 'index.html';
+            const settings = this.getSettings();
+            const isHidden = settings[pageName]?.hidden?.[containerId]?.includes(id);
+            const isModeActive = this.isModeActive();
             
             const existing = document.getElementById('personalize-ctx-menu');
             if (existing) existing.remove();
@@ -543,32 +501,87 @@ const PersonalizationManager = {
                 box-shadow: 0 4px 12px rgba(0,0,0,0.5);
                 padding: 4px 0;
                 z-index: 1000000;
-                min-width: 160px;
+                min-width: 170px;
                 font-family: sans-serif;
-                font-size: 0.85rem;
+                font-size: 0.82rem;
                 user-select: none;
             `;
 
-            menu.innerHTML = `
-                <div id="ctx-hide-btn" style="padding: 8px 14px; cursor: pointer; display: flex; align-items: center; gap: 8px; color: white !important; transition: background 0.15s;" onmouseenter="this.style.background='#334155'" onmouseleave="this.style.background='transparent'">
-                    👁️ Ocultar elemento
-                </div>
-                <div id="ctx-personalize-btn" style="padding: 8px 14px; cursor: pointer; border-top: 1px solid #334155; display: flex; align-items: center; gap: 8px; color: white !important; transition: background 0.15s;" onmouseenter="this.style.background='#334155'" onmouseleave="this.style.background='transparent'">
-                    🛠️ Personalizar página
-                </div>
-            `;
+            let menuHTML = '';
 
+            if (isModeActive) {
+                if (isHidden) {
+                    menuHTML = `
+                        <div id="ctx-show-btn" style="padding: 8px 14px; cursor: pointer; display: flex; align-items: center; gap: 8px; color: white !important; transition: background 0.15s;" onmouseenter="this.style.background='#334155'" onmouseleave="this.style.background='transparent'">
+                            👁️ Mostrar elemento
+                        </div>
+                    `;
+                } else {
+                    menuHTML = `
+                        <div id="ctx-move-prev-btn" style="padding: 8px 14px; cursor: pointer; display: flex; align-items: center; gap: 8px; color: white !important; transition: background 0.15s;" onmouseenter="this.style.background='#334155'" onmouseleave="this.style.background='transparent'">
+                            ⬅️/⬆️ Mover anterior
+                        </div>
+                        <div id="ctx-move-next-btn" style="padding: 8px 14px; cursor: pointer; display: flex; align-items: center; gap: 8px; color: white !important; transition: background 0.15s;" onmouseenter="this.style.background='#334155'" onmouseleave="this.style.background='transparent'">
+                            ➡️/⬇️ Mover siguiente
+                        </div>
+                        <div id="ctx-hide-btn" style="padding: 8px 14px; cursor: pointer; border-top: 1px solid #334155; display: flex; align-items: center; gap: 8px; color: #FFA8A8 !important; transition: background 0.15s;" onmouseenter="this.style.background='#334155'" onmouseleave="this.style.background='transparent'">
+                            ✖ Ocultar
+                        </div>
+                    `;
+                }
+            } else {
+                menuHTML = `
+                    <div id="ctx-hide-btn" style="padding: 8px 14px; cursor: pointer; display: flex; align-items: center; gap: 8px; color: white !important; transition: background 0.15s;" onmouseenter="this.style.background='#334155'" onmouseleave="this.style.background='transparent'">
+                        👁️ Ocultar elemento
+                    </div>
+                    <div id="ctx-personalize-btn" style="padding: 8px 14px; cursor: pointer; border-top: 1px solid #334155; display: flex; align-items: center; gap: 8px; color: white !important; transition: background 0.15s;" onmouseenter="this.style.background='#334155'" onmouseleave="this.style.background='transparent'">
+                        🛠️ Personalizar página
+                    </div>
+                `;
+            }
+
+            menu.innerHTML = menuHTML;
             document.body.appendChild(menu);
 
-            menu.querySelector('#ctx-hide-btn').addEventListener('click', () => {
-                this.hideElement(id);
-                menu.remove();
-            });
+            const showBtn = menu.querySelector('#ctx-show-btn');
+            if (showBtn) {
+                showBtn.addEventListener('click', () => {
+                    this.showElement(id);
+                    menu.remove();
+                });
+            }
 
-            menu.querySelector('#ctx-personalize-btn').addEventListener('click', () => {
-                this.enterMode();
-                menu.remove();
-            });
+            const movePrevBtn = menu.querySelector('#ctx-move-prev-btn');
+            if (movePrevBtn) {
+                movePrevBtn.addEventListener('click', () => {
+                    this.moveElement(id, 'prev');
+                    menu.remove();
+                });
+            }
+
+            const moveNextBtn = menu.querySelector('#ctx-move-next-btn');
+            if (moveNextBtn) {
+                moveNextBtn.addEventListener('click', () => {
+                    this.moveElement(id, 'next');
+                    menu.remove();
+                });
+            }
+
+            const hideBtn = menu.querySelector('#ctx-hide-btn');
+            if (hideBtn) {
+                hideBtn.addEventListener('click', () => {
+                    this.hideElement(id);
+                    menu.remove();
+                });
+            }
+
+            const personalizeBtn = menu.querySelector('#ctx-personalize-btn');
+            if (personalizeBtn) {
+                personalizeBtn.addEventListener('click', () => {
+                    this.enterMode();
+                    menu.remove();
+                });
+            }
 
             const rect = menu.getBoundingClientRect();
             if (rect.right > window.innerWidth) {
