@@ -740,7 +740,7 @@ ${item.date}`.replace('\n', ''); // Safe compile
                     
                     const mergedClient = { ...cloudClient };
                     if (isTrainer) {
-                        const trainerFields = ['email', 'phone', 'gender', 'status', 'reviewDay', 'monthlyFee', 'assignedDiet', 'assignedDiets', 'publishedDiets', 'dietPublished', 'assignedRoutine', 'activeBlockId', 'cardio', 'cardioUrl', 'cardioPublished', 'supplementation', 'supplementationPublished', 'supplementationUrl', 'supplementationUrlVisible', 'paymentStatus', 'paymentExpiry', 'subscriptionType', 'subscriptionAmount', 'reviewFrequency', 'reviewDaysOfMonth', 'specificReviewDate'];
+                        const trainerFields = ['email', 'phone', 'gender', 'status', 'reviewDay', 'monthlyFee', 'assignedDiet', 'assignedDiets', 'publishedDiets', 'dietPublished', 'assignedRoutine', 'activeBlockId', 'cardio', 'cardioUrl', 'cardioPublished', 'supplementation', 'supplementationPublished', 'supplementationUrl', 'supplementationUrlVisible', 'paymentStatus', 'paymentExpiry', 'subscriptionType', 'subscriptionAmount', 'reviewFrequency', 'reviewDaysOfMonth', 'specificReviewDate', 'assignedTrainerId', 'customOnboardingQuestions', 'customFeedbackQuestions', 'customPerimeters', 'weightHistory'];
                         trainerFields.forEach(f => {
                             if (localClient[f] !== undefined) mergedClient[f] = localClient[f];
                         });
@@ -3269,6 +3269,10 @@ const Clients = {
       cardioUrlVisible: true,
       feedbacks: [],
       accessCode: generateAccessCode(),
+      assignedTrainerId: clientData.assignedTrainerId || '',
+      customOnboardingQuestions: clientData.customOnboardingQuestions || [],
+      customFeedbackQuestions: clientData.customFeedbackQuestions || [],
+      customPerimeters: clientData.customPerimeters || [],
       weightHistory: []
     };
     data.clients.push(newClient);
