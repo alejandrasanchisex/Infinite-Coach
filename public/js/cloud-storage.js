@@ -14,6 +14,10 @@ const CloudStorage = {
         return true;
     },
 
+    uploadMedia: async function(file) {
+        return this.upload(file, file.name);
+    },
+
     /**
      * Uploads a file to Supabase Storage (MANDATORY)
      */

@@ -31,7 +31,7 @@
 
         // Force PWA cache bust / reload
         (function() {
-            const CURRENT_VERSION = '495';
+            const CURRENT_VERSION = '497';
             const savedVersion = localStorage.getItem('app_version');
             if (savedVersion !== CURRENT_VERSION) {
                 localStorage.setItem('app_version', CURRENT_VERSION);
@@ -57,8 +57,8 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="styles/theme.css?v=495">
-    <link rel="stylesheet" href="styles/components.css?v=495">
+    <link rel="stylesheet" href="styles/theme.css?v=497">
+    <link rel="stylesheet" href="styles/components.css?v=497">
     <style>
         .settings-section {
             margin-bottom: var(--spacing-xl);
@@ -139,14 +139,14 @@
                 </div>
                 <button class="menu-toggle" onclick="toggleMenu()">☰</button>
                 <ul class="nav-links" id="navLinks">
-                    <li><a href="trainer-dashboard.html?v=495" class="nav-link">Dashboard</a></li>
-                    <li><a href="trainer-clients.html?v=495" class="nav-link">Clientes</a></li>
-                    <li><a href="trainer-routines.html?v=495" class="nav-link">Rutinas</a></li>
-                    <li><a href="trainer-diets.html?v=495" class="nav-link">Dietas</a></li>
-                    <li><a href="trainer-feedbacks.html?v=495" class="nav-link">Revisiones</a></li>
-                    <li><a href="trainer-media.html?v=495" class="nav-link">Biblioteca</a></li>
-                    <li><a href="trainer-appointments.html?v=495" class="nav-link">Agenda</a></li>
-                    <li><a href="trainer-settings.html?v=495" class="nav-link active">Configuración</a></li>
+                    <li><a href="trainer-dashboard.html?v=497" class="nav-link">Dashboard</a></li>
+                    <li><a href="trainer-clients.html?v=497" class="nav-link">Clientes</a></li>
+                    <li><a href="trainer-routines.html?v=497" class="nav-link">Rutinas</a></li>
+                    <li><a href="trainer-diets.html?v=497" class="nav-link">Dietas</a></li>
+                    <li><a href="trainer-feedbacks.html?v=497" class="nav-link">Revisiones</a></li>
+                    <li><a href="trainer-media.html?v=497" class="nav-link">Biblioteca</a></li>
+                    <li><a href="trainer-appointments.html?v=497" class="nav-link">Agenda</a></li>
+                    <li><a href="trainer-settings.html?v=497" class="nav-link active">Configuración</a></li>
                     <li><a href="#" onclick="if(typeof AUTH !== 'undefined') { AUTH.signOut() } else { window.location.reload() }; return false;" class="nav-link" style="color:var(--error-color)">🚪 Salir</a></li>
                 </ul>
             </nav>
@@ -295,6 +295,28 @@
                                     <label class="checkbox-label">
                                         <input type="checkbox" id="clientShowWeightHabit"> Mostrar Registro de Peso Diario (App)
                                     </label>
+                                    
+                                    <div style="border-top: 1px dashed rgba(255,255,255,0.1); margin: 8px 0; padding-top: 8px;"></div>
+                                    <span style="font-size: 0.75rem; font-weight: bold; color: var(--primary-color); opacity: 0.8; text-transform: uppercase; margin-bottom: 4px; display: block;">Módulos Visibles en la App</span>
+                                    
+                                    <label class="checkbox-label">
+                                        <input type="checkbox" id="clientShowDiet"> Mostrar pestaña "Mi Dieta"
+                                    </label>
+                                    <label class="checkbox-label">
+                                        <input type="checkbox" id="clientShowRoutine"> Mostrar pestaña "Mi Rutina"
+                                    </label>
+                                    <label class="checkbox-label">
+                                        <input type="checkbox" id="clientShowHabits"> Mostrar pestaña "Hábitos"
+                                    </label>
+                                    <label class="checkbox-label">
+                                        <input type="checkbox" id="clientShowEvolution"> Mostrar pestaña "Evolución"
+                                    </label>
+                                    <label class="checkbox-label">
+                                        <input type="checkbox" id="clientShowFeedback"> Mostrar pestaña "Revisión"
+                                    </label>
+                                    <label class="checkbox-label">
+                                        <input type="checkbox" id="clientShowLibrary"> Mostrar pestaña "Biblioteca"
+                                    </label>
                                 </div>
                             </div>
                             <div class="divider"></div>
@@ -442,6 +464,31 @@
 
                             <button class="btn btn-secondary" style="width: 100%;" onclick="saveQuestions(); savePerimeters();">
                                 💾 Guardar Ajustes de Revisión
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Cuestionario de Onboarding del Cliente -->
+                    <div class="card shadow-sm" style="margin-top: 1rem;">
+                        <div class="card-header">
+                            <h2 class="card-title">📋 Cuestionario de Onboarding</h2>
+                        </div>
+                        <div class="card-body">
+                            <p class="text-xs text-muted mb-md">Configura preguntas personalizadas adicionales que tus clientes deberán responder obligatoriamente la primera vez que accedan a la aplicación.</p>
+                            
+                            <div class="mb-lg">
+                                <label class="form-label">Preguntas de Onboarding Personalizadas</label>
+                                <div id="onboardingQuestionsList" class="flex-col gap-xs mb-md">
+                                    <!-- Injected dynamically -->
+                                </div>
+                                <div class="flex gap-sm">
+                                    <input type="text" id="newOnboardingQuestionInput" class="form-input" placeholder="Añadir pregunta..." onkeypress="if(event.key==='Enter') addOnboardingQuestion()">
+                                    <button class="btn btn-primary" onclick="addOnboardingQuestion()">+</button>
+                                </div>
+                            </div>
+
+                            <button class="btn btn-secondary" style="width: 100%;" onclick="saveOnboardingQuestions()">
+                                💾 Guardar Ajustes de Onboarding
                             </button>
                         </div>
                     </div>
@@ -625,21 +672,22 @@
 
     <!-- Supabase SDK & Service -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="js/supabase-service.js?v=495"></script>
+    <script src="js/supabase-service.js?v=497"></script>
 
     <!-- UI Scripts -->
-    <script src="js/config.js?v=495"></script>
-    <script src="js/auth.js?v=495"></script>
-    <script src="js/sheets.js?v=495"></script>
-    <script src="js/data-models.js?v=495"></script>
-    <script src="js/cloud-storage.js?v=495"></script>
-    <script src="js/utils.js?v=495"></script>
+    <script src="js/config.js?v=497"></script>
+    <script src="js/auth.js?v=497"></script>
+    <script src="js/sheets.js?v=497"></script>
+    <script src="js/data-models.js?v=497"></script>
+    <script src="js/cloud-storage.js?v=497"></script>
+    <script src="js/utils.js?v=497"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
-    <script src="js/excel-manager.js?v=495"></script>
+    <script src="js/excel-manager.js?v=497"></script>
     <script>
         // Global Variables
         let feedbackQuestions = [];
         let feedbackPerimeters = [];
+        let onboardingQuestions = [];
         let currentLogoBase64 = null;
 
         // Check if brand is configured
@@ -964,6 +1012,13 @@
             if (document.getElementById('clientShowMacros')) document.getElementById('clientShowMacros').checked = clientSettings.showMacros !== false;
             if (document.getElementById('clientShowRIR')) document.getElementById('clientShowRIR').checked = clientSettings.showRIR !== false;
             if (document.getElementById('clientShowWeightHabit')) document.getElementById('clientShowWeightHabit').checked = clientSettings.showWeightHabit !== false;
+            
+            if (document.getElementById('clientShowDiet')) document.getElementById('clientShowDiet').checked = clientSettings.showDiet !== false;
+            if (document.getElementById('clientShowRoutine')) document.getElementById('clientShowRoutine').checked = clientSettings.showRoutine !== false;
+            if (document.getElementById('clientShowHabits')) document.getElementById('clientShowHabits').checked = clientSettings.showHabits !== false;
+            if (document.getElementById('clientShowEvolution')) document.getElementById('clientShowEvolution').checked = clientSettings.showEvolution !== false;
+            if (document.getElementById('clientShowFeedback')) document.getElementById('clientShowFeedback').checked = clientSettings.showFeedback !== false;
+            if (document.getElementById('clientShowLibrary')) document.getElementById('clientShowLibrary').checked = clientSettings.showLibrary !== false;
 
             const trainerSettings = b.trainerSettings || { autoSaveDietTemplate: false };
             if (document.getElementById('autoSaveDietTemplate')) document.getElementById('autoSaveDietTemplate').checked = trainerSettings.autoSaveDietTemplate;
@@ -1003,9 +1058,11 @@
 
             feedbackQuestions = Array.isArray(b.feedbackQuestions) ? [...b.feedbackQuestions] : ['Comentarios y Observaciones'];
             feedbackPerimeters = Array.isArray(b.trainerPerimeters) ? [...b.trainerPerimeters] : ['Cintura', 'Cadera', 'Pecho', 'Brazo', 'Muslo'];
+            onboardingQuestions = Array.isArray(b.onboardingQuestions) ? [...b.onboardingQuestions] : [];
 
             if (typeof renderQuestions === 'function') renderQuestions();
             if (typeof renderPerimeters === 'function') renderPerimeters();
+            if (typeof renderOnboardingQuestions === 'function') renderOnboardingQuestions();
             renderBatchStatus();
         }
 
@@ -1044,7 +1101,13 @@
                         showCalories: document.getElementById('clientShowCalories').checked,
                         showMacros: document.getElementById('clientShowMacros').checked,
                         showRIR: document.getElementById('clientShowRIR').checked,
-                        showWeightHabit: document.getElementById('clientShowWeightHabit').checked
+                        showWeightHabit: document.getElementById('clientShowWeightHabit').checked,
+                        showDiet: document.getElementById('clientShowDiet').checked,
+                        showRoutine: document.getElementById('clientShowRoutine').checked,
+                        showHabits: document.getElementById('clientShowHabits').checked,
+                        showEvolution: document.getElementById('clientShowEvolution').checked,
+                        showFeedback: document.getElementById('clientShowFeedback').checked,
+                        showLibrary: document.getElementById('clientShowLibrary').checked
                     }
                 };
                 
@@ -1100,7 +1163,13 @@
                         showCalories: document.getElementById('clientShowCalories').checked,
                         showMacros: document.getElementById('clientShowMacros').checked,
                         showRIR: document.getElementById('clientShowRIR').checked,
-                        showWeightHabit: document.getElementById('clientShowWeightHabit').checked
+                        showWeightHabit: document.getElementById('clientShowWeightHabit').checked,
+                        showDiet: document.getElementById('clientShowDiet').checked,
+                        showRoutine: document.getElementById('clientShowRoutine').checked,
+                        showHabits: document.getElementById('clientShowHabits').checked,
+                        showEvolution: document.getElementById('clientShowEvolution').checked,
+                        showFeedback: document.getElementById('clientShowFeedback').checked,
+                        showLibrary: document.getElementById('clientShowLibrary').checked
                     }
                 };
                 BrandConfig.set(updated);
@@ -1199,7 +1268,8 @@
                 'brandNameInput', 'whatsappInput', 'primaryColorInput', 'secondaryColorInput', 
                 'accentColorInput', 'themeModeInput', 'bgDarkColorInput', 'bgLightColorInput', 'autoSaveDietTemplate',
                 'pdfShowCalories', 'pdfShowMacros', 'clientShowVideos', 'clientShowCalories',
-                'clientShowMacros', 'clientShowRIR', 'clientShowWeightHabit'
+                'clientShowMacros', 'clientShowRIR', 'clientShowWeightHabit',
+                'clientShowDiet', 'clientShowRoutine', 'clientShowHabits', 'clientShowEvolution', 'clientShowFeedback'
             ].includes(id)) {
                 window.triggerSilentSaveBrand();
             } else if (['stripePublicKey', 'stripeSecretKey'].includes(id)) {
@@ -1219,7 +1289,8 @@
                 'brandNameInput', 'whatsappInput', 'primaryColorInput', 'secondaryColorInput', 
                 'accentColorInput', 'themeModeInput', 'bgDarkColorInput', 'bgLightColorInput', 'autoSaveDietTemplate',
                 'pdfShowCalories', 'pdfShowMacros', 'clientShowVideos', 'clientShowCalories',
-                'clientShowMacros', 'clientShowRIR', 'clientShowWeightHabit'
+                'clientShowMacros', 'clientShowRIR', 'clientShowWeightHabit',
+                'clientShowDiet', 'clientShowRoutine', 'clientShowHabits', 'clientShowEvolution', 'clientShowFeedback'
             ].includes(id)) {
                 window.triggerSilentSaveBrand();
             } else if (['stripePublicKey', 'stripeSecretKey'].includes(id)) {
@@ -1648,6 +1719,45 @@
             setTimeout(() => location.reload(), 500);
         }
 
+        // Onboarding Questions Logic
+        function renderOnboardingQuestions() {
+            const container = document.getElementById('onboardingQuestionsList');
+            if (!container) return; 
+            if (onboardingQuestions.length === 0) {
+                container.innerHTML = '<div class="text-muted text-sm text-center">Sin preguntas de onboarding definidas</div>';
+                return;
+            }
+            container.innerHTML = onboardingQuestions.map((q, index) => `
+                <div class="flex-between p-sm" style="background: rgba(255,255,255,0.05); border-radius: 4px; align-items: center; margin-bottom: 5px;">
+                    <span style="font-size: 0.9rem;">${q}</span>
+                    <button class="btn btn-sm btn-danger" onclick="removeOnboardingQuestion(${index})" title="Eliminar">🗑️</button>
+                </div>
+            `).join('');
+        }
+
+        function addOnboardingQuestion() {
+            const input = document.getElementById('newOnboardingQuestionInput');
+            const val = input.value.trim();
+            if (val) {
+                onboardingQuestions.push(val);
+                input.value = '';
+                renderOnboardingQuestions();
+                BrandConfig.set({ onboardingQuestions: onboardingQuestions });
+            }
+        }
+
+        function removeOnboardingQuestion(index) {
+            onboardingQuestions.splice(index, 1);
+            renderOnboardingQuestions();
+            BrandConfig.set({ onboardingQuestions: onboardingQuestions });
+        }
+
+        function saveOnboardingQuestions() {
+            BrandConfig.set({ onboardingQuestions: onboardingQuestions });
+            showToast('Preguntas de onboarding guardadas', 'success');
+            setTimeout(() => location.reload(), 500);
+        }
+
         // Perimeters Logic
         function renderPerimeters() {
             const container = document.getElementById('perimetersList');
@@ -1962,6 +2072,6 @@
             }, 2500);
         }
     </script>
-    <script src="js/custom-recipes.js?v=495"></script></body>
+    <script src="js/custom-recipes.js?v=497"></script></body>
 
 </html>

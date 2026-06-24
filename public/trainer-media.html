@@ -4,7 +4,7 @@
     <script>
         // Force PWA cache bust / reload
         (function() {
-            const CURRENT_VERSION = '495';
+            const CURRENT_VERSION = '497';
             const savedVersion = localStorage.getItem('app_version');
             if (savedVersion !== CURRENT_VERSION) {
                 localStorage.setItem('app_version', CURRENT_VERSION);
@@ -31,8 +31,8 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <link rel="stylesheet" href="styles/theme.css?v=495">
-    <link rel="stylesheet" href="styles/components.css?v=495">
+    <link rel="stylesheet" href="styles/theme.css?v=497">
+    <link rel="stylesheet" href="styles/components.css?v=497">
     <style>
         .media-container { padding: 1.5rem 0; }
         .tabs-nav { display: flex; gap: 2rem; margin-bottom: 2rem; border-bottom: 1px solid rgba(255,255,255,0.05); }
@@ -96,14 +96,14 @@
                     </div>
                     <button class="menu-toggle" onclick="toggleMenu()">☰</button>
                     <ul class="nav-links" id="navLinks">
-                        <li><a href="trainer-dashboard.html?v=495" class="nav-link">Dashboard</a></li>
-                        <li><a href="trainer-clients.html?v=495" class="nav-link">Clientes</a></li>
-                        <li><a href="trainer-routines.html?v=495" class="nav-link">Rutinas</a></li>
-                        <li><a href="trainer-diets.html?v=495" class="nav-link">Dietas</a></li>
-                        <li><a href="trainer-feedbacks.html?v=495" class="nav-link">Revisiones</a></li>
-                        <li><a href="trainer-media.html?v=495" class="nav-link active">Biblioteca</a></li>
-                        <li><a href="trainer-appointments.html?v=495" class="nav-link">Agenda</a></li>
-                        <li><a href="trainer-settings.html?v=495" class="nav-link">Configuración</a></li>
+                        <li><a href="trainer-dashboard.html?v=497" class="nav-link">Dashboard</a></li>
+                        <li><a href="trainer-clients.html?v=497" class="nav-link">Clientes</a></li>
+                        <li><a href="trainer-routines.html?v=497" class="nav-link">Rutinas</a></li>
+                        <li><a href="trainer-diets.html?v=497" class="nav-link">Dietas</a></li>
+                        <li><a href="trainer-feedbacks.html?v=497" class="nav-link">Revisiones</a></li>
+                        <li><a href="trainer-media.html?v=497" class="nav-link active">Biblioteca</a></li>
+                        <li><a href="trainer-appointments.html?v=497" class="nav-link">Agenda</a></li>
+                        <li><a href="trainer-settings.html?v=497" class="nav-link">Configuración</a></li>
                         <li><a href="#" onclick="window.location.reload(); return false;" class="nav-link" style="color:var(--error-color)">🚪 Salir</a></li>
                     </ul>
                 </nav>
@@ -149,6 +149,9 @@
                         </button>
                         <button id="t-p" class="tab-item" onclick="setTab('recipe')">
                             Fotos de Recetas <span id="count-rec" class="tab-count"></span>
+                        </button>
+                        <button id="t-l" class="tab-item" onclick="setTab('library')">
+                            Biblioteca Clientes <span id="count-lib" class="tab-count"></span>
                         </button>
                         <button id="t-h" class="tab-item" onclick="setTab('hidden')">
                             Ocultos <span id="count-hid" class="tab-count"></span>
@@ -198,6 +201,10 @@
                         <i class="fas fa-cloud-upload-alt"></i> Subir Foto
                     </label>
                     <input type="file" id="fileInput" style="display: none;" accept="image/*" onchange="handleFileUpload(this)">
+                    <label for="libraryFileInput" id="libraryUploadBtnLabel" class="btn-upload" style="display: none;">
+                        <i class="fas fa-cloud-upload-alt"></i> Subir PDF / Video
+                    </label>
+                    <input type="file" id="libraryFileInput" style="display: none;" accept="application/pdf,video/*" onchange="handleFileUpload(this)">
                 </div>
             </div>
             <div class="form-group">
@@ -230,6 +237,17 @@
                     <option value="Glúteos">Glúteos</option>
                     <option value="Cuello">Cuello</option>
                 </select>
+            </div>
+            <div class="form-group" id="editLibraryTypeGroup" style="display: none;">
+                <label>Tipo de Recurso</label>
+                <select id="editLibraryType" class="form-control" style="cursor: pointer;" onchange="handleLibraryTypeChange()">
+                    <option value="pdf">Documento PDF</option>
+                    <option value="video">Video (URL o archivo)</option>
+                </select>
+            </div>
+            <div class="form-group" id="editFolderGroup" style="display: none;">
+                <label>Carpeta / Categoría</label>
+                <input type="text" id="editFolder" class="form-control" placeholder="Ej: Dieta, Rutinas, Ebooks...">
             </div>
             <div style="display: flex; gap: 1rem; margin-top: 2rem;">
                 <button id="btnSave" class="btn btn-primary" onclick="saveChanges()" style="flex:1;">Guardar Cambios</button>
@@ -283,8 +301,8 @@
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="js/supabase-service.js?v=495"></script>
-    <script src="js/data-models.js?v=495"></script>
+    <script src="js/supabase-service.js?v=497"></script>
+    <script src="js/data-models.js?v=497"></script>
     <script src="js/utils.js"></script>
     <script src="js/cloud-storage.js"></script>
 
@@ -297,6 +315,7 @@
             document.querySelectorAll('.tab-item').forEach(b => b.classList.remove('active'));
             if(t === 'exercise') document.getElementById('t-v').classList.add('active');
             else if(t === 'recipe') document.getElementById('t-p').classList.add('active');
+            else if(t === 'library') document.getElementById('t-l').classList.add('active');
             else document.getElementById('t-h').classList.add('active');
             
             // Mostrar/ocultar filtro de grupo muscular según la pestaña activa
@@ -359,18 +378,27 @@
 
                 if(needsSave) saveData(data);
                 
-                mediaCache = Media.getAll();
+                const tempMedia = Media.getAll();
+                const countEx = tempMedia.filter(m => m.category === 'exercise' && m.status !== 'hidden').length;
+                const countRec = tempMedia.filter(m => m.category === 'recipe' && m.status !== 'hidden').length;
+                const countHid = tempMedia.filter(m => m.status === 'hidden').length;
+                const countLib = (window.Library ? window.Library.getAll() : []).length;
                 
-                // Actualizar contadores discretos
-                const countEx = mediaCache.filter(m => m.category === 'exercise' && m.status !== 'hidden').length;
-                const countRec = mediaCache.filter(m => m.category === 'recipe' && m.status !== 'hidden').length;
-                const countHid = mediaCache.filter(m => m.status === 'hidden').length;
-                
-                document.getElementById('count-ex').textContent = `(${countEx})`;
-                document.getElementById('count-rec').textContent = `(${countRec})`;
-                document.getElementById('count-hid').textContent = `(${countHid})`;
+                if (document.getElementById('count-ex')) document.getElementById('count-ex').textContent = `(${countEx})`;
+                if (document.getElementById('count-rec')) document.getElementById('count-rec').textContent = `(${countRec})`;
+                if (document.getElementById('count-hid')) document.getElementById('count-hid').textContent = `(${countHid})`;
+                if (document.getElementById('count-lib')) document.getElementById('count-lib').textContent = `(${countLib})`;
+
+                if (currentTab === 'library') {
+                    mediaCache = window.Library ? window.Library.getAll() : [];
+                } else {
+                    mediaCache = tempMedia;
+                }
 
                 const items = mediaCache.filter(m => {
+                    if (currentTab === 'library') {
+                        return m.title.toLowerCase().includes(query);
+                    }
                     const matchesTab = (currentTab === 'hidden') ? m.status === 'hidden' : (m.category === currentTab && m.status !== 'hidden');
                     
                     let matchesMuscle = true;
@@ -394,7 +422,50 @@
                 }
                 
                 
-                if (currentTab === 'exercise') {
+                if (currentTab === 'library') {
+                    grid.style.display = 'block'; // Quitar el grid normal
+                    const groups = {};
+                    items.forEach(item => {
+                        let folderName = item.folder || 'General';
+                        folderName = folderName.trim();
+                        if (!groups[folderName]) groups[folderName] = [];
+                        groups[folderName].push(item);
+                    });
+
+                    // Ordenar carpetas alfabéticamente
+                    const sortedFolders = Object.keys(groups).sort();
+
+                    let html = topBarHtml;
+                    sortedFolders.forEach(folder => {
+                        html += `<div class="exercise-group" style="border-left-color: #a55eea;">`; // Diferente color para carpetas
+                        html += `<h3 class="group-title" style="color: #a55eea;"><i class="fas fa-folder" style="margin-right:8px;"></i> ${folder} (${groups[folder].length})</h3>`;
+                        html += `<div class="exercise-list">`;
+                        
+                        // Ordenar por título alfabéticamente
+                        groups[folder].sort((a,b) => a.title.localeCompare(b.title)).forEach(m => {
+                            const icon = m.type === 'pdf' ? 'fa-file-pdf' : 'fa-video';
+                            const iconColor = m.type === 'pdf' ? '#ff7675' : '#0984e3';
+                            html += `
+                            <div class="exercise-item">
+                                <span class="ex-title"><i class="fas ${icon}" style="color:${iconColor}; margin-right:8px;"></i> ${m.title}</span>
+                                <div class="ex-actions">
+                                    <a class="btn-ver" href="${m.url}" target="_blank" style="text-decoration:none;"><i class="fas fa-external-link-alt"></i> ABRIR</a>
+                                    <button class="btn-sq" style="background: rgba(255,255,255,0.15); color: var(--text-primary);" onclick="openEditModal('${m.id}')"><i class="fas fa-edit"></i></button>
+                                    <button class="btn-sq" style="background:var(--error-color);" onclick="deleteItemPermanently('${m.id}')"><i class="fas fa-trash"></i></button>
+                                </div>
+                            </div>
+                            `;
+                        });
+                        
+                        html += `</div></div>`;
+                    });
+                    
+                    if (sortedFolders.length === 0) {
+                        html += '<div style="text-align:center; padding:3rem; opacity:0.5;">No hay recursos en la biblioteca. Haz clic en "+ Añadir Contenido" para añadir PDFs o vídeos.</div>';
+                    }
+                    
+                    grid.innerHTML = html;
+                } else if (currentTab === 'exercise') {
                     // Agrupar por grupo muscular
                     grid.style.display = 'block'; // Quitar el grid normal
                     const groups = {};
@@ -480,35 +551,58 @@
             } catch(e) { alert("Error al subir."); } finally { btn.disabled = false; btn.textContent = "Guardar Cambios"; }
         }
 
+        function handleLibraryTypeChange() {
+            const type = document.getElementById('editLibraryType').value;
+            const fileInput = document.getElementById('libraryFileInput');
+            if (fileInput) {
+                fileInput.accept = type === 'pdf' ? 'application/pdf' : 'video/*';
+            }
+        }
+
         function openAddModal() {
             document.getElementById('editId').value = "";
             document.getElementById('editUrl').value = "";
             document.getElementById('editTitle').value = "";
             document.getElementById('editDesc').value = "";
             
-            const cat = (currentTab === 'recipe') ? 'recipe' : 'exercise';
             const titleEl = document.getElementById('editModalTitle');
-            if (titleEl) {
-                titleEl.innerText = (cat === 'recipe') ? 'Añadir Nueva Receta' : 'Añadir Nuevo Ejercicio';
-            }
-            
             const btnSave = document.getElementById('btnSave');
             if (btnSave) {
                 btnSave.textContent = "Añadir Contenido";
             }
             
-            if (cat === 'exercise') {
-                document.getElementById('editUrlLabel').innerText = 'Enlace del Vídeo (YouTube, Vimeo, etc.)';
+            if (currentTab === 'library') {
+                if (titleEl) titleEl.innerText = 'Añadir Nuevo Recurso';
+                document.getElementById('editUrlLabel').innerText = 'Enlace o Archivo';
                 document.getElementById('uploadBtnLabel').style.display = 'none';
+                document.getElementById('libraryUploadBtnLabel').style.display = 'inline-flex';
                 document.getElementById('editIngredientsGroup').style.display = 'none';
-                document.getElementById('editMuscleGroup').style.display = 'block';
-                document.getElementById('editMuscle').value = "";
-            } else {
+                document.getElementById('editMuscleGroup').style.display = 'none';
+                document.getElementById('editLibraryTypeGroup').style.display = 'block';
+                document.getElementById('editFolderGroup').style.display = 'block';
+                document.getElementById('editLibraryType').value = "pdf";
+                document.getElementById('editFolder').value = "";
+                handleLibraryTypeChange();
+            } else if (currentTab === 'recipe') {
+                if (titleEl) titleEl.innerText = 'Añadir Nueva Receta';
                 document.getElementById('editUrlLabel').innerText = 'Imagen de la Ficha';
                 document.getElementById('uploadBtnLabel').style.display = 'inline-flex';
+                document.getElementById('libraryUploadBtnLabel').style.display = 'none';
                 document.getElementById('editIngredientsGroup').style.display = 'block';
                 document.getElementById('editMuscleGroup').style.display = 'none';
+                document.getElementById('editLibraryTypeGroup').style.display = 'none';
+                document.getElementById('editFolderGroup').style.display = 'none';
                 document.getElementById('editIngredients').value = "";
+            } else {
+                if (titleEl) titleEl.innerText = 'Añadir Nuevo Ejercicio';
+                document.getElementById('editUrlLabel').innerText = 'Enlace del Vídeo (YouTube, Vimeo, etc.)';
+                document.getElementById('uploadBtnLabel').style.display = 'none';
+                document.getElementById('libraryUploadBtnLabel').style.display = 'none';
+                document.getElementById('editIngredientsGroup').style.display = 'none';
+                document.getElementById('editMuscleGroup').style.display = 'block';
+                document.getElementById('editLibraryTypeGroup').style.display = 'none';
+                document.getElementById('editFolderGroup').style.display = 'none';
+                document.getElementById('editMuscle').value = "";
             }
             
             document.getElementById('editModal').style.display = 'flex';
@@ -532,12 +626,26 @@
             document.getElementById('editTitle').value = m.title;
             document.getElementById('editDesc').value = m.description || "";
             
-            if (m.category === 'exercise') {
+            if (m.folder !== undefined) { // Es un recurso de biblioteca
+                document.getElementById('editUrlLabel').innerText = 'Enlace o Archivo';
+                document.getElementById('uploadBtnLabel').style.display = 'none';
+                document.getElementById('libraryUploadBtnLabel').style.display = 'inline-flex';
+                document.getElementById('editIngredientsGroup').style.display = 'none';
+                document.getElementById('editMuscleGroup').style.display = 'none';
+                document.getElementById('editLibraryTypeGroup').style.display = 'block';
+                document.getElementById('editFolderGroup').style.display = 'block';
+                document.getElementById('editLibraryType').value = m.type || 'pdf';
+                document.getElementById('editFolder').value = m.folder || '';
+                handleLibraryTypeChange();
+            } else if (m.category === 'exercise') {
                 document.getElementById('editUrlLabel').innerText = 'Enlace del Vídeo (YouTube, Vimeo, etc.)';
                 document.getElementById('uploadBtnLabel').style.display = 'none';
+                document.getElementById('libraryUploadBtnLabel').style.display = 'none';
                 
                 document.getElementById('editIngredientsGroup').style.display = 'none';
                 document.getElementById('editMuscleGroup').style.display = 'block';
+                document.getElementById('editLibraryTypeGroup').style.display = 'none';
+                document.getElementById('editFolderGroup').style.display = 'none';
                 // Normalizar el valor al primer grupo si hay varios, para el select
                 const muscleVal = Array.isArray(m.muscleGroup) ? m.muscleGroup[0] : (m.muscleGroup ? m.muscleGroup.split(',')[0].trim() : '');
                 
@@ -563,9 +671,12 @@
             } else {
                 document.getElementById('editUrlLabel').innerText = 'Imagen de la Ficha';
                 document.getElementById('uploadBtnLabel').style.display = 'inline-flex';
+                document.getElementById('libraryUploadBtnLabel').style.display = 'none';
                 
                 document.getElementById('editIngredientsGroup').style.display = 'block';
                 document.getElementById('editMuscleGroup').style.display = 'none';
+                document.getElementById('editLibraryTypeGroup').style.display = 'none';
+                document.getElementById('editFolderGroup').style.display = 'none';
                 document.getElementById('editIngredients').value = Array.isArray(m.ingredients) ? m.ingredients.join(', ') : (m.ingredients || "");
             }
             
@@ -588,40 +699,59 @@
             btn.textContent = "Guardando...";
             
             try {
-                if (id) {
-                    // Modo edición
-                    const m = mediaCache.find(item => item.id == id);
-                    const updateData = {
-                        url: urlVal,
-                        title: titleVal,
-                        description: descVal
-                    };
-                    if (m && m.category === 'exercise') {
-                        updateData.muscleGroup = document.getElementById('editMuscle').value;
-                    } else {
-                        updateData.ingredients = document.getElementById('editIngredients').value;
-                    }
-                    await Media.update(id, updateData);
-                    if (typeof showToast === 'function') showToast('Cambios guardados con éxito', 'success');
-                } else {
-                    // Modo creación
-                    const cat = (currentTab === 'recipe' || currentTab === 'hidden') ? 'recipe' : 'exercise';
-                    const newMedia = {
-                        type: (cat === 'recipe') ? 'image' : 'video',
-                        category: cat,
+                if (currentTab === 'library') {
+                    const folderVal = document.getElementById('editFolder').value.trim() || 'General';
+                    const typeVal = document.getElementById('editLibraryType').value;
+                    const resourceData = {
                         url: urlVal,
                         title: titleVal,
                         description: descVal,
-                        isSystem: false,
-                        userEdited: true
+                        folder: folderVal,
+                        type: typeVal
                     };
-                    if (cat === 'exercise') {
-                        newMedia.muscleGroup = document.getElementById('editMuscle').value;
+                    if (id) {
+                        await Library.update(id, resourceData);
+                        if (typeof showToast === 'function') showToast('Cambios guardados con éxito', 'success');
                     } else {
-                        newMedia.ingredients = document.getElementById('editIngredients').value;
+                        await Library.create(resourceData);
+                        if (typeof showToast === 'function') showToast('Recurso añadido con éxito', 'success');
                     }
-                    await Media.create(newMedia);
-                    if (typeof showToast === 'function') showToast('Contenido añadido con éxito', 'success');
+                } else {
+                    if (id) {
+                        // Modo edición
+                        const m = mediaCache.find(item => item.id == id);
+                        const updateData = {
+                            url: urlVal,
+                            title: titleVal,
+                            description: descVal
+                        };
+                        if (m && m.category === 'exercise') {
+                            updateData.muscleGroup = document.getElementById('editMuscle').value;
+                        } else {
+                            updateData.ingredients = document.getElementById('editIngredients').value;
+                        }
+                        await Media.update(id, updateData);
+                        if (typeof showToast === 'function') showToast('Cambios guardados con éxito', 'success');
+                    } else {
+                        // Modo creación
+                        const cat = (currentTab === 'recipe' || currentTab === 'hidden') ? 'recipe' : 'exercise';
+                        const newMedia = {
+                            type: (cat === 'recipe') ? 'image' : 'video',
+                            category: cat,
+                            url: urlVal,
+                            title: titleVal,
+                            description: descVal,
+                            isSystem: false,
+                            userEdited: true
+                        };
+                        if (cat === 'exercise') {
+                            newMedia.muscleGroup = document.getElementById('editMuscle').value;
+                        } else {
+                            newMedia.ingredients = document.getElementById('editIngredients').value;
+                        }
+                        await Media.create(newMedia);
+                        if (typeof showToast === 'function') showToast('Contenido añadido con éxito', 'success');
+                    }
                 }
                 closeEditModal();
                 renderGrid();
@@ -644,7 +774,14 @@
         }
 
         function deleteItemPermanently(id) {
-            if(confirm("¿BORRAR DEFINITIVAMENTE?")) { Media.delete(id); renderGrid(); }
+            if(confirm("¿BORRAR DEFINITIVAMENTE?")) {
+                if (currentTab === 'library') {
+                    Library.delete(id);
+                } else {
+                    Media.delete(id);
+                }
+                renderGrid();
+            }
         }
 
         async function restoreAllHidden() {

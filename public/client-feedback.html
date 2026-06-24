@@ -7,7 +7,7 @@
     <script>
         // Force PWA cache bust / reload
         (function() {
-            const CURRENT_VERSION = '495';
+            const CURRENT_VERSION = '497';
             const savedVersion = localStorage.getItem('app_version');
             if (savedVersion !== CURRENT_VERSION) {
                 localStorage.setItem('app_version', CURRENT_VERSION);
@@ -31,9 +31,9 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="styles/theme.css?v=495">
-    <link rel="stylesheet" href="styles/components.css?v=495">
-    <link rel="stylesheet" href="styles/mobile.css?v=495">
+    <link rel="stylesheet" href="styles/theme.css?v=497">
+    <link rel="stylesheet" href="styles/components.css?v=497">
+    <link rel="stylesheet" href="styles/mobile.css?v=497">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <script>
@@ -155,10 +155,10 @@
                     <span id="brandName">Infinite Coach</span>
                 </div>
                 <ul class="nav-links" id="navLinks">
-                    <li><a href="client-dashboard.html?v=495" class="nav-link">Inicio</a></li>
-                    <li><a href="client-profile.html?v=495" class="nav-link">Ficha Técnica</a></li>
+                    <li><a href="client-dashboard.html?v=497" class="nav-link">Inicio</a></li>
+                    <li><a href="client-profile.html?v=497" class="nav-link">Ficha Técnica</a></li>
 
-                    <li><a href="client-login.html?v=495" class="nav-link">Salir</a></li>
+                    <li><a href="client-login.html?v=497" class="nav-link">Salir</a></li>
                 </ul>
                 <button class="menu-toggle" onclick="toggleMenu()" style="margin-left: auto;">☰</button>
             </nav>
@@ -342,11 +342,11 @@
 
     <!-- Supabase SDK & Service -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="js/supabase-service.js?v=495"></script>
+    <script src="js/supabase-service.js?v=497"></script>
 
-    <script src="js/data-models.js?v=495"></script>
-    <script src="js/cloud-storage.js?v=495"></script>
-    <script src="js/utils.js?v=495"></script>
+    <script src="js/data-models.js?v=497"></script>
+    <script src="js/cloud-storage.js?v=497"></script>
+    <script src="js/utils.js?v=497"></script>
     <script>
         const clientId = sessionStorage.getItem('clientId') || localStorage.getItem('clientId');
         if (!clientId) {
@@ -391,6 +391,11 @@
             const isInactive = client.status === 'inactive';
             const isUnpaid = client.paymentStatus !== 'paid' || client.status === 'unpaid';
             if (isInactive || isUnpaid) {
+                window.location.replace('client-dashboard.html');
+                return;
+            }
+
+            if (brand && brand.clientSettings && brand.clientSettings.showFeedback === false) {
                 window.location.replace('client-dashboard.html');
                 return;
             }
@@ -442,7 +447,9 @@
 
         function renderPerimeters() {
             const container = document.getElementById('dynamicPerimeters');
-            const perimeters = Array.isArray(brand.trainerPerimeters) ? brand.trainerPerimeters : ['Cintura', 'Cadera', 'Pecho', 'Brazo', 'Muslo'];
+            const perimeters = (client && Array.isArray(client.customPerimeters) && client.customPerimeters.length > 0)
+                ? client.customPerimeters
+                : (Array.isArray(brand.trainerPerimeters) ? brand.trainerPerimeters : ['Cintura', 'Cadera', 'Pecho', 'Brazo', 'Muslo']);
             
             if (perimeters.length === 0) {
                 container.innerHTML = '';
@@ -459,9 +466,9 @@
 
         function renderQuestions() {
             const container = document.getElementById('dynamicQuestions');
-            const questions = brand.feedbackQuestions && brand.feedbackQuestions.length > 0
-                ? brand.feedbackQuestions
-                : []; // Default to empty if no custom questions
+            const questions = (client && Array.isArray(client.customFeedbackQuestions) && client.customFeedbackQuestions.length > 0)
+                ? client.customFeedbackQuestions
+                : (brand.feedbackQuestions && brand.feedbackQuestions.length > 0 ? brand.feedbackQuestions : []);
 
             if (questions.length === 0) {
                 container.innerHTML = '';
@@ -825,6 +832,6 @@
         `;
         document.head.appendChild(style);
     </script>
-    <script src="js/custom-recipes.js?v=495"></script></body>
+    <script src="js/custom-recipes.js?v=497"></script></body>
 
 </html>

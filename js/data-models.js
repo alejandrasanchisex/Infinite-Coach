@@ -256,9 +256,9 @@ const getData = () => {
     
 
     const defaults = {
-    version: DB_VERSION, clients: [], routines: [], diets: [], foods: [], media: [], 
+    version: DB_VERSION, clients: [], routines: [], diets: [], foods: [], media: [], library: [],
     hidden_system_media: [], deleted_system_media: [], brand: { name: 'Infinite Coach', configured: true },
-    supplementationTemplates: [], feedbacks: [], appointments: [], invoices: [], trainingLogs: [], habits: [], trainingBlocks: [], deletedIds: []
+    supplementationTemplates: [], feedbacks: [], appointments: [], invoices: [], trainingLogs: [], habits: [], trainingBlocks: [], deletedIds: [], teamMembers: []
   };
   if (!raw) {
     const activeId = window.activeTrainerId || localStorage.getItem('activeTrainerId') || 'default';
@@ -568,7 +568,7 @@ const mergeLocalEdits = (localNew, cloudMerged, localPrev, isTrainer) => {
         const page = pathname.split('/').pop() || '';
         
         if (page.includes('settings') || page.includes('asteam') || page.includes('subscription')) {
-            return ['brand', 'trainerSettings', 'paymentSettings', 'fiscalData']; 
+            return ['brand', 'trainerSettings', 'paymentSettings', 'fiscalData', 'teamMembers']; 
         }
         if (page.includes('diets')) {
             return ['diets', 'foods'];
@@ -834,7 +834,7 @@ ${item.date}`.replace('\n', ''); // Safe compile
     });
     // Merge non-array config fields
     const currentId = window.activeTrainerId || localStorage.getItem('activeTrainerId') || 'default';
-    const configFields = ['brand', 'trainerSettings', 'paymentSettings', 'fiscalData'];
+    const configFields = ['brand', 'trainerSettings', 'paymentSettings', 'fiscalData', 'teamMembers'];
     configFields.forEach(field => {
         if (localNew[field] !== undefined) {
             if (editableCols && editableCols.includes(field)) {
@@ -986,7 +986,7 @@ window.syncFromCloud = async () => {
 
         if (cloudData) {
             // Garantizar que todos los arrays existen en la nube
-            const collections = ['clients', 'routines', 'diets', 'foods', 'media', 'feedbacks', 'appointments', 'invoices', 'trainingBlocks', 'trainingLogs', 'habits', 'supplementationTemplates'];
+            const collections = ['clients', 'routines', 'diets', 'foods', 'media', 'feedbacks', 'appointments', 'invoices', 'trainingBlocks', 'trainingLogs', 'habits', 'supplementationTemplates', 'library'];
             collections.forEach(col => {
                 if (!cloudData[col]) cloudData[col] = [];
             });
@@ -2959,6 +2959,48 @@ window.Media = {
   }
 };
 
+window.Library = {
+  getAll: () => {
+    const data = getData();
+    return data.library || [];
+  },
+  create: (itemData) => {
+    const data = getData();
+    const newItem = {
+      id: generateUUID(),
+      title: itemData.title || '',
+      type: itemData.type || 'pdf', // 'pdf' | 'video'
+      url: itemData.url || '',
+      folder: itemData.folder || 'General',
+      description: itemData.description || '',
+      createdAt: new Date().toISOString()
+    };
+    if (!data.library) data.library = [];
+    data.library.push(newItem);
+    saveData(data);
+    return newItem;
+  },
+  update: (id, updates) => {
+    const data = getData();
+    if (!data.library) data.library = [];
+    const index = data.library.findIndex(item => item.id == id);
+    if (index !== -1) {
+      data.library[index] = { ...data.library[index], ...updates };
+      saveData(data);
+      return data.library[index];
+    }
+    return null;
+  },
+  delete: (id) => {
+    const data = getData();
+    if (!data.library) data.library = [];
+    data.library = data.library.filter(item => item.id != id);
+    if (!data.deletedIds) data.deletedIds = [];
+    data.deletedIds.push(id);
+    saveData(data);
+  }
+};
+
 // Generate UUID
 const generateUUID = () => {
   return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
@@ -4647,6 +4689,49 @@ const BrandConfig = {
             }
         } catch (e) {
             console.warn("Could not set dynamic manifest URL:", e);
+        }
+
+        // Dynamically inject the "Biblioteca" link in the client navigation menu if enabled
+        const injectClientLibraryNav = () => {
+            const isClientPage = window.location.pathname.includes('client-') || 
+                                 (document.body && document.body.classList.contains('theme-client'));
+            if (!isClientPage) return;
+            
+            const navList = document.querySelector('#navLinks, .nav-links');
+            if (!navList) return;
+            
+            // Prevent duplicate injection
+            if (document.getElementById('navLinkLibrary')) return;
+            
+            const cs = (brand && brand.clientSettings) ? brand.clientSettings : {};
+            if (cs.showLibrary === false) return; // Hidden by trainer
+            
+            const li = document.createElement('li');
+            li.id = 'navLinkLibrary';
+            const isCurrentPage = window.location.pathname.includes('client-library.html');
+            li.innerHTML = `<a href="client-library.html?v=496" class="nav-link ${isCurrentPage ? 'active' : ''}">Biblioteca</a>`;
+            
+            // Find the "Salir" link or insert before the last child
+            const links = navList.querySelectorAll('li');
+            let inserted = false;
+            for (let i = 0; i < links.length; i++) {
+                const text = links[i].textContent || '';
+                if (text.toLowerCase().includes('salir')) {
+                    navList.insertBefore(li, links[i]);
+                    inserted = true;
+                    break;
+                }
+            }
+            if (!inserted) {
+                navList.appendChild(li);
+            }
+        };
+
+        // Try to inject immediately or on DOMContentLoaded
+        if (document.querySelector('#navLinks, .nav-links')) {
+            injectClientLibraryNav();
+        } else {
+            document.addEventListener('DOMContentLoaded', injectClientLibraryNav);
         }
     }
   }
