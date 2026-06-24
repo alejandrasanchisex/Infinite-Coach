@@ -5,7 +5,7 @@
     <script>
         // Force PWA cache bust / reload
         (function() {
-            const CURRENT_VERSION = '497';
+            const CURRENT_VERSION = '498';
             const savedVersion = localStorage.getItem('app_version');
             if (savedVersion !== CURRENT_VERSION) {
                 localStorage.setItem('app_version', CURRENT_VERSION);
@@ -31,8 +31,8 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="styles/theme.css?v=497">
-    <link rel="stylesheet" href="styles/components.css?v=497">
+    <link rel="stylesheet" href="styles/theme.css?v=498">
+    <link rel="stylesheet" href="styles/components.css?v=498">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <style>
         /* Bulletproof sizing override for routine editor and xl modals */
@@ -299,14 +299,14 @@
                     </div>
                     <button class="menu-toggle" onclick="toggleMenu()">☰</button>
                     <ul class="nav-links" id="navLinks">
-                        <li><a href="trainer-dashboard.html?v=497" class="nav-link">Dashboard</a></li>
-                        <li><a href="trainer-clients.html?v=497" class="nav-link active">Clientes</a></li>
-                        <li><a href="trainer-routines.html?v=497" class="nav-link">Rutinas</a></li>
-                        <li><a href="trainer-diets.html?v=497" class="nav-link">Dietas</a></li>
-                        <li><a href="trainer-feedbacks.html?v=497" class="nav-link">Revisiones</a></li>
-                        <li><a href="trainer-media.html?v=497" class="nav-link">Biblioteca</a></li>
-                        <li><a href="trainer-appointments.html?v=497" class="nav-link">Agenda</a></li>
-                        <li><a href="trainer-settings.html?v=497" class="nav-link">Configuración</a></li>
+                        <li><a href="trainer-dashboard.html?v=498" class="nav-link">Dashboard</a></li>
+                        <li><a href="trainer-clients.html?v=498" class="nav-link active">Clientes</a></li>
+                        <li><a href="trainer-routines.html?v=498" class="nav-link">Rutinas</a></li>
+                        <li><a href="trainer-diets.html?v=498" class="nav-link">Dietas</a></li>
+                        <li><a href="trainer-feedbacks.html?v=498" class="nav-link">Revisiones</a></li>
+                        <li><a href="trainer-media.html?v=498" class="nav-link">Biblioteca</a></li>
+                        <li><a href="trainer-appointments.html?v=498" class="nav-link">Agenda</a></li>
+                        <li><a href="trainer-settings.html?v=498" class="nav-link">Configuración</a></li>
                         <li><a href="#" onclick="if(typeof AUTH !== 'undefined') { AUTH.signOut() } else { window.location.reload() }; return false;" class="nav-link" style="color:var(--error-color)">🚪 Salir</a></li>
                     </ul>
                 </nav>
@@ -925,7 +925,7 @@
                                     </div>
                                     <div class="card-body">
                                         <div id="stripeNotConfigured" style="display: none;">
-                                            <p class="text-xs text-muted mb-md">Configura tus claves de Stripe en los <a href="trainer-settings.html?v=497" style="color: var(--primary-color);">Ajustes</a> para habilitar cobros automáticos.</p>
+                                            <p class="text-xs text-muted mb-md">Configura tus claves de Stripe en los <a href="trainer-settings.html?v=498" style="color: var(--primary-color);">Ajustes</a> para habilitar cobros automáticos.</p>
                                         </div>
                                         <div id="stripeActiveConfig">
                                             <p class="text-xs text-muted mb-md">Genera un enlace de pago recurrente para este cliente usando tus planes configurados.</p>
@@ -982,19 +982,19 @@
 
     <!-- Supabase SDK & Service -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="js/supabase-service.js?v=497"></script>
+    <script src="js/supabase-service.js?v=498"></script>
 
-    <script src="js/config.js?v=497"></script>
-    <script src="js/auth.js?v=497"></script>
-    <script src="js/sheets.js?v=497"></script>
-    <script src="js/data-models.js?v=497"></script>
-    <script src="js/utils.js?v=497"></script>
-    <script src="js/custom-recipes.js?v=497"></script>
-    <script src="js/custom-exercises.js?v=497"></script>
-    <script src="js/diet-editor-v3.js?v=497"></script>
+    <script src="js/config.js?v=498"></script>
+    <script src="js/auth.js?v=498"></script>
+    <script src="js/sheets.js?v=498"></script>
+    <script src="js/data-models.js?v=498"></script>
+    <script src="js/utils.js?v=498"></script>
+    <script src="js/custom-recipes.js?v=498"></script>
+    <script src="js/custom-exercises.js?v=498"></script>
+    <script src="js/diet-editor-v3.js?v=498"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.29/jspdf.plugin.autotable.min.js"></script>
-    <script src="js/export-utils.js?v=497"></script>
+    <script src="js/export-utils.js?v=498"></script>
     <script>
         const pageUrlParams = new URLSearchParams(window.location.search);
         const clientId = pageUrlParams.get('id');
@@ -1520,7 +1520,9 @@
                 // Perimeters
                 const perimetersContainer = document.getElementById('perimetersDisplayList');
                 if (perimetersContainer) {
-                    const perims = Array.isArray(brand.trainerPerimeters) ? brand.trainerPerimeters : ['Cintura', 'Cadera', 'Pecho', 'Brazo', 'Muslo'];
+                    const perims = (currentClient && Array.isArray(currentClient.customPerimeters) && currentClient.customPerimeters.length > 0)
+                        ? currentClient.customPerimeters
+                        : (Array.isArray(brand.trainerPerimeters) ? brand.trainerPerimeters : ['Cintura', 'Cadera', 'Pecho', 'Brazo', 'Muslo']);
                     const feedbacks = (typeof Feedbacks !== 'undefined') ? Feedbacks.getByClientId(clientId).sort((a,b) => new Date(b.date) - new Date(a.date)) : [];
                     let latestPerimeters = (feedbacks.length > 0) ? (feedbacks[0].perimeters || {}) : {};
 
@@ -2268,7 +2270,9 @@
             // Render Table Log
             const logBody = document.getElementById('historyLogBody');
             const logHeader = document.getElementById('historyLogHeader');
-            const perims = Array.isArray(brand.trainerPerimeters) ? brand.trainerPerimeters : ['Cintura', 'Cadera', 'Pecho', 'Brazo', 'Muslo'];
+            const perims = (currentClient && Array.isArray(currentClient.customPerimeters) && currentClient.customPerimeters.length > 0)
+                ? currentClient.customPerimeters
+                : (Array.isArray(brand.trainerPerimeters) ? brand.trainerPerimeters : ['Cintura', 'Cadera', 'Pecho', 'Brazo', 'Muslo']);
 
             if (logHeader) {
                 logHeader.innerHTML = `
@@ -2647,6 +2651,9 @@
                     specificReviewDate: document.getElementById('editSpecificReviewDate') ? document.getElementById('editSpecificReviewDate').value : null,
                     reviewDaysOfMonth: document.getElementById('editReviewDaysOfMonth') ? document.getElementById('editReviewDaysOfMonth').value : null,
                     assignedTrainerId: assignedTrainerId,
+                    customOnboardingQuestions: window.tempOnboardingQuestions || [],
+                    customFeedbackQuestions: window.tempFeedbackQuestions || [],
+                    customPerimeters: window.tempPerimeters || [],
 
                     technicalData: {
                         ...techUpdates,
@@ -4975,7 +4982,7 @@
                         <div style="max-width: 800px; margin: 0 auto; border: 1px solid #eee; padding: 30px; border-radius: 8px;">
                             ${content}
                         </div>
-                        <script src="js/custom-recipes.js?v=497"><\/script></body>
+                        <script src="js/custom-recipes.js?v=498"><\/script></body>
                 </html>
             `);
             printWindow.document.close();
@@ -5450,6 +5457,11 @@
         function editClientInfo() {
             const tech = currentClient.technicalData || {};
 
+            // Initialize temporary variables for client personalization overrides
+            window.tempOnboardingQuestions = Array.isArray(currentClient.customOnboardingQuestions) ? [...currentClient.customOnboardingQuestions] : [];
+            window.tempFeedbackQuestions = Array.isArray(currentClient.customFeedbackQuestions) ? [...currentClient.customFeedbackQuestions] : [];
+            window.tempPerimeters = Array.isArray(currentClient.customPerimeters) ? [...currentClient.customPerimeters] : [];
+
             const activeId = localStorage.getItem('activeTrainerId') || 'default';
             const platformRaw = localStorage.getItem('saasFitnessPlatform');
             let isMultipleAccess = false;
@@ -5619,6 +5631,47 @@
                         <label class="form-label">Información a tener en cuenta</label>
                         <textarea id="editNotes" class="form-textarea" rows="2">${tech.notes || ''}</textarea>
                     </div>
+
+                    <!-- Personalización Individual del Cliente -->
+                    <div style="background: rgba(255,255,255,0.02); border: 1.5px solid rgba(255,255,255,0.06); padding: 15px; border-radius: 12px; margin-bottom: 20px; margin-top: 20px;">
+                        <h4 style="color: var(--primary-color); font-size: 0.95rem; font-weight: 700; margin-top: 0; margin-bottom: 10px; display: flex; align-items: center; gap: 8px;">
+                            <span>🎨</span> Personalización Individual
+                        </h4>
+                        <p class="text-xs text-muted mb-md" style="margin-bottom: 12px; line-height: 1.4; color: #888;">
+                            Si se dejan vacíos, se usarán los valores globales configurados en Ajustes.
+                        </p>
+
+                        <!-- Onboarding Questions Overrides -->
+                        <div style="margin-bottom: 15px;">
+                            <label class="form-label" style="font-weight: 600; font-size: 0.8rem; color: #ccc;">Onboarding (Cuestionario Inicial)</label>
+                            <div id="modalOnboardingQuestionsList" style="display: flex; flex-direction: column; gap: 6px; margin-bottom: 8px;"></div>
+                            <div class="flex gap-xs" style="display: flex; gap: 6px;">
+                                <input type="text" id="newModalOnboardingQuestion" class="form-input form-input-sm" placeholder="Nueva pregunta de bienvenida..." style="flex: 1; font-size: 0.8rem;">
+                                <button type="button" class="btn btn-sm btn-primary" onclick="window.addModalOnboardingQuestion()" style="padding: 0 12px; font-weight: bold;">+</button>
+                            </div>
+                        </div>
+
+                        <!-- Feedback Questions Overrides -->
+                        <div style="margin-bottom: 15px; border-top: 1px dashed rgba(255,255,255,0.05); padding-top: 15px;">
+                            <label class="form-label" style="font-weight: 600; font-size: 0.8rem; color: #ccc;">Preguntas de Revisión (Check-ins)</label>
+                            <div id="modalFeedbackQuestionsList" style="display: flex; flex-direction: column; gap: 6px; margin-bottom: 8px;"></div>
+                            <div class="flex gap-xs" style="display: flex; gap: 6px;">
+                                <input type="text" id="newModalFeedbackQuestion" class="form-input form-input-sm" placeholder="Nueva pregunta de revisión..." style="flex: 1; font-size: 0.8rem;">
+                                <button type="button" class="btn btn-sm btn-primary" onclick="window.addModalFeedbackQuestion()" style="padding: 0 12px; font-weight: bold;">+</button>
+                            </div>
+                        </div>
+
+                        <!-- Perimeters Overrides -->
+                        <div style="border-top: 1px dashed rgba(255,255,255,0.05); padding-top: 15px;">
+                            <label class="form-label" style="font-weight: 600; font-size: 0.8rem; color: #ccc;">Perímetros a Medir</label>
+                            <div id="modalPerimetersList" style="display: flex; flex-direction: column; gap: 6px; margin-bottom: 8px;"></div>
+                            <div class="flex gap-xs" style="display: flex; gap: 6px;">
+                                <input type="text" id="newModalPerimeter" class="form-input form-input-sm" placeholder="Nuevo perímetro (Ej: Cuello)..." style="flex: 1; font-size: 0.8rem;">
+                                <button type="button" class="btn btn-sm btn-primary" onclick="window.addModalPerimeter()" style="padding: 0 12px; font-weight: bold;">+</button>
+                            </div>
+                        </div>
+                    </div>
+
                     <div class="form-group">
                         <label class="form-label">Estado</label>
                         <select id="editStatus" class="form-select">
@@ -5635,6 +5688,98 @@
  
             // Initial calculation and visibility
             if (window.updateSkinfoldVisibility) window.updateSkinfoldVisibility();
+
+            // Render custom dynamic lists in the modal
+            if (window.renderModalOnboardingQuestions) window.renderModalOnboardingQuestions();
+            if (window.renderModalFeedbackQuestions) window.renderModalFeedbackQuestions();
+            if (window.renderModalPerimeters) window.renderModalPerimeters();
+        }
+
+        window.renderModalOnboardingQuestions = function() {
+            const container = document.getElementById('modalOnboardingQuestionsList');
+            if (!container) return;
+            if (!window.tempOnboardingQuestions || window.tempOnboardingQuestions.length === 0) {
+                container.innerHTML = '<div class="text-muted text-xs" style="color: #666; font-style: italic; font-size: 0.75rem;">Sin preguntas específicas. Se usarán las de Ajustes globales.</div>';
+                return;
+            }
+            container.innerHTML = window.tempOnboardingQuestions.map((q, idx) => `
+                <div style="background: rgba(255,255,255,0.02); padding: 5px 10px; border-radius: 6px; border: 1px solid rgba(255,255,255,0.05); display: flex; justify-content: space-between; align-items: center; gap: 10px;">
+                    <span class="text-sm" style="font-size: 0.8rem; color: #fff;">${q}</span>
+                    <button type="button" class="btn btn-sm btn-danger" onclick="window.removeModalOnboardingQuestion(${idx})" style="padding: 2px 6px; font-size: 0.7rem; background: transparent; border: none; cursor: pointer;" title="Eliminar">🗑️</button>
+                </div>
+            `).join('');
+        };
+
+        window.addModalOnboardingQuestion = function() {
+            const input = document.getElementById('newModalOnboardingQuestion');
+            if (input && input.value.trim()) {
+                window.tempOnboardingQuestions.push(input.value.trim());
+                input.value = '';
+                window.renderModalOnboardingQuestions();
+            }
+        };
+
+        window.removeModalOnboardingQuestion = function(idx) {
+            window.tempOnboardingQuestions.splice(idx, 1);
+            window.renderModalOnboardingQuestions();
+        };
+
+        window.renderModalFeedbackQuestions = function() {
+            const container = document.getElementById('modalFeedbackQuestionsList');
+            if (!container) return;
+            if (!window.tempFeedbackQuestions || window.tempFeedbackQuestions.length === 0) {
+                container.innerHTML = '<div class="text-muted text-xs" style="color: #666; font-style: italic; font-size: 0.75rem;">Sin preguntas específicas. Se usarán las de Ajustes globales.</div>';
+                return;
+            }
+            container.innerHTML = window.tempFeedbackQuestions.map((q, idx) => `
+                <div style="background: rgba(255,255,255,0.02); padding: 5px 10px; border-radius: 6px; border: 1px solid rgba(255,255,255,0.05); display: flex; justify-content: space-between; align-items: center; gap: 10px;">
+                    <span class="text-sm" style="font-size: 0.8rem; color: #fff;">${q}</span>
+                    <button type="button" class="btn btn-sm btn-danger" onclick="window.removeModalFeedbackQuestion(${idx})" style="padding: 2px 6px; font-size: 0.7rem; background: transparent; border: none; cursor: pointer;" title="Eliminar">🗑️</button>
+                </div>
+            `).join('');
+        };
+
+        window.addModalFeedbackQuestion = function() {
+            const input = document.getElementById('newModalFeedbackQuestion');
+            if (input && input.value.trim()) {
+                window.tempFeedbackQuestions.push(input.value.trim());
+                input.value = '';
+                window.renderModalFeedbackQuestions();
+            }
+        };
+
+        window.removeModalFeedbackQuestion = function(idx) {
+            window.tempFeedbackQuestions.splice(idx, 1);
+            window.renderModalFeedbackQuestions();
+        };
+
+        window.renderModalPerimeters = function() {
+            const container = document.getElementById('modalPerimetersList');
+            if (!container) return;
+            if (!window.tempPerimeters || window.tempPerimeters.length === 0) {
+                container.innerHTML = '<div class="text-muted text-xs" style="color: #666; font-style: italic; font-size: 0.75rem;">Sin perímetros específicos. Se usarán los de Ajustes globales.</div>';
+                return;
+            }
+            container.innerHTML = window.tempPerimeters.map((p, idx) => `
+                <div style="background: rgba(255,255,255,0.02); padding: 5px 10px; border-radius: 6px; border: 1px solid rgba(255,255,255,0.05); display: flex; justify-content: space-between; align-items: center; gap: 10px;">
+                    <span class="text-sm" style="font-size: 0.8rem; color: #fff;">${p}</span>
+                    <button type="button" class="btn btn-sm btn-danger" onclick="window.removeModalPerimeter(${idx})" style="padding: 2px 6px; font-size: 0.7rem; background: transparent; border: none; cursor: pointer;" title="Eliminar">🗑️</button>
+                </div>
+            `).join('');
+        };
+
+        window.addModalPerimeter = function() {
+            const input = document.getElementById('newModalPerimeter');
+            if (input && input.value.trim()) {
+                window.tempPerimeters.push(input.value.trim());
+                input.value = '';
+                window.renderModalPerimeters();
+            }
+        };
+
+        window.removeModalPerimeter = function(idx) {
+            window.tempPerimeters.splice(idx, 1);
+            window.renderModalPerimeters();
         }
 
         
@@ -6392,7 +6537,7 @@
             // Usar siempre el ID real del entrenador para garantizar sincronización con Supabase
             const realTrainerId = window.activeTrainerId || localStorage.getItem('activeTrainerId') || 't-w0iybl7qb';
             const baseUrl = window.location.origin + '/client-login.html';
-            const fullUrl = `${baseUrl}?t=${realTrainerId}&v=497`;
+            const fullUrl = `${baseUrl}?t=${realTrainerId}&v=498`;
             copyToClipboard(fullUrl);
             showToast('¡Link copiado! Envíalo a tu cliente.', 'success');
         };
@@ -6539,6 +6684,6 @@
             }
         });
     </script>
-    <script src="js/custom-recipes.js?v=497"></script></body>
+    <script src="js/custom-recipes.js?v=498"></script></body>
 
 </html>
