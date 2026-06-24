@@ -5,7 +5,7 @@
     <script>
         // Force PWA cache bust / reload
         (function() {
-            const CURRENT_VERSION = '490';
+            const CURRENT_VERSION = '491';
             const savedVersion = localStorage.getItem('app_version');
             if (savedVersion !== CURRENT_VERSION) {
                 localStorage.setItem('app_version', CURRENT_VERSION);
@@ -28,7 +28,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Gestión de Clientes - ASTeam</title>
-  <link rel="stylesheet" href="styles/theme.css?v=490">
+  <link rel="stylesheet" href="styles/theme.css?v=491">
   <link rel="stylesheet" href="styles/components.css">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 </head>
@@ -58,14 +58,14 @@
           </div>
           <button class="menu-toggle" onclick="toggleMenu()">☰</button>
           <ul class="nav-links" id="navLinks">
-            <li><a href="trainer-dashboard.html?v=490" class="nav-link">Dashboard</a></li>
-            <li><a href="trainer-clients.html?v=490" class="nav-link active">Clientes</a></li>
-            <li><a href="trainer-routines.html?v=490" class="nav-link">Rutinas</a></li>
-            <li><a href="trainer-diets.html?v=490" class="nav-link">Dietas</a></li>
-            <li><a href="trainer-feedbacks.html?v=490" class="nav-link">Revisiones</a></li>
-            <li><a href="trainer-media.html?v=490" class="nav-link">Biblioteca</a></li>
-            <li><a href="trainer-appointments.html?v=490" class="nav-link">Agenda</a></li>
-            <li><a href="trainer-settings.html?v=490" class="nav-link">Configuración</a></li>
+            <li><a href="trainer-dashboard.html?v=491" class="nav-link">Dashboard</a></li>
+            <li><a href="trainer-clients.html?v=491" class="nav-link active">Clientes</a></li>
+            <li><a href="trainer-routines.html?v=491" class="nav-link">Rutinas</a></li>
+            <li><a href="trainer-diets.html?v=491" class="nav-link">Dietas</a></li>
+            <li><a href="trainer-feedbacks.html?v=491" class="nav-link">Revisiones</a></li>
+            <li><a href="trainer-media.html?v=491" class="nav-link">Biblioteca</a></li>
+            <li><a href="trainer-appointments.html?v=491" class="nav-link">Agenda</a></li>
+            <li><a href="trainer-settings.html?v=491" class="nav-link">Configuración</a></li>
             <li><a href="#" onclick="if(typeof AUTH !== 'undefined') { AUTH.signOut() } else { window.location.reload() }; return false;" class="nav-link" style="color:var(--error-color)">🚪 Salir</a></li>
           </ul>
         </nav>
@@ -135,6 +135,8 @@
                   <th style="padding: 15px;">CLIENTE</th>
                   <th>ESTADO</th>
                   <th class="hide-on-mobile">REVISIÓN</th>
+                  <th class="hide-on-mobile">CUOTA</th>
+                  <th class="hide-on-mobile">VIGENCIA PAGO</th>
                   <th class="hide-on-mobile">CÓDIGO ACCESO</th>
                   <th class="hide-on-mobile">CONTACTO</th>
                   <th style="text-align: right; padding-right: 15px;">ACCIONES</th>
@@ -156,14 +158,14 @@
 
   <!-- Supabase SDK & Service -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script src="js/supabase-service.js?v=490"></script>
+  <script src="js/supabase-service.js?v=491"></script>
 
-  <script src="js/config.js?v=490"></script>
-  <script src="js/auth.js?v=490"></script>
-  <script src="js/sheets.js?v=490"></script>
-  <script src="js/data-models.js?v=490"></script>
-  <script src="js/custom-exercises.js?v=490"></script>
-  <script src="js/utils.js?v=490"></script>
+  <script src="js/config.js?v=491"></script>
+  <script src="js/auth.js?v=491"></script>
+  <script src="js/sheets.js?v=491"></script>
+  <script src="js/data-models.js?v=491"></script>
+  <script src="js/custom-exercises.js?v=491"></script>
+  <script src="js/utils.js?v=491"></script>
   <script>
     const daysMapShort = { '1': 'Lun', '2': 'Mar', '3': 'Mié', '4': 'Jue', '5': 'Vie', '6': 'Sáb', '7': 'Dom' };
 
@@ -197,7 +199,7 @@
       filtered.sort((a, b) => (a.name || '').localeCompare(b.name || ''));
 
       if (!filtered || filtered.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="6" style="text-align:center; padding: 40px; color: #666;">
+        tbody.innerHTML = `<tr><td colspan="8" style="text-align:center; padding: 40px; color: #666;">
           ${allClients.length === 0 ? 'No hay clientes registrados.' : 'No se encontraron clientes con esos filtros.'}
         </td></tr>`;
         return;
@@ -242,6 +244,23 @@
                   return '---';
                 })()}
               </span>
+            </td>
+            <td class="hide-on-mobile">
+              ${c.subscriptionType ? `
+                <div style="font-weight: 500;">${c.subscriptionType}</div>
+                ${c.subscriptionAmount ? `<div class="text-secondary" style="font-size: 0.75rem;">${c.subscriptionAmount} €</div>` : ''}
+              ` : '<span class="text-secondary">---</span>'}
+            </td>
+            <td class="hide-on-mobile">
+              ${(() => {
+                const statusClass = c.paymentStatus === 'paid' ? 'badge-success' : 'badge-error';
+                const statusLabel = c.paymentStatus === 'paid' ? 'Pagado' : 'Pendiente';
+                if (c.paymentExpiry) {
+                  return `<span class="badge ${statusClass}" style="min-width: 80px; text-align: center;">${c.paymentExpiry}</span>`;
+                } else {
+                  return `<span class="badge ${statusClass}" style="min-width: 80px; text-align: center; opacity: 0.7;">${statusLabel}</span>`;
+                }
+              })()}
             </td>
             <td class="hide-on-mobile"><code style="color:var(--primary-color)">${c.accessCode}</code></td>
             <td class="hide-on-mobile">${c.phone || '---'}</td>
@@ -469,6 +488,6 @@
       if (typeof window.dibujarTabla === 'function') window.dibujarTabla();
     }
   </script>
-    <script src="js/custom-recipes.js?v=490"></script></body>
+    <script src="js/custom-recipes.js?v=491"></script></body>
 
 </html>

@@ -303,8 +303,8 @@ const PersonalizationManager = {
             left: 0;
             width: 100%;
             height: 50px;
-            background: #8B5CF6;
-            color: white;
+            background: #8B5CF6 !important;
+            color: white !important;
             display: flex;
             align-items: center;
             justify-content: space-between;
@@ -316,12 +316,12 @@ const PersonalizationManager = {
             box-sizing: border-box;
         `;
         banner.innerHTML = `
-            <div style="display: flex; align-items: center; gap: 8px; font-family: sans-serif; font-size: 0.9rem;">
-                <span>🛠️ <strong>Modo Personalización Activo</strong>. Haz clic derecho en elementos para ocultar, u ordena con las flechas.</span>
+            <div style="display: flex; align-items: center; gap: 8px; font-family: sans-serif; font-size: 0.9rem; color: white !important;">
+                <span style="color: white !important;">🛠️ <strong style="color: white !important;">Modo Personalización Activo</strong>. Haz clic derecho en elementos para ocultar, u ordena con las flechas.</span>
             </div>
             <div style="display: flex; gap: 10px;">
-                <button onclick="PersonalizationManager.resetAll()" style="background: rgba(255,255,255,0.2); color: white; border: none; font-weight: 600; cursor: pointer; padding: 6px 12px; border-radius: 4px; font-size: 0.8rem;">Restablecer</button>
-                <button onclick="PersonalizationManager.exitMode()" style="background: white; color: #8B5CF6; border: none; font-weight: 700; cursor: pointer; padding: 6px 15px; border-radius: 4px; font-size: 0.8rem;">Guardar y Salir</button>
+                <button onclick="PersonalizationManager.resetAll()" style="background: rgba(255,255,255,0.2) !important; color: white !important; border: none !important; font-weight: 600; cursor: pointer; padding: 6px 12px; border-radius: 4px; font-size: 0.8rem;">Restablecer</button>
+                <button onclick="PersonalizationManager.exitMode()" style="background: white !important; color: #8B5CF6 !important; border: none !important; font-weight: 700; cursor: pointer; padding: 6px 15px; border-radius: 4px; font-size: 0.8rem;">Guardar y Salir</button>
             </div>
         `;
         document.body.appendChild(banner);
@@ -353,12 +353,12 @@ const PersonalizationManager = {
                     font-size: 0.75rem;
                 `;
                 if (isHidden) {
-                    controls.innerHTML = `<span onclick="PersonalizationManager.showElement('${id}'); event.stopPropagation();" style="cursor: pointer; background: #EF4444; padding: 1px 5px; border-radius: 2px; color: white; font-size: 0.7rem;">👁️ Mostrar</span>`;
+                    controls.innerHTML = `<span onclick="PersonalizationManager.showElement('${id}'); event.stopPropagation();" style="cursor: pointer; background: #EF4444 !important; padding: 1px 5px; border-radius: 2px; color: white !important; font-size: 0.7rem; font-weight: bold;">👁️ Mostrar</span>`;
                 } else {
                     controls.innerHTML = `
-                        <span onclick="PersonalizationManager.moveElement('${id}', 'prev'); event.stopPropagation();" style="cursor: pointer; background: #8B5CF6; padding: 1px 3px; border-radius: 2px; color: white;">←</span>
-                        <span onclick="PersonalizationManager.moveElement('${id}', 'next'); event.stopPropagation();" style="cursor: pointer; background: #8B5CF6; padding: 1px 3px; border-radius: 2px; color: white;">→</span>
-                        <span onclick="PersonalizationManager.hideElement('${id}'); event.stopPropagation();" style="cursor: pointer; background: #EF4444; padding: 1px 3px; border-radius: 2px; color: white;">✖</span>
+                        <span onclick="PersonalizationManager.moveElement('${id}', 'prev'); event.stopPropagation();" style="cursor: pointer; background: #8B5CF6 !important; padding: 1px 3px; border-radius: 2px; color: white !important;">←</span>
+                        <span onclick="PersonalizationManager.moveElement('${id}', 'next'); event.stopPropagation();" style="cursor: pointer; background: #8B5CF6 !important; padding: 1px 3px; border-radius: 2px; color: white !important;">→</span>
+                        <span onclick="PersonalizationManager.hideElement('${id}'); event.stopPropagation();" style="cursor: pointer; background: #EF4444 !important; padding: 1px 3px; border-radius: 2px; color: white !important;">✖</span>
                     `;
                 }
                 el.appendChild(controls);
@@ -379,8 +379,8 @@ const PersonalizationManager = {
                 position: absolute;
                 top: -12px;
                 right: 8px;
-                background: ${isHidden ? '#EF4444' : '#8B5CF6'};
-                color: white;
+                background: ${isHidden ? '#EF4444' : '#8B5CF6'} !important;
+                color: white !important;
                 border-radius: 4px;
                 padding: 3px 8px;
                 display: flex;
@@ -395,15 +395,15 @@ const PersonalizationManager = {
 
             if (isHidden) {
                 controlBar.innerHTML = `
-                    <span style="font-weight: bold; color: #FFD2D2; margin-right: 4px;">[Oculto]</span>
-                    <button onclick="PersonalizationManager.showElement('${id}')" style="background: white; border: none; color: #EF4444; border-radius: 2px; cursor: pointer; padding: 2px 6px; font-size: 0.7rem; font-weight: bold;">👁️ Mostrar</button>
+                    <span style="font-weight: bold; color: #FFD2D2 !important; margin-right: 4px;">[Oculto]</span>
+                    <button onclick="PersonalizationManager.showElement('${id}')" style="background: white !important; border: none !important; color: #EF4444 !important; border-radius: 2px; cursor: pointer; padding: 2px 6px; font-size: 0.7rem; font-weight: bold;">👁️ Mostrar</button>
                 `;
             } else {
                 controlBar.innerHTML = `
-                    <span style="font-weight: bold; margin-right: 4px;">Mover:</span>
-                    <button onclick="PersonalizationManager.moveElement('${id}', 'prev')" style="background: none; border: none; color: white; cursor: pointer; font-size: 0.8rem; font-weight: bold; padding: 0 2px;">⬅️/⬆️</button>
-                    <button onclick="PersonalizationManager.moveElement('${id}', 'next')" style="background: none; border: none; color: white; cursor: pointer; font-size: 0.8rem; font-weight: bold; padding: 0 2px;">➡️/⬇️</button>
-                    <button onclick="PersonalizationManager.hideElement('${id}')" style="background: none; border: none; color: #FFA8A8; cursor: pointer; font-size: 0.8rem; font-weight: bold; margin-left: 4px; padding: 0 2px;">✖ Ocultar</button>
+                    <span style="font-weight: bold; color: white !important; margin-right: 4px;">Mover:</span>
+                    <button onclick="PersonalizationManager.moveElement('${id}', 'prev')" style="background: none !important; border: none !important; color: white !important; cursor: pointer; font-size: 0.8rem; font-weight: bold; padding: 0 2px;">⬅️/⬆️</button>
+                    <button onclick="PersonalizationManager.moveElement('${id}', 'next')" style="background: none !important; border: none !important; color: white !important; cursor: pointer; font-size: 0.8rem; font-weight: bold; padding: 0 2px;">➡️/⬇️</button>
+                    <button onclick="PersonalizationManager.hideElement('${id}')" style="background: none !important; border: none !important; color: #FFA8A8 !important; cursor: pointer; font-size: 0.8rem; font-weight: bold; margin-left: 4px; padding: 0 2px;">✖ Ocultar</button>
                 `;
             }
             el.appendChild(controlBar);
@@ -536,24 +536,24 @@ const PersonalizationManager = {
                 position: absolute;
                 top: ${e.pageY}px;
                 left: ${e.pageX}px;
-                background: #1E293B;
-                color: white;
-                border: 1px solid #475569;
+                background: #1E293B !important;
+                color: white !important;
+                border: 1px solid #475569 !important;
                 border-radius: 6px;
                 box-shadow: 0 4px 12px rgba(0,0,0,0.5);
                 padding: 4px 0;
                 z-index: 1000000;
-                min-width: 140px;
+                min-width: 160px;
                 font-family: sans-serif;
-                font-size: 0.8rem;
+                font-size: 0.85rem;
                 user-select: none;
             `;
 
             menu.innerHTML = `
-                <div id="ctx-hide-btn" style="padding: 8px 14px; cursor: pointer; display: flex; align-items: center; gap: 8px; transition: background 0.15s;">
+                <div id="ctx-hide-btn" style="padding: 8px 14px; cursor: pointer; display: flex; align-items: center; gap: 8px; color: white !important; transition: background 0.15s;" onmouseenter="this.style.background='#334155'" onmouseleave="this.style.background='transparent'">
                     👁️ Ocultar elemento
                 </div>
-                <div id="ctx-personalize-btn" style="padding: 8px 14px; cursor: pointer; border-top: 1px solid #334155; display: flex; align-items: center; gap: 8px; transition: background 0.15s;">
+                <div id="ctx-personalize-btn" style="padding: 8px 14px; cursor: pointer; border-top: 1px solid #334155; display: flex; align-items: center; gap: 8px; color: white !important; transition: background 0.15s;" onmouseenter="this.style.background='#334155'" onmouseleave="this.style.background='transparent'">
                     🛠️ Personalizar página
                 </div>
             `;
