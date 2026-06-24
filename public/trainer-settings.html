@@ -1924,7 +1924,7 @@
         };
 
         // Load settings on page load
-        loadSettings();
+        initSettingsUI();
     </script>
 
 
@@ -1948,7 +1948,11 @@
             document.getElementById('app').style.display = 'block';
 
             // Cargar ajustes
-            if (typeof loadSettings === 'function') loadSettings();
+            if (typeof initSettingsUI === 'function') {
+                initSettingsUI();
+            } else if (typeof loadSettings === 'function') {
+                loadSettings();
+            }
 
             // Trigger diagnostic log upload
             setTimeout(() => {
