@@ -25,7 +25,11 @@ export async function POST(request: Request) {
     const targetEmail = toEmail || "alejandra.asteam@gmail.com";
 
     // Configurar el contenido del correo
-    const emailSubject = subject || `Nuevo formulario ${targetBrand}!`;
+    // If the subject is generic, replace it with a cleaner, dynamic subject.
+    let emailSubject = subject || `Nuevo formulario ${targetBrand}!`;
+    if (!subject || subject.startsWith("Nuevo formulario - Web") || subject.startsWith("Nuevo formulario")) {
+      emailSubject = `Nueva Solicitud de Asesoría: ${name} - ${targetBrand}`;
+    }
     const emailBody = `
       <meta charset="utf-8">
       <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #e0e0e0; border-radius: 10px; background-color: #fafafa;">
@@ -97,8 +101,19 @@ export async function POST(request: Request) {
         },
       });
 
+      // Dinámicamente configuramos el remitente para que muestre la marca correspondiente (ej. "Lucy Tundidor Asesorías")
+      let senderEmail = SMTP_USER;
+      if (SMTP_FROM && SMTP_FROM.includes("<") && SMTP_FROM.includes(">")) {
+        const match = SMTP_FROM.match(/<([^>]+)>/);
+        if (match) {
+          senderEmail = match[1];
+        }
+      }
+      
+      const displayName = targetBrand === "ASTeam" ? "ASTeam Asesorías" : `${targetBrand} Asesorías`;
+
       await transporter.sendMail({
-        from: SMTP_FROM || `"${targetBrand} Asesorías" <${SMTP_USER}>`,
+        from: `"${displayName}" <${senderEmail}>`,
         to: targetEmail,
         subject: emailSubject,
         html: emailBody,

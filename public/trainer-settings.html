@@ -31,7 +31,7 @@
 
         // Force PWA cache bust / reload
         (function() {
-            const CURRENT_VERSION = '519';
+            const CURRENT_VERSION = '512';
             const savedVersion = localStorage.getItem('app_version');
             if (savedVersion !== CURRENT_VERSION) {
                 localStorage.setItem('app_version', CURRENT_VERSION);
@@ -57,8 +57,8 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="styles/theme.css?v=519">
-    <link rel="stylesheet" href="styles/components.css?v=519">
+    <link rel="stylesheet" href="styles/theme.css?v=512">
+    <link rel="stylesheet" href="styles/components.css?v=512">
     <style>
         .settings-section {
             margin-bottom: var(--spacing-xl);
@@ -139,14 +139,14 @@
                 </div>
                 <button class="menu-toggle" onclick="toggleMenu()">☰</button>
                 <ul class="nav-links" id="navLinks">
-                    <li><a href="trainer-dashboard.html?v=519" class="nav-link">Dashboard</a></li>
-                    <li><a href="trainer-clients.html?v=519" class="nav-link">Clientes</a></li>
-                    <li><a href="trainer-routines.html?v=519" class="nav-link">Rutinas</a></li>
-                    <li><a href="trainer-diets.html?v=519" class="nav-link">Dietas</a></li>
-                    <li><a href="trainer-feedbacks.html?v=519" class="nav-link">Revisiones</a></li>
-                    <li><a href="trainer-media.html?v=519" class="nav-link">Biblioteca</a></li>
-                    <li><a href="trainer-appointments.html?v=519" class="nav-link">Agenda</a></li>
-                    <li><a href="trainer-settings.html?v=519" class="nav-link active">Configuración</a></li>
+                    <li><a href="trainer-dashboard.html?v=512" class="nav-link">Dashboard</a></li>
+                    <li><a href="trainer-clients.html?v=512" class="nav-link">Clientes</a></li>
+                    <li><a href="trainer-routines.html?v=512" class="nav-link">Rutinas</a></li>
+                    <li><a href="trainer-diets.html?v=512" class="nav-link">Dietas</a></li>
+                    <li><a href="trainer-feedbacks.html?v=512" class="nav-link">Revisiones</a></li>
+                    <li><a href="trainer-media.html?v=512" class="nav-link">Biblioteca</a></li>
+                    <li><a href="trainer-appointments.html?v=512" class="nav-link">Agenda</a></li>
+                    <li><a href="trainer-settings.html?v=512" class="nav-link active">Configuración</a></li>
                     <li><a href="#" onclick="if(typeof AUTH !== 'undefined') { AUTH.signOut() } else { window.location.reload() }; return false;" class="nav-link" style="color:var(--error-color)">🚪 Salir</a></li>
                 </ul>
             </nav>
@@ -795,16 +795,16 @@
 
     <!-- Supabase SDK & Service -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="js/supabase-service.js?v=519"></script>
+    <script src="js/supabase-service.js?v=512"></script>
 
     <!-- UI Scripts -->
-    <script src="js/config.js?v=519"></script>
-    <script src="js/auth.js?v=519"></script>
-    <script src="js/sheets.js?v=519"></script>
-    <script src="js/data-models.js?v=519"></script>
-    <script src="js/cloud-storage.js?v=519"></script>
-    <script src="js/utils.js?v=519"></script>
-    <script src="js/excel-manager.js?v=519"></script>
+    <script src="js/config.js?v=512"></script>
+    <script src="js/auth.js?v=512"></script>
+    <script src="js/sheets.js?v=512"></script>
+    <script src="js/data-models.js?v=512"></script>
+    <script src="js/cloud-storage.js?v=512"></script>
+    <script src="js/utils.js?v=512"></script>
+    <script src="js/excel-manager.js?v=512"></script>
     <script>
         // Global Variables
         let feedbackQuestions = [];
@@ -936,13 +936,13 @@
                                      (trainerEmail && (trainerEmail.toLowerCase() === 'ingenia@ingeniaia.es' || trainerEmail.toLowerCase() === 'alejandra.asteam@gmail.com')));
 
                 const isLucy = (activeId.includes('t-udve3b1u3') || 
-                                (trainerEmail && trainerEmail.toLowerCase() === 'lucyy.tundidor@gmail.com'));
+                                (trainerEmail && trainerEmail.toLowerCase() === 'lucytundidor@gmail.com'));
 
                 if (!t && isAlejandra) {
                     t = trainers.find(tr => tr.id === 't-w0iybl7qb' || tr.email === 'alejandra.asteam@gmail.com' || tr.email === 'ingenia@ingeniaia.es');
                 }
                 if (!t && isLucy) {
-                    t = trainers.find(tr => tr.id === 't-udve3b1u3' || tr.email === 'lucyy.tundidor@gmail.com');
+                    t = trainers.find(tr => tr.id === 't-udve3b1u3' || tr.email === 'lucytundidor@gmail.com');
                 }
 
                 // Bulletproof Fallback: if data can't be fetched or trainer not found, default to a standard Plan Basic
@@ -952,7 +952,7 @@
                         id: activeId || 'default',
                         name: isLucy ? 'Lucy Tundidor' : (isAlejandra ? 'Alejandra ASTeam' : (activeId === 'demo' ? 'DEMO Trainer' : (activeId === 'victor' ? 'Victor' : 'Entrenador Infinite Coach'))),
                         plan: 'Plan Basic',
-                        email: trainerEmail || (isLucy ? 'lucyy.tundidor@gmail.com' : (isAlejandra ? 'alejandra.asteam@gmail.com' : 'trainer@infinitecoach.es')),
+                        email: trainerEmail || (isLucy ? 'lucytundidor@gmail.com' : (isAlejandra ? 'alejandra.asteam@gmail.com' : 'trainer@infinitecoach.es')),
                         status: 'active',
                         expiryDate: '18/06/2026',
                         licenseKey: localStorage.getItem('_rememberedTrainerKey') || 'FIT-XXXX-26'
@@ -2492,6 +2492,6 @@
             }, 2500);
         }
     </script>
-    <script src="js/custom-recipes.js?v=519" defer></script></body>
+    <script src="js/custom-recipes.js?v=512" defer></script></body>
 
 </html>

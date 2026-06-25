@@ -59,6 +59,28 @@ const SupabaseService = {
     async saveTrainerData(trainerId, fullData) {
         if (!this.client) this.init();
         try {
+            // 🛡️ RESET BLINDAJE GLOBAL: Bloquear escrituras de sesiones obsoletas que intentan pisar un reset limpio
+            if (trainerId && trainerId !== 'default') {
+                try {
+                    const { data: cloudProfile } = await this.client
+                        .from('trainer_profiles')
+                        .select('full_data')
+                        .eq('trainer_id', trainerId)
+                        .single();
+                    
+                    if (cloudProfile && cloudProfile.full_data && cloudProfile.full_data.__reset_version) {
+                        const cloudReset = cloudProfile.full_data.__reset_version;
+                        const localReset = fullData ? fullData.__reset_version : null;
+                        if (String(localReset) !== String(cloudReset)) {
+                            console.error(`🚨 [RESET DB SHIELD] GUARDADO BLOQUEADO: La nube tiene un reset v${cloudReset} y el cliente intentó guardar v${localReset}. Descartando guardado para evitar restaurar datos borrados.`);
+                            return false; 
+                        }
+                    }
+                } catch (errResetCheck) {
+                    console.warn("[RESET DB SHIELD] Error en la verificación de reset, continuando...", errResetCheck);
+                }
+            }
+
             // 🛡️ CORTAFUEGOS ASTEAM: Evitar contaminación con datos de prueba
             if (trainerId === 't-w0iybl7qb' && fullData) {
                 console.log("🛡️ [ASTEAM CORTAFUEGOS] Aplicando sanitización estricta...");

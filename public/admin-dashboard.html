@@ -5,7 +5,7 @@
     <script>
         // Force PWA cache bust / reload
         (function() {
-            const CURRENT_VERSION = '519';
+            const CURRENT_VERSION = '512';
             const savedVersion = localStorage.getItem('app_version');
             if (savedVersion !== CURRENT_VERSION) {
                 localStorage.setItem('app_version', CURRENT_VERSION);
@@ -31,8 +31,8 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="styles/theme.css?v=519">
-    <link rel="stylesheet" href="styles/components.css?v=519">
+    <link rel="stylesheet" href="styles/theme.css?v=512">
+    <link rel="stylesheet" href="styles/components.css?v=512">
     <style>
         :root {
             --admin-primary: #8B5CF6; /* Purple for Master Admin */
@@ -420,6 +420,10 @@
                     <label style="display: block; margin-bottom: 6px; font-size: 0.85rem;">Email de Acceso</label>
                     <input type="email" id="tEmail" class="form-input" placeholder="email@ejemplo.com" required>
                 </div>
+                <div class="form-group mb-md">
+                    <label style="display: block; margin-bottom: 6px; font-size: 0.85rem; color: #10B981;">Email de Stripe (Opcional)</label>
+                    <input type="email" id="tStripeEmail" class="form-input" placeholder="Solo si pagó en Stripe con otro email" style="border-color: rgba(16, 185, 129, 0.3);">
+                </div>
                 
                 <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;" class="mb-md">
                     <div class="form-group">
@@ -577,9 +581,9 @@
 
     <!-- Supabase SDK & Service -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="js/supabase-service.js?v=519"></script>
+    <script src="js/supabase-service.js?v=512"></script>
 
-    <script src="js/utils.js?v=519"></script>
+    <script src="js/utils.js?v=512"></script>
 
     <script>
         // MASTER STATE CONTROL
@@ -755,6 +759,39 @@
             }
         };
 
+        window.copyAccessCredentials = (trainerName, appName, stripeLink, email, licenseKey, btn) => {
+            let message = `¡Hola ${trainerName}!\n\nAquí tienes tus datos de acceso para ${appName || 'Infinite Coach'}:\n`;
+            if (stripeLink) {
+                message += `💳 Enlace de pago (Stripe): ${stripeLink}\n`;
+            }
+            message += `👤 Usuario: ${email}\n`;
+            message += `🔑 Código de acceso: ${licenseKey}\n`;
+            message += `🔗 Accede a la plataforma: https://www.infinitecoach.es\n\n`;
+            message += `¡Cualquier duda me dices!`;
+
+            const onSuccess = () => {
+                const originalText = btn.textContent;
+                btn.textContent = '✅';
+                window.adminToast("¡Mensaje de acceso copiado! ✉️", "success");
+                setTimeout(() => {
+                    btn.textContent = originalText;
+                }, 1500);
+            };
+
+            const onError = (err) => {
+                console.error("Error al copiar mensaje:", err);
+                window.adminToast("Error al copiar mensaje", "error");
+            };
+
+            if (navigator.clipboard && typeof navigator.clipboard.writeText === 'function') {
+                navigator.clipboard.writeText(message).then(onSuccess).catch(() => {
+                    fallbackCopyStripeLink(message, onSuccess, onError);
+                });
+            } else {
+                fallbackCopyStripeLink(message, onSuccess, onError);
+            }
+        };
+
         function fallbackCopyStripeLink(text, onSuccess, onError) {
             const textArea = document.createElement("textarea");
             textArea.value = text;
@@ -836,6 +873,7 @@
 
                 document.getElementById('tName').value = t.name || '';
                 document.getElementById('tEmail').value = t.email || '';
+                document.getElementById('tStripeEmail').value = t.stripeEmail || '';
                 document.getElementById('tApp').value = t.appId || 'infinite-coach';
                 
                 // Update plans list for this app first
@@ -868,6 +906,7 @@
 
                 document.getElementById('tName').value = '';
                 document.getElementById('tEmail').value = '';
+                document.getElementById('tStripeEmail').value = '';
                 document.getElementById('tBillingDay').value = 1;
                 document.getElementById('tAccessType').value = 'unique';
                 
@@ -998,6 +1037,7 @@
                         <td style="padding: 15px; border-bottom: 1px solid rgba(255,255,255,0.03);">
                              <div style="display: flex; gap: 10px; align-items: center;">
                                 ${stripeLink ? `<button onclick="window.copyStripeLink('${stripeLink}', this)" style="cursor: pointer; border: none; background: none; font-size: 1.2rem;" title="Copiar enlace de pago">📋</button>` : ''}
+                                <button onclick="window.copyAccessCredentials('${t.name.replace(/'/g, "\\'")}', '${appObj.name.replace(/'/g, "\\'")}', '${stripeLink || ''}', '${t.email.replace(/'/g, "\\'")}', '${t.licenseKey.replace(/'/g, "\\'")}', this)" style="cursor: pointer; border: none; background: none; font-size: 1.2rem;" title="Copiar mensaje de acceso completo (Stripe + Usuario + Código)">✉️</button>
                                 <button onclick="window.openTrainerModal('${t.id}')" style="cursor: pointer; border: none; background: none; font-size: 1.2rem;" title="Editar">✏️</button>
                                 <button onclick="window.sendWApp('${t.id}')" style="cursor: pointer; border: none; background: none; font-size: 1.2rem;" title="WhatsApp">📱</button>
                              </div>
@@ -1336,6 +1376,7 @@
                         data.trainers[idx].status = document.getElementById('tStatus').value;
                         data.trainers[idx].lastPaymentDate = document.getElementById('tLastPaymentDate').value;
                         data.trainers[idx].expiryDate = document.getElementById('tExpiryDate').value;
+                        data.trainers[idx].stripeEmail = document.getElementById('tStripeEmail').value.trim();
                         data.trainers[idx].billingDay = parseInt(document.getElementById('tBillingDay').value) || 1;
                         data.trainers[idx].accessType = document.getElementById('tAccessType').value;
                         
@@ -1356,6 +1397,7 @@
                         status: 'active',
                         lastPaymentDate: isFree ? 'LIFETIME' : new Date().toLocaleDateString('es-ES'),
                         expiryDate: isFree ? '31/12/2099' : new Date(new Date().setMonth(new Date().getMonth() + 1)).toLocaleDateString('es-ES'),
+                        stripeEmail: document.getElementById('tStripeEmail').value.trim(),
                         billingDay: parseInt(document.getElementById('tBillingDay').value) || 1,
                         accessType: document.getElementById('tAccessType').value
                     };
@@ -1520,5 +1562,5 @@
             });
         });
     </script>
-    <script src="js/custom-recipes.js?v=519"></script></body>
+    <script src="js/custom-recipes.js?v=512"></script></body>
 </html>

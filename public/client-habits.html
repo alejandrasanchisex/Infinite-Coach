@@ -7,7 +7,7 @@
     <script>
         // Force PWA cache bust / reload
         (function() {
-            const CURRENT_VERSION = '519';
+            const CURRENT_VERSION = '520';
             const savedVersion = localStorage.getItem('app_version');
             if (savedVersion !== CURRENT_VERSION) {
                 localStorage.setItem('app_version', CURRENT_VERSION);
@@ -31,9 +31,9 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="styles/theme.css?v=519">
-    <link rel="stylesheet" href="styles/components.css?v=519">
-    <link rel="stylesheet" href="styles/mobile.css?v=519">
+    <link rel="stylesheet" href="styles/theme.css?v=520">
+    <link rel="stylesheet" href="styles/components.css?v=520">
+    <link rel="stylesheet" href="styles/mobile.css?v=520">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <script>
@@ -221,10 +221,10 @@
                     <span id="brandName">Infinite Coach</span>
                 </div>
                 <ul class="nav-links" id="navLinks">
-                    <li><a href="client-dashboard.html?v=519" class="nav-link">Inicio</a></li>
-                    <li><a href="client-profile.html?v=519" class="nav-link">Ficha Técnica</a></li>
+                    <li><a href="client-dashboard.html?v=520" class="nav-link">Inicio</a></li>
+                    <li><a href="client-profile.html?v=520" class="nav-link">Ficha Técnica</a></li>
 
-                    <li><a href="client-login.html?v=519" class="nav-link">Salir</a></li>
+                    <li><a href="client-login.html?v=520" class="nav-link">Salir</a></li>
                 </ul>
                 <button class="menu-toggle" onclick="toggleMenu()" style="margin-left: auto;">☰</button>
             </nav>
@@ -235,7 +235,7 @@
     <main class="main-content">
         <div class="container">
             <div class="flex-between align-center mb-lg">
-                <a href="client-dashboard.html?v=519" class="btn btn-sm btn-secondary" style="border-radius: 50px; padding: 8px 15px;">
+                <a href="client-dashboard.html?v=520" class="btn btn-sm btn-secondary" style="border-radius: 50px; padding: 8px 15px;">
                     ← Volver
                 </a>
                 <h1 style="margin: 0; font-size: 1.5rem;">Hábitos Diarios</h1>
@@ -331,11 +331,11 @@
 
     <!-- Supabase SDK & Service -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="js/supabase-service.js?v=519"></script>
+    <script src="js/supabase-service.js?v=520"></script>
 
-    <script src="js/config.js?v=519"></script>
-    <script src="js/data-models.js?v=519"></script>
-    <script src="js/utils.js?v=519"></script>
+    <script src="js/config.js?v=520"></script>
+    <script src="js/data-models.js?v=520"></script>
+    <script src="js/utils.js?v=520"></script>
     <script>
         const params = new URLSearchParams(window.location.search);
         const urlClientId = params.get('c') || params.get('client');
@@ -387,7 +387,7 @@
             if (!container) return;
 
             const dates = [];
-            for (let i = 6; i >= 0; i--) {
+            for (let i = 7; i >= 0; i--) {
                 const d = new Date();
                 d.setDate(d.getDate() - i);
                 dates.push(d);
@@ -452,6 +452,19 @@
                 return;
             }
 
+            // Theme
+            BrandConfig.applyTheme();
+            const brand = BrandConfig.get();
+            if (brand) {
+                const bNameEl = document.getElementById('brandName');
+                if (bNameEl) bNameEl.textContent = brand.name || 'Infinite Coach';
+                const bLogoEl = document.getElementById('brandLogo');
+                if (bLogoEl && brand.logo) {
+                    bLogoEl.src = brand.logo;
+                    bLogoEl.style.display = 'block';
+                }
+            }
+
             // Redireccionar al Dashboard si está inactivo o tiene pagos pendientes (Opción 3)
             const isInactive = client.status === 'inactive';
             const isUnpaid = client.paymentStatus !== 'paid' || client.status === 'unpaid';
@@ -465,16 +478,7 @@
                 return;
             }
 
-            // Theme
-            BrandConfig.applyTheme();
-            const brand = BrandConfig.get();
-            document.getElementById('brandName').textContent = brand.name;
-            if (brand.logo) {
-                document.getElementById('brandLogo').src = brand.logo;
-                document.getElementById('brandLogo').style.display = 'block';
-            }
-
-            if (brand.clientSettings && brand.clientSettings.showWeightHabit === false) {
+            if (brand && brand.clientSettings && brand.clientSettings.showWeightHabit === false) {
                 const cardWeight = document.getElementById('card-weight');
                 if (cardWeight) cardWeight.style.display = 'none';
                 const filterWeight = document.getElementById('f-weight');
@@ -758,5 +762,5 @@
 
 
     </script>
-    <script src="js/custom-recipes.js?v=519"></script></body>
+    <script src="js/custom-recipes.js?v=520"></script></body>
 </html>

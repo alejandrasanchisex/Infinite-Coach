@@ -7,7 +7,7 @@
     <script>
         // Force PWA cache bust / reload
         (function() {
-            const CURRENT_VERSION = '519';
+            const CURRENT_VERSION = '512';
             const savedVersion = localStorage.getItem('app_version');
             if (savedVersion !== CURRENT_VERSION) {
                 localStorage.setItem('app_version', CURRENT_VERSION);
@@ -31,9 +31,9 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="styles/theme.css?v=519">
-    <link rel="stylesheet" href="styles/components.css?v=519">
-    <link rel="stylesheet" href="styles/mobile.css?v=519">
+    <link rel="stylesheet" href="styles/theme.css?v=512">
+    <link rel="stylesheet" href="styles/components.css?v=512">
+    <link rel="stylesheet" href="styles/mobile.css?v=512">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <script>
@@ -104,10 +104,10 @@
                     <span id="brandName">Infinite Coach</span>
                 </div>
                 <ul class="nav-links" id="navLinks">
-                    <li><a href="client-dashboard.html?v=519" class="nav-link active">Inicio</a></li>
-                    <li><a href="client-profile.html?v=519" class="nav-link">Ficha Técnica</a></li>
+                    <li><a href="client-dashboard.html?v=512" class="nav-link active">Inicio</a></li>
+                    <li><a href="client-profile.html?v=512" class="nav-link">Ficha Técnica</a></li>
 
-                    <li><a href="client-login.html?v=519" class="nav-link">Salir</a></li>
+                    <li><a href="client-login.html?v=512" class="nav-link">Salir</a></li>
                 </ul>
                 <button class="menu-toggle" onclick="toggleMenu()" style="margin-left: auto;">☰</button>
             </nav>
@@ -123,33 +123,6 @@
                 <p class="text-muted" style="margin-top: 5px; font-size: 0.9rem;">Hoy es un gran día para entrenar.</p>
             </div>
 
-            <!-- SECCIÓN WOW: TU OBJETIVO DE HOY (Estilo Apple Fitness+) -->
-            <div id="todayTargetSection" class="mb-xl" style="display: none;">
-                <div class="card" style="background: linear-gradient(135deg, #1e1e1e 0%, #000 100%); border: 1.5px solid rgba(255,255,255,0.1); border-radius: 24px; padding: 25px; overflow: hidden; position: relative;">
-                    <!-- Decoración visual de fondo -->
-                    <div style="position: absolute; top: -20px; right: -20px; width: 120px; height: 120px; background: var(--primary-color); filter: blur(60px); opacity: 0.15; z-index: 1;"></div>
-                    
-                    <div style="position: relative; z-index: 2;">
-                        <h3 class="text-xs uppercase letter-spacing-2 mb-sm" style="color: var(--primary-color); font-weight: 700;">🎯 TU OBJETIVO DE HOY</h3>
-                        <div id="sessionSummary">
-                            <h2 style="font-size: 1.5rem; font-weight: 800; margin-bottom: 8px; color: #fff;" id="nextSessionName">Sesión de Entrenamiento</h2>
-                            <div class="flex align-center gap-md" style="margin-bottom: 20px;">
-                                <div style="display: flex; align-items: center; gap: 5px; color: #aaa; font-size: 0.85rem;">
-                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path></svg>
-                                    <span id="sessionExercises">---</span> ejercicios
-                                </div>
-                                <div style="display: flex; align-items: center; gap: 5px; color: #aaa; font-size: 0.85rem;">
-                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
-                                    45-60 min
-                                </div>
-                            </div>
-                            <button class="btn btn-primary" onclick="window.location.href='client-routine.html'" style="width: 100%; justify-content: center; padding: 16px; border-radius: 16px; font-weight: 800; font-size: 1rem; box-shadow: 0 10px 25px rgba(var(--primary-color-rgb), 0.3);">
-                                EMPEZAR AHORA
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            </div>
 
             <!-- Accesos Rápidos (Estilo corregido) -->
             <div class="mb-xl">
@@ -230,19 +203,19 @@
             </style>
             
             <div style="text-align: center; color: rgba(255,255,255,0.15); font-size: 0.75rem; margin: 30px 0 10px; font-weight: 500;">
-                Versión de la App: v519
+                Versión de la App: v526
             </div>
         </div>
     </main>
 
     <!-- Supabase SDK & Service -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="js/supabase-service.js?v=519"></script>
+    <script src="js/supabase-service.js?v=512"></script>
 
-    <script src="js/config.js?v=519"></script>
-    <script src="js/data-models.js?v=519"></script>
-    <script src="js/utils.js?v=519"></script>
-    <script src="js/custom-exercises.js?v=519"></script>
+    <script src="js/config.js?v=512"></script>
+    <script src="js/data-models.js?v=512"></script>
+    <script src="js/utils.js?v=512"></script>
+    <script src="js/custom-exercises.js?v=512"></script>
     <script>
         // CLIENT INITIALIZATION
         const dashboardUrlParams = new URLSearchParams(window.location.search);
@@ -285,7 +258,7 @@
 
         async function initDashboard() {
             // --- 1. RENDER INMEDIATO DE DATOS LOCALES (UX ULTRA-RÁPIDA) ---
-            function renderLocalData() {
+            function renderLocalData(withOnboardingCheck = false) {
                 // 1.1 Cargar tema y branding
                 try {
                     BrandConfig.applyTheme();
@@ -441,35 +414,8 @@
                             }
                         } catch(errQuota) { console.warn('Error inside quota button render:', errQuota); }
 
-                        // Verificar Onboarding (Cuestionario Inicial)
-                        try {
-                            const onboardingOverlay = document.getElementById('onboardingOverlay');
-                            console.log("[Onboarding Check] Initial setup check:", {
-                                clientExists: !!client,
-                                clientId: client ? client.id : null,
-                                initialSetupDone: client ? client.initialSetupDone : null,
-                                type: client ? typeof client.initialSetupDone : null,
-                                overlayExists: !!onboardingOverlay
-                            });
-                            
-
-
-                            if (onboardingOverlay) {
-                                if (client.initialSetupDone !== true && client.initialSetupDone !== 'true') {
-                                    console.log("[Onboarding Check] Onboarding is required. Showing overlay...");
-                                    onboardingOverlay.style.display = 'flex';
-                                    try {
-                                        initOnboardingForm(client);
-                                    } catch (errInit) {
-                                        console.error("[Onboarding Check] Error in initOnboardingForm:", errInit);
-                                    }
-                                    return; // Bloquear ejecución posterior
-                                } else {
-                                    console.log("[Onboarding Check] Onboarding already completed. Hiding overlay.");
-                                    onboardingOverlay.style.display = 'none';
-                                }
-                            }
-                        } catch(errOnboarding) { console.warn('Error in onboarding check:', errOnboarding); }
+                        // Onboarding desactivado — el overlay siempre permanece oculto
+                        try { const oo = document.getElementById('onboardingOverlay'); if (oo) oo.style.display = 'none'; } catch(e) {}
 
                         // Verificar bloqueos de acceso (Opción 3)
                         try {
@@ -564,7 +510,8 @@
             } catch(e) { console.warn('Cloud sync error:', e); }
 
             // --- 3. RE-RENDERIZAR CON DATOS ACTUALIZADOS DE LA NUBE ---
-            renderLocalData();
+            // withOnboardingCheck=true → aquí sí comprobamos onboarding (datos fiables de la nube)
+            renderLocalData(true);
 
             // --- 4. ACCIONES ADICIONALES (STRIPE / NOTIFICACIONES) ---
             let client = Clients.getById(clientId);
@@ -589,7 +536,7 @@
                                     
                                     // Sincronizar y volver a renderizar con la marca del entrenador correcto
                                     await window.syncFromCloud();
-                                    renderLocalData();
+                                    renderLocalData(true);
                                     client = Clients.getById(clientId);
                                     break;
                                 }
@@ -951,6 +898,7 @@
                 // Hide onboarding overlay
                 const obOverlay = document.getElementById('onboardingOverlay');
                 if (obOverlay) obOverlay.style.display = 'none';
+                window._onboardingFormInit = false;
                 
                 // Trigger background cloud sync
                 if (window.syncFromCloud) {
@@ -958,7 +906,7 @@
                 }
                 
                 // Re-render local dashboard views
-                renderLocalData();
+                renderLocalData(true);
                 
             } catch (err) {
                 console.error("Error updating client onboarding:", err);
@@ -1142,7 +1090,7 @@
     </style>
 
 
-    <script src="js/custom-recipes.js?v=519"></script>
-    <script src="js/pwa-install.js?v=519"></script>
+    <script src="js/custom-recipes.js?v=512"></script>
+    <script src="js/pwa-install.js?v=512"></script>
 </body>
 </html>

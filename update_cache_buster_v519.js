@@ -1,6 +1,9 @@
 const fs = require('fs');
 const path = require('path');
 
+const OLD_V = /(\?v=|\&v=)\d+/g;
+const NEW_V = '$1519';
+
 const publicDir = path.join(__dirname, 'public');
 const files = fs.readdirSync(publicDir);
 
@@ -9,55 +12,45 @@ files.forEach(file => {
     if (path.extname(file) === '.html') {
         const filePath = path.join(publicDir, file);
         let content = fs.readFileSync(filePath, 'utf8');
-        
         let changed = false;
-        
-        // Match version patterns like v=518 or similar and update to 519
-        const versionRegex = /(\?v=|\&v=)\d+/g;
-        if (versionRegex.test(content)) {
-            content = content.replace(versionRegex, (match, prefix) => `${prefix}519`);
+
+        if (OLD_V.test(content)) {
+            content = content.replace(OLD_V, NEW_V);
             changed = true;
         }
-        
-        // Match const CURRENT_VERSION = '518';
+        OLD_V.lastIndex = 0;
+
         if (content.includes('CURRENT_VERSION')) {
             content = content.replace(/const CURRENT_VERSION = '\d+';/g, "const CURRENT_VERSION = '519';");
             content = content.replace(/const CURRENT_VERSION = "\d+";/g, 'const CURRENT_VERSION = "519";');
             changed = true;
         }
 
-        // Match hardcoded redirections like client-dashboard.html?v=518
-        const redirectVersionRegex = /client-dashboard\.html\?v=\d+/g;
-        if (redirectVersionRegex.test(content)) {
-            content = content.replace(redirectVersionRegex, "client-dashboard.html?v=519");
-            changed = true;
-        }
-        
+        content = content.replace(/client-dashboard\.html\?v=\d+/g, "client-dashboard.html?v=519");
+
         if (changed) {
             fs.writeFileSync(filePath, content);
-            console.log(`Updated cache buster to v519 in ${file}`);
+            console.log(`Updated: ${file}`);
             count++;
         }
     }
 });
 
-// Update sw.js comment/version
 const swPath = path.join(publicDir, 'sw.js');
 if (fs.existsSync(swPath)) {
-    let swContent = fs.readFileSync(swPath, 'utf8');
-    swContent = swContent.replace(/Service Worker Cache Buster v\d+/g, "Service Worker Cache Buster v519");
-    fs.writeFileSync(swPath, swContent);
-    console.log("Updated sw.js version comment to v519");
+    let sw = fs.readFileSync(swPath, 'utf8');
+    sw = sw.replace(/Service Worker Cache Buster v\d+/g, "Service Worker Cache Buster v519");
+    fs.writeFileSync(swPath, sw);
+    console.log("Updated sw.js → v519");
 }
 
-// Update src/app/page.tsx redirects
 const pagePath = path.join(__dirname, 'src', 'app', 'page.tsx');
 if (fs.existsSync(pagePath)) {
-    let pageContent = fs.readFileSync(pagePath, 'utf8');
-    pageContent = pageContent.replace(/client-dashboard\.html\?v=\d+/g, "client-dashboard.html?v=519");
-    pageContent = pageContent.replace(/client-login\.html\?v=\d+/g, "client-login.html?v=519");
-    fs.writeFileSync(pagePath, pageContent);
-    console.log("Updated redirects in src/app/page.tsx to v519");
+    let pg = fs.readFileSync(pagePath, 'utf8');
+    pg = pg.replace(/client-dashboard\.html\?v=\d+/g, "client-dashboard.html?v=519");
+    pg = pg.replace(/client-login\.html\?v=\d+/g, "client-login.html?v=519");
+    fs.writeFileSync(pagePath, pg);
+    console.log("Updated page.tsx → v519");
 }
 
-console.log(`Total HTML files updated: ${count}`);
+console.log(`\nTotal HTML files updated: ${count}`);

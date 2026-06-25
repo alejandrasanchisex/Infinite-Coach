@@ -933,7 +933,24 @@ const saveData = (data) => {
       saveQueuePromise = saveQueuePromise.then(async () => {
           try {
               const cloudData = await window.SupabaseService.getTrainerData(currentId);
-              if (cloudData && cloudData.lastModified) {
+              if (cloudData) {
+                  // 🛡️ BLINDAJE DE RESET: Si la nube tiene un reset pendiente que el local no ha procesado, descartar el guardado
+                  if (cloudData.__reset_version) {
+                      const localResetKey = `_resetVersion_${currentId}`;
+                      const localResetVersion = localStorage.getItem(localResetKey);
+                      if (String(localResetVersion) !== String(cloudData.__reset_version)) {
+                          console.log(`🧹 [RESET BLOCK] Bloqueando guardado local: la nube tiene reset v${cloudData.__reset_version} no procesado. Adoptando datos de la nube...`);
+                          localStorage.setItem(localResetKey, String(cloudData.__reset_version));
+                          localStorage.setItem(getStorageKey(), JSON.stringify(cloudData));
+                          localStorage.removeItem(getStorageKey() + '_backup');
+                          if (typeof window !== 'undefined' && window.location) {
+                              console.log("🔄 [RESET] Recargando página para aplicar el reset de datos...");
+                              window.location.reload();
+                          }
+                          return;
+                      }
+                  }
+                  if (cloudData.lastModified) {
                   const cloudTime = new Date(cloudData.lastModified).getTime();
                   const localTime = localPrevModified ? new Date(localPrevModified).getTime() : 0;
                   
@@ -997,6 +1014,25 @@ window.syncFromCloud = async () => {
         }
 
         if (cloudData) {
+            // 🛡️ BLINDAJE DE RESET: Si la nube tiene __reset_version, descartar caché local y adoptar nube directamente
+            if (cloudData.__reset_version) {
+                const localResetKey = `_resetVersion_${currentId}`;
+                const localResetVersion = localStorage.getItem(localResetKey);
+                if (String(localResetVersion) !== String(cloudData.__reset_version)) {
+                    console.log(`🧹 [RESET] Detectado reset de datos (v${cloudData.__reset_version}). Descartando caché local y adoptando datos de la nube...`);
+                    localStorage.setItem(localResetKey, String(cloudData.__reset_version));
+                    localStorage.setItem(getStorageKey(), JSON.stringify(cloudData));
+                    // Limpiar backups también
+                    localStorage.removeItem(getStorageKey() + '_backup');
+                    setLastSyncTime(currentId);
+                    if (typeof window !== 'undefined' && window.location) {
+                        console.log("🔄 [RESET] Recargando página para aplicar el reset de datos...");
+                        window.location.reload();
+                    }
+                    return cloudData;
+                }
+            }
+
             // Garantizar que todos los arrays existen en la nube
             const collections = ['clients', 'routines', 'diets', 'foods', 'media', 'feedbacks', 'appointments', 'invoices', 'trainingBlocks', 'trainingLogs', 'habits', 'supplementationTemplates', 'library'];
             collections.forEach(col => {
@@ -4352,7 +4388,7 @@ const BrandConfig = {
         if (activeId.includes('t-8umeizyns') || (trainerEmail && trainerEmail.toLowerCase() === 'vtoledonutrition@gmail.com')) {
             isToledo = true;
         }
-        if (activeId.includes('t-udve3b1u3') || (trainerEmail && trainerEmail.toLowerCase() === 'lucyy.tundidor@gmail.com')) {
+        if (activeId.includes('t-udve3b1u3') || (trainerEmail && trainerEmail.toLowerCase() === 'lucytundidor@gmail.com')) {
             isLucy = true;
         }
         console.log(`[BrandConfig] activeId="${activeId}" trainerEmail="${trainerEmail}" => isAlejandra=${isAlejandra}, isToledo=${isToledo}, isLucy=${isLucy}`);

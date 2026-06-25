@@ -79,7 +79,7 @@ export default function LucyTundidorLanding() {
     try {
       const payload = {
         ...formData,
-        toEmail: "lucyy.tundidor@gmail.com",
+        toEmail: "lucytundidor@gmail.com",
         brand: "Lucy Tundidor",
         primaryColor: "#816e61",
         subject: "Nuevo formulario - Web Lucy Tundidor"
