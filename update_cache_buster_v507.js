@@ -22,7 +22,7 @@ files.forEach(file => {
         // Match const CURRENT_VERSION = '506';
         if (content.includes('CURRENT_VERSION')) {
             content = content.replace(/const CURRENT_VERSION = '\d+';/g, "const CURRENT_VERSION = '507';");
-            content = content.replace(/const CURRENT_VERSION = "\d+";/g, "const CURRENT_VERSION = '507';");
+            content = content.replace(/const CURRENT_VERSION = "\d+";/g, 'const CURRENT_VERSION = "507";'); // handle mismatched quotes safely;
             changed = true;
         }
 
