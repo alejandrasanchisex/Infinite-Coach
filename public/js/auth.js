@@ -68,6 +68,37 @@ const AUTH = {
 // ── PASO 1: Bypass inmediato si ya autenticó en esta sesión ───────────
 window.addEventListener('DOMContentLoaded', () => {
     if (sessionStorage.getItem('_trainerAuthed') === '1' || localStorage.getItem('_trainerAuthed') === '1') {
+        
+        // ── LICENCIA EXPIRADA CHECK (LOCAL) ─────────────────────────
+        try {
+            const PLATFORM_KEY = 'saasFitnessPlatform';
+            const platform = JSON.parse(localStorage.getItem(PLATFORM_KEY) || '{"trainers":[]}');
+            const trainerId = localStorage.getItem('activeTrainerId');
+            if (trainerId && trainerId !== 'demo') {
+                const trainer = (platform.trainers || []).find(t => t.id === trainerId);
+                if (trainer) {
+                    const now = new Date();
+                    const parts = trainer.expiryDate?.split('/');
+                    let isExpired = false;
+                    if (parts && parts.length === 3) {
+                        const day = parseInt(parts[0], 10);
+                        const month = parseInt(parts[1], 10) - 1;
+                        const year = parseInt(parts[2], 10);
+                        const expiryDate = new Date(year, month, day, 23, 59, 59);
+                        isExpired = expiryDate < now;
+                    }
+                    if (trainer.status !== 'active' || isExpired) {
+                        if (!window.location.pathname.includes('trainer-subscription.html')) {
+                            console.log(`Licencia vencida o inactiva (Vence: ${trainer.expiryDate}). Redirigiendo.`);
+                            window.location.href = 'trainer-subscription.html';
+                            return;
+                        }
+                    }
+                }
+            }
+        } catch(e) { console.warn('Error checking license expiration (local):', e); }
+        // ────────────────────────────────────────────────────────────
+
         sessionStorage.setItem('_trainerAuthed', '1');
         localStorage.setItem('_trainerAuthed', '1');
         AUTH.isAuthorized = true;
@@ -88,12 +119,50 @@ window.addEventListener('DOMContentLoaded', () => {
 
 // Auto-disparar sincronización si ya hay sesión activa (para refrescos de página en cualquier pestaña)
 document.addEventListener('DOMContentLoaded', () => {
-    setTimeout(() => {
-        if ((sessionStorage.getItem('_trainerAuthed') === '1' || localStorage.getItem('_trainerAuthed') === '1') && typeof onGoogleAuthSuccess === 'function') {
+    setTimeout(async () => {
+        if (sessionStorage.getItem('_trainerAuthed') === '1' || localStorage.getItem('_trainerAuthed') === '1') {
             sessionStorage.setItem('_trainerAuthed', '1');
             localStorage.setItem('_trainerAuthed', '1');
+            
+            // ── LICENCIA EXPIRADA CHECK (SYNC NUBE SEGUNDO PLANO) ───────
+            if (window.SupabaseService) {
+                try {
+                    window.SupabaseService.init();
+                    const platformData = await window.SupabaseService.getGlobalConfig();
+                    if (platformData) {
+                        localStorage.setItem('saasFitnessPlatform', JSON.stringify(platformData));
+                        const trainerId = localStorage.getItem('activeTrainerId');
+                        if (trainerId && trainerId !== 'demo') {
+                            const trainer = (platformData.trainers || []).find(t => t.id === trainerId);
+                            if (trainer) {
+                                const now = new Date();
+                                const parts = trainer.expiryDate?.split('/');
+                                let isExpired = false;
+                                if (parts && parts.length === 3) {
+                                    const day = parseInt(parts[0], 10);
+                                    const month = parseInt(parts[1], 10) - 1;
+                                    const year = parseInt(parts[2], 10);
+                                    const expiryDate = new Date(year, month, day, 23, 59, 59);
+                                    isExpired = expiryDate < now;
+                                }
+                                if (trainer.status !== 'active' || isExpired) {
+                                    if (!window.location.pathname.includes('trainer-subscription.html')) {
+                                        console.log(`Licencia vencida o inactiva detectada en nube. Redirigiendo.`);
+                                        window.location.href = 'trainer-subscription.html';
+                                        return;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                } catch(e) { console.warn("Error syncing license status with Supabase:", e); }
+            }
+            // ────────────────────────────────────────────────────────────
+
             console.log("Sesión persistente detectada -> Disparando onGoogleAuthSuccess global");
-            onGoogleAuthSuccess();
+            if (typeof onGoogleAuthSuccess === 'function') {
+                onGoogleAuthSuccess();
+            }
         }
     }, 800); // Dar tiempo a que carguen otros scripts
 });

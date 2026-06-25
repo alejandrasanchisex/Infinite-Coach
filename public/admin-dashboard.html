@@ -5,7 +5,7 @@
     <script>
         // Force PWA cache bust / reload
         (function() {
-            const CURRENT_VERSION = '507';
+            const CURRENT_VERSION = '516';
             const savedVersion = localStorage.getItem('app_version');
             if (savedVersion !== CURRENT_VERSION) {
                 localStorage.setItem('app_version', CURRENT_VERSION);
@@ -31,8 +31,8 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="styles/theme.css?v=507">
-    <link rel="stylesheet" href="styles/components.css?v=507">
+    <link rel="stylesheet" href="styles/theme.css?v=516">
+    <link rel="stylesheet" href="styles/components.css?v=516">
     <style>
         :root {
             --admin-primary: #8B5CF6; /* Purple for Master Admin */
@@ -577,9 +577,9 @@
 
     <!-- Supabase SDK & Service -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="js/supabase-service.js?v=507"></script>
+    <script src="js/supabase-service.js?v=516"></script>
 
-    <script src="js/utils.js?v=507"></script>
+    <script src="js/utils.js?v=516"></script>
 
     <script>
         // MASTER STATE CONTROL
@@ -731,18 +731,58 @@
 
         window.copyStripeLink = (url, btn) => {
             if (!url) return;
-            navigator.clipboard.writeText(url).then(() => {
+            
+            const onSuccess = () => {
                 const originalText = btn.textContent;
                 btn.textContent = '✅';
                 window.adminToast("¡Enlace de Stripe copiado al portapapeles! 📋", "success");
                 setTimeout(() => {
                     btn.textContent = originalText;
                 }, 1500);
-            }).catch(err => {
+            };
+
+            const onError = (err) => {
                 console.error("Error al copiar enlace:", err);
                 window.adminToast("Error al copiar enlace", "error");
-            });
+            };
+
+            if (navigator.clipboard && typeof navigator.clipboard.writeText === 'function') {
+                navigator.clipboard.writeText(url).then(onSuccess).catch(() => {
+                    fallbackCopyStripeLink(url, onSuccess, onError);
+                });
+            } else {
+                fallbackCopyStripeLink(url, onSuccess, onError);
+            }
         };
+
+        function fallbackCopyStripeLink(text, onSuccess, onError) {
+            const textArea = document.createElement("textarea");
+            textArea.value = text;
+            textArea.style.position = "fixed";
+            textArea.style.top = "0";
+            textArea.style.left = "0";
+            textArea.style.width = "2em";
+            textArea.style.height = "2em";
+            textArea.style.padding = "0";
+            textArea.style.border = "none";
+            textArea.style.outline = "none";
+            textArea.style.boxShadow = "none";
+            textArea.style.background = "transparent";
+            document.body.appendChild(textArea);
+            textArea.focus();
+            textArea.select();
+            try {
+                const successful = document.execCommand('copy');
+                if (successful) {
+                    onSuccess();
+                } else {
+                    onError('execCommand failed');
+                }
+            } catch (err) {
+                onError(err);
+            }
+            document.body.removeChild(textArea);
+        }
  
         // TOOL: UUID & KEYS
         function genUUID() { return 't-' + Math.random().toString(36).substr(2, 9); }
@@ -1480,5 +1520,5 @@
             });
         });
     </script>
-    <script src="js/custom-recipes.js?v=507"></script></body>
+    <script src="js/custom-recipes.js?v=516"></script></body>
 </html>

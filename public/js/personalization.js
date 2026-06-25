@@ -2,6 +2,14 @@
  * PERSONALIZATION MANAGER (Vanilla JS)
  * Dynamics 365 Business Central-style page element customization.
  */
+function getNormalizedPageName() {
+    let name = window.location.pathname.split('/').pop() || 'index.html';
+    if (name && !name.includes('.')) {
+        name = name + '.html';
+    }
+    return name;
+}
+
 const PersonalizationManager = {
     settingsKey: '_personalization_settings',
     modeKey: '_personalizationMode',
@@ -87,6 +95,10 @@ const PersonalizationManager = {
 
     identifyElements() {
         // 1. Navigation Menu List Items
+        const navLinksParent = document.querySelector('#navLinks');
+        if (navLinksParent) {
+            navLinksParent.setAttribute('data-personalize-container', 'nav-links-menu');
+        }
         document.querySelectorAll('#navLinks li').forEach(li => {
             if (li.getAttribute('data-personalize-id')) return;
             const a = li.querySelector('a');
@@ -99,7 +111,6 @@ const PersonalizationManager = {
                     li.setAttribute('data-personalize-id', 'nav-logout');
                 }
             }
-            li.parentNode.setAttribute('data-personalize-container', 'nav-links-menu');
         });
 
         // 2. Stats Grid KPIs (on dashboard)
@@ -146,15 +157,16 @@ const PersonalizationManager = {
 
         // 4. General Cards on other pages
         document.querySelectorAll('.card').forEach((card, idx) => {
-            if (card.getAttribute('data-personalize-id') || card.closest('.grid.grid-6') || card.closest('.main-content .grid.grid-2')) return;
             const header = card.querySelector('.card-header .card-title, h2, h3');
             if (header) {
                 const txt = header.textContent.replace(/[\uE000-\uF8FF]|\uD83C[\uDC00-\uDFFF]|\uD83D[\uDC00-\uDFFF]|[\u2011-\u26FF]|\uD83E[\uDD10-\uDDFF]/g, '').trim().toLowerCase();
                 const slug = txt.replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
                 if (slug) {
-                    card.setAttribute('data-personalize-id', 'card-' + slug);
+                    if (!card.getAttribute('data-personalize-id') && !card.closest('.grid.grid-6') && !card.closest('.main-content .grid.grid-2')) {
+                        card.setAttribute('data-personalize-id', 'card-' + slug);
+                    }
                     const parent = card.parentNode;
-                    if (parent && !parent.getAttribute('data-personalize-container')) {
+                    if (parent && !parent.getAttribute('data-personalize-container') && !card.closest('.grid.grid-6') && !card.closest('.main-content .grid.grid-2')) {
                         parent.setAttribute('data-personalize-container', 'container-' + slug);
                     }
                 }
@@ -177,7 +189,7 @@ const PersonalizationManager = {
     },
 
     applyLayout() {
-        const pageName = window.location.pathname.split('/').pop() || 'index.html';
+        const pageName = getNormalizedPageName();
         const settings = this.getSettings();
         const pageSettings = settings[pageName] || {};
         const isEditing = this.isModeActive();
@@ -240,7 +252,7 @@ const PersonalizationManager = {
         const headers = Array.from(theadRow.querySelectorAll('th'));
         const headerIds = headers.map(th => th.getAttribute('data-personalize-id')).filter(Boolean);
         
-        const pageName = window.location.pathname.split('/').pop() || 'index.html';
+        const pageName = getNormalizedPageName();
         const settings = this.getSettings();
         const pageSettings = settings[pageName] || {};
         const containerId = theadRow.getAttribute('data-personalize-container');
@@ -387,7 +399,7 @@ const PersonalizationManager = {
         const containerId = container ? container.getAttribute('data-personalize-container') : null;
         if (!containerId) return;
 
-        const pageName = window.location.pathname.split('/').pop() || 'index.html';
+        const pageName = getNormalizedPageName();
         const settings = this.getSettings();
         if (!settings[pageName]) settings[pageName] = {};
         if (!settings[pageName].hidden) settings[pageName].hidden = {};
@@ -412,7 +424,7 @@ const PersonalizationManager = {
         const containerId = container ? container.getAttribute('data-personalize-container') : null;
         if (!containerId) return;
 
-        const pageName = window.location.pathname.split('/').pop() || 'index.html';
+        const pageName = getNormalizedPageName();
         const settings = this.getSettings();
         if (settings[pageName] && settings[pageName].hidden && settings[pageName].hidden[containerId]) {
             settings[pageName].hidden[containerId] = settings[pageName].hidden[containerId].filter(x => x !== id);
@@ -433,7 +445,7 @@ const PersonalizationManager = {
         const containerId = container ? container.getAttribute('data-personalize-container') : null;
         if (!containerId) return;
 
-        const pageName = window.location.pathname.split('/').pop() || 'index.html';
+        const pageName = getNormalizedPageName();
         const settings = this.getSettings();
 
         if (direction === 'prev') {
@@ -476,7 +488,7 @@ const PersonalizationManager = {
 
             e.preventDefault();
 
-            const pageName = window.location.pathname.split('/').pop() || 'index.html';
+            const pageName = getNormalizedPageName();
             const settings = this.getSettings();
             const isHidden = settings[pageName]?.hidden?.[containerId]?.includes(id);
             const isModeActive = this.isModeActive();

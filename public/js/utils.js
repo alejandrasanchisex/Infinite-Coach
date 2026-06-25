@@ -678,13 +678,50 @@ const scrollToElement = (elementId) => {
 };
 
 // Copy to clipboard
-const copyToClipboard = (text) => {
-    navigator.clipboard.writeText(text).then(() => {
-        showToast('Copiado al portapapeles', 'success');
-    }).catch(() => {
-        showToast('Error al copiar', 'error');
-    });
+const copyToClipboard = (text, successMessage = 'Copiado al portapapeles') => {
+    if (navigator.clipboard && typeof navigator.clipboard.writeText === 'function') {
+        navigator.clipboard.writeText(text).then(() => {
+            showToast(successMessage, 'success');
+        }).catch((err) => {
+            console.warn('navigator.clipboard falló, usando fallback: ', err);
+            fallbackCopyToClipboard(text, successMessage);
+        });
+    } else {
+        fallbackCopyToClipboard(text, successMessage);
+    }
 };
+
+const fallbackCopyToClipboard = (text, successMessage) => {
+    const textArea = document.createElement("textarea");
+    textArea.value = text;
+    textArea.style.position = "fixed";
+    textArea.style.top = "0";
+    textArea.style.left = "0";
+    textArea.style.width = "2em";
+    textArea.style.height = "2em";
+    textArea.style.padding = "0";
+    textArea.style.border = "none";
+    textArea.style.outline = "none";
+    textArea.style.boxShadow = "none";
+    textArea.style.background = "transparent";
+    document.body.appendChild(textArea);
+    textArea.focus();
+    textArea.select();
+    try {
+        const successful = document.execCommand('copy');
+        if (successful) {
+            showToast(successMessage, 'success');
+        } else {
+            showToast('Error al copiar', 'error');
+        }
+    } catch (err) {
+        console.error('Error al copiar con fallback: ', err);
+        showToast('Error al copiar', 'error');
+    }
+    document.body.removeChild(textArea);
+};
+
+window.copyToClipboard = copyToClipboard;
 
 // Get days in month
 const getDaysInMonth = (year, month) => {
@@ -1007,12 +1044,12 @@ document.addEventListener('DOMContentLoaded', () => {
     // Restricciones para colaboradores (sub-entrenadores)
     if (localStorage.getItem('_isSubTrainer') === 'true') {
         // 1. Redirigir si intenta acceder a la página de configuración
-        if (window.location.pathname.includes('trainer-settings.html')) {
+        if (window.location.pathname.includes('trainer-settings')) {
             window.location.href = 'trainer-dashboard.html';
             return;
         }
         // 2. Ocultar enlaces a configuración en los menús de navegación
-        document.querySelectorAll('a[href*="trainer-settings.html"]').forEach(a => {
+        document.querySelectorAll('a[href*="trainer-settings"]').forEach(a => {
             const li = a.closest('li');
             if (li) {
                 li.style.display = 'none';
@@ -1023,12 +1060,12 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // Cargar e inicializar el Administrador de Personalización (solo en backend de entrenador)
-    const isTrainerPage = window.location.pathname.includes('trainer-') || window.location.pathname.includes('admin-dashboard.html');
+    const isTrainerPage = window.location.pathname.includes('trainer-') || window.location.pathname.includes('admin-dashboard');
     const isLoginPage = window.location.pathname.includes('login');
     if (isTrainerPage && !isLoginPage) {
         if (typeof PersonalizationManager === 'undefined') {
             const script = document.createElement('script');
-            script.src = 'js/personalization.js?v=505';
+            script.src = 'js/personalization.js?v=511';
             script.onload = () => {
                 if (window.PersonalizationManager) {
                     window.PersonalizationManager.init();

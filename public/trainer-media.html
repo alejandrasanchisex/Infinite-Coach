@@ -4,7 +4,7 @@
     <script>
         // Force PWA cache bust / reload
         (function() {
-            const CURRENT_VERSION = '507';
+            const CURRENT_VERSION = '516';
             const savedVersion = localStorage.getItem('app_version');
             if (savedVersion !== CURRENT_VERSION) {
                 localStorage.setItem('app_version', CURRENT_VERSION);
@@ -31,8 +31,8 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <link rel="stylesheet" href="styles/theme.css?v=507">
-    <link rel="stylesheet" href="styles/components.css?v=507">
+    <link rel="stylesheet" href="styles/theme.css?v=516">
+    <link rel="stylesheet" href="styles/components.css?v=516">
     <style>
         .media-container { padding: 1.5rem 0; }
         .tabs-nav { display: flex; gap: 2rem; margin-bottom: 2rem; border-bottom: 1px solid rgba(255,255,255,0.05); }
@@ -73,6 +73,10 @@
         .btn-upload:hover { background: rgba(255,255,255,0.15); border-color: var(--primary-color); }
 
         /* Light Theme Overrides */
+        html.theme-light .modal-section,
+        body.theme-light .modal-section {
+            background: rgba(0, 0, 0, 0.03) !important;
+        }
         html.theme-light .form-control,
         body.theme-light .form-control {
             background: #f8fafc !important;
@@ -164,14 +168,14 @@
                     </div>
                     <button class="menu-toggle" onclick="toggleMenu()">☰</button>
                     <ul class="nav-links" id="navLinks">
-                        <li><a href="trainer-dashboard.html?v=507" class="nav-link">Dashboard</a></li>
-                        <li><a href="trainer-clients.html?v=507" class="nav-link">Clientes</a></li>
-                        <li><a href="trainer-routines.html?v=507" class="nav-link">Rutinas</a></li>
-                        <li><a href="trainer-diets.html?v=507" class="nav-link">Dietas</a></li>
-                        <li><a href="trainer-feedbacks.html?v=507" class="nav-link">Revisiones</a></li>
-                        <li><a href="trainer-media.html?v=507" class="nav-link active">Biblioteca</a></li>
-                        <li><a href="trainer-appointments.html?v=507" class="nav-link">Agenda</a></li>
-                        <li><a href="trainer-settings.html?v=507" class="nav-link">Configuración</a></li>
+                        <li><a href="trainer-dashboard.html?v=516" class="nav-link">Dashboard</a></li>
+                        <li><a href="trainer-clients.html?v=516" class="nav-link">Clientes</a></li>
+                        <li><a href="trainer-routines.html?v=516" class="nav-link">Rutinas</a></li>
+                        <li><a href="trainer-diets.html?v=516" class="nav-link">Dietas</a></li>
+                        <li><a href="trainer-feedbacks.html?v=516" class="nav-link">Revisiones</a></li>
+                        <li><a href="trainer-media.html?v=516" class="nav-link active">Biblioteca</a></li>
+                        <li><a href="trainer-appointments.html?v=516" class="nav-link">Agenda</a></li>
+                        <li><a href="trainer-settings.html?v=516" class="nav-link">Configuración</a></li>
                         <li><a href="#" onclick="window.location.reload(); return false;" class="nav-link" style="color:var(--error-color)">🚪 Salir</a></li>
                     </ul>
                 </nav>
@@ -245,11 +249,11 @@
             <div class="modal-right">
                 <div class="modal-section" style="margin-bottom: 1.5rem; background: rgba(255,255,255,0.03); padding: 1.2rem; border-radius: 16px; border-left: 3px solid var(--primary-color);">
                     <div style="font-size: 0.8rem; font-weight: 800; color: var(--primary-color); text-transform: uppercase; margin-bottom: 0.8rem; display: flex; align-items: center; gap: 6px;"><i class="far fa-comment-dots"></i> Descripción</div>
-                    <div id="modalDesc" style="color: #e2e8f0; font-size: 0.95rem; line-height: 1.6;"></div>
+                    <div id="modalDesc" style="color: var(--text-secondary); font-size: 0.95rem; line-height: 1.6;"></div>
                 </div>
                 <div class="modal-section" style="margin-bottom: 1.5rem; background: rgba(255,255,255,0.03); padding: 1.2rem; border-radius: 16px; border-left: 3px solid #a55eea;">
                     <div id="modalSection2Title" style="font-size: 0.8rem; font-weight: 800; color: #a55eea; text-transform: uppercase; margin-bottom: 0.8rem; display: flex; align-items: center; gap: 6px;"><i class="far fa-heart"></i> Alimentos / Ingredientes</div>
-                    <div id="modalIngredients" style="color: #e2e8f0; font-size: 0.95rem; line-height: 1.6;"></div>
+                    <div id="modalIngredients" style="color: var(--text-secondary); font-size: 0.95rem; line-height: 1.6;"></div>
                 </div>
             </div>
         </div>
@@ -369,8 +373,8 @@
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="js/supabase-service.js?v=507"></script>
-    <script src="js/data-models.js?v=507"></script>
+    <script src="js/supabase-service.js?v=516"></script>
+    <script src="js/data-models.js?v=516"></script>
     <script src="js/utils.js"></script>
     <script src="js/cloud-storage.js"></script>
 
@@ -908,7 +912,7 @@
                     const groups = Array.isArray(m.muscleGroup) ? m.muscleGroup : m.muscleGroup.split(',');
                     html += groups.map(g => `<span style="background: rgba(165,94,234,0.2); padding: 4px 10px; border-radius: 20px; font-size: 0.85rem; margin-right: 6px; display:inline-block; margin-bottom: 6px;">${cap(g.trim())}</span>`).join('');
                 } else {
-                    html += '<div style="color:#cbd5e1; margin-bottom:1rem;">N/A</div>';
+                    html += '<div style="color: var(--text-muted); margin-bottom:1rem;">N/A</div>';
                 }
                 
                 if(m.url) {
@@ -920,7 +924,7 @@
                 sec2Title.innerHTML = '<i class="far fa-heart"></i> Alimentos / Ingredientes';
                 if(m.ingredients) {
                     const ings = Array.isArray(m.ingredients) ? m.ingredients : m.ingredients.split(',');
-                    ingWrap.innerHTML = ings.map(i => `<div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;color:#cbd5e1;"><div style="width:12px;height:2px;background:var(--primary-color);border-radius:2px;"></div><span>${cap(i.trim())}</span></div>`).join('');
+                    ingWrap.innerHTML = ings.map(i => `<div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;color: var(--text-secondary);"><div style="width:12px;height:2px;background:var(--primary-color);border-radius:2px;"></div><span>${cap(i.trim())}</span></div>`).join('');
                 } else { 
                     ingWrap.innerHTML = 'N/A'; 
                 }

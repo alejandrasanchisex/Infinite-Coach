@@ -591,17 +591,8 @@ async function seed() {
 
         // 10. Crear Citas (Appointments) para Alejandra
         if (!fullData.appointments) fullData.appointments = [];
-        const datePast = new Date(Date.now() - 14 * 24 * 60 * 60 * 1000).toISOString(); // Hace 2 semanas (Completada)
         const dateFuture = new Date(Date.now() + 5 * 24 * 60 * 60 * 1000).toISOString(); // En 5 días (Planificada)
         
-        fullData.appointments.push({
-            id: generateUUID(),
-            clientId: clientUuid,
-            date: datePast,
-            type: 'call',
-            notes: 'Videollamada de bienvenida y repaso de objetivos iniciales. Se aclaran dudas sobre la app, la dieta y la rutina.',
-            status: 'completed'
-        });
         fullData.appointments.push({
             id: generateUUID(),
             clientId: clientUuid,

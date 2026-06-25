@@ -31,7 +31,7 @@
 
         // Force PWA cache bust / reload
         (function() {
-            const CURRENT_VERSION = '507';
+            const CURRENT_VERSION = '516';
             const savedVersion = localStorage.getItem('app_version');
             if (savedVersion !== CURRENT_VERSION) {
                 localStorage.setItem('app_version', CURRENT_VERSION);
@@ -57,8 +57,8 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="styles/theme.css?v=507">
-    <link rel="stylesheet" href="styles/components.css?v=507">
+    <link rel="stylesheet" href="styles/theme.css?v=516">
+    <link rel="stylesheet" href="styles/components.css?v=516">
     <style>
         .settings-section {
             margin-bottom: var(--spacing-xl);
@@ -139,14 +139,14 @@
                 </div>
                 <button class="menu-toggle" onclick="toggleMenu()">☰</button>
                 <ul class="nav-links" id="navLinks">
-                    <li><a href="trainer-dashboard.html?v=507" class="nav-link">Dashboard</a></li>
-                    <li><a href="trainer-clients.html?v=507" class="nav-link">Clientes</a></li>
-                    <li><a href="trainer-routines.html?v=507" class="nav-link">Rutinas</a></li>
-                    <li><a href="trainer-diets.html?v=507" class="nav-link">Dietas</a></li>
-                    <li><a href="trainer-feedbacks.html?v=507" class="nav-link">Revisiones</a></li>
-                    <li><a href="trainer-media.html?v=507" class="nav-link">Biblioteca</a></li>
-                    <li><a href="trainer-appointments.html?v=507" class="nav-link">Agenda</a></li>
-                    <li><a href="trainer-settings.html?v=507" class="nav-link active">Configuración</a></li>
+                    <li><a href="trainer-dashboard.html?v=516" class="nav-link">Dashboard</a></li>
+                    <li><a href="trainer-clients.html?v=516" class="nav-link">Clientes</a></li>
+                    <li><a href="trainer-routines.html?v=516" class="nav-link">Rutinas</a></li>
+                    <li><a href="trainer-diets.html?v=516" class="nav-link">Dietas</a></li>
+                    <li><a href="trainer-feedbacks.html?v=516" class="nav-link">Revisiones</a></li>
+                    <li><a href="trainer-media.html?v=516" class="nav-link">Biblioteca</a></li>
+                    <li><a href="trainer-appointments.html?v=516" class="nav-link">Agenda</a></li>
+                    <li><a href="trainer-settings.html?v=516" class="nav-link active">Configuración</a></li>
                     <li><a href="#" onclick="if(typeof AUTH !== 'undefined') { AUTH.signOut() } else { window.location.reload() }; return false;" class="nav-link" style="color:var(--error-color)">🚪 Salir</a></li>
                 </ul>
             </nav>
@@ -175,6 +175,11 @@
                                 <label class="form-label">Nombre del Negocio</label>
                                 <input type="text" id="brandNameInput" class="form-input" placeholder="Ej: AS Fitness">
                             </div>
+                            <div class="form-group mb-md" id="adminTrainerNameGroup" style="display: none;">
+                                <label class="form-label">Nombre del Entrenador Principal (Administrador)</label>
+                                <input type="text" id="adminTrainerNameInput" class="form-input" placeholder="Ej: Administrador (Principal)">
+                            </div>
+
 
                             <div class="form-group mb-md">
                                 <label class="form-label">Logo</label>
@@ -457,18 +462,6 @@
                         </div>
                     </div>
 
-                    <!-- Zona de Peligro -->
-                    <div class="card shadow-sm danger-zone" style="margin-top: 1rem; border-color: rgba(239, 68, 68, 0.2);">
-                        <div class="card-header">
-                            <h2 class="card-title" style="color: var(--error);">⚠️ Zona de Peligro</h2>
-                        </div>
-                        <div class="card-body">
-                            <p class="text-xs text-muted mb-md">Acciones irreversibles. Eliminará clientes, rutinas, dietas e historial operativo permanentemente.</p>
-                            <button class="btn btn-danger btn-sm" style="width: 100%;" onclick="deleteAllData()">
-                                🗑️ Borrar Todos los Datos
-                            </button>
-                        </div>
-                    </div>
                 </div>
 
                 <!-- Columna Derecha: Revisiones y Datos -->
@@ -747,33 +740,58 @@
 
      </div>
 
-    <!-- Firebase SDKs -->
-    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-storage.js"></script>
-    <script src="js/firebase-config.js"></script>
-    <script src="js/firebase-service.js"></script>
-
     <!-- Supabase SDK & Service -->
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="js/supabase-service.js?v=507"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" defer></script>
+    <script src="js/supabase-service.js?v=516" defer></script>
 
     <!-- UI Scripts -->
-    <script src="js/config.js?v=507"></script>
-    <script src="js/auth.js?v=507"></script>
-    <script src="js/sheets.js?v=507"></script>
-    <script src="js/data-models.js?v=507"></script>
-    <script src="js/cloud-storage.js?v=507"></script>
-    <script src="js/utils.js?v=507"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
-    <script src="js/excel-manager.js?v=507"></script>
+    <script src="js/config.js?v=516" defer></script>
+    <script src="js/auth.js?v=516" defer></script>
+    <script src="js/sheets.js?v=516" defer></script>
+    <script src="js/data-models.js?v=516" defer></script>
+    <script src="js/cloud-storage.js?v=516" defer></script>
+    <script src="js/utils.js?v=516" defer></script>
+    <script src="js/excel-manager.js?v=516" defer></script>
     <script>
         // Global Variables
         let feedbackQuestions = [];
         let feedbackPerimeters = [];
         let onboardingQuestions = [];
         let currentLogoBase64 = null;
+
+        // Lazy load SheetJS (XLSX) library on demand
+        window.ensureSheetJS = function(callback) {
+            if (window.XLSX) {
+                callback();
+                return;
+            }
+            if (typeof showToast === 'function') {
+                showToast('Cargando módulo de Excel...', 'info');
+            }
+            const script = document.createElement('script');
+            script.src = "https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js";
+            script.onload = () => {
+                if (typeof showToast === 'function') {
+                    showToast('Módulo de Excel cargado', 'success');
+                }
+                callback();
+            };
+            script.onerror = () => {
+                if (typeof showToast === 'function') {
+                    showToast('Error al cargar el módulo de Excel', 'error');
+                }
+            };
+            document.head.appendChild(script);
+        };
+
+        // Override default export function to load SheetJS first
+        window.exportMasterExcel = function() {
+            window.ensureSheetJS(() => {
+                if (window.ExcelManager && typeof window.ExcelManager.exportToExcel === 'function') {
+                    window.ExcelManager.exportToExcel();
+                }
+            });
+        };
 
         // Check if brand is configured
         if (!BrandConfig.isConfigured()) {
@@ -944,8 +962,17 @@
                          licenseKeyVal.textContent = t.licenseKey || localStorage.getItem('_rememberedTrainerKey') || 'FIT-XXXX-26';
                      }
                      
-                     const accessType = t.accessType || 'unique';
+                     let accessType = t.accessType || 'unique';
+                     const plan = (t.plan || 'Plan Basic').toLowerCase();
+                     if (accessType === 'multiple' && !plan.includes('elite') && !plan.includes('demo')) {
+                         accessType = 'unique';
+                     }
                      localStorage.setItem('trainerAccessType', accessType);
+                     
+                     const adminGroup = document.getElementById('adminTrainerNameGroup');
+                     if (adminGroup) {
+                         adminGroup.style.display = (accessType === 'multiple') ? 'block' : 'none';
+                     }
                      
                      const teamCard = document.getElementById('teamSettingsCard');
                       if (teamCard) {
@@ -1037,6 +1064,9 @@
         };
         
         document.addEventListener('DOMContentLoaded', () => {
+            if (typeof initSettingsUI === 'function') {
+                initSettingsUI();
+            }
             const form = document.getElementById('teamMemberForm');
             if (form) {
                 form.addEventListener('submit', (e) => {
@@ -1123,6 +1153,30 @@
 
             const trainerSettings = b.trainerSettings || { autoSaveDietTemplate: false };
             if (document.getElementById('autoSaveDietTemplate')) document.getElementById('autoSaveDietTemplate').checked = trainerSettings.autoSaveDietTemplate;
+            if (document.getElementById('adminTrainerNameInput')) {
+                document.getElementById('adminTrainerNameInput').value = trainerSettings.adminName || '';
+            }
+            let isMultipleAccess = localStorage.getItem('trainerAccessType') === 'multiple';
+            if (isMultipleAccess) {
+                let currentPlan = 'Plan Basic';
+                const platformRaw = localStorage.getItem('saasFitnessPlatform');
+                if (platformRaw) {
+                    try {
+                        const platformData = JSON.parse(platformRaw);
+                        const activeId = localStorage.getItem('activeTrainerId') || 'default';
+                        const t = platformData.trainers?.find(tr => tr.id === activeId);
+                        if (t) currentPlan = t.plan || 'Plan Basic';
+                    } catch(e){}
+                }
+                const planLower = currentPlan.toLowerCase();
+                if (!planLower.includes('elite') && !planLower.includes('demo')) {
+                    isMultipleAccess = false;
+                }
+            }
+            const adminGroup = document.getElementById('adminTrainerNameGroup');
+            if (adminGroup) {
+                adminGroup.style.display = isMultipleAccess ? 'block' : 'none';
+            }
 
             const fiscal = b.fiscalData || { companyName: '', nif: '', address: '', zip: '', city: '', defaultIva: 21, invoiceSeries: 'F' + new Date().getFullYear() };
             if (document.getElementById('fiscalNameInput')) document.getElementById('fiscalNameInput').value = fiscal.companyName || '';
@@ -1190,7 +1244,8 @@
                     colors: { primary, secondary, accent, themeMode, bgDark, bgLight },
                     trainerSettings: {
                         ...(b.trainerSettings || {}),
-                        autoSaveDietTemplate: document.getElementById('autoSaveDietTemplate').checked
+                        autoSaveDietTemplate: document.getElementById('autoSaveDietTemplate').checked,
+                        adminName: document.getElementById('adminTrainerNameInput') ? document.getElementById('adminTrainerNameInput').value.trim() : ''
                     },
                     pdfSettings: {
                         ...(b.pdfSettings || {}),
@@ -1252,7 +1307,8 @@
                     colors: { primary, secondary, accent, themeMode, bgDark, bgLight },
                     trainerSettings: {
                         ...(b.trainerSettings || {}),
-                        autoSaveDietTemplate: document.getElementById('autoSaveDietTemplate').checked
+                        autoSaveDietTemplate: document.getElementById('autoSaveDietTemplate').checked,
+                        adminName: document.getElementById('adminTrainerNameInput') ? document.getElementById('adminTrainerNameInput').value.trim() : ''
                     },
                     pdfSettings: {
                         ...(b.pdfSettings || {}),
@@ -1371,7 +1427,7 @@
                     window.savePersonalizationVisibility(false);
                 }
             } else if ([
-                'brandNameInput', 'whatsappInput', 'primaryColorInput', 'secondaryColorInput', 
+                'brandNameInput', 'adminTrainerNameInput', 'whatsappInput', 'primaryColorInput', 'secondaryColorInput', 
                 'accentColorInput', 'themeModeInput', 'bgDarkColorInput', 'bgLightColorInput', 'autoSaveDietTemplate',
                 'pdfShowCalories', 'pdfShowMacros', 'clientShowVideos', 'clientShowCalories',
                 'clientShowMacros', 'clientShowRIR', 'clientShowWeightHabit',
@@ -1396,7 +1452,7 @@
                     window.savePersonalizationVisibility(false);
                 }
             } else if ([
-                'brandNameInput', 'whatsappInput', 'primaryColorInput', 'secondaryColorInput', 
+                'brandNameInput', 'adminTrainerNameInput', 'whatsappInput', 'primaryColorInput', 'secondaryColorInput', 
                 'accentColorInput', 'themeModeInput', 'bgDarkColorInput', 'bgLightColorInput', 'autoSaveDietTemplate',
                 'pdfShowCalories', 'pdfShowMacros', 'clientShowVideos', 'clientShowCalories',
                 'clientShowMacros', 'clientShowRIR', 'clientShowWeightHabit',
@@ -1437,7 +1493,10 @@
                     settings = {};
                 }
 
-                const pageName = window.location.pathname.split('/').pop() || 'index.html';
+                let pageName = window.location.pathname.split('/').pop() || 'index.html';
+                if (pageName && !pageName.includes('.')) {
+                    pageName += '.html';
+                }
                 const pageSettings = settings[pageName] || {};
                 const hiddenNavs = pageSettings.hidden?.['nav-links-menu'] || [];
 
@@ -1655,10 +1714,12 @@
             const month = now.getMonth();
             const year = now.getFullYear();
 
-            const activeClients = clients.filter(c => c.status === 'active' && (parseFloat(c.monthlyFee) > 0));
+            const activeClients = clients.filter(c => c && c.status === 'active' && (parseFloat(c.monthlyFee) > 0));
             const pendingCount = activeClients.filter(c => {
-                const invs = Invoices.getByClientId(c.id) || [];
+                if (!c || !c.id) return false;
+                const invs = (Invoices.getByClientId(c.id) || []).filter(inv => inv !== null && inv !== undefined);
                 return !invs.some(inv => {
+                    if (!inv || !inv.date) return false;
                     const date = new Date(inv.date);
                     return date.getMonth() === month && date.getFullYear() === year;
                 });
@@ -1945,20 +2006,6 @@
             reader.readAsText(file);
         }
 
-        // Delete all data
-        function deleteAllData() {
-            const confirmation = prompt('Esta acción eliminará TODOS los datos. Escribe "BORRAR TODO" para confirmar:');
-
-            if (confirmation === 'BORRAR TODO') {
-                localStorage.clear();
-                showToast('Todos los datos han sido eliminados', 'success');
-                setTimeout(() => {
-                    window.location.href = 'index.html';
-                }, 1500);
-            } else {
-                showToast('Operación cancelada', 'info');
-            }
-        }
 
         
 
@@ -2315,8 +2362,7 @@
             }
         };
 
-        // Load settings on page load
-        initSettingsUI();
+        // Load settings on DOMContentLoaded instead to avoid deferred script issues
     </script>
 
 
@@ -2354,6 +2400,6 @@
             }, 2500);
         }
     </script>
-    <script src="js/custom-recipes.js?v=507"></script></body>
+    <script src="js/custom-recipes.js?v=516" defer></script></body>
 
 </html>

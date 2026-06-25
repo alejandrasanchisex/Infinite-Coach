@@ -767,10 +767,22 @@ ${item.date}`.replace('\n', ''); // Safe compile
                             mergedClient.name = localClient.name;
                         }
                     } else {
-                        const clientFields = ['profilePhoto', 'weightHistory', 'feedbacks'];
+                        const clientFields = ['profilePhoto', 'weightHistory', 'feedbacks', 'initialSetupDone', 'onboardingAnswers'];
                         clientFields.forEach(f => {
                             if (localClient[f] !== undefined) mergedClient[f] = localClient[f];
                         });
+
+                        // Permitir guardar datos de onboarding en campos de entrenador en el primer guardado
+                        const isInitialSetup = localClient.initialSetupDone === true && (cloudClient.initialSetupDone !== true && cloudClient.initialSetupDone !== 'true');
+                        const trainerFieldsToMerge = ['phone', 'gender', 'subscriptionType', 'subscriptionAmount', 'monthlyFee'];
+                        trainerFieldsToMerge.forEach(f => {
+                            if (isInitialSetup && localClient[f] !== undefined) {
+                                mergedClient[f] = localClient[f];
+                            } else if (cloudClient[f] === undefined && localClient[f] !== undefined) {
+                                mergedClient[f] = localClient[f];
+                            }
+                        });
+
                         if (localClient.technicalData) {
                             if (!mergedClient.technicalData) mergedClient.technicalData = {};
                             const clientTechFields = ['age', 'height', 'goals', 'injuries', 'allergies', 'notes', 'weight', 'waist', 'glute', 'chest', 'arm', 'leg'];
@@ -1169,7 +1181,7 @@ ${item.date}`.replace('\n', ''); // Safe compile
                                     ];
                                     
                                     // Campos controlados por el cliente
-                                    const clientFields = ['profilePhoto', 'weightHistory', 'feedbacks'];
+                                    const clientFields = ['profilePhoto', 'weightHistory', 'feedbacks', 'initialSetupDone', 'onboardingAnswers'];
 
                                     const mergedClient = { ...cloudItem }; // Empezar con copia de nube
 
@@ -1214,11 +1226,16 @@ ${item.date}`.replace('\n', ''); // Safe compile
 
                                     } else {
                                         // Cliente es el máster:
-                                        // - Para campos de Entrenador: usar siempre la nube.
+                                        // - Para campos de Entrenador: usar siempre la nube (a menos que estén vacíos o sea la configuración inicial).
                                         // - Para campos de Cliente: si local es más nuevo, usar local. Si no, usar nube.
                                         trainerFields.forEach(f => {
-                                            if (cloudItem[f] !== undefined) {
+                                            const isInitialSetup = localItem.initialSetupDone === true && (cloudItem.initialSetupDone !== true && cloudItem.initialSetupDone !== 'true');
+                                            if (isInitialSetup && localItem[f] !== undefined) {
+                                                mergedClient[f] = localItem[f];
+                                            } else if (cloudItem[f] !== undefined) {
                                                 mergedClient[f] = cloudItem[f];
+                                            } else if (localItem[f] !== undefined) {
+                                                mergedClient[f] = localItem[f];
                                             }
                                         });
                                         clientFields.forEach(f => {
@@ -1470,7 +1487,11 @@ ${item.date}`.replace('\n', ''); // Safe compile
                     } else {
                         console.log("📤 Sincronizando cambios locales fusionados a la nube...");
                         mergedData.lastModified = new Date().toISOString();
-                        await window.SupabaseService.saveTrainerData(currentId, mergedData);
+                        try {
+                            await window.SupabaseService.saveTrainerData(currentId, mergedData);
+                        } catch (errSaveCloud) {
+                            console.error("Sync cloud save error (ignored to preserve local update):", errSaveCloud);
+                        }
                     }
                 }
 
@@ -1501,7 +1522,11 @@ ${item.date}`.replace('\n', ''); // Safe compile
         } else if (localData) {
             // Si no hay datos en la nube pero sí locales, subirlos
             console.log("📤 Subiendo datos locales iniciales a la nube...");
-            await window.SupabaseService.saveTrainerData(currentId, localData);
+            try {
+                await window.SupabaseService.saveTrainerData(currentId, localData);
+            } catch (errSaveCloudInit) {
+                console.error("Sync cloud initial save error (ignored to preserve local update):", errSaveCloudInit);
+            }
             return localData;
         }
     } catch (e) { console.error("Sync Error:", e); }
@@ -3164,7 +3189,9 @@ const Clients = {
       clients = clients.filter(c => c.assignedTrainerId === subTrainerId);
     }
 
-    return clients.map(c => {
+    return clients
+      .filter(c => c !== null && c !== undefined)
+      .map(c => {
       if (c && c.paymentExpiry && c.paymentStatus === 'paid') {
         try {
           const parts = c.paymentExpiry.split('/');
@@ -4223,7 +4250,7 @@ const TrainingBlocks = {
 const Invoices = {
   getAll: () => {
     const data = getData();
-    return data.invoices || [];
+    return (data.invoices || []).filter(i => i !== null && i !== undefined);
   },
 
   getByClientId: (clientId) => {
@@ -4358,6 +4385,13 @@ window.Habits = Habits;
 window.TrainingBlocks = TrainingBlocks;
 window.Invoices = Invoices;
 const BrandConfig = {
+  getAdminName: () => {
+    if (window.BrandConfig && window.BrandConfig !== BrandConfig && typeof window.BrandConfig.getAdminName === 'function') {
+      return window.BrandConfig.getAdminName();
+    }
+    const b = BrandConfig.get();
+    return (b && b.trainerSettings && b.trainerSettings.adminName) || 'Administrador (Principal)';
+  },
   get: () => {
     if (window.BrandConfig && window.BrandConfig !== BrandConfig) {
       return window.BrandConfig.get();
@@ -4758,39 +4792,8 @@ const BrandConfig = {
         }
 
         const injectClientLibraryNav = () => {
-            const isClientPage = window.location.pathname.includes('client-') && 
-                                 !window.location.pathname.includes('trainer-') &&
-                                 !window.location.pathname.includes('admin-');
-            if (!isClientPage) return;
-            
-            const navList = document.querySelector('#navLinks, .nav-links');
-            if (!navList) return;
-            
-            // Prevent duplicate injection
-            if (document.getElementById('navLinkLibrary')) return;
-            
-            const cs = (brand && brand.clientSettings) ? brand.clientSettings : {};
-            if (cs.showLibrary === false) return; // Hidden by trainer
-            
-            const li = document.createElement('li');
-            li.id = 'navLinkLibrary';
-            const isCurrentPage = window.location.pathname.includes('client-library.html');
-            li.innerHTML = `<a href="client-library.html?v=496" class="nav-link ${isCurrentPage ? 'active' : ''}">Biblioteca</a>`;
-            
-            // Find the "Salir" link or insert before the last child
-            const links = navList.querySelectorAll('li');
-            let inserted = false;
-            for (let i = 0; i < links.length; i++) {
-                const text = links[i].textContent || '';
-                if (text.toLowerCase().includes('salir')) {
-                    navList.insertBefore(li, links[i]);
-                    inserted = true;
-                    break;
-                }
-            }
-            if (!inserted) {
-                navList.appendChild(li);
-            }
+            // Disabled: library should only be visible as a module on the home dashboard page
+            return;
         };
 
         // Try to inject immediately or on DOMContentLoaded

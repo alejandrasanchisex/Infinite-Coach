@@ -368,13 +368,50 @@ const scrollToElement = (elementId) => {
 };
 
 // Copy to clipboard
-const copyToClipboard = (text) => {
-    navigator.clipboard.writeText(text).then(() => {
-        showToast('Copiado al portapapeles', 'success');
-    }).catch(() => {
-        showToast('Error al copiar', 'error');
-    });
+const copyToClipboard = (text, successMessage = 'Copiado al portapapeles') => {
+    if (navigator.clipboard && typeof navigator.clipboard.writeText === 'function') {
+        navigator.clipboard.writeText(text).then(() => {
+            showToast(successMessage, 'success');
+        }).catch((err) => {
+            console.warn('navigator.clipboard falló, usando fallback: ', err);
+            fallbackCopyToClipboard(text, successMessage);
+        });
+    } else {
+        fallbackCopyToClipboard(text, successMessage);
+    }
 };
+
+const fallbackCopyToClipboard = (text, successMessage) => {
+    const textArea = document.createElement("textarea");
+    textArea.value = text;
+    textArea.style.position = "fixed";
+    textArea.style.top = "0";
+    textArea.style.left = "0";
+    textArea.style.width = "2em";
+    textArea.style.height = "2em";
+    textArea.style.padding = "0";
+    textArea.style.border = "none";
+    textArea.style.outline = "none";
+    textArea.style.boxShadow = "none";
+    textArea.style.background = "transparent";
+    document.body.appendChild(textArea);
+    textArea.focus();
+    textArea.select();
+    try {
+        const successful = document.execCommand('copy');
+        if (successful) {
+            showToast(successMessage, 'success');
+        } else {
+            showToast('Error al copiar', 'error');
+        }
+    } catch (err) {
+        console.error('Error al copiar con fallback: ', err);
+        showToast('Error al copiar', 'error');
+    }
+    document.body.removeChild(textArea);
+};
+
+window.copyToClipboard = copyToClipboard;
 
 // Get days in month
 const getDaysInMonth = (year, month) => {
