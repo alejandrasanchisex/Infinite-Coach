@@ -245,10 +245,10 @@
     <script src="js/custom-exercises.js?v=519"></script>
     <script>
         // CLIENT INITIALIZATION
-        const urlParams = new URLSearchParams(window.location.search);
+        const dashboardUrlParams = new URLSearchParams(window.location.search);
 
-        const clientIdFromUrl = urlParams.get('id');
-        let trainerIdFromUrl = urlParams.get('t');
+        const clientIdFromUrl = dashboardUrlParams.get('id');
+        let trainerIdFromUrl = dashboardUrlParams.get('t');
         if (trainerIdFromUrl) {
             const lower = trainerIdFromUrl.toLowerCase().trim();
             if (lower === 'asteam' || lower === 'alejandra') {
@@ -608,11 +608,11 @@
 
             try {
                 // Sincronizar automáticamente el estado de pago cuando regrese de un pago exitoso en Stripe
-                const paymentStatusParam = urlParams.get('payment');
+                const paymentStatusParam = dashboardUrlParams.get('payment');
                 if (paymentStatusParam === 'success') {
                     client.paymentStatus = 'paid';
                     
-                    const durationParam = urlParams.get('duration');
+                    const durationParam = dashboardUrlParams.get('duration');
                     if (durationParam) {
                         const months = parseInt(durationParam);
                         if (!isNaN(months) && months > 0) {
