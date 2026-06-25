@@ -423,6 +423,29 @@ const generateWhatsAppLink = (phone, message) => {
 };
 window.generateWhatsAppLink = generateWhatsAppLink;
 
+// Get default WhatsApp messages or custom ones from settings
+const getWhatsAppTemplate = (key, data = {}) => {
+    const brand = window.BrandConfig ? window.BrandConfig.get() : {};
+    const templates = brand.whatsappTemplates || {};
+    
+    const defaults = {
+        generalChat: 'Hola {name}, soy {trainerName}...',
+        paymentReminder: 'Hola {name}, te escribo de {trainerName} para recordarte que el pago de tu cuota mensual ({fee}) está pendiente. ¡Gracias!',
+        renewalReminder: 'Hola {name}, te escribo para recordarte que tu suscripción se renovará el {expiryDate}. El importe de tu cuota es de {fee}. ¿Confirmamos la renovación para seguir a tope el próximo periodo? ¡Gracias!',
+        reviewReception: '¡Hola {name}! He recibido tu revisión semanal. ¡Vamos a darle caña!',
+        appointmentCoordination: '¡Hola {name}! Te escribo para coordinar nuestra cita del {date}.'
+    };
+    
+    let template = templates[key] || defaults[key] || '';
+    
+    let msg = template;
+    for (const k in data) {
+        msg = msg.replace(new RegExp(`{${k}}`, 'g'), data[k]);
+    }
+    return msg;
+};
+window.getWhatsAppTemplate = getWhatsAppTemplate;
+
 // Calculate days left for payment expiry
 const calculateDaysLeft = (expiryString) => {
     if (!expiryString) return null;

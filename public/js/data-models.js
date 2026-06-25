@@ -997,30 +997,41 @@ const saveData = (data) => {
       saveQueuePromise = saveQueuePromise.then(async () => {
           try {
               const cloudData = await window.SupabaseService.getTrainerData(currentId);
-              if (cloudData && cloudData.lastModified) {
-                  const cloudTime = new Date(cloudData.lastModified).getTime();
-                  const localTime = localPrevModified ? new Date(localPrevModified).getTime() : 0;
-                  
-                  if (cloudTime > localTime + 2500) {
-                      console.log("🔄 Se detectaron cambios externos más nuevos en la nube. Fusionando antes de subir...");
+              if (cloudData) {
+                  if (!isTrainer) {
+                      // 🛡️ SECURITY BLOCK: Clients must ALWAYS merge their client-specific edits with cloud config to prevent overwriting brand/settings
+                      console.log("🔒 [Client Save] Fusionando siempre con la nube para proteger la configuración del entrenador...");
+                      const finalData = mergeLocalEdits(mergedWithLocal, cloudData, prevData, isTrainer);
+                      finalData.lastModified = new Date().toISOString();
                       
-                      // Temporarily restore local lastModified to localPrevModified for syncFromCloud comparison
-                      const tempSaved = JSON.parse(localStorage.getItem(getStorageKey()) || '{}');
-                      tempSaved.lastModified = localPrevModified;
-                      localStorage.setItem(getStorageKey(), JSON.stringify(tempSaved));
+                      localStorage.setItem(getStorageKey(), JSON.stringify(finalData));
+                      await window.SupabaseService.saveTrainerData(currentId, finalData);
+                      return;
+                  } else if (cloudData.lastModified) {
+                      const cloudTime = new Date(cloudData.lastModified).getTime();
+                      const localTime = localPrevModified ? new Date(localPrevModified).getTime() : 0;
+                      
+                      if (cloudTime > localTime + 2500) {
+                          console.log("🔄 Se detectaron cambios externos más nuevos en la nube. Fusionando antes de subir...");
+                          
+                          // Temporarily restore local lastModified to localPrevModified for syncFromCloud comparison
+                          const tempSaved = JSON.parse(localStorage.getItem(getStorageKey()) || '{}');
+                          tempSaved.lastModified = localPrevModified;
+                          localStorage.setItem(getStorageKey(), JSON.stringify(tempSaved));
 
-                      const freshData = await window.syncFromCloud();
-                      if (freshData) {
-                          // Obtenemos los datos recién fusionados en local storage
-                          const mergedLocal = JSON.parse(localStorage.getItem(getStorageKey()) || '{}');
-                          
-                          // Aplicamos de forma segura los cambios locales sobre los datos fusionados de la nube
-                          const finalData = mergeLocalEdits(mergedWithLocal, mergedLocal, prevData, isTrainer);
-                          finalData.lastModified = new Date().toISOString();
-                          
-                          localStorage.setItem(getStorageKey(), JSON.stringify(finalData));
-                          await window.SupabaseService.saveTrainerData(currentId, finalData);
-                          return;
+                          const freshData = await window.syncFromCloud();
+                          if (freshData) {
+                              // Obtenemos los datos recién fusionados en local storage
+                              const mergedLocal = JSON.parse(localStorage.getItem(getStorageKey()) || '{}');
+                              
+                              // Aplicamos de forma segura los cambios locales sobre los datos fusionados de la nube
+                              const finalData = mergeLocalEdits(mergedWithLocal, mergedLocal, prevData, isTrainer);
+                              finalData.lastModified = new Date().toISOString();
+                              
+                              localStorage.setItem(getStorageKey(), JSON.stringify(finalData));
+                              await window.SupabaseService.saveTrainerData(currentId, finalData);
+                              return;
+                          }
                       }
                   }
               }

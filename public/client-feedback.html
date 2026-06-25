@@ -7,7 +7,7 @@
     <script>
         // Force PWA cache bust / reload
         (function() {
-            const CURRENT_VERSION = '516';
+            const CURRENT_VERSION = '519';
             const savedVersion = localStorage.getItem('app_version');
             if (savedVersion !== CURRENT_VERSION) {
                 localStorage.setItem('app_version', CURRENT_VERSION);
@@ -31,9 +31,9 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="styles/theme.css?v=516">
-    <link rel="stylesheet" href="styles/components.css?v=516">
-    <link rel="stylesheet" href="styles/mobile.css?v=516">
+    <link rel="stylesheet" href="styles/theme.css?v=519">
+    <link rel="stylesheet" href="styles/components.css?v=519">
+    <link rel="stylesheet" href="styles/mobile.css?v=519">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <script>
@@ -155,10 +155,10 @@
                     <span id="brandName">Infinite Coach</span>
                 </div>
                 <ul class="nav-links" id="navLinks">
-                    <li><a href="client-dashboard.html?v=516" class="nav-link">Inicio</a></li>
-                    <li><a href="client-profile.html?v=516" class="nav-link">Ficha Técnica</a></li>
+                    <li><a href="client-dashboard.html?v=519" class="nav-link">Inicio</a></li>
+                    <li><a href="client-profile.html?v=519" class="nav-link">Ficha Técnica</a></li>
 
-                    <li><a href="client-login.html?v=516" class="nav-link">Salir</a></li>
+                    <li><a href="client-login.html?v=519" class="nav-link">Salir</a></li>
                 </ul>
                 <button class="menu-toggle" onclick="toggleMenu()" style="margin-left: auto;">☰</button>
             </nav>
@@ -334,11 +334,11 @@
 
     <!-- Supabase SDK & Service -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="js/supabase-service.js?v=516"></script>
+    <script src="js/supabase-service.js?v=519"></script>
 
-    <script src="js/data-models.js?v=516"></script>
-    <script src="js/cloud-storage.js?v=516"></script>
-    <script src="js/utils.js?v=516"></script>
+    <script src="js/data-models.js?v=519"></script>
+    <script src="js/cloud-storage.js?v=519"></script>
+    <script src="js/utils.js?v=519"></script>
     <script>
         const clientId = sessionStorage.getItem('clientId') || localStorage.getItem('clientId');
         if (!clientId) {
@@ -441,7 +441,7 @@
             const container = document.getElementById('dynamicPerimeters');
             const perimeters = (client && Array.isArray(client.customPerimeters) && client.customPerimeters.length > 0)
                 ? client.customPerimeters
-                : (Array.isArray(brand.trainerPerimeters) ? brand.trainerPerimeters : ['Cintura', 'Cadera', 'Pecho', 'Brazo', 'Muslo']);
+                : (Array.isArray(brand.trainerPerimeters) && brand.trainerPerimeters.length > 0 ? brand.trainerPerimeters : ['Cintura', 'Cadera', 'Pecho', 'Brazo', 'Muslo']);
             
             if (perimeters.length === 0) {
                 container.innerHTML = '';
@@ -458,9 +458,20 @@
 
         function renderQuestions() {
             const container = document.getElementById('dynamicQuestions');
+            const defaultQuestions = [
+                "¿Qué tal te ves fisicamente?",
+                "Sensaciones sobre la dieta (mucha/poca comida, ansiedad, poco apetito...)",
+                "Comida/alimento que no te haya gustado y/o quieras cambiar de la dieta actual",
+                "Comida/alimento que quieras tener en tu próxima dieta a ser posible",
+                "¿Has realizado algún salto de dieta para tener en cuenta?",
+                "¿Qué tal han ido los entrenos? Cuéntame tus sensaciones",
+                "¿Has podido entrenar los días estipulados?",
+                "¿Te recuperas correctamente de los entrenos entre sesiones?",
+                "Del 1 al 10, ¿Cuál ha sido tu implicación en los entrenamientos? (Intensidad, realización de todas las series...)"
+            ];
             const questions = (client && Array.isArray(client.customFeedbackQuestions) && client.customFeedbackQuestions.length > 0)
                 ? client.customFeedbackQuestions
-                : (brand.feedbackQuestions && brand.feedbackQuestions.length > 0 ? brand.feedbackQuestions : []);
+                : (brand.feedbackQuestions && brand.feedbackQuestions.length > 0 ? brand.feedbackQuestions : defaultQuestions);
 
             if (questions.length === 0) {
                 container.innerHTML = '';
@@ -824,6 +835,6 @@
         `;
         document.head.appendChild(style);
     </script>
-    <script src="js/custom-recipes.js?v=516"></script></body>
+    <script src="js/custom-recipes.js?v=519"></script></body>
 
 </html>

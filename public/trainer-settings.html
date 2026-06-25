@@ -31,7 +31,7 @@
 
         // Force PWA cache bust / reload
         (function() {
-            const CURRENT_VERSION = '516';
+            const CURRENT_VERSION = '519';
             const savedVersion = localStorage.getItem('app_version');
             if (savedVersion !== CURRENT_VERSION) {
                 localStorage.setItem('app_version', CURRENT_VERSION);
@@ -57,8 +57,8 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="styles/theme.css?v=516">
-    <link rel="stylesheet" href="styles/components.css?v=516">
+    <link rel="stylesheet" href="styles/theme.css?v=519">
+    <link rel="stylesheet" href="styles/components.css?v=519">
     <style>
         .settings-section {
             margin-bottom: var(--spacing-xl);
@@ -139,14 +139,14 @@
                 </div>
                 <button class="menu-toggle" onclick="toggleMenu()">☰</button>
                 <ul class="nav-links" id="navLinks">
-                    <li><a href="trainer-dashboard.html?v=516" class="nav-link">Dashboard</a></li>
-                    <li><a href="trainer-clients.html?v=516" class="nav-link">Clientes</a></li>
-                    <li><a href="trainer-routines.html?v=516" class="nav-link">Rutinas</a></li>
-                    <li><a href="trainer-diets.html?v=516" class="nav-link">Dietas</a></li>
-                    <li><a href="trainer-feedbacks.html?v=516" class="nav-link">Revisiones</a></li>
-                    <li><a href="trainer-media.html?v=516" class="nav-link">Biblioteca</a></li>
-                    <li><a href="trainer-appointments.html?v=516" class="nav-link">Agenda</a></li>
-                    <li><a href="trainer-settings.html?v=516" class="nav-link active">Configuración</a></li>
+                    <li><a href="trainer-dashboard.html?v=519" class="nav-link">Dashboard</a></li>
+                    <li><a href="trainer-clients.html?v=519" class="nav-link">Clientes</a></li>
+                    <li><a href="trainer-routines.html?v=519" class="nav-link">Rutinas</a></li>
+                    <li><a href="trainer-diets.html?v=519" class="nav-link">Dietas</a></li>
+                    <li><a href="trainer-feedbacks.html?v=519" class="nav-link">Revisiones</a></li>
+                    <li><a href="trainer-media.html?v=519" class="nav-link">Biblioteca</a></li>
+                    <li><a href="trainer-appointments.html?v=519" class="nav-link">Agenda</a></li>
+                    <li><a href="trainer-settings.html?v=519" class="nav-link active">Configuración</a></li>
                     <li><a href="#" onclick="if(typeof AUTH !== 'undefined') { AUTH.signOut() } else { window.location.reload() }; return false;" class="nav-link" style="color:var(--error-color)">🚪 Salir</a></li>
                 </ul>
             </nav>
@@ -333,6 +333,7 @@
                         </div>
                     </div>
 
+
                     <!-- Personalización Visual -->
                     <div class="card shadow-sm" style="margin-top: 1rem;">
                         <div class="card-header">
@@ -459,6 +460,58 @@
                                     </tbody>
                                 </table>
                             </div>
+                        </div>
+                    </div>
+
+                    <!-- Plantillas de WhatsApp -->
+                    <div class="card shadow-sm" style="margin-top: 1rem;">
+                        <div class="card-header">
+                            <h2 class="card-title">💬 Plantillas de WhatsApp</h2>
+                        </div>
+                        <div class="card-body">
+                            <p class="text-xs text-muted mb-lg" style="line-height: 1.4;">
+                                Personaliza los mensajes predeterminados que envías a tus clientes por WhatsApp desde las diferentes secciones de la aplicación. Puedes usar variables entre llaves:<br>
+                                <code>{name}</code> (Nombre del cliente), 
+                                <code>{trainerName}</code> (Nombre de tu negocio/marca), 
+                                <code>{fee}</code> (Cuota mensual del cliente), 
+                                <code>{expiryDate}</code> (Fecha de vencimiento/renovación), y 
+                                <code>{date}</code> (Fecha/hora de la cita).
+                            </p>
+
+                            <div class="form-group mb-md">
+                                <label class="form-label" style="font-size: 0.8rem; font-weight: 600; display: block; margin-bottom: 6px;">Mensaje de Chat General (Ficha de Cliente)</label>
+                                <textarea id="waGeneralChat" class="form-input" style="height: 70px; resize: vertical; background: rgba(255,255,255,0.05); color: #fff; border: 1px solid rgba(255,255,255,0.1); border-radius: 6px; padding: 10px; width: 100%; font-family: inherit; font-size: 0.85rem;" placeholder="Ej: Hola {name}, soy {trainerName}..."></textarea>
+                                <span class="text-xs text-muted" style="display: block; margin-top: 4px; font-size: 0.75rem; opacity: 0.6;">Variables disponibles: <code>{name}</code>, <code>{trainerName}</code></span>
+                            </div>
+
+                            <div class="form-group mb-md">
+                                <label class="form-label" style="font-size: 0.8rem; font-weight: 600; display: block; margin-bottom: 6px;">Recordatorio de Pago Pendiente (Dashboard / Ficha)</label>
+                                <textarea id="waPaymentReminder" class="form-input" style="height: 70px; resize: vertical; background: rgba(255,255,255,0.05); color: #fff; border: 1px solid rgba(255,255,255,0.1); border-radius: 6px; padding: 10px; width: 100%; font-family: inherit; font-size: 0.85rem;" placeholder="Ej: Hola {name}, te escribo para recordarte el pago..."></textarea>
+                                <span class="text-xs text-muted" style="display: block; margin-top: 4px; font-size: 0.75rem; opacity: 0.6;">Variables disponibles: <code>{name}</code>, <code>{trainerName}</code>, <code>{fee}</code></span>
+                            </div>
+
+                            <div class="form-group mb-md">
+                                <label class="form-label" style="font-size: 0.8rem; font-weight: 600; display: block; margin-bottom: 6px;">Recordatorio de Renovación de Suscripción</label>
+                                <textarea id="waRenewalReminder" class="form-input" style="height: 70px; resize: vertical; background: rgba(255,255,255,0.05); color: #fff; border: 1px solid rgba(255,255,255,0.1); border-radius: 6px; padding: 10px; width: 100%; font-family: inherit; font-size: 0.85rem;" placeholder="Ej: Hola {name}, tu suscripción se renovará el {expiryDate}..."></textarea>
+                                <span class="text-xs text-muted" style="display: block; margin-top: 4px; font-size: 0.75rem; opacity: 0.6;">Variables disponibles: <code>{name}</code>, <code>{trainerName}</code>, <code>{fee}</code>, <code>{expiryDate}</code></span>
+                            </div>
+
+                            <div class="form-group mb-md">
+                                <label class="form-label" style="font-size: 0.8rem; font-weight: 600; display: block; margin-bottom: 6px;">Mensaje de Revisión Semanal Recibida</label>
+                                <textarea id="waReviewReception" class="form-input" style="height: 70px; resize: vertical; background: rgba(255,255,255,0.05); color: #fff; border: 1px solid rgba(255,255,255,0.1); border-radius: 6px; padding: 10px; width: 100%; font-family: inherit; font-size: 0.85rem;" placeholder="Ej: ¡Hola {name}! He recibido tu revisión..."></textarea>
+                                <span class="text-xs text-muted" style="display: block; margin-top: 4px; font-size: 0.75rem; opacity: 0.6;">Variables disponibles: <code>{name}</code></span>
+                            </div>
+
+                            <div class="form-group mb-md">
+                                <label class="form-label" style="font-size: 0.8rem; font-weight: 600; display: block; margin-bottom: 6px;">Mensaje para Coordinar Cita (Calendario)</label>
+                                <textarea id="waAppointmentCoordination" class="form-input" style="height: 70px; resize: vertical; background: rgba(255,255,255,0.05); color: #fff; border: 1px solid rgba(255,255,255,0.1); border-radius: 6px; padding: 10px; width: 100%; font-family: inherit; font-size: 0.85rem;" placeholder="Ej: ¡Hola {name}! Te escribo para coordinar nuestra cita del {date}..."></textarea>
+                                <span class="text-xs text-muted" style="display: block; margin-top: 4px; font-size: 0.75rem; opacity: 0.6;">Variables disponibles: <code>{name}</code>, <code>{date}</code></span>
+                            </div>
+
+                            <div class="divider" style="margin: 15px 0;"></div>
+                            <button class="btn btn-primary" style="width: 100%;" onclick="saveBrandSettings()">
+                                💾 Guardar Plantillas
+                            </button>
                         </div>
                     </div>
 
@@ -741,17 +794,17 @@
      </div>
 
     <!-- Supabase SDK & Service -->
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" defer></script>
-    <script src="js/supabase-service.js?v=516" defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="js/supabase-service.js?v=519"></script>
 
     <!-- UI Scripts -->
-    <script src="js/config.js?v=516" defer></script>
-    <script src="js/auth.js?v=516" defer></script>
-    <script src="js/sheets.js?v=516" defer></script>
-    <script src="js/data-models.js?v=516" defer></script>
-    <script src="js/cloud-storage.js?v=516" defer></script>
-    <script src="js/utils.js?v=516" defer></script>
-    <script src="js/excel-manager.js?v=516" defer></script>
+    <script src="js/config.js?v=519"></script>
+    <script src="js/auth.js?v=519"></script>
+    <script src="js/sheets.js?v=519"></script>
+    <script src="js/data-models.js?v=519"></script>
+    <script src="js/cloud-storage.js?v=519"></script>
+    <script src="js/utils.js?v=519"></script>
+    <script src="js/excel-manager.js?v=519"></script>
     <script>
         // Global Variables
         let feedbackQuestions = [];
@@ -1151,6 +1204,14 @@
             if (document.getElementById('clientShowFeedback')) document.getElementById('clientShowFeedback').checked = clientSettings.showFeedback !== false;
             if (document.getElementById('clientShowLibrary')) document.getElementById('clientShowLibrary').checked = clientSettings.showLibrary !== false;
 
+            // WhatsApp templates loading
+            const templates = b.whatsappTemplates || {};
+            if (document.getElementById('waGeneralChat')) document.getElementById('waGeneralChat').value = templates.generalChat || 'Hola {name}, soy {trainerName}...';
+            if (document.getElementById('waPaymentReminder')) document.getElementById('waPaymentReminder').value = templates.paymentReminder || 'Hola {name}, te escribo de {trainerName} para recordarte que el pago de tu cuota mensual ({fee}) está pendiente. ¡Gracias!';
+            if (document.getElementById('waRenewalReminder')) document.getElementById('waRenewalReminder').value = templates.renewalReminder || 'Hola {name}, te escribo para recordarte que tu suscripción se renovará el {expiryDate}. El importe de tu cuota es de {fee}. ¿Confirmamos la renovación para seguir a tope el próximo periodo? ¡Gracias!';
+            if (document.getElementById('waReviewReception')) document.getElementById('waReviewReception').value = templates.reviewReception || '¡Hola {name}! He recibido tu revisión semanal. ¡Vamos a darle caña!';
+            if (document.getElementById('waAppointmentCoordination')) document.getElementById('waAppointmentCoordination').value = templates.appointmentCoordination || '¡Hola {name}! Te escribo para coordinar nuestra cita del {date}.';
+
             const trainerSettings = b.trainerSettings || { autoSaveDietTemplate: false };
             if (document.getElementById('autoSaveDietTemplate')) document.getElementById('autoSaveDietTemplate').checked = trainerSettings.autoSaveDietTemplate;
             if (document.getElementById('adminTrainerNameInput')) {
@@ -1211,8 +1272,19 @@
                 document.getElementById('logoPreview').src = b.logo || BrandConfig.get().logo;
             }
 
-            feedbackQuestions = Array.isArray(b.feedbackQuestions) ? [...b.feedbackQuestions] : ['Comentarios y Observaciones'];
-            feedbackPerimeters = Array.isArray(b.trainerPerimeters) ? [...b.trainerPerimeters] : ['Cintura', 'Cadera', 'Pecho', 'Brazo', 'Muslo'];
+            const defaultQuestions = [
+                "¿Qué tal te ves fisicamente?",
+                "Sensaciones sobre la dieta (mucha/poca comida, ansiedad, poco apetito...)",
+                "Comida/alimento que no te haya gustado y/o quieras cambiar de la dieta actual",
+                "Comida/alimento que quieras tener en tu próxima dieta a ser posible",
+                "¿Has realizado algún salto de dieta para tener en cuenta?",
+                "¿Qué tal han ido los entrenos? Cuéntame tus sensaciones",
+                "¿Has podido entrenar los días estipulados?",
+                "¿Te recuperas correctamente de los entrenos entre sesiones?",
+                "Del 1 al 10, ¿Cuál ha sido tu implicación en los entrenamientos? (Intensidad, realización de todas las series...)"
+            ];
+            feedbackQuestions = Array.isArray(b.feedbackQuestions) && b.feedbackQuestions.length > 0 ? [...b.feedbackQuestions] : defaultQuestions;
+            feedbackPerimeters = Array.isArray(b.trainerPerimeters) && b.trainerPerimeters.length > 0 ? [...b.trainerPerimeters] : ['Cintura', 'Cadera', 'Pecho', 'Brazo', 'Muslo'];
             onboardingQuestions = Array.isArray(b.onboardingQuestions) ? [...b.onboardingQuestions] : [];
 
             if (typeof renderQuestions === 'function') renderQuestions();
@@ -1236,12 +1308,21 @@
                 const bgDark = document.getElementById('bgDarkColorInput').value;
                 const bgLight = document.getElementById('bgLightColorInput').value;
 
+                const whatsappTemplates = {
+                    generalChat: document.getElementById('waGeneralChat') ? document.getElementById('waGeneralChat').value.trim() : (b.whatsappTemplates?.generalChat || ''),
+                    paymentReminder: document.getElementById('waPaymentReminder') ? document.getElementById('waPaymentReminder').value.trim() : (b.whatsappTemplates?.paymentReminder || ''),
+                    renewalReminder: document.getElementById('waRenewalReminder') ? document.getElementById('waRenewalReminder').value.trim() : (b.whatsappTemplates?.renewalReminder || ''),
+                    reviewReception: document.getElementById('waReviewReception') ? document.getElementById('waReviewReception').value.trim() : (b.whatsappTemplates?.reviewReception || ''),
+                    appointmentCoordination: document.getElementById('waAppointmentCoordination') ? document.getElementById('waAppointmentCoordination').value.trim() : (b.whatsappTemplates?.appointmentCoordination || '')
+                };
+
                 const updated = {
                     ...b,
                     name: newName,
                     whatsapp: newWhatsapp,
                     logo: currentLogoBase64 || b.logo, // IMPORTANTE: No sobrescribir con null si no se ha subido uno nuevo
                     colors: { primary, secondary, accent, themeMode, bgDark, bgLight },
+                    whatsappTemplates,
                     trainerSettings: {
                         ...(b.trainerSettings || {}),
                         autoSaveDietTemplate: document.getElementById('autoSaveDietTemplate').checked,
@@ -1299,12 +1380,21 @@
                 const bgDark = document.getElementById('bgDarkColorInput').value;
                 const bgLight = document.getElementById('bgLightColorInput').value;
 
+                const whatsappTemplates = {
+                    generalChat: document.getElementById('waGeneralChat') ? document.getElementById('waGeneralChat').value.trim() : (b.whatsappTemplates?.generalChat || ''),
+                    paymentReminder: document.getElementById('waPaymentReminder') ? document.getElementById('waPaymentReminder').value.trim() : (b.whatsappTemplates?.paymentReminder || ''),
+                    renewalReminder: document.getElementById('waRenewalReminder') ? document.getElementById('waRenewalReminder').value.trim() : (b.whatsappTemplates?.renewalReminder || ''),
+                    reviewReception: document.getElementById('waReviewReception') ? document.getElementById('waReviewReception').value.trim() : (b.whatsappTemplates?.reviewReception || ''),
+                    appointmentCoordination: document.getElementById('waAppointmentCoordination') ? document.getElementById('waAppointmentCoordination').value.trim() : (b.whatsappTemplates?.appointmentCoordination || '')
+                };
+
                 const updated = {
                     ...b,
                     name: newName,
                     whatsapp: newWhatsapp,
                     logo: currentLogoBase64 || b.logo,
                     colors: { primary, secondary, accent, themeMode, bgDark, bgLight },
+                    whatsappTemplates,
                     trainerSettings: {
                         ...(b.trainerSettings || {}),
                         autoSaveDietTemplate: document.getElementById('autoSaveDietTemplate').checked,
@@ -1431,7 +1521,8 @@
                 'accentColorInput', 'themeModeInput', 'bgDarkColorInput', 'bgLightColorInput', 'autoSaveDietTemplate',
                 'pdfShowCalories', 'pdfShowMacros', 'clientShowVideos', 'clientShowCalories',
                 'clientShowMacros', 'clientShowRIR', 'clientShowWeightHabit',
-                'clientShowDiet', 'clientShowRoutine', 'clientShowHabits', 'clientShowEvolution', 'clientShowFeedback'
+                'clientShowDiet', 'clientShowRoutine', 'clientShowHabits', 'clientShowEvolution', 'clientShowFeedback',
+                'clientShowLibrary', 'waGeneralChat', 'waPaymentReminder', 'waRenewalReminder', 'waReviewReception', 'waAppointmentCoordination'
             ].includes(id)) {
                 window.triggerSilentSaveBrand();
             } else if (['stripePublicKey', 'stripeSecretKey'].includes(id)) {
@@ -1456,7 +1547,8 @@
                 'accentColorInput', 'themeModeInput', 'bgDarkColorInput', 'bgLightColorInput', 'autoSaveDietTemplate',
                 'pdfShowCalories', 'pdfShowMacros', 'clientShowVideos', 'clientShowCalories',
                 'clientShowMacros', 'clientShowRIR', 'clientShowWeightHabit',
-                'clientShowDiet', 'clientShowRoutine', 'clientShowHabits', 'clientShowEvolution', 'clientShowFeedback'
+                'clientShowDiet', 'clientShowRoutine', 'clientShowHabits', 'clientShowEvolution', 'clientShowFeedback',
+                'clientShowLibrary', 'waGeneralChat', 'waPaymentReminder', 'waRenewalReminder', 'waReviewReception', 'waAppointmentCoordination'
             ].includes(id)) {
                 window.triggerSilentSaveBrand();
             } else if (['stripePublicKey', 'stripeSecretKey'].includes(id)) {
@@ -2400,6 +2492,6 @@
             }, 2500);
         }
     </script>
-    <script src="js/custom-recipes.js?v=516" defer></script></body>
+    <script src="js/custom-recipes.js?v=519" defer></script></body>
 
 </html>
