@@ -4028,11 +4028,13 @@ const TrainingLogs = {
 
   getDraft: (clientId, routineId, dayNumber) => {
     const data = getData();
+    const activeBlock = (data.trainingBlocks || []).find(b => b.clientId == clientId && b.status === 'active');
     return (data.trainingLogs || []).find(l => 
         l.clientId == clientId && 
         l.routineId === routineId && 
         l.dayNumber === dayNumber && 
-        l.completed === false
+        l.completed === false &&
+        (!activeBlock || l.blockId === activeBlock.id)
     );
   },
 
@@ -4048,7 +4050,8 @@ const TrainingLogs = {
         l.clientId == logData.clientId && 
         l.routineId === logData.routineId && 
         l.dayNumber === logData.dayNumber && 
-        l.completed === false
+        l.completed === false &&
+        (!activeBlock || l.blockId === activeBlock.id)
     );
 
     if (draft) {
@@ -4082,12 +4085,15 @@ const TrainingLogs = {
     const data = getData();
     if (!data.trainingLogs) data.trainingLogs = [];
 
+    const activeBlock = (data.trainingBlocks || []).find(b => b.clientId == logData.clientId && b.status === 'active');
+
     // Find and update the existing draft if it exists
     let existingLog = data.trainingLogs.find(l => 
         l.clientId == logData.clientId && 
         l.routineId === logData.routineId && 
         l.dayNumber === logData.dayNumber && 
-        l.completed === false
+        l.completed === false &&
+        (!activeBlock || l.blockId === activeBlock.id)
     );
 
     if (existingLog) {
@@ -4096,13 +4102,15 @@ const TrainingLogs = {
         existingLog.completed = true;
         existingLog.date = new Date().toISOString();
         existingLog.lastModified = new Date().toISOString();
+        if (activeBlock) existingLog.blockId = activeBlock.id;
     } else {
         // Prevent duplication on double-submission by checking for already completed logs
         let duplicateCompleted = data.trainingLogs.find(l => 
             l.clientId == logData.clientId && 
             l.routineId === logData.routineId && 
             l.dayNumber === logData.dayNumber && 
-            l.completed === true
+            l.completed === true &&
+            (!activeBlock || l.blockId === activeBlock.id)
         );
         if (duplicateCompleted) {
             console.warn("Duplicate completed log submission detected. Updating instead of duplicating.");
@@ -4111,7 +4119,6 @@ const TrainingLogs = {
             duplicateCompleted.lastModified = new Date().toISOString();
             existingLog = duplicateCompleted;
         } else {
-            const activeBlock = (data.trainingBlocks || []).find(b => b.clientId == logData.clientId && b.status === 'active');
             existingLog = {
               id: generateUUID(),
               clientId: logData.clientId,
@@ -4496,7 +4503,7 @@ const BrandConfig = {
     } else if (isLucy) {
         defaultBrand = {
             name: 'Lucy Tundidor',
-            logo: 'https://bieeydhacavxymoosasx.supabase.co/storage/v1/object/public/Media/lucy_logo_cropped.png?v=2',
+            logo: 'https://bieeydhacavxymoosasx.supabase.co/storage/v1/object/public/Media/lucy_logo_cropped.png?v=527',
             configured: true,
             colors: { 
                 primary: '#816e61', 
@@ -4524,7 +4531,7 @@ const BrandConfig = {
     }
     // If not Lucy, ensure Lucy config is cleared
     if (!isLucy) {
-        if (res && (res.name === 'Lucy Tundidor' || res.logo === 'https://bieeydhacavxymoosasx.supabase.co/storage/v1/object/public/Media/lucy_logo_cropped.png' || res.logo === 'https://bieeydhacavxymoosasx.supabase.co/storage/v1/object/public/Media/lucy_logo_cropped.png?v=2' || (res.colors && res.colors.primary === '#816e61'))) {
+        if (res && (res.name === 'Lucy Tundidor' || res.logo === 'https://bieeydhacavxymoosasx.supabase.co/storage/v1/object/public/Media/lucy_logo_cropped.png' || res.logo === 'https://bieeydhacavxymoosasx.supabase.co/storage/v1/object/public/Media/lucy_logo_cropped.png?v=527' || (res.colors && res.colors.primary === '#816e61'))) {
             res = defaultBrand;
             if (typeof saveData === 'function') {
                 data.brand = res;
@@ -4591,7 +4598,7 @@ const BrandConfig = {
             res.colors = defaultBrand.colors;
             changed = true;
         }
-        if (!res.logo || res.logo === 'img/logo-infinite-coach.png' || res.logo.includes('1779724548154') || res.logo.includes('lucy_logo_v1.png') || !res.logo.includes('lucy_logo_cropped.png?v=2')) {
+        if (!res.logo || res.logo === 'img/logo-infinite-coach.png' || res.logo.includes('1779724548154') || res.logo.includes('lucy_logo_v1.png') || !res.logo.includes('lucy_logo_cropped.png?v=527')) {
             res.logo = defaultBrand.logo;
             changed = true;
         }

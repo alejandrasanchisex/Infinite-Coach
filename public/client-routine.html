@@ -7,7 +7,7 @@
   <script>
       // Force PWA cache bust / reload
       (function() {
-          const CURRENT_VERSION = '512';
+          const CURRENT_VERSION = '527';
           const savedVersion = localStorage.getItem('app_version');
           if (savedVersion !== CURRENT_VERSION) {
               localStorage.setItem('app_version', CURRENT_VERSION);
@@ -31,9 +31,9 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="styles/theme.css?v=512">
-  <link rel="stylesheet" href="styles/components.css?v=512">
-  <link rel="stylesheet" href="styles/mobile.css?v=512">
+  <link rel="stylesheet" href="styles/theme.css?v=527">
+  <link rel="stylesheet" href="styles/components.css?v=527">
+  <link rel="stylesheet" href="styles/mobile.css?v=527">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <script>
@@ -145,10 +145,10 @@
           <span id="brandName">Infinite Coach</span>
         </div>
         <ul class="nav-links" id="navLinks">
-          <li><a href="client-dashboard.html?v=512" class="nav-link">Inicio</a></li>
-          <li><a href="client-profile.html?v=512" class="nav-link">Ficha Técnica</a></li>
+          <li><a href="client-dashboard.html?v=527" class="nav-link">Inicio</a></li>
+          <li><a href="client-profile.html?v=527" class="nav-link">Ficha Técnica</a></li>
 
-          <li><a href="client-login.html?v=512" class="nav-link">Salir</a></li>
+          <li><a href="client-login.html?v=527" class="nav-link">Salir</a></li>
         </ul>
         <button class="menu-toggle" onclick="toggleMenu()" style="margin-left: auto;">☰</button>
       </nav>
@@ -207,12 +207,12 @@
 
   <!-- Supabase SDK & Service -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script src="js/supabase-service.js?v=512"></script>
+  <script src="js/supabase-service.js?v=527"></script>
 
-  <script src="js/config.js?v=512"></script>
-  <script src="js/data-models.js?v=512"></script>
-  <script src="js/custom-exercises.js?v=512"></script>
-  <script src="js/utils.js?v=512"></script>
+  <script src="js/config.js?v=527"></script>
+  <script src="js/data-models.js?v=527"></script>
+  <script src="js/custom-exercises.js?v=527"></script>
+  <script src="js/utils.js?v=527"></script>
   <script>
     // --- RESOLUCIÓN DE TRAINER ID (FALLBACK SEGURO) ---
     (function() {
@@ -271,7 +271,7 @@
         if (activeDays.length === 0) return true; // Empty week acts as completed
         
         return activeDays.every(d => {
-            return userLogs.some(l => (l.routineId === w.id || l.routineId === logicId) && l.dayNumber === d && l.completed);
+            return userLogs.some(l => (l.routineId === w.id || l.routineId === logicId) && l.dayNumber === d && l.completed && (!isBlockBased || !publishedBlock || l.blockId === publishedBlock.id));
         });
     }
 
@@ -504,7 +504,7 @@
             const logsToUse = window.localUserLogs || TrainingLogs.getByClientId(client.id);
 
             tabsContainer.innerHTML = days.map((day, index) => {
-               const isCompleted = logsToUse.some(l => (l.routineId === routine.id || l.routineId === currentLogicId) && l.dayNumber === day && l.completed);
+               const isCompleted = logsToUse.some(l => (l.routineId === routine.id || l.routineId === currentLogicId) && l.dayNumber === day && l.completed && (!isBlockBased || !publishedBlock || l.blockId === publishedBlock.id));
                const dayEx = routine.days ? (routine.days[day-1]?.exercises || []) : (routine.exercises || []).filter(e=>e.day===day);
                const hasEx = dayEx.length > 0;
 
@@ -607,7 +607,8 @@
       completedLog = userLogs.find(l => 
           (l.routineId === routine.id || l.routineId === currentRoutineId) && 
           l.dayNumber === dayNumber && 
-          l.completed
+          l.completed &&
+          (!isBlockBased || !publishedBlock || l.blockId === publishedBlock.id)
       );
       if (completedLog) sessionCompleted = true;
 
@@ -1129,6 +1130,6 @@
     // Trigger App Initialization
     initializeApp();
   </script>
-    <script src="js/custom-recipes.js?v=512"></script></body>
+    <script src="js/custom-recipes.js?v=527"></script></body>
 
 </html>
