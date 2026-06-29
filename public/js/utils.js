@@ -1088,7 +1088,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (isTrainerPage && !isLoginPage) {
         if (typeof PersonalizationManager === 'undefined') {
             const script = document.createElement('script');
-            script.src = 'js/personalization.js?v=528';
+            script.src = 'js/personalization.js?v=529';
             script.onload = () => {
                 if (window.PersonalizationManager) {
                     window.PersonalizationManager.init();
