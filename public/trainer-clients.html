@@ -5,7 +5,7 @@
     <script>
         // Force PWA cache bust / reload
         (function() {
-            const CURRENT_VERSION = '529';
+            const CURRENT_VERSION = '530';
             const savedVersion = localStorage.getItem('app_version');
             if (savedVersion !== CURRENT_VERSION) {
                 localStorage.setItem('app_version', CURRENT_VERSION);
@@ -28,7 +28,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Gestión de Clientes - ASTeam</title>
-  <link rel="stylesheet" href="styles/theme.css?v=529">
+  <link rel="stylesheet" href="styles/theme.css?v=530">
   <link rel="stylesheet" href="styles/components.css">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 </head>
@@ -58,14 +58,14 @@
           </div>
           <button class="menu-toggle" onclick="toggleMenu()">☰</button>
           <ul class="nav-links" id="navLinks">
-            <li><a href="trainer-dashboard.html?v=529" class="nav-link">Dashboard</a></li>
-            <li><a href="trainer-clients.html?v=529" class="nav-link active">Clientes</a></li>
-            <li><a href="trainer-routines.html?v=529" class="nav-link">Rutinas</a></li>
-            <li><a href="trainer-diets.html?v=529" class="nav-link">Dietas</a></li>
-            <li><a href="trainer-feedbacks.html?v=529" class="nav-link">Revisiones</a></li>
-            <li><a href="trainer-media.html?v=529" class="nav-link">Biblioteca</a></li>
-            <li><a href="trainer-appointments.html?v=529" class="nav-link">Agenda</a></li>
-            <li><a href="trainer-settings.html?v=529" class="nav-link">Configuración</a></li>
+            <li><a href="trainer-dashboard.html?v=530" class="nav-link">Dashboard</a></li>
+            <li><a href="trainer-clients.html?v=530" class="nav-link active">Clientes</a></li>
+            <li><a href="trainer-routines.html?v=530" class="nav-link">Rutinas</a></li>
+            <li><a href="trainer-diets.html?v=530" class="nav-link">Dietas</a></li>
+            <li><a href="trainer-feedbacks.html?v=530" class="nav-link">Revisiones</a></li>
+            <li><a href="trainer-media.html?v=530" class="nav-link">Biblioteca</a></li>
+            <li><a href="trainer-appointments.html?v=530" class="nav-link">Agenda</a></li>
+            <li><a href="trainer-settings.html?v=530" class="nav-link">Configuración</a></li>
             <li><a href="#" onclick="if(typeof AUTH !== 'undefined') { AUTH.signOut() } else { window.location.reload() }; return false;" class="nav-link" style="color:var(--error-color)">🚪 Salir</a></li>
           </ul>
         </nav>
@@ -161,22 +161,29 @@
 
   <!-- Supabase SDK & Service -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script src="js/supabase-service.js?v=529"></script>
+  <script src="js/supabase-service.js?v=530"></script>
 
-  <script src="js/config.js?v=529"></script>
-  <script src="js/auth.js?v=529"></script>
-  <script src="js/sheets.js?v=529"></script>
-  <script src="js/data-models.js?v=529"></script>
-  <script src="js/custom-exercises.js?v=529"></script>
-  <script src="js/utils.js?v=529"></script>
+  <script src="js/config.js?v=530"></script>
+  <script src="js/auth.js?v=530"></script>
+  <script src="js/sheets.js?v=530"></script>
+  <script src="js/data-models.js?v=530"></script>
+  <script src="js/custom-exercises.js?v=530"></script>
+  <script src="js/utils.js?v=530"></script>
   <script>
     const daysMapShort = { '1': 'Lun', '2': 'Mar', '3': 'Mié', '4': 'Jue', '5': 'Vie', '6': 'Sáb', '7': 'Dom' };
+
+    let filtersInitialized = false;
 
     window.populateQuotaFilter = function(allClients) {
       const select = document.getElementById('quotaFilter');
       if (!select) return;
       
-      const currentValue = select.value || 'all';
+      let currentValue = select.value;
+      const savedQuota = localStorage.getItem('clients_filter_quota');
+      if ((!currentValue || currentValue === 'all') && savedQuota) {
+        currentValue = savedQuota;
+      }
+      
       const uniqueTypes = new Set();
       allClients.forEach(c => {
         if (c && c.subscriptionType) {
@@ -203,8 +210,22 @@
       console.log('Dibujando tabla de clientes...');
       const allClients = window.Clients ? window.Clients.getAll() : [];
       
-      // Populate quota filter list dynamically if select is not currently focused/active
+      const statusEl = document.getElementById('statusFilter');
+      const paymentEl = document.getElementById('paymentFilter');
       const quotaEl = document.getElementById('quotaFilter');
+      const searchEl = document.getElementById('searchInput');
+
+      if (!filtersInitialized) {
+        const savedStatus = localStorage.getItem('clients_filter_status');
+        if (savedStatus && statusEl) statusEl.value = savedStatus;
+        const savedPayment = localStorage.getItem('clients_filter_payment');
+        if (savedPayment && paymentEl) paymentEl.value = savedPayment;
+        const savedSearch = localStorage.getItem('clients_filter_search');
+        if (savedSearch && searchEl) searchEl.value = savedSearch;
+        filtersInitialized = true;
+      }
+      
+      // Populate quota filter list dynamically if select is not currently focused/active
       if (quotaEl && document.activeElement !== quotaEl) {
         window.populateQuotaFilter(allClients);
       }
@@ -212,14 +233,16 @@
       const tbody = document.getElementById('cuerpoTabla');
       if (!tbody) return;
 
-      const searchEl = document.getElementById('searchInput');
-      const statusEl = document.getElementById('statusFilter');
-      const paymentEl = document.getElementById('paymentFilter');
-
       const searchTerm = searchEl ? searchEl.value.toLowerCase() : '';
       const statusFilter = statusEl ? statusEl.value : 'all';
       const paymentFilter = paymentEl ? paymentEl.value : 'all';
       const quotaFilter = quotaEl ? quotaEl.value : 'all';
+
+      // Save filter preferences
+      if (statusEl) localStorage.setItem('clients_filter_status', statusFilter);
+      if (paymentEl) localStorage.setItem('clients_filter_payment', paymentFilter);
+      if (quotaEl) localStorage.setItem('clients_filter_quota', quotaFilter);
+      if (searchEl) localStorage.setItem('clients_filter_search', searchEl.value);
 
       let filtered = allClients.filter(c => {
         if (!c) return false;
@@ -528,6 +551,6 @@
       if (typeof window.dibujarTabla === 'function') window.dibujarTabla();
     }
   </script>
-    <script src="js/custom-recipes.js?v=529"></script></body>
+    <script src="js/custom-recipes.js?v=530"></script></body>
 
 </html>
