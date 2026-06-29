@@ -4503,7 +4503,7 @@ const BrandConfig = {
     } else if (isLucy) {
         defaultBrand = {
             name: 'Lucy Tundidor',
-            logo: 'https://bieeydhacavxymoosasx.supabase.co/storage/v1/object/public/Media/lucy_logo_cropped.png?v=527',
+            logo: 'https://bieeydhacavxymoosasx.supabase.co/storage/v1/object/public/Media/lucy_logo_cropped.png?v=528',
             configured: true,
             colors: { 
                 primary: '#816e61', 
@@ -4531,7 +4531,7 @@ const BrandConfig = {
     }
     // If not Lucy, ensure Lucy config is cleared
     if (!isLucy) {
-        if (res && (res.name === 'Lucy Tundidor' || res.logo === 'https://bieeydhacavxymoosasx.supabase.co/storage/v1/object/public/Media/lucy_logo_cropped.png' || res.logo === 'https://bieeydhacavxymoosasx.supabase.co/storage/v1/object/public/Media/lucy_logo_cropped.png?v=527' || (res.colors && res.colors.primary === '#816e61'))) {
+        if (res && (res.name === 'Lucy Tundidor' || res.logo === 'https://bieeydhacavxymoosasx.supabase.co/storage/v1/object/public/Media/lucy_logo_cropped.png' || res.logo === 'https://bieeydhacavxymoosasx.supabase.co/storage/v1/object/public/Media/lucy_logo_cropped.png?v=528' || (res.colors && res.colors.primary === '#816e61'))) {
             res = defaultBrand;
             if (typeof saveData === 'function') {
                 data.brand = res;
@@ -4598,7 +4598,7 @@ const BrandConfig = {
             res.colors = defaultBrand.colors;
             changed = true;
         }
-        if (!res.logo || res.logo === 'img/logo-infinite-coach.png' || res.logo.includes('1779724548154') || res.logo.includes('lucy_logo_v1.png') || !res.logo.includes('lucy_logo_cropped.png?v=527')) {
+        if (!res.logo || res.logo === 'img/logo-infinite-coach.png' || res.logo.includes('1779724548154') || res.logo.includes('lucy_logo_v1.png') || !res.logo.includes('lucy_logo_cropped.png?v=528')) {
             res.logo = defaultBrand.logo;
             changed = true;
         }
