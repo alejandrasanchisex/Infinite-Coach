@@ -656,7 +656,7 @@ const mergeLocalEdits = (localNew, cloudMerged, localPrev, isTrainer) => {
             return ['appointments', 'feedbacks'];
         }
         if (page.includes('client-detail')) {
-            return ['clients', 'trainingBlocks', 'trainingLogs', 'feedbacks', 'appointments', 'diets', 'routines'];
+            return ['clients', 'trainingBlocks', 'trainingLogs', 'feedbacks', 'appointments', 'diets', 'routines', 'supplementationTemplates'];
         }
         return null;
     };
@@ -853,11 +853,19 @@ ${item.date}`.replace('\n', ''); // Safe compile
                             return;
                         }
                     }
-                    if (col === 'appointments' && localItem && cloudItem) {
-                        const localChanged = !prevItem || localItem.status !== prevItem.status || localItem.replyNotes !== prevItem.replyNotes;
-                        if (localChanged) {
-                            const mergedApp = { ...cloudItem, status: localItem.status, replyNotes: localItem.replyNotes };
-                            finalItems.push(mergedApp);
+                    if (col === 'appointments') {
+                        if (localItem && cloudItem) {
+                            const localChanged = !prevItem || JSON.stringify(localItem) !== JSON.stringify(prevItem);
+                            if (localChanged) {
+                                finalItems.push({ ...cloudItem, ...localItem });
+                            } else {
+                                finalItems.push(cloudItem);
+                            }
+                            return;
+                        } else if (localItem) {
+                            if (!prevItem) {
+                                finalItems.push(localItem);
+                            }
                             return;
                         }
                     }
@@ -1375,11 +1383,8 @@ ${item.date}`.replace('\n', ''); // Safe compile
                                     const mergedAppt = { ...cloudItem }; // Empezar con el del cloud
                                     
                                     if (isTrainer) {
-                                        // Entrenador es máster de status y replyNotes
-                                        mergedAppt.status = localItem.status || cloudItem.status;
-                                        mergedAppt.replyNotes = localItem.replyNotes || cloudItem.replyNotes;
-                                        if (localItem.date && localItem.date !== cloudItem.date) mergedAppt.date = localItem.date;
-                                        if (localItem.time && localItem.time !== cloudItem.time) mergedAppt.time = localItem.time;
+                                        // El entrenador puede editar cualquier campo de la cita (date, time, notes, type, status, etc.)
+                                        Object.assign(mergedAppt, localItem);
                                     } else {
                                         // Cliente acepta la aprobación/rechazo de la nube (del entrenador)
                                         mergedAppt.status = cloudItem.status || localItem.status;
@@ -1423,7 +1428,9 @@ ${item.date}`.replace('\n', ''); // Safe compile
                                     if (trainerCollections.includes(col)) {
                                         mergedItems.push(cloudItem); // Rutinas/bloques del entrenador: siempre preferir la Nube
                                     } else {
-                                        if (localTime > cloudTime) {
+                                        const localItemTime = new Date(localItem.lastModified || localItem.updatedAt || localItem.date || 0).getTime();
+                                        const cloudItemTime = new Date(cloudItem.lastModified || cloudItem.updatedAt || cloudItem.date || 0).getTime();
+                                        if (localItemTime > cloudItemTime) {
                                             mergedItems.push(localItem);
                                         } else {
                                             mergedItems.push(cloudItem);
@@ -4690,16 +4697,23 @@ const BrandConfig = {
       document.documentElement.style.setProperty('--primary-color-rgb', hexToRgb(brand.colors.primary));
       
       // Dynamic Theme Light/Dark Class
-      const isClientPage = window.location.pathname.includes('client-') || 
+      const isClientPage = (window.location.pathname.includes('client-') && !window.location.pathname.includes('trainer-')) || 
                            (document.body && document.body.classList.contains('theme-client'));
-      const clientTheme = isClientPage ? (localStorage.getItem('clientThemeMode') || 'default') : 'default';
+      const isTrainerPage = window.location.pathname.includes('trainer-') || 
+                            window.location.pathname.includes('admin-') ||
+                            (document.body && document.body.classList.contains('theme-trainer'));
       let isLight = false;
-      if (clientTheme === 'light') {
-          isLight = true;
-      } else if (clientTheme === 'dark') {
-          isLight = false;
-      } else {
+      if (isTrainerPage) {
           isLight = brand.colors.themeMode === 'light';
+      } else {
+          const clientTheme = isClientPage ? (localStorage.getItem('clientThemeMode') || 'default') : 'default';
+          if (clientTheme === 'light') {
+              isLight = true;
+          } else if (clientTheme === 'dark') {
+              isLight = false;
+          } else {
+              isLight = brand.colors.themeMode === 'light';
+          }
       }
       document.documentElement.classList.toggle('theme-light', isLight);
       if (document.body) {

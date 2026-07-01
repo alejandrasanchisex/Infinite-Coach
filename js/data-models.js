@@ -592,7 +592,7 @@ const mergeLocalEdits = (localNew, cloudMerged, localPrev, isTrainer) => {
             return ['appointments', 'feedbacks'];
         }
         if (page.includes('client-detail')) {
-            return ['clients', 'trainingBlocks', 'trainingLogs', 'feedbacks', 'appointments', 'diets', 'routines'];
+            return ['clients', 'trainingBlocks', 'trainingLogs', 'feedbacks', 'appointments', 'diets', 'routines', 'supplementationTemplates'];
         }
         return null;
     };
@@ -977,6 +977,7 @@ const saveData = (data) => {
                       }
                   }
               }
+              }
               await window.SupabaseService.saveTrainerData(currentId, mergedWithLocal);
           } catch (e) {
               console.warn('Supabase DB Sync Error (Safe Merge failed, fallback directly):', e);
@@ -1347,7 +1348,9 @@ ${item.date}`.replace('\n', ''); // Safe compile
                                     if (trainerCollections.includes(col)) {
                                         mergedItems.push(cloudItem); // Rutinas/bloques del entrenador: siempre preferir la Nube
                                     } else {
-                                        if (localTime > cloudTime) {
+                                        const localItemTime = new Date(localItem.lastModified || localItem.updatedAt || localItem.date || 0).getTime();
+                                        const cloudItemTime = new Date(cloudItem.lastModified || cloudItem.updatedAt || cloudItem.date || 0).getTime();
+                                        if (localItemTime > cloudItemTime) {
                                             mergedItems.push(localItem);
                                         } else {
                                             mergedItems.push(cloudItem);
@@ -4611,16 +4614,23 @@ const BrandConfig = {
       document.documentElement.style.setProperty('--primary-color-rgb', hexToRgb(brand.colors.primary));
       
       // Dynamic Theme Light/Dark Class
-      const isClientPage = window.location.pathname.includes('client-') || 
+      const isClientPage = (window.location.pathname.includes('client-') && !window.location.pathname.includes('trainer-')) || 
                            (document.body && document.body.classList.contains('theme-client'));
-      const clientTheme = isClientPage ? (localStorage.getItem('clientThemeMode') || 'default') : 'default';
+      const isTrainerPage = window.location.pathname.includes('trainer-') || 
+                            window.location.pathname.includes('admin-') ||
+                            (document.body && document.body.classList.contains('theme-trainer'));
       let isLight = false;
-      if (clientTheme === 'light') {
-          isLight = true;
-      } else if (clientTheme === 'dark') {
-          isLight = false;
-      } else {
+      if (isTrainerPage) {
           isLight = brand.colors.themeMode === 'light';
+      } else {
+          const clientTheme = isClientPage ? (localStorage.getItem('clientThemeMode') || 'default') : 'default';
+          if (clientTheme === 'light') {
+              isLight = true;
+          } else if (clientTheme === 'dark') {
+              isLight = false;
+          } else {
+              isLight = brand.colors.themeMode === 'light';
+          }
       }
       document.documentElement.classList.toggle('theme-light', isLight);
       if (document.body) {

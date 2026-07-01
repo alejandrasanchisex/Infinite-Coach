@@ -320,7 +320,18 @@ window.renderMealCard = function (meal, idx) {
                                         ${foods.map(food => `
                                             <tr style="border-bottom: 1px solid rgba(255,255,255,0.03);">
                                                 <td style="padding: 6px 5px; font-weight: 500;">${food.name}</td>
-                                                <td style="text-align: center; color: var(--text-muted); padding: 6px;">${food.quantity === '1 ración' ? '-' : food.quantity}</td>
+                                                 <td style="text-align: center; color: var(--text-muted); padding: 6px;">
+                                                     ${(() => {
+                                                         const q = food.quantity;
+                                                         if (!q || q === '1 ración' || q === '-') return '-';
+                                                         if (/[a-zA-Z]/.test(q)) return q;
+                                                         const n = parseFloat(q);
+                                                         if (!isNaN(n)) {
+                                                             return n > 20 ? `${n}g` : `${n} ud`;
+                                                         }
+                                                         return q;
+                                                     })()}
+                                                 </td>
                                                 <td style="text-align: center; font-weight: bold; padding: 6px;">${food.calories}</td>
                                                 <td style="text-align: right; padding: 6px 5px;">
                                                     <div style="display: flex; justify-content: flex-end; gap: 10px;">
@@ -421,9 +432,18 @@ window.addFood = function (mealIdx, optionNum) {
         return;
     }
 
+    // Normalizar cantidad al guardar para asegurar sufijos g/ud si es solo número
+    let normalizedQty = quantity || '-';
+    if (normalizedQty && normalizedQty !== '-' && normalizedQty !== '1 ración' && !/[a-zA-Z]/.test(normalizedQty)) {
+        const n = parseFloat(normalizedQty);
+        if (!isNaN(n)) {
+            normalizedQty = n > 20 ? `${n}g` : `${n} ud`;
+        }
+    }
+
     const food = {
         name,
-        quantity: quantity || '-',
+        quantity: normalizedQty,
         calories: parseInt(calories) || 0,
         protein: parseFloat(protein) || 0,
         carbs: parseFloat(carbs) || 0,
@@ -1239,7 +1259,72 @@ window.checkFoodMacros = function (mealIdx, optionNum) {
         return;
     }
 
-    const qty = parseFloat(qtyInput) || 0;
+    // Helper para parsear la cantidad normalizando palabras en español
+    function parseSpanishQuantity(str) {
+        if (!str) return 0;
+        let s = str.trim().toLowerCase();
+        if (s.startsWith("un ") || s === "un" || s.startsWith("una ") || s === "una" || s.startsWith("uno ") || s === "uno") {
+            s = s.replace(/^(un|una|uno)\b/, "1");
+        } else if (s.startsWith("dos ")) {
+            s = s.replace(/^dos\b/, "2");
+        } else if (s.startsWith("tres ")) {
+            s = s.replace(/^tres\b/, "3");
+        } else if (s.startsWith("media ") || s.startsWith("medio ")) {
+            s = s.replace(/^(media|medio)\b/, "0.5");
+        }
+        const val = parseFloat(s);
+        return isNaN(val) ? 0 : val;
+    }
+
+    // Helper para obtener el peso por unidad de un alimento
+    function getWeightPerUnit(foodName) {
+        const name = (foodName || '').trim().toLowerCase();
+        if (typeof window.foodDatabase !== 'undefined' && Array.isArray(window.foodDatabase)) {
+            const dbMatch = window.foodDatabase.find(f => f && f.names && Array.isArray(f.names) && f.names.some(n => n && typeof n === 'string' && (n.trim().toLowerCase() === name || name.includes(n.trim().toLowerCase()) || n.trim().toLowerCase().includes(name))));
+            if (dbMatch && dbMatch.weightPerUnit) {
+                return dbMatch.weightPerUnit;
+            }
+        }
+        const weights = {
+            'plátano': 120,
+            'banana': 120,
+            'manzana': 150,
+            'pera': 150,
+            'naranja': 150,
+            'melocotón': 150,
+            'durazno': 150,
+            'kiwi': 75,
+            'mandarina': 80,
+            'limón': 100,
+            'huevo': 55,
+            'clara': 35,
+            'dátil': 8,
+            'tostada': 30,
+            'rebanada': 30,
+            'pan': 30,
+            'tortita': 8,
+            'tortilla': 30,
+            'quesito': 15,
+            'yogur': 125,
+            'lata': 60,
+            'atún': 60,
+            'patata': 150,
+            'papa': 150,
+            'boniato': 150,
+            'batata': 150,
+            'aguacate': 150,
+            'tomate': 120,
+            'zanahoria': 80
+        };
+        for (const key in weights) {
+            if (name.includes(key)) {
+                return weights[key];
+            }
+        }
+        return 100;
+    }
+
+    const qty = parseSpanishQuantity(qtyInput);
 
     // 1. Buscar en la base de datos de usuario (Foods) - Ahora con búsqueda flexible e inmune a nulos
     let found = null;
@@ -1263,15 +1348,29 @@ window.checkFoodMacros = function (mealIdx, optionNum) {
         const baseC = found.carbs || found.c || 0;
         const baseF = found.fat || found.f || 0;
 
-        // LÓGICA DE CÁLCULO MEJORADA
-        let factor = 1;
+        // Determinar si es una cantidad basada en unidades o gramos
+        const isQtyUnitInput = /unidade?s?|uds?|ración|raciones/i.test(qtyInput);
+        const isQtyGramInput = /g(r|ram(o|s|os)?)?s?\b/i.test(qtyInput.trim());
+        let isUnit = (found.type === 'unit' || found.unit === 'unit');
         
-        // Si el alimento está guardado por UNIDADES (ej: 1 huevo, 1 dátil)
-        if (found.type === 'unit' || found.unit === 'unit') {
-            factor = qty; // Multiplicamos directo: 2 unidades * 75kcal = 150kcal
+        if (isQtyGramInput) {
+            isUnit = false;
+        } else if (!isUnit && (isQtyUnitInput || (qty <= 20 && qty > 0))) {
+            isUnit = true;
+        }
+
+        let factor = 1;
+        if (isUnit) {
+            if (found.type === 'unit' || found.unit === 'unit') {
+                factor = qty; // Multiplicamos directo
+            } else {
+                // Alimento en gramos pero ingresado por unidades: buscar peso por unidad
+                const weightPerUnit = getWeightPerUnit(nameInput);
+                factor = (qty * weightPerUnit) / 100;
+            }
         } else {
-            // Por defecto asumimos que el alimento está guardado cada 100g
-            factor = qty / 100; // 200g / 100 = factor 2
+            // Por defecto asumimos gramos (cada 100g)
+            factor = qty / 100;
         }
 
         const calEl = document.getElementById(`newFoodCal_${suffix}`);
