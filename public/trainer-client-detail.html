@@ -4807,6 +4807,7 @@
                 }
 
                 const history = Invoices.getByClientId(clientId) || [];
+                console.log("DEBUG [loadInvoices]: history = ", history, "clientId = ", clientId);
                 
                 if (history.length === 0) {
                     container.innerHTML = `
