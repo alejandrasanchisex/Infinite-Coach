@@ -629,7 +629,8 @@ const mergeLocalEdits = (localNew, cloudMerged, localPrev, isTrainer) => {
     const getEditableCollectionsForPage = () => {
         if (typeof window === 'undefined') return null;
         const pathname = window.location.pathname;
-        const page = pathname.split('/').pop() || '';
+        const pageRaw = pathname.split('/').pop() || '';
+        const page = pageRaw.replace(/_/g, '-');
         
         if (page.includes('settings') || page.includes('asteam') || page.includes('subscription')) {
             return ['brand', 'trainerSettings', 'paymentSettings', 'fiscalData', 'teamMembers', 'invoices']; 
