@@ -3580,98 +3580,114 @@ const Diets = {
 // ============================================
 
 const SYSTEM_FOODS = [
-  // PROTEINAS
-  { name: "Pechuga de Pollo", calories: 165, protein: 31, carbs: 0, fat: 3.6 },
-  { name: "Pollo a la plancha", calories: 165, protein: 31, carbs: 0, fat: 3.6 },
-  { name: "Pavo (Solomillo/Pechuga)", calories: 105, protein: 24, carbs: 0, fat: 1 },
-  { name: "Ternera Magra (Picada/Tiras)", calories: 170, protein: 26, carbs: 0, fat: 7 },
-  { name: "Lomo de Cerdo (Cinta)", calories: 155, protein: 22, carbs: 0, fat: 7 },
-  { name: "Cordero Magro", calories: 220, protein: 20, carbs: 0, fat: 15 },
-  { name: "Conejo", calories: 133, protein: 21, carbs: 0, fat: 5 },
-  { name: "Jamón Serrano (sin grasa)", calories: 210, protein: 30, carbs: 0.5, fat: 10 },
-  { name: "Taquitos de Jamón Cocido", calories: 105, protein: 18, carbs: 1.5, fat: 3 },
-  { name: "Salmón Fresco", calories: 208, protein: 20, carbs: 0, fat: 13 },
-  { name: "Salmón Ahumado", calories: 184, protein: 22, carbs: 0.5, fat: 10 },
-  { name: "Atún al Natural (Lata)", calories: 116, protein: 26, carbs: 0, fat: 1 },
-  { name: "Atún Fresco", calories: 130, protein: 25, carbs: 0, fat: 3 },
-  { name: "Merluza / Pescado Blanco", calories: 78, protein: 17, carbs: 0, fat: 0.8 },
-  { name: "Bacalao (Fresco/Desmigado)", calories: 82, protein: 18, carbs: 0, fat: 0.7 },
-  { name: "Sepia / Calamar", calories: 80, protein: 16, carbs: 1, fat: 1 },
-  { name: "Gambas / Langostinos", calories: 95, protein: 20, carbs: 1, fat: 1 },
-  { name: "Mejillones", calories: 86, protein: 12, carbs: 3, fat: 2 },
-  { name: "Dorada / Trucha", calories: 120, protein: 19, carbs: 0, fat: 4.5 },
-  { name: "Ventresca de Atún", calories: 210, protein: 24, carbs: 0, fat: 12 },
-  { name: "Tofu Firme", calories: 83, protein: 10, carbs: 1, fat: 5 },
-  { name: "Seitán", calories: 120, protein: 24, carbs: 4, fat: 2 },
-  { name: "Edamame (sin vaina)", calories: 122, protein: 11, carbs: 10, fat: 5 },
-
-
-  // HUEVOS Y LÁCTEOS
-  { name: "Huevo Entero (1 ud L)", calories: 75, protein: 6.5, carbs: 0.5, fat: 5, type: 'unit' },
-  { name: "Clara de Huevo (100ml)", calories: 50, protein: 11, carbs: 0.7, fat: 0.1 },
-  { name: "Yogur Griego", calories: 115, protein: 9, carbs: 4, fat: 8 },
-  { name: "Queso Fresco Batido 0%", calories: 46, protein: 8, carbs: 3.5, fat: 0.1 },
-  { name: "Queso Cottage", calories: 98, protein: 11, carbs: 3.4, fat: 4.3 },
-  { name: "Queso Skyr", calories: 63, protein: 11, carbs: 4, fat: 0.2 },
-  { name: "Queso Requesón / Ricotta", calories: 170, protein: 11.5, carbs: 3, fat: 12 },
-  { name: "Queso Feta", calories: 264, protein: 14, carbs: 4, fat: 21 },
-  { name: "Queso Mozzarella", calories: 280, protein: 22, carbs: 2, fat: 20 },
-  { name: "Queso Havarti / Curado", calories: 350, protein: 25, carbs: 1, fat: 28 },
-  { name: "Queso Crema Light", calories: 150, protein: 8, carbs: 5, fat: 11 },
-  { name: "Quesitos Light (1 ud)", calories: 35, protein: 2.5, carbs: 1, fat: 2, type: 'unit' },
-  { name: "Leche Desnatada", calories: 35, protein: 3.4, carbs: 5, fat: 0.1 },
-  { name: "Bebida de Soja / Almendras", calories: 35, protein: 3, carbs: 1, fat: 1.5 },
-  { name: "Kéfir", calories: 60, protein: 3.5, carbs: 4, fat: 3.5 },
-
-  // FRUTAS Y VERDURAS
-  { name: "Plátano", calories: 89, protein: 1.1, carbs: 23, fat: 0.3 },
-  { name: "Manzana / Pera", calories: 52, protein: 0.3, carbs: 14, fat: 0.2 },
-  { name: "Frutos Rojos (Mix)", calories: 45, protein: 0.8, carbs: 10, fat: 0.4 },
-  { name: "Mango / Papaya", calories: 60, protein: 0.7, carbs: 15, fat: 0.3 },
-  { name: "Piña / Melocotón", calories: 50, protein: 0.5, carbs: 13, fat: 0.1 },
-  { name: "Brócoli / Espinacas", calories: 30, protein: 2.8, carbs: 5, fat: 0.4 },
-  { name: "Pimientos / Tomate", calories: 22, protein: 1, carbs: 4, fat: 0.2 },
-  { name: "Berenjena / Calabacín", calories: 20, protein: 1.2, carbs: 3.5, fat: 0.2 },
-  { name: "Champiñones / Setas", calories: 25, protein: 3, carbs: 3, fat: 0.3 },
-  { name: "Verdura", calories: 25, protein: 1.5, carbs: 4, fat: 0.2 },
-
-  // GRASAS Y FRUTOS SECOS
-  { name: "Aceite de Oliva / Coco", calories: 884, protein: 0, carbs: 0, fat: 100 },
+  { name: "Aceite de oliva virgen extra", calories: 884, protein: 0, carbs: 0, fat: 100 },
   { name: "Aguacate", calories: 160, protein: 2, carbs: 9, fat: 15 },
-  { name: "Crema de Cacahuete/Almendra", calories: 595, protein: 25, carbs: 12, fat: 50 },
-  { name: "Nueces / Almendras / Pistachos", calories: 610, protein: 19, carbs: 14, fat: 52 },
-  { name: "Anacardos / Avellanas", calories: 580, protein: 17, carbs: 22, fat: 48 },
-  { name: "Semillas (Chía/Cáñamo/Lino)", calories: 520, protein: 20, carbs: 10, fat: 40 },
-  { name: "Hummus", calories: 175, protein: 8, carbs: 14, fat: 10 },
-  { name: "Tahini", calories: 595, protein: 17, carbs: 21, fat: 54 },
-  { name: "Aceitunas (Verdes/Negras)", calories: 145, protein: 1, carbs: 3, fat: 15 },
-
-  // CEREALES E HIDRATOS
-  { name: "Avena (Copos/Harina)", calories: 380, protein: 13, carbs: 66, fat: 7 },
-  { name: "Arroz (Integral/Jazmín/Basmati)", calories: 355, protein: 7, carbs: 78, fat: 0.7 },
-  { name: "Pasta Integral / Espelta", calories: 350, protein: 12.5, carbs: 70, fat: 1.5 },
-  { name: "Pasta de Lentejas", calories: 335, protein: 25, carbs: 50, fat: 2 },
-  { name: "Quinoa (Cruda)", calories: 368, protein: 14, carbs: 64, fat: 6 },
-  { name: "Cuscús Integral", calories: 345, protein: 12.8, carbs: 67, fat: 1.5 },
-  { name: "Garbanzos / Lentejas (Cocidos)", calories: 140, protein: 8.5, carbs: 20, fat: 2 },
-  { name: "Patata / Batata (Cruda)", calories: 80, protein: 2, carbs: 18, fat: 0.1 },
-  { name: "Pan Integral / Centeno", calories: 240, protein: 8.5, carbs: 45, fat: 2.5 },
-  { name: "Tortilla Trigo/Maíz (1 ud)", calories: 120, protein: 3.5, carbs: 20, fat: 2.5, type: 'unit' },
-  { name: "Bagel Integral (1 ud)", calories: 245, protein: 10, carbs: 48, fat: 2, type: 'unit' },
-  { name: "Arepa de Maíz (Masa)", calories: 165, protein: 3, carbs: 35, fat: 1 },
-  { name: "Granola Casera", calories: 460, protein: 10, carbs: 60, fat: 20 },
-  { name: "Dátiles (1 ud Medjool)", calories: 66, protein: 0.4, carbs: 16, fat: 0, type: 'unit' },
-  { name: "Miel / Sirope Ágave (1 cda)", calories: 60, protein: 0, carbs: 15, fat: 0, type: 'unit' },
-  { name: "Crema de arroz", calories: 365, protein: 7, carbs: 82, fat: 1 },
-  { name: "Corn flakes/Crema arroz/Cereales 0%", calories: 370, protein: 7, carbs: 84, fat: 1 },
-  { name: "Leche vegetal", calories: 35, protein: 1, carbs: 3, fat: 1.5 },
-  { name: "Chocolate Negro  85% o Coco rallado", calories: 600, protein: 8, carbs: 20, fat: 50 },
-  { name: "Salmorejo", calories: 70, protein: 1, carbs: 6, fat: 4.5 },
-  { name: "Tostadas tipo Ortiz", calories: 380, protein: 11, carbs: 72, fat: 4 },
-  { name: "Salmón ahumado o Jamón serrano", calories: 200, protein: 25, carbs: 0.5, fat: 10 },
-  { name: "Cereales de maíz (cornflakes)", calories: 380, protein: 7, carbs: 84, fat: 1 },
-  { name: "Tortitas de arroz inflado", calories: 387, protein: 8, carbs: 82, fat: 2.8 },
-  { name: "Pan integral Ortiz", calories: 255, protein: 9.5, carbs: 45, fat: 2.5 }
+  { name: "Almendras naturales", calories: 579, protein: 21, carbs: 22, fat: 49 },
+  { name: "Alubias blancas cocidas", calories: 330, protein: 21, carbs: 60, fat: 0.8 },
+  { name: "Arándanos congelados", calories: 50, protein: 0.7, carbs: 12, fat: 0.3 },
+  { name: "Arándanos frescos", calories: 57, protein: 0.7, carbs: 14, fat: 0.3 },
+  { name: "Arepa de maíz precocido", calories: 360, protein: 7, carbs: 77, fat: 2.5 },
+  { name: "Arroz", calories: 360, protein: 7, carbs: 79, fat: 1 },
+  { name: "Atún al natural", calories: 116, protein: 26, carbs: 0, fat: 1 },
+  { name: "Bacalao desmigado", calories: 82, protein: 18, carbs: 0, fat: 0.7 },
+  { name: "Bagel", calories: 270, protein: 10, carbs: 53, fat: 2 },
+  { name: "Batata / Boniato (asado)", calories: 86, protein: 1.6, carbs: 20, fat: 0.1 },
+  { name: "Boniato", calories: 86, protein: 1.6, carbs: 20, fat: 0.1 },
+  { name: "Cacao puro en polvo", calories: 228, protein: 20, carbs: 58, fat: 14 },
+  { name: "Chocolate 85%", calories: 600, protein: 8, carbs: 20, fat: 50 },
+  { name: "Cinta de lomo", calories: 160, protein: 21, carbs: 0, fat: 8 },
+  { name: "Claras de Huevo", calories: 52, protein: 11, carbs: 0.7, fat: 0.2 },
+  { name: "Colines / Bastones integrales", calories: 390, protein: 11, carbs: 72, fat: 5 },
+  { name: "Copos de avena", calories: 370, protein: 13, carbs: 60, fat: 7 },
+  { name: "Copos de avena / Harina de avena", calories: 389, protein: 16.9, carbs: 66, fat: 6.9 },
+  { name: "Cornflakes", calories: 370, protein: 7, carbs: 84, fat: 0.8 },
+  { name: "Crema de arroz", calories: 370, protein: 7, carbs: 82, fat: 1 },
+  { name: "Crema de cacahuete o almendras", calories: 588, protein: 25, carbs: 20, fat: 50 },
+  { name: "Crema de frutos secos", calories: 610, protein: 25, carbs: 12, fat: 52 },
+  { name: "Cuscús integral", calories: 350, protein: 12, carbs: 73, fat: 1.5 },
+  { name: "Dátil", calories: 282, protein: 2.5, carbs: 75, fat: 0.4, type: 'unit' },
+  { name: "Edamame al vapor", calories: 120, protein: 11, carbs: 9, fat: 5 },
+  { name: "Falafel horneado", calories: 250, protein: 13, carbs: 30, fat: 8 },
+  { name: "Fiambre de pavo", calories: 100, protein: 18, carbs: 2, fat: 2 },
+  { name: "Frambuesas", calories: 52, protein: 1.2, carbs: 12, fat: 0.7 },
+  { name: "Fresas", calories: 32, protein: 0.7, carbs: 7.7, fat: 0.3 },
+  { name: "Fruta contable", calories: 70, protein: 0.8, carbs: 16, fat: 0.3, type: 'unit' },
+  { name: "Fruta incontable", calories: 50, protein: 0.7, carbs: 11, fat: 0.2 },
+  { name: "Frutos rojos congelados", calories: 45, protein: 1, carbs: 8, fat: 0.5 },
+  { name: "Gambas cocidas", calories: 85, protein: 20, carbs: 0.5, fat: 0.8 },
+  { name: "Garbanzos cocidos", calories: 364, protein: 19, carbs: 61, fat: 6 },
+  { name: "Granola", calories: 450, protein: 10, carbs: 60, fat: 16 },
+  { name: "Guacamole", calories: 160, protein: 2, carbs: 8, fat: 14 },
+  { name: "Harina de avena", calories: 370, protein: 13, carbs: 60, fat: 7 },
+  { name: "Higos frescos", calories: 74, protein: 0.8, carbs: 19, fat: 0.3 },
+  { name: "Huevo Entero", calories: 75, protein: 6.5, carbs: 0.5, fat: 5, type: 'unit' },
+  { name: "Hummus de garbanzo", calories: 170, protein: 5, carbs: 14, fat: 10 },
+  { name: "Jamón cocido", calories: 110, protein: 18, carbs: 2, fat: 4 },
+  { name: "Jamón serrano", calories: 240, protein: 31, carbs: 0.5, fat: 13 },
+  { name: "Kéfir", calories: 60, protein: 3.5, carbs: 4.8, fat: 3 },
+  { name: "Kiwi", calories: 61, protein: 1.1, carbs: 15, fat: 0.5, type: 'unit' },
+  { name: "Leche de almendras / avellanas", calories: 24, protein: 0.5, carbs: 3, fat: 1.1 },
+  { name: "Leche de almendras 0%", calories: 13, protein: 0.5, carbs: 0.2, fat: 1.1 },
+  { name: "Leche de soja", calories: 45, protein: 3.3, carbs: 2.5, fat: 1.8 },
+  { name: "Leche desnatada", calories: 34, protein: 3.4, carbs: 5, fat: 0.1 },
+  { name: "Leche semidesnatada", calories: 47, protein: 3.3, carbs: 4.8, fat: 1.6 },
+  { name: "Lentejas cocidas", calories: 350, protein: 25, carbs: 63, fat: 1 },
+  { name: "Lomo embuchado", calories: 280, protein: 35, carbs: 1, fat: 15 },
+  { name: "Mandarina", calories: 53, protein: 0.8, carbs: 13, fat: 0.3, type: 'unit' },
+  { name: "Mango", calories: 60, protein: 0.8, carbs: 15, fat: 0.4 },
+  { name: "Manzana", calories: 52, protein: 0.3, carbs: 14, fat: 0.2, type: 'unit' },
+  { name: "Mejillones al vapor", calories: 86, protein: 12, carbs: 3.4, fat: 2.2 },
+  { name: "Melocotón", calories: 39, protein: 0.9, carbs: 9.5, fat: 0.3, type: 'unit' },
+  { name: "Miel", calories: 304, protein: 0.3, carbs: 82, fat: 0 },
+  { name: "Muesli", calories: 360, protein: 10, carbs: 62, fat: 7 },
+  { name: "Nueces", calories: 654, protein: 15, carbs: 14, fat: 65 },
+  { name: "Ñoquis", calories: 160, protein: 4, carbs: 32, fat: 1 },
+  { name: "Pan", calories: 260, protein: 8, carbs: 50, fat: 3 },
+  { name: "Pan integral / Centeno / Masa madre", calories: 250, protein: 9, carbs: 45, fat: 2.5 },
+  { name: "Papaya", calories: 43, protein: 0.5, carbs: 11, fat: 0.3 },
+  { name: "Pasta", calories: 355, protein: 12, carbs: 72, fat: 1.5 },
+  { name: "Pasta integral", calories: 350, protein: 12, carbs: 72, fat: 1.5 },
+  { name: "Patata", calories: 77, protein: 2, carbs: 17, fat: 0.1 },
+  { name: "Pavo", calories: 105, protein: 22, carbs: 0, fat: 1.5 },
+  { name: "Pavo (Pechuga, Fiambre, Solomillo)", calories: 105, protein: 22, carbs: 0, fat: 1.5 },
+  { name: "Pechuga de Pollo", calories: 110, protein: 23, carbs: 0, fat: 1.5 },
+  { name: "Pera", calories: 57, protein: 0.4, carbs: 15, fat: 0.1, type: 'unit' },
+  { name: "Pescado blanco", calories: 75, protein: 17, carbs: 0, fat: 0.8 },
+  { name: "Pimiento", calories: 27, protein: 1, carbs: 6, fat: 0.3 },
+  { name: "Piña natural", calories: 50, protein: 0.5, carbs: 13, fat: 0.1 },
+  { name: "Pistachos o Anacardos", calories: 560, protein: 19, carbs: 29, fat: 44.5 },
+  { name: "Plátano", calories: 89, protein: 1.1, carbs: 23, fat: 0.3, type: 'unit' },
+  { name: "Plátano", calories: 89, protein: 1.1, carbs: 23, fat: 0.3 },
+  { name: "Pollo", calories: 120, protein: 23, carbs: 0, fat: 2.5 },
+  { name: "Proteína en Polvo", calories: 390, protein: 78, carbs: 8, fat: 6 },
+  { name: "Quesitos Light", calories: 35, protein: 2.5, carbs: 1, fat: 2, type: 'unit' },
+  { name: "Queso cottage", calories: 98, protein: 11, carbs: 3.4, fat: 4.3 },
+  { name: "Queso crema light", calories: 150, protein: 6, carbs: 5, fat: 12 },
+  { name: "Queso curado / gratinado", calories: 380, protein: 25, carbs: 1.3, fat: 30 },
+  { name: "Queso Fresco Batido 0%", calories: 50, protein: 8, carbs: 4, fat: 0.2 },
+  { name: "Queso fresco tipo Burgos", calories: 110, protein: 11, carbs: 3, fat: 6 },
+  { name: "Queso graso", calories: 400, protein: 25, carbs: 1, fat: 33 },
+  { name: "Queso havarti", calories: 330, protein: 21, carbs: 0.5, fat: 26 },
+  { name: "Queso mozzarella light", calories: 200, protein: 22, carbs: 2, fat: 12 },
+  { name: "Quinoa cocida", calories: 370, protein: 14, carbs: 64, fat: 6 },
+  { name: "Requesón", calories: 100, protein: 12, carbs: 3, fat: 4 },
+  { name: "Salmón", calories: 180, protein: 20, carbs: 0, fat: 11 },
+  { name: "Salsa de yogur light", calories: 80, protein: 3.5, carbs: 7, fat: 4 },
+  { name: "Salsa Pesto", calories: 529, protein: 5.2, carbs: 6, fat: 53 },
+  { name: "Semillas (Chía, Lino, Calabaza)", calories: 530, protein: 19, carbs: 30, fat: 43 },
+  { name: "Sepia / Calamar / Gambas", calories: 80, protein: 16, carbs: 0.7, fat: 0.9 },
+  { name: "Sirope de ágave", calories: 310, protein: 0, carbs: 78, fat: 0 },
+  { name: "Skyr", calories: 65, protein: 11, carbs: 4, fat: 0.2 },
+  { name: "Ternera magra", calories: 150, protein: 21, carbs: 0, fat: 5 },
+  { name: "Tofu firme", calories: 76, protein: 8, carbs: 1.9, fat: 4.8 },
+  { name: "Tortilla de maíz", calories: 220, protein: 5, carbs: 45, fat: 2.5, type: 'unit' },
+  { name: "Tortilla de trigo integral", calories: 290, protein: 8, carbs: 45, fat: 6, type: 'unit' },
+  { name: "Tortitas de arroz", calories: 380, protein: 8, carbs: 80, fat: 3 },
+  { name: "Tortitas de arroz o maíz", calories: 380, protein: 8, carbs: 80, fat: 3, type: 'unit' },
+  { name: "Uvas", calories: 67, protein: 0.6, carbs: 17, fat: 0.4 },
+  { name: "Verdura", calories: 0, protein: 0, carbs: 0, fat: 0, type: 'unit' },
+  { name: "Yogur griego", calories: 115, protein: 10, carbs: 3, fat: 7, type: 'unit' },
+  { name: "Yogur natural", calories: 60, protein: 3.5, carbs: 4.7, fat: 3.3 }
 ];
 
 const Foods = {
@@ -4626,36 +4642,7 @@ const BrandConfig = {
 
     let res = data.brand || defaultBrand;
     
-    // If not Alejandra, ensure ASTeam config is cleared and default Infinite Coach is returned/configured
-    if (!isAlejandra) {
-        if (res && (res.name === 'ASTeam' || res.logo === 'https://bieeydhacavxymoosasx.supabase.co/storage/v1/object/public/Media/1779724548154_Gemini_Generated_Image_vse84nvse84nvse8.png' || (res.colors && res.colors.primary === '#fdbfec'))) {
-            res = defaultBrand;
-            if (typeof saveData === 'function') {
-                data.brand = res;
-                saveData(data);
-            }
-        }
-    }
-    // If not Lucy, ensure Lucy config is cleared
-    if (!isLucy) {
-        if (res && (res.name === 'Lucy Tundidor' || res.logo === 'https://bieeydhacavxymoosasx.supabase.co/storage/v1/object/public/Media/lucy_logo_cropped.png' || res.logo === 'https://bieeydhacavxymoosasx.supabase.co/storage/v1/object/public/Media/lucy_logo_cropped.png?v=531' || (res.colors && res.colors.primary === '#816e61'))) {
-            res = defaultBrand;
-            if (typeof saveData === 'function') {
-                data.brand = res;
-                saveData(data);
-            }
-        }
-    }
-    // If not Julian, ensure Julian config is cleared
-    if (!isJulian) {
-        if (res && (res.name === 'Método JFK' || res.logo === 'img/metodo_jfk_logo.png' || (res.colors && res.colors.primary === '#96001E'))) {
-            res = defaultBrand;
-            if (typeof saveData === 'function') {
-                data.brand = res;
-                saveData(data);
-            }
-        }
-    }
+    // Brand config is fully persistent; no auto-resetting blocks for active trainers.
 
     if (res && (res.name === 'MyFitness' || res.name === 'Fitness App' || (res.name === 'Infinite Coach' && defaultBrand.name === 'ASTeam') || (res.name === 'Infinite Coach' && defaultBrand.name === 'Lucy Tundidor') || (res.name === 'Infinite Coach' && defaultBrand.name === 'Método JFK'))) {
         res.name = defaultBrand.name;

@@ -219,12 +219,19 @@ window.renderDietEditor = function () {
                 if (typeof Foods !== 'undefined') {
                     const allFoods = Foods.getAll();
                     if (Array.isArray(allFoods)) {
-                        found = allFoods.find(f => f && f.name && typeof f.name === 'string' && f.name.trim().toLowerCase() === nameInput) || 
-                                allFoods.find(f => f && f.name && typeof f.name === 'string' && f.name.trim().toLowerCase().includes(nameInput));
+                        found = allFoods.find(f => {
+                            if (!f || !f.name) return false;
+                            const dbName = f.name.trim().toLowerCase();
+                            return dbName === nameInput || dbName.includes(nameInput) || nameInput.includes(dbName);
+                        });
                     }
                 }
                 if (!found && typeof window.foodDatabase !== 'undefined' && Array.isArray(window.foodDatabase)) {
-                    found = window.foodDatabase.find(f => f && f.names && Array.isArray(f.names) && f.names.some(n => n && typeof n === 'string' && n.trim().toLowerCase().includes(nameInput)));
+                    found = window.foodDatabase.find(f => f && f.names && Array.isArray(f.names) && f.names.some(n => {
+                        if (!n) return false;
+                        const dbName = n.trim().toLowerCase();
+                        return dbName === nameInput || dbName.includes(nameInput) || nameInput.includes(dbName);
+                    }));
                 }
 
                 if (found) {
@@ -1861,15 +1868,21 @@ window.checkFoodMacros = function (mealIdx, optionNum) {
     if (typeof Foods !== 'undefined') {
         const allFoods = Foods.getAll();
         if (Array.isArray(allFoods)) {
-            // Primero intentamos match exacto, luego por inclusión, comparando de forma segura
-            found = allFoods.find(f => f && f.name && typeof f.name === 'string' && f.name.trim().toLowerCase() === nameInput) || 
-                    allFoods.find(f => f && f.name && typeof f.name === 'string' && f.name.trim().toLowerCase().includes(nameInput));
+            found = allFoods.find(f => {
+                if (!f || !f.name) return false;
+                const dbName = f.name.trim().toLowerCase();
+                return dbName === nameInput || dbName.includes(nameInput) || nameInput.includes(dbName);
+            });
         }
     }
 
     // 2. Si no, buscar en la base de datos interna básica
     if (!found && typeof window.foodDatabase !== 'undefined' && Array.isArray(window.foodDatabase)) {
-        found = window.foodDatabase.find(f => f && f.names && Array.isArray(f.names) && f.names.some(n => n && typeof n === 'string' && n.trim().toLowerCase().includes(nameInput)));
+        found = window.foodDatabase.find(f => f && f.names && Array.isArray(f.names) && f.names.some(n => {
+            if (!n) return false;
+            const dbName = n.trim().toLowerCase();
+            return dbName === nameInput || dbName.includes(nameInput) || nameInput.includes(dbName);
+        }));
     }
 
     if (found && qty > 0) {
