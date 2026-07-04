@@ -321,16 +321,22 @@ window.renderMealCard = function (meal, idx) {
                                             <tr style="border-bottom: 1px solid rgba(255,255,255,0.03);">
                                                 <td style="padding: 6px 5px; font-weight: 500;">${food.name}</td>
                                                  <td style="text-align: center; color: var(--text-muted); padding: 6px;">
-                                                     ${(() => {
-                                                         const q = food.quantity;
-                                                         if (!q || q === '1 ración' || q === '-') return '-';
-                                                         if (/[a-zA-Z]/.test(q)) return q;
-                                                         const n = parseFloat(q);
-                                                         if (!isNaN(n)) {
-                                                             return n > 20 ? `${n}g` : `${n} ud`;
-                                                         }
-                                                         return q;
-                                                     })()}
+                                                      ${(() => {
+                                                          const q = food.quantity;
+                                                          if (!q || q === '1 ración' || q === '-') return '-';
+                                                          if (/[a-zA-Z]/.test(q)) return q;
+                                                          const n = parseFloat(q);
+                                                          if (!isNaN(n)) {
+                                                              let type = 'g';
+                                                              if (typeof Foods !== 'undefined') {
+                                                                  const dbFood = Foods.getAll().find(dbf => dbf && dbf.name && dbf.name.toLowerCase() === food.name.toLowerCase()) ||
+                                                                                 Foods.getAll().find(dbf => dbf && dbf.name && (dbf.name.toLowerCase().includes(food.name.toLowerCase()) || food.name.toLowerCase().includes(dbf.name.toLowerCase())));
+                                                                  if (dbFood) type = dbFood.type || 'g';
+                                                              }
+                                                              return type === 'unit' ? `${n} ud` : `${n}g`;
+                                                          }
+                                                          return q;
+                                                      })()}
                                                  </td>
                                                 <td style="text-align: center; font-weight: bold; padding: 6px;">${food.calories}</td>
                                                 <td style="text-align: right; padding: 6px 5px;">
@@ -437,7 +443,13 @@ window.addFood = function (mealIdx, optionNum) {
     if (normalizedQty && normalizedQty !== '-' && normalizedQty !== '1 ración' && !/[a-zA-Z]/.test(normalizedQty)) {
         const n = parseFloat(normalizedQty);
         if (!isNaN(n)) {
-            normalizedQty = n > 20 ? `${n}g` : `${n} ud`;
+            let type = 'g';
+            if (typeof Foods !== 'undefined') {
+                const dbFood = Foods.getAll().find(dbf => dbf && dbf.name && dbf.name.toLowerCase() === name.toLowerCase()) ||
+                               Foods.getAll().find(dbf => dbf && dbf.name && (dbf.name.toLowerCase().includes(name.toLowerCase()) || name.toLowerCase().includes(dbf.name.toLowerCase())));
+                if (dbFood) type = dbFood.type || 'g';
+            }
+            normalizedQty = type === 'unit' ? `${n} ud` : `${n}g`;
         }
     }
 

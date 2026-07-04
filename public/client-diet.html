@@ -659,7 +659,7 @@
   <script src="js/supabase-service.js?v=536"></script>
 
   <script src="js/config.js?v=536"></script>
-  <script src="js/data-models.js?v=536"></script>
+  <script src="js/data-models.js?v=537"></script>
   <script src="js/utils.js?v=536"></script>
   <script src="js/custom-recipes.js?v=536"></script>
   <script>
@@ -895,7 +895,13 @@
                   // Smart unit detection if only numbers are provided
                   if (/^\d+(\.\d+)?$/.test(qty)) {
                       const n = parseFloat(qty);
-                      qty = n > 20 ? `${n}g` : `${n}uds`;
+                      let type = 'g';
+                      if (typeof Foods !== 'undefined') {
+                          const dbFood = Foods.getAll().find(dbf => dbf && dbf.name && dbf.name.toLowerCase() === f.name.toLowerCase()) ||
+                                         Foods.getAll().find(dbf => dbf && dbf.name && (dbf.name.toLowerCase().includes(f.name.toLowerCase()) || f.name.toLowerCase().includes(dbf.name.toLowerCase())));
+                          if (dbFood) type = dbFood.type || 'g';
+                      }
+                      qty = type === 'unit' ? `${n} uds` : `${n}g`;
                   }
                   
                   return `
