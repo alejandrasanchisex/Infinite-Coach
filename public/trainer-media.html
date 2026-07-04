@@ -4,7 +4,7 @@
     <script>
         // Force PWA cache bust / reload
         (function() {
-            const CURRENT_VERSION = '534';
+            const CURRENT_VERSION = '536';
             const savedVersion = localStorage.getItem('app_version');
             if (savedVersion !== CURRENT_VERSION) {
                 localStorage.setItem('app_version', CURRENT_VERSION);
@@ -31,8 +31,8 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <link rel="stylesheet" href="styles/theme.css?v=534">
-    <link rel="stylesheet" href="styles/components.css?v=534">
+    <link rel="stylesheet" href="styles/theme.css?v=536">
+    <link rel="stylesheet" href="styles/components.css?v=536">
     <style>
         .media-container { padding: 1.5rem 0; }
         .tabs-nav { display: flex; gap: 2rem; margin-bottom: 2rem; border-bottom: 1px solid rgba(255,255,255,0.05); }
@@ -168,14 +168,14 @@
                     </div>
                     <button class="menu-toggle" onclick="toggleMenu()">☰</button>
                     <ul class="nav-links" id="navLinks">
-                        <li><a href="trainer-dashboard.html?v=534" class="nav-link">Dashboard</a></li>
-                        <li><a href="trainer-clients.html?v=534" class="nav-link">Clientes</a></li>
-                        <li><a href="trainer-routines.html?v=534" class="nav-link">Rutinas</a></li>
-                        <li><a href="trainer-diets.html?v=534" class="nav-link">Dietas</a></li>
-                        <li><a href="trainer-feedbacks.html?v=534" class="nav-link">Revisiones</a></li>
-                        <li><a href="trainer-media.html?v=534" class="nav-link active">Biblioteca</a></li>
-                        <li><a href="trainer-appointments.html?v=534" class="nav-link">Agenda</a></li>
-                        <li><a href="trainer-settings.html?v=534" class="nav-link">Configuración</a></li>
+                        <li><a href="trainer-dashboard.html?v=536" class="nav-link">Dashboard</a></li>
+                        <li><a href="trainer-clients.html?v=536" class="nav-link">Clientes</a></li>
+                        <li><a href="trainer-routines.html?v=536" class="nav-link">Rutinas</a></li>
+                        <li><a href="trainer-diets.html?v=536" class="nav-link">Dietas</a></li>
+                        <li><a href="trainer-feedbacks.html?v=536" class="nav-link">Revisiones</a></li>
+                        <li><a href="trainer-media.html?v=536" class="nav-link active">Biblioteca</a></li>
+                        <li><a href="trainer-appointments.html?v=536" class="nav-link">Agenda</a></li>
+                        <li><a href="trainer-settings.html?v=536" class="nav-link">Configuración</a></li>
                         <li><a href="#" onclick="window.location.reload(); return false;" class="nav-link" style="color:var(--error-color)">🚪 Salir</a></li>
                     </ul>
                 </nav>
@@ -319,7 +319,10 @@
             </div>
             <div class="form-group" id="editFolderGroup" style="display: none;">
                 <label>Carpeta / Categoría</label>
-                <input type="text" id="editFolder" class="form-control" placeholder="Ej: Dieta, Rutinas, Ebooks...">
+                <select id="editFolderSelect" class="form-control" style="cursor: pointer; margin-bottom: 10px;" onchange="handleFolderSelectChange()">
+                    <!-- Populated dynamically -->
+                </select>
+                <input type="text" id="editFolder" class="form-control" placeholder="Nombre de la nueva carpeta...">
             </div>
             <div style="display: flex; gap: 1rem; margin-top: 2rem;">
                 <button id="btnSave" class="btn btn-primary" onclick="saveChanges()" style="flex:1;">Guardar Cambios</button>
@@ -373,8 +376,8 @@
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="js/supabase-service.js?v=534"></script>
-    <script src="js/data-models.js?v=534"></script>
+    <script src="js/supabase-service.js?v=536"></script>
+    <script src="js/data-models.js?v=536"></script>
     <script src="js/utils.js"></script>
     <script src="js/cloud-storage.js"></script>
 
@@ -673,6 +676,70 @@
             }
         }
 
+        function handleFolderSelectChange() {
+            const select = document.getElementById('editFolderSelect');
+            const input = document.getElementById('editFolder');
+            if (select && input) {
+                if (select.value === '__NEW__') {
+                    input.style.display = 'block';
+                    input.value = '';
+                    input.focus();
+                } else {
+                    input.style.display = 'none';
+                    input.value = select.value;
+                }
+            }
+        }
+
+        function initializeFolderDropdown(selectedFolder = '') {
+            const existingFolders = Array.from(new Set((window.Library ? window.Library.getAll() : []).map(m => m.folder || 'General'))).map(f => f.trim()).filter(Boolean);
+            
+            const trimmedSelected = selectedFolder.trim();
+            if (trimmedSelected && trimmedSelected !== 'General' && !existingFolders.includes(trimmedSelected)) {
+                existingFolders.push(trimmedSelected);
+            }
+
+            existingFolders.sort((a, b) => a.localeCompare(b, 'es'));
+
+            const folderSelect = document.getElementById('editFolderSelect');
+            const folderInput = document.getElementById('editFolder');
+            if (folderSelect && folderInput) {
+                folderSelect.innerHTML = '';
+                
+                if (!existingFolders.includes('General')) {
+                    existingFolders.unshift('General');
+                }
+
+                existingFolders.forEach(folder => {
+                    const opt = document.createElement('option');
+                    opt.value = folder;
+                    opt.textContent = folder;
+                    folderSelect.appendChild(opt);
+                });
+
+                const optNew = document.createElement('option');
+                optNew.value = '__NEW__';
+                optNew.textContent = '+ Crear Nueva Carpeta...';
+                folderSelect.appendChild(optNew);
+
+                if (trimmedSelected) {
+                    folderSelect.value = trimmedSelected;
+                    folderInput.value = trimmedSelected;
+                    folderInput.style.display = 'none';
+                } else {
+                    if (existingFolders.length > 0) {
+                        folderSelect.value = existingFolders[0];
+                        folderInput.value = existingFolders[0];
+                        folderInput.style.display = 'none';
+                    } else {
+                        folderSelect.value = '__NEW__';
+                        folderInput.value = '';
+                        folderInput.style.display = 'block';
+                    }
+                }
+            }
+        }
+
         function openAddModal() {
             document.getElementById('editId').value = "";
             document.getElementById('editUrl').value = "";
@@ -695,7 +762,7 @@
                 document.getElementById('editLibraryTypeGroup').style.display = 'block';
                 document.getElementById('editFolderGroup').style.display = 'block';
                 document.getElementById('editLibraryType').value = "pdf";
-                document.getElementById('editFolder').value = "";
+                initializeFolderDropdown("");
                 handleLibraryTypeChange();
             } else if (currentTab === 'recipe') {
                 if (titleEl) titleEl.innerText = 'Añadir Nueva Receta';
@@ -749,7 +816,7 @@
                 document.getElementById('editLibraryTypeGroup').style.display = 'block';
                 document.getElementById('editFolderGroup').style.display = 'block';
                 document.getElementById('editLibraryType').value = m.type || 'pdf';
-                document.getElementById('editFolder').value = m.folder || '';
+                initializeFolderDropdown(m.folder || '');
                 handleLibraryTypeChange();
             } else if (m.category === 'exercise') {
                 document.getElementById('editUrlLabel').innerText = 'Enlace del Vídeo (YouTube, Vimeo, etc.)';
