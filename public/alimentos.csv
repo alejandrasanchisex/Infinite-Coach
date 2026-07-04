@@ -1,45 +1,280 @@
 ﻿Alimento;Tipo de Medición;Calorías (kcal);Proteínas (g);Carbohidratos (g);Grasas (g)
 "Aceite de oliva";"Gramos (x 100g)";900;0;0;100
+"Aceite de oliva virgen extra";"Gramos (x 100g)";884;0;0;100
+"Aceite de oliva virgen extra";"Gramos (x 100g)";884;0;0;100
+"Aceite de oliva virgen extra";"Gramos (x 100g)";884;0;0;100
 "Aguacate";"Gramos (x 100g)";160;2;9;15
+"Aguacate (Guacamole)";"Gramos (x 100g)";160;2;9;15
+"Aguacate (Guacamole)";"Gramos (x 100g)";160;2;9;15
+"Aguacate (Guacamole)";"Gramos (x 100g)";160;2;9;15
+"Almendras naturales";"Gramos (x 100g)";579;21;22;49
+"Almendras naturales";"Gramos (x 100g)";579;21;22;49
+"Almendras naturales";"Gramos (x 100g)";579;21;22;49
+"Alubias blancas cocidas";"Gramos (x 100g)";330;21;60;0.8
+"Alubias blancas cocidas";"Gramos (x 100g)";330;21;60;0.8
+"Alubias blancas cocidas";"Gramos (x 100g)";330;21;60;0.8
 "Arándanos congelados";"Gramos (x 100g)";50;0.7;12;0.3
+"Arándanos frescos";"Gramos (x 100g)";57;0.7;14;0.3
+"Arándanos frescos";"Gramos (x 100g)";57;0.7;14;0.3
+"Arándanos frescos";"Gramos (x 100g)";57;0.7;14;0.3
+"Arepa de maíz precocido";"Gramos (x 100g)";360;7;77;2.5
+"Arepa de maíz precocido";"Gramos (x 100g)";360;7;77;2.5
+"Arepa de maíz precocido";"Gramos (x 100g)";360;7;77;2.5
 "Arroz";"Gramos (x 100g)";360;7;79;1
+"Arroz (Blanco, Integral, Basmati, Jazmín)";"Gramos (x 100g)";350;7;78;0.5
+"Arroz (Blanco, Integral, Basmati, Jazmín)";"Gramos (x 100g)";350;7;78;0.5
+"Arroz (Blanco, Integral, Basmati, Jazmín)";"Gramos (x 100g)";350;7;78;0.5
+"Atún al natural";"Gramos (x 100g)";116;26;0;1
+"Atún al natural";"Gramos (x 100g)";116;26;0;1
+"Atún al natural";"Gramos (x 100g)";116;26;0;1
+"Bacalao desmigado";"Gramos (x 100g)";82;18;0;0.7
+"Bacalao desmigado";"Gramos (x 100g)";82;18;0;0.7
+"Bacalao desmigado";"Gramos (x 100g)";82;18;0;0.7
 "Bagel";"Gramos (x 100g)";270;10;53;2
+"Batata / Boniato (asado)";"Gramos (x 100g)";86;1.6;20;0.1
+"Batata / Boniato (asado)";"Gramos (x 100g)";86;1.6;20;0.1
+"Batata / Boniato (asado)";"Gramos (x 100g)";86;1.6;20;0.1
 "Boniato";"Gramos (x 100g)";86;1.6;20;0.1
+"Cacao puro en polvo";"Gramos (x 100g)";228;20;58;14
+"Cacao puro en polvo";"Gramos (x 100g)";228;20;58;14
+"Cacao puro en polvo";"Gramos (x 100g)";228;20;58;14
 "Chocolate 85%";"Gramos (x 100g)";600;8;20;50
 "Cinta de lomo";"Gramos (x 100g)";160;21;0;8
-"Claras de huevo";"Gramos (x 100g)";50;11;0.7;0.2
+"Claras de Huevo";"Gramos (x 100g)";52;11;0.7;0.2
+"Claras de Huevo";"Gramos (x 100g)";52;11;0.7;0.2
+"Claras de Huevo";"Gramos (x 100g)";52;11;0.7;0.2
+"Colines / Bastones integrales";"Gramos (x 100g)";390;11;72;5
+"Colines / Bastones integrales";"Gramos (x 100g)";390;11;72;5
+"Colines / Bastones integrales";"Gramos (x 100g)";390;11;72;5
 "Copos de avena";"Gramos (x 100g)";370;13;60;7
+"Copos de avena / Harina de avena";"Gramos (x 100g)";389;16.9;66;6.9
+"Copos de avena / Harina de avena";"Gramos (x 100g)";389;16.9;66;6.9
+"Copos de avena / Harina de avena";"Gramos (x 100g)";389;16.9;66;6.9
 "Cornflakes";"Gramos (x 100g)";370;7;84;0.8
 "Crema de arroz";"Gramos (x 100g)";370;7;82;1
+"Crema de cacahuete o almendras";"Gramos (x 100g)";588;25;20;50
+"Crema de cacahuete o almendras";"Gramos (x 100g)";588;25;20;50
+"Crema de cacahuete o almendras";"Gramos (x 100g)";588;25;20;50
 "Crema de frutos secos";"Gramos (x 100g)";610;25;12;52
+"Cuscús integral";"Gramos (x 100g)";350;12;73;1.5
+"Cuscús integral";"Gramos (x 100g)";350;12;73;1.5
+"Cuscús integral";"Gramos (x 100g)";350;12;73;1.5
+"Dátil";"Por Unidad / Porción";282;2.5;75;0.4
+"Dátil";"Por Unidad / Porción";282;2.5;75;0.4
+"Dátil";"Por Unidad / Porción";282;2.5;75;0.4
 "Dátiles";"Gramos (x 100g)";280;2;75;0.2
+"Edamame al vapor";"Gramos (x 100g)";120;11;9;5
+"Edamame al vapor";"Gramos (x 100g)";120;11;9;5
+"Edamame al vapor";"Gramos (x 100g)";120;11;9;5
+"Falafel horneado";"Gramos (x 100g)";250;13;30;8
+"Falafel horneado";"Gramos (x 100g)";250;13;30;8
+"Falafel horneado";"Gramos (x 100g)";250;13;30;8
 "Fiambre de pavo";"Gramos (x 100g)";100;18;2;2
+"Frambuesas";"Gramos (x 100g)";52;1.2;12;0.7
+"Frambuesas";"Gramos (x 100g)";52;1.2;12;0.7
+"Frambuesas";"Gramos (x 100g)";52;1.2;12;0.7
+"Fresas";"Gramos (x 100g)";32;0.7;7.7;0.3
+"Fresas";"Gramos (x 100g)";32;0.7;7.7;0.3
+"Fresas";"Gramos (x 100g)";32;0.7;7.7;0.3
+"Fruta contable";"Por Unidad / Porción";70;0.8;16;0.3
+"Fruta contable";"Por Unidad / Porción";70;0.8;16;0.3
+"Fruta contable";"Por Unidad / Porción";70;0.8;16;0.3
+"Fruta incontable";"Gramos (x 100g)";50;0.7;11;0.2
+"Fruta incontable";"Gramos (x 100g)";50;0.7;11;0.2
+"Fruta incontable";"Gramos (x 100g)";50;0.7;11;0.2
 "Frutos rojos congelados";"Gramos (x 100g)";45;1;8;0.5
+"Gambas cocidas";"Gramos (x 100g)";85;20;0.5;0.8
+"Gambas cocidas";"Gramos (x 100g)";85;20;0.5;0.8
+"Gambas cocidas";"Gramos (x 100g)";85;20;0.5;0.8
+"Garbanzos cocidos";"Gramos (x 100g)";364;19;61;6
+"Garbanzos cocidos";"Gramos (x 100g)";364;19;61;6
+"Garbanzos cocidos";"Gramos (x 100g)";364;19;61;6
 "Granola";"Gramos (x 100g)";450;10;60;16
+"Granola casera";"Gramos (x 100g)";450;10;60;18
+"Granola casera";"Gramos (x 100g)";450;10;60;18
+"Granola casera";"Gramos (x 100g)";450;10;60;18
 "Guacamole";"Gramos (x 100g)";160;2;8;14
 "Harina de avena";"Gramos (x 100g)";370;13;60;7
-"Huevo entero";"Gramos (x 100g)";143;13;1;10
+"Higos frescos";"Gramos (x 100g)";74;0.8;19;0.3
+"Higos frescos";"Gramos (x 100g)";74;0.8;19;0.3
+"Higos frescos";"Gramos (x 100g)";74;0.8;19;0.3
+"Huevo entero";"Por Unidad / Porción";155;13;1.1;11
+"Huevo entero";"Por Unidad / Porción";155;13;1.1;11
+"Huevo entero";"Por Unidad / Porción";155;13;1.1;11
+"Huevo Entero";"Por Unidad / Porción";75;6.5;0.5;5
+"Hummus de garbanzo";"Gramos (x 100g)";170;5;14;10
+"Hummus de garbanzo";"Gramos (x 100g)";170;5;14;10
+"Hummus de garbanzo";"Gramos (x 100g)";170;5;14;10
 "Jamón cocido";"Gramos (x 100g)";110;18;2;4
 "Jamón serrano";"Gramos (x 100g)";240;31;0.5;13
+"Jamón serrano (Limpio)";"Gramos (x 100g)";240;30;0;13
+"Jamón serrano (Limpio)";"Gramos (x 100g)";240;30;0;13
+"Jamón serrano (Limpio)";"Gramos (x 100g)";240;30;0;13
+"Kéfir";"Gramos (x 100g)";60;3.5;4.8;3
+"Kéfir";"Gramos (x 100g)";60;3.5;4.8;3
+"Kéfir";"Gramos (x 100g)";60;3.5;4.8;3
+"Kiwi";"Por Unidad / Porción";61;1.1;15;0.5
+"Kiwi";"Por Unidad / Porción";61;1.1;15;0.5
+"Kiwi";"Por Unidad / Porción";61;1.1;15;0.5
+"Leche de almendras / avellanas";"Gramos (x 100g)";24;0.5;3;1.1
+"Leche de almendras / avellanas";"Gramos (x 100g)";24;0.5;3;1.1
+"Leche de almendras / avellanas";"Gramos (x 100g)";24;0.5;3;1.1
 "Leche de almendras 0%";"Gramos (x 100g)";13;0.5;0.2;1.1
+"Leche de soja";"Gramos (x 100g)";45;3.3;2.5;1.8
+"Leche de soja";"Gramos (x 100g)";45;3.3;2.5;1.8
+"Leche de soja";"Gramos (x 100g)";45;3.3;2.5;1.8
+"Leche desnatada";"Gramos (x 100g)";34;3.4;5;0.1
+"Leche desnatada";"Gramos (x 100g)";34;3.4;5;0.1
+"Leche desnatada";"Gramos (x 100g)";34;3.4;5;0.1
 "Leche semidesnatada";"Gramos (x 100g)";47;3.3;4.8;1.6
+"Lentejas cocidas";"Gramos (x 100g)";350;25;63;1
+"Lentejas cocidas";"Gramos (x 100g)";350;25;63;1
+"Lentejas cocidas";"Gramos (x 100g)";350;25;63;1
 "Lomo embuchado";"Gramos (x 100g)";280;35;1;15
-"Manzana";"Gramos (x 100g)";52;0.3;14;0.2
+"Mandarina";"Por Unidad / Porción";53;0.8;13;0.3
+"Mandarina";"Por Unidad / Porción";53;0.8;13;0.3
+"Mandarina";"Por Unidad / Porción";53;0.8;13;0.3
+"Mango";"Gramos (x 100g)";60;0.8;15;0.4
+"Mango";"Gramos (x 100g)";60;0.8;15;0.4
+"Mango";"Gramos (x 100g)";60;0.8;15;0.4
+"Manzana";"Por Unidad / Porción";52;0.3;14;0.2
+"Manzana";"Por Unidad / Porción";52;0.3;14;0.2
+"Manzana";"Por Unidad / Porción";52;0.3;14;0.2
+"Mejillones al vapor";"Gramos (x 100g)";86;12;3.4;2.2
+"Mejillones al vapor";"Gramos (x 100g)";86;12;3.4;2.2
+"Mejillones al vapor";"Gramos (x 100g)";86;12;3.4;2.2
+"Melocotón";"Por Unidad / Porción";39;0.9;9.5;0.3
+"Melocotón";"Por Unidad / Porción";39;0.9;9.5;0.3
+"Melocotón";"Por Unidad / Porción";39;0.9;9.5;0.3
+"Miel de abejas";"Gramos (x 100g)";304;0.3;82;0
+"Miel de abejas";"Gramos (x 100g)";304;0.3;82;0
+"Miel de abejas";"Gramos (x 100g)";304;0.3;82;0
 "Muesli";"Gramos (x 100g)";360;10;62;7
-"Nueces";"Gramos (x 100g)";650;15;14;65
+"Nueces";"Gramos (x 100g)";654;15;14;65
+"Nueces";"Gramos (x 100g)";654;15;14;65
+"Nueces";"Gramos (x 100g)";654;15;14;65
 "Ñoquis";"Gramos (x 100g)";160;4;32;1
 "Pan";"Gramos (x 100g)";260;8;50;3
+"Pan integral / Centeno / Masa madre";"Gramos (x 100g)";250;9;45;2.5
+"Pan integral / Centeno / Masa madre";"Gramos (x 100g)";250;9;45;2.5
+"Pan integral / Centeno / Masa madre";"Gramos (x 100g)";250;9;45;2.5
+"Papaya";"Gramos (x 100g)";43;0.5;11;0.3
+"Papaya";"Gramos (x 100g)";43;0.5;11;0.3
+"Papaya";"Gramos (x 100g)";43;0.5;11;0.3
 "Pasta";"Gramos (x 100g)";355;12;72;1.5
+"Pasta integral";"Gramos (x 100g)";350;12;72;1.5
+"Pasta integral";"Gramos (x 100g)";350;12;72;1.5
+"Pasta integral";"Gramos (x 100g)";350;12;72;1.5
 "Patata";"Gramos (x 100g)";77;2;17;0.1
+"Patata (Asada, Puré, Baby)";"Gramos (x 100g)";77;2;17;0.1
+"Patata (Asada, Puré, Baby)";"Gramos (x 100g)";77;2;17;0.1
+"Patata (Asada, Puré, Baby)";"Gramos (x 100g)";77;2;17;0.1
+"Pavo (Pechuga, Fiambre, Solomillo)";"Gramos (x 100g)";105;22;0;1.5
+"Pavo (Pechuga, Fiambre, Solomillo)";"Gramos (x 100g)";105;22;0;1.5
+"Pavo (Pechuga, Fiambre, Solomillo)";"Gramos (x 100g)";105;22;0;1.5
 "Pechuga de Pollo";"Gramos (x 100g)";110;23;0;1.5
+"Pera";"Por Unidad / Porción";57;0.4;15;0.1
+"Pera";"Por Unidad / Porción";57;0.4;15;0.1
+"Pera";"Por Unidad / Porción";57;0.4;15;0.1
 "Pescado blanco";"Gramos (x 100g)";75;17;0;0.8
+"Pescado blanco (Merluza, Lubina)";"Gramos (x 100g)";80;18;0;1
+"Pescado blanco (Merluza, Lubina)";"Gramos (x 100g)";80;18;0;1
+"Pescado blanco (Merluza, Lubina)";"Gramos (x 100g)";80;18;0;1
 "Pimiento";"Gramos (x 100g)";27;1;6;0.3
+"Piña natural";"Gramos (x 100g)";50;0.5;13;0.1
+"Piña natural";"Gramos (x 100g)";50;0.5;13;0.1
+"Piña natural";"Gramos (x 100g)";50;0.5;13;0.1
+"Pistachos o Anacardos";"Gramos (x 100g)";560;19;29;44.5
+"Pistachos o Anacardos";"Gramos (x 100g)";560;19;29;44.5
+"Pistachos o Anacardos";"Gramos (x 100g)";560;19;29;44.5
+"Plátano";"Por Unidad / Porción";89;1.1;23;0.3
+"Plátano";"Por Unidad / Porción";89;1.1;23;0.3
+"Plátano";"Por Unidad / Porción";89;1.1;23;0.3
 "Plátano";"Gramos (x 100g)";89;1.1;23;0.3
+"Pollo (Pechuga, Desmechado, Crudo)";"Gramos (x 100g)";120;23;0;2.5
+"Pollo (Pechuga, Desmechado, Crudo)";"Gramos (x 100g)";120;23;0;2.5
+"Pollo (Pechuga, Desmechado, Crudo)";"Gramos (x 100g)";120;23;0;2.5
 "Proteína en Polvo";"Gramos (x 100g)";390;78;8;6
+"Proteína en Polvo ";"Por Unidad / Porción";93;20;1.5;0.8
+"Proteína en polvo (Whey)";"Gramos (x 100g)";380;80;5;4
+"Proteína en polvo (Whey)";"Gramos (x 100g)";380;80;5;4
+"Proteína en polvo (Whey)";"Gramos (x 100g)";380;80;5;4
+"Quesitos Light";"Por Unidad / Porción";35;2.5;1;2
+"Queso batido 0%";"Gramos (x 100g)";47;8;3.5;0.1
+"Queso batido 0%";"Gramos (x 100g)";47;8;3.5;0.1
+"Queso batido 0%";"Gramos (x 100g)";47;8;3.5;0.1
+"Queso cottage";"Gramos (x 100g)";98;11;3.4;4.3
+"Queso cottage";"Gramos (x 100g)";98;11;3.4;4.3
+"Queso cottage";"Gramos (x 100g)";98;11;3.4;4.3
+"Queso crema light";"Gramos (x 100g)";150;6;5;12
+"Queso crema light";"Gramos (x 100g)";150;6;5;12
+"Queso crema light";"Gramos (x 100g)";150;6;5;12
+"Queso curado / gratinado";"Gramos (x 100g)";380;25;1.3;30
+"Queso curado / gratinado";"Gramos (x 100g)";380;25;1.3;30
+"Queso curado / gratinado";"Gramos (x 100g)";380;25;1.3;30
 "Queso Fresco Batido 0%";"Gramos (x 100g)";50;8;4;0.2
+"Queso fresco tipo Burgos";"Gramos (x 100g)";110;11;3;6
+"Queso fresco tipo Burgos";"Gramos (x 100g)";110;11;3;6
+"Queso fresco tipo Burgos";"Gramos (x 100g)";110;11;3;6
 "Queso graso";"Gramos (x 100g)";400;25;1;33
-"Salsa al gusto";"Gramos (x 100g)";430;5;7;42
-"Ternera magra";"Gramos (x 100g)";130;21;0;5
+"Queso havarti (Loncha)";"Gramos (x 100g)";330;21;0.5;26
+"Queso havarti (Loncha)";"Gramos (x 100g)";330;21;0.5;26
+"Queso havarti (Loncha)";"Gramos (x 100g)";330;21;0.5;26
+"Queso mozzarella light";"Gramos (x 100g)";200;22;2;12
+"Queso mozzarella light";"Gramos (x 100g)";200;22;2;12
+"Queso mozzarella light";"Gramos (x 100g)";200;22;2;12
+"Quinoa cocida";"Gramos (x 100g)";370;14;64;6
+"Quinoa cocida";"Gramos (x 100g)";370;14;64;6
+"Quinoa cocida";"Gramos (x 100g)";370;14;64;6
+"Requesón";"Gramos (x 100g)";100;12;3;4
+"Requesón";"Gramos (x 100g)";100;12;3;4
+"Requesón";"Gramos (x 100g)";100;12;3;4
+"Salmón (Fresco o Ahumado)";"Gramos (x 100g)";180;20;0;11
+"Salmón (Fresco o Ahumado)";"Gramos (x 100g)";180;20;0;11
+"Salmón (Fresco o Ahumado)";"Gramos (x 100g)";180;20;0;11
+"Salsa de yogur light";"Gramos (x 100g)";80;3.5;7;4
+"Salsa de yogur light";"Gramos (x 100g)";80;3.5;7;4
+"Salsa de yogur light";"Gramos (x 100g)";80;3.5;7;4
+"Salsa Pesto";"Gramos (x 100g)";529;5.2;6;53
+"Salsa Pesto";"Gramos (x 100g)";529;5.2;6;53
+"Salsa Pesto";"Gramos (x 100g)";529;5.2;6;53
+"Semillas (Chía, Lino, Calabaza)";"Gramos (x 100g)";530;19;30;43
+"Semillas (Chía, Lino, Calabaza)";"Gramos (x 100g)";530;19;30;43
+"Semillas (Chía, Lino, Calabaza)";"Gramos (x 100g)";530;19;30;43
+"Sepia / Calamar / Gambas";"Por Unidad / Porción";0;0;0;0
+"Sepia salteada";"Gramos (x 100g)";80;16;0.7;0.9
+"Sepia salteada";"Gramos (x 100g)";80;16;0.7;0.9
+"Sepia salteada";"Gramos (x 100g)";80;16;0.7;0.9
+"Sirope de ágave";"Gramos (x 100g)";310;0;78;0
+"Sirope de ágave";"Gramos (x 100g)";310;0;78;0
+"Sirope de ágave";"Gramos (x 100g)";310;0;78;0
+"Skyr";"Gramos (x 100g)";65;11;4;0.2
+"Skyr";"Gramos (x 100g)";65;11;4;0.2
+"Skyr";"Gramos (x 100g)";65;11;4;0.2
+"Ternera magra";"Gramos (x 100g)";150;21;0;5
+"Ternera magra";"Gramos (x 100g)";150;21;0;5
+"Ternera magra";"Gramos (x 100g)";150;21;0;5
+"Tofu firme";"Gramos (x 100g)";76;8;1.9;4.8
+"Tofu firme";"Gramos (x 100g)";76;8;1.9;4.8
+"Tofu firme";"Gramos (x 100g)";76;8;1.9;4.8
+"Tortilla de maíz";"Por Unidad / Porción";220;5;45;2.5
+"Tortilla de maíz";"Por Unidad / Porción";220;5;45;2.5
+"Tortilla de maíz";"Por Unidad / Porción";220;5;45;2.5
+"Tortilla de trigo integral";"Por Unidad / Porción";290;8;45;6
+"Tortilla de trigo integral";"Por Unidad / Porción";290;8;45;6
+"Tortilla de trigo integral";"Por Unidad / Porción";290;8;45;6
 "Tortillas de trigo";"Gramos (x 100g)";310;8;50;8
 "Tortitas de arroz";"Gramos (x 100g)";380;8;80;3
+"Tortitas de arroz o maíz";"Por Unidad / Porción";380;8;80;3
+"Tortitas de arroz o maíz";"Por Unidad / Porción";380;8;80;3
+"Tortitas de arroz o maíz";"Por Unidad / Porción";380;8;80;3
+"Uvas rojas";"Gramos (x 100g)";67;0.6;17;0.4
+"Uvas rojas";"Gramos (x 100g)";67;0.6;17;0.4
+"Uvas rojas";"Gramos (x 100g)";67;0.6;17;0.4
 "Verdura";"Por Unidad / Porción";0;0;0;0
+"Yogur griego";"Por Unidad / Porción";115;10;3;7
+"Yogur griego";"Por Unidad / Porción";115;10;3;7
+"Yogur griego";"Por Unidad / Porción";115;10;3;7
+"Yogur natural";"Gramos (x 100g)";60;3.5;4.7;3.3
+"Yogur natural";"Gramos (x 100g)";60;3.5;4.7;3.3
+"Yogur natural";"Gramos (x 100g)";60;3.5;4.7;3.3

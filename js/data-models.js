@@ -4380,6 +4380,7 @@ const BrandConfig = {
     let isAlejandra = false;
     let isToledo = false;
     let isLucy = false;
+    let isJulian = false;
     if (typeof window !== 'undefined') {
         const activeId = window.activeTrainerId || localStorage.getItem('activeTrainerId') || '';
         const trainerEmail = localStorage.getItem('_trainerEmail') || '';
@@ -4395,7 +4396,10 @@ const BrandConfig = {
         if (activeId.includes('t-udve3b1u3') || (trainerEmail && trainerEmail.toLowerCase() === 'lucytundidor@gmail.com')) {
             isLucy = true;
         }
-        console.log(`[BrandConfig] activeId="${activeId}" trainerEmail="${trainerEmail}" => isAlejandra=${isAlejandra}, isToledo=${isToledo}, isLucy=${isLucy}`);
+        if (activeId.includes('t-kghykurxf') || (trainerEmail && trainerEmail.toLowerCase() === 'julian@gmail.com')) {
+            isJulian = true;
+        }
+        console.log(`[BrandConfig] activeId="${activeId}" trainerEmail="${trainerEmail}" => isAlejandra=${isAlejandra}, isToledo=${isToledo}, isLucy=${isLucy}, isJulian=${isJulian}`);
     }
 
     // Default brand settings
@@ -4440,6 +4444,21 @@ const BrandConfig = {
             },
             fiscalData: { invoiceSeries: 'FLUCY' + new Date().getFullYear() }
         };
+    } else if (isJulian) {
+        defaultBrand = {
+            name: 'Método JFK',
+            logo: 'img/metodo_jfk_logo.png',
+            configured: true,
+            colors: { 
+                primary: '#96001E', 
+                accent: '#A50F2D', 
+                themeMode: 'light', 
+                bgLight: '#FAF8F8', 
+                secondary: '#FFFFFF', 
+                bgDark: '#1A1516' 
+            },
+            fiscalData: { invoiceSeries: 'FJFK' + new Date().getFullYear() }
+        };
     }
 
     let res = data.brand || defaultBrand;
@@ -4464,8 +4483,18 @@ const BrandConfig = {
             }
         }
     }
+    // If not Julian, ensure Julian config is cleared
+    if (!isJulian) {
+        if (res && (res.name === 'Método JFK' || res.logo === 'img/metodo_jfk_logo.png' || (res.colors && res.colors.primary === '#96001E'))) {
+            res = defaultBrand;
+            if (typeof saveData === 'function') {
+                data.brand = res;
+                saveData(data);
+            }
+        }
+    }
 
-    if (res && (res.name === 'MyFitness' || res.name === 'Fitness App' || (res.name === 'Infinite Coach' && defaultBrand.name === 'ASTeam') || (res.name === 'Infinite Coach' && defaultBrand.name === 'Lucy Tundidor'))) {
+    if (res && (res.name === 'MyFitness' || res.name === 'Fitness App' || (res.name === 'Infinite Coach' && defaultBrand.name === 'ASTeam') || (res.name === 'Infinite Coach' && defaultBrand.name === 'Lucy Tundidor') || (res.name === 'Infinite Coach' && defaultBrand.name === 'Método JFK'))) {
         res.name = defaultBrand.name;
         res.colors = defaultBrand.colors;
         res.logo = defaultBrand.logo;
@@ -4545,6 +4574,23 @@ const BrandConfig = {
         const expectedPerimeters = ["Cintura", "Cadera", "Pecho", "Brazo", "Muslo"];
         if (!res.trainerPerimeters || res.trainerPerimeters.length < 3) {
             res.trainerPerimeters = expectedPerimeters;
+            changed = true;
+        }
+        if (changed && typeof saveData === 'function') {
+            data.brand = res;
+            saveData(data);
+        }
+    }
+    // Auto-correct stale or corrupted Julian settings in local cache (forcing correct logo, colors)
+    if (isJulian && res && (res.name === 'Método JFK' || defaultBrand.name === 'Método JFK')) {
+        let changed = false;
+        res.name = 'Método JFK';
+        if (!res.colors || res.colors.primary === '#00d9ff' || res.colors.primary === '#00D9FF' || res.colors.primary === '#fdbfec' || res.colors.primary === '#816e61') {
+            res.colors = defaultBrand.colors;
+            changed = true;
+        }
+        if (!res.logo || res.logo === 'img/logo-infinite-coach.png' || !res.logo.includes('metodo_jfk_logo.png')) {
+            res.logo = defaultBrand.logo;
             changed = true;
         }
         if (changed && typeof saveData === 'function') {
