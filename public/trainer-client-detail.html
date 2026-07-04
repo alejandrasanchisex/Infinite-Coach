@@ -990,11 +990,11 @@
     <script src="js/config.js?v=536"></script>
     <script src="js/auth.js?v=536"></script>
     <script src="js/sheets.js?v=536"></script>
-    <script src="js/data-models.js?v=538"></script>
+    <script src="js/data-models.js?v=539"></script>
     <script src="js/utils.js?v=536"></script>
     <script src="js/custom-recipes.js?v=536"></script>
     <script src="js/custom-exercises.js?v=536"></script>
-    <script src="js/diet-editor-v3.js?v=538"></script>
+    <script src="js/diet-editor-v3.js?v=539"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.29/jspdf.plugin.autotable.min.js"></script>
     <script src="js/export-utils.js?v=536"></script>
@@ -5011,13 +5011,37 @@
             ], 'modal-lg');
         }
 
-        function downloadInvoicePDF(invoiceNumber) {
+        async function downloadInvoicePDF(invoiceNumber) {
             const element = document.getElementById('invoiceDetailPrint');
+            if (!element) {
+                showToast('No se encontró el elemento de la factura', 'error');
+                return;
+            }
+
+            // Fallback dinámico si por alguna razón no cargó la librería desde el CDN al inicio
+            if (typeof html2pdf === 'undefined') {
+                console.log("html2pdf is undefined. Attempting to load dynamically...");
+                try {
+                    await new Promise((resolve, reject) => {
+                        const script = document.createElement('script');
+                        script.src = "https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js";
+                        script.onload = resolve;
+                        script.onerror = reject;
+                        document.head.appendChild(script);
+                    });
+                } catch(e) {
+                    console.warn("Failed to load html2pdf dynamically. Falling back to native print.");
+                    showToast('No se pudo cargar el generador de PDF. Abriendo panel de impresión...', 'warning');
+                    printInvoice();
+                    return;
+                }
+            }
+
             const opt = {
                 margin:       10,
                 filename:     `Factura_${invoiceNumber}.pdf`,
                 image:        { type: 'jpeg', quality: 0.98 },
-                html2canvas:  { scale: 2, useCORS: true },
+                html2canvas:  { scale: 2, useCORS: true, logging: false },
                 jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
             };
 
@@ -5025,13 +5049,22 @@
             const originalShadow = element.style.boxShadow;
             element.style.boxShadow = 'none';
 
-            html2pdf().set(opt).from(element).save().then(() => {
+            try {
+                html2pdf().set(opt).from(element).save().then(() => {
+                    element.style.boxShadow = originalShadow;
+                    showToast('PDF generado correctamente', 'success');
+                }).catch(err => {
+                    console.error('PDF Error inside promise:', err);
+                    element.style.boxShadow = originalShadow;
+                    showToast('Error al generar PDF. Intentando impresión nativa...', 'warning');
+                    printInvoice();
+                });
+            } catch (err) {
+                console.error('PDF Catch Error:', err);
                 element.style.boxShadow = originalShadow;
-                showToast('PDF generado correctamente', 'success');
-            }).catch(err => {
-                console.error('PDF Error:', err);
-                showToast('Error al generar PDF', 'error');
-            });
+                showToast('Error de ejecución en PDF. Intentando impresión nativa...', 'warning');
+                printInvoice();
+            }
         }
 
         function printInvoice() {
@@ -5066,6 +5099,9 @@
             `);
             printWindow.document.close();
         }
+
+        window.downloadInvoicePDF = downloadInvoicePDF;
+        window.printInvoice = printInvoice;
 
         function showFeedbackResponseModal(fbId) {
             showModal('Responder Feedback', `
