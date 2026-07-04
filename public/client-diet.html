@@ -659,7 +659,7 @@
   <script src="js/supabase-service.js?v=536"></script>
 
   <script src="js/config.js?v=536"></script>
-  <script src="js/data-models.js?v=537"></script>
+  <script src="js/data-models.js?v=538"></script>
   <script src="js/utils.js?v=536"></script>
   <script src="js/custom-recipes.js?v=536"></script>
   <script>
@@ -701,16 +701,7 @@
     let showMacros = true;
     let brand = null;
 
-    document.addEventListener('DOMContentLoaded', async () => {
-      // Sync cloud (Supabase es ahora el primario)
-      if (window.SupabaseService) {
-          window.SupabaseService.init();
-          await window.syncFromCloud();
-      } else if (window.FirebaseService) {
-          await window.FirebaseService.init();
-          await window.syncFromCloud();
-      }
-
+    function renderDietPage() {
       // Apply brand theme
       BrandConfig.applyTheme();
       brand = BrandConfig.get();
@@ -818,6 +809,31 @@
           document.getElementById('shopBtn')?.parentElement?.style.setProperty('display', 'none');
           console.log('No active diet to show');
       }
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      // 1. Renderizar localmente al instante
+      renderDietPage();
+
+      // 2. Sincronizar en segundo plano
+      const runSync = async () => {
+        try {
+          if (window.SupabaseService) {
+              window.SupabaseService.init();
+              const freshData = await window.syncFromCloud();
+              if (freshData) {
+                  renderDietPage();
+              }
+          } else if (window.FirebaseService) {
+              await window.FirebaseService.init();
+              const freshData = await window.syncFromCloud();
+              if (freshData) {
+                  renderDietPage();
+              }
+          }
+        } catch(e) { console.warn(e); }
+      };
+      runSync();
     });
 
     window.switchClientDiet = function (dietId) {

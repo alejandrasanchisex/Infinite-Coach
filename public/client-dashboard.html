@@ -213,7 +213,7 @@
     <script src="js/supabase-service.js?v=536"></script>
 
     <script src="js/config.js?v=536"></script>
-    <script src="js/data-models.js?v=537"></script>
+    <script src="js/data-models.js?v=538"></script>
     <script src="js/utils.js?v=536"></script>
     <script src="js/custom-exercises.js?v=536"></script>
     <script>
@@ -499,19 +499,28 @@
             renderLocalData();
 
             // --- 2. SINCRONIZACIÓN EN SEGUNDO PLANO (SIN BLOQUEAR LA PANTALLA) ---
-            try {
-                if (window.SupabaseService) {
-                    window.SupabaseService.init();
-                    await window.syncFromCloud();
-                } else if (window.FirebaseService) {
-                    await window.FirebaseService.init();
-                    await window.syncFromCloud();
-                }
-            } catch(e) { console.warn('Cloud sync error:', e); }
-
-            // --- 3. RE-RENDERIZAR CON DATOS ACTUALIZADOS DE LA NUBE ---
-            // withOnboardingCheck=true → aquí sí comprobamos onboarding (datos fiables de la nube)
-            renderLocalData(true);
+            const runCloudSync = async () => {
+                try {
+                    if (window.SupabaseService) {
+                        window.SupabaseService.init();
+                        const freshData = await window.syncFromCloud();
+                        if (freshData) {
+                            renderLocalData(true);
+                            const updatedClient = Clients.getById(clientId);
+                            if (updatedClient && window.NotificationManager) {
+                                NotificationManager.checkReminders(updatedClient, BrandConfig.get());
+                            }
+                        }
+                    } else if (window.FirebaseService) {
+                        await window.FirebaseService.init();
+                        const freshData = await window.syncFromCloud();
+                        if (freshData) {
+                            renderLocalData(true);
+                        }
+                    }
+                } catch(e) { console.warn('Cloud sync error:', e); }
+            };
+            runCloudSync();
 
             // --- 4. ACCIONES ADICIONALES (STRIPE / NOTIFICACIONES) ---
             let client = Clients.getById(clientId);

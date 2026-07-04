@@ -275,7 +275,7 @@
     <script src="js/config.js?v=536"></script>
     <script src="js/auth.js?v=536"></script>
     <script src="js/sheets.js?v=536"></script>
-    <script src="js/data-models.js?v=537"></script>
+    <script src="js/data-models.js?v=538"></script>
     <script src="js/utils.js?v=536"></script>
     <script>
         // Branding is handled via onGoogleAuthSuccess() and global listeners
@@ -1190,42 +1190,53 @@
         });
 
         async function onGoogleAuthSuccess() {
-            // Sincronizar con la nube (Supabase es ahora el primario)
-            if (window.SupabaseService) {
-                window.SupabaseService.init();
-                await window.syncFromCloud();
-                
-                // --- Lógica Especial de Administrador ---
-                const activeId = localStorage.getItem('activeTrainerId');
-                const config = await window.SupabaseService.getGlobalConfig();
-                const platformData = JSON.parse(localStorage.getItem('saasFitnessPlatform') || '{}');
-                
-                // Si el ID activo coincide con el email de soporte o está en la lista de admin
-                const currentTrainer = platformData.trainers?.find(t => t.id === activeId);
-                const adminEmail = "ingenia@ingeniaia.es"; // Email dueño
-
-                if (currentTrainer && currentTrainer.email === adminEmail) {
-                    const masterLink = document.getElementById('masterLink');
-                    if (masterLink) {
-                        masterLink.style.display = 'block';
-                    }
-                    sessionStorage.setItem('_isMasterAdmin', 'true'); // Dar permisos para entrar
-                }
-            } else if (window.FirebaseService) {
-                await window.FirebaseService.init();
-                await window.syncFromCloud();
-            }
-
-            // Aplicar branding
+            // 1. Aplicar branding
             if (typeof BrandConfig !== 'undefined') {
                 BrandConfig.applyTheme();
             }
 
-            document.getElementById('login-screen').style.display = 'none';
-            document.getElementById('app').style.display = 'block';
+            // 2. Mostrar la interfaz de inmediato
+            const loginScreen = document.getElementById('login-screen');
+            const app = document.getElementById('app');
+            if (loginScreen) loginScreen.style.display = 'none';
+            if (app) app.style.display = 'block';
 
             if (typeof loadDashboard === 'function') loadDashboard();
 
+            // 3. Sincronizar en segundo plano sin bloquear al usuario
+            const runSync = async () => {
+                try {
+                    if (window.SupabaseService) {
+                        window.SupabaseService.init();
+                        const freshData = await window.syncFromCloud();
+                        
+                        // --- Lógica Especial de Administrador ---
+                        const activeId = localStorage.getItem('activeTrainerId');
+                        const platformData = JSON.parse(localStorage.getItem('saasFitnessPlatform') || '{}');
+                        const currentTrainer = platformData.trainers?.find(t => t.id === activeId);
+                        const adminEmail = "ingenia@ingeniaia.es"; // Email dueño
+
+                        if (currentTrainer && currentTrainer.email === adminEmail) {
+                            const masterLink = document.getElementById('masterLink');
+                            if (masterLink) {
+                                masterLink.style.display = 'block';
+                            }
+                            sessionStorage.setItem('_isMasterAdmin', 'true');
+                        }
+
+                        if (freshData && typeof loadDashboard === 'function') {
+                            loadDashboard();
+                        }
+                    } else if (window.FirebaseService) {
+                        await window.FirebaseService.init();
+                        const freshData = await window.syncFromCloud();
+                        if (freshData && typeof loadDashboard === 'function') {
+                            loadDashboard();
+                        }
+                    }
+                } catch(e) { console.warn(e); }
+            };
+            runSync();
         }
 
         async function syncAndRefreshDashboard(btn) {

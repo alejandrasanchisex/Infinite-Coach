@@ -210,7 +210,7 @@
   <script src="js/supabase-service.js?v=536"></script>
 
   <script src="js/config.js?v=536"></script>
-  <script src="js/data-models.js?v=537"></script>
+  <script src="js/data-models.js?v=538"></script>
   <script src="js/custom-exercises.js?v=536"></script>
   <script src="js/utils.js?v=536"></script>
   <script>
@@ -310,121 +310,143 @@
             console.error("Local cleanup error:", e);
         }
 
-        // Sync with Cloud (Supabase es ahora el primario)
-        if (window.SupabaseService) {
-            window.SupabaseService.init();
-            await window.syncFromCloud();
-        } else if (window.FirebaseService) {
-            await window.FirebaseService.init();
-            await window.syncFromCloud();
-        }
+        // Renderizar localmente al instante
+        await renderRoutinePage();
 
-        brand = BrandConfig.get() || brand;
-        BrandConfig.applyTheme();
-        if (document.getElementById('brandName')) document.getElementById('brandName').textContent = brand.name;
-        if (brand.logo && document.getElementById('brandLogo')) document.getElementById('brandLogo').src = brand.logo;
+        // Sync with Cloud (Supabase es ahora el primario) en segundo plano
+        const runSync = async () => {
+            try {
+                if (window.SupabaseService) {
+                    window.SupabaseService.init();
+                    const freshData = await window.syncFromCloud();
+                    if (freshData) {
+                        await renderRoutinePage();
+                    }
+                } else if (window.FirebaseService) {
+                    await window.FirebaseService.init();
+                    const freshData = await window.syncFromCloud();
+                    if (freshData) {
+                        await renderRoutinePage();
+                    }
+                }
+            } catch(e) { console.warn(e); }
+        };
+        runSync();
+      } catch (e) {
+        updateStatus("Fallo al inicializar: " + e.message);
+        console.error("Critical Init Error:", e);
+      }
+    }
 
-        clientId = new URLSearchParams(window.location.search).get('id') || sessionStorage.getItem('clientId') || localStorage.getItem('clientId');
-        if (!clientId) {
-            window.location.replace('client-login.html');
-            return;
-        }
-        sessionStorage.setItem('clientId', clientId);
-        localStorage.setItem('clientId', clientId);
+    async function renderRoutinePage() {
+        try {
+            brand = BrandConfig.get() || brand;
+            BrandConfig.applyTheme();
+            if (document.getElementById('brandName')) document.getElementById('brandName').textContent = brand.name;
+            if (brand.logo && document.getElementById('brandLogo')) document.getElementById('brandLogo').src = brand.logo;
 
-        client = Clients.getById(clientId);
-        if (!client) {
-            const activeId = localStorage.getItem('activeTrainerId') || 'default';
-            window.location.replace('client-login.html?reauth=true&t=' + activeId);
-            return;
-        }
-
-        // Redireccionar al Dashboard si está inactivo o tiene pagos pendientes (Opción 3)
-        const isInactive = client.status === 'inactive';
-        const isUnpaid = client.paymentStatus !== 'paid' || client.status === 'unpaid';
-        if (isInactive || isUnpaid) {
-            window.location.replace('client-dashboard.html');
-            return;
-        }
-
-        if (brand && brand.clientSettings && brand.clientSettings.showRoutine === false) {
-            window.location.replace('client-dashboard.html');
-            return;
-        }
-
-        // Attach input/change listener for autosave early
-        const container = document.getElementById('dayContent');
-        if (container) {
-            container.addEventListener('input', () => {
-                autosaveSessionDraft();
-            });
-            container.addEventListener('change', () => {
-                autosaveSessionDraft();
-            });
-        }
-
-        // Load Avatar
-        const avatar = document.getElementById('clientProfileAvatar');
-        if (avatar) {
-            if (client.profilePhoto) {
-                avatar.innerHTML = `<img src="${client.profilePhoto}" style="width:100%;height:100%;object-fit:cover;">`;
-                avatar.style.background = 'transparent';
-            } else {
-                avatar.textContent = client.name.charAt(0).toUpperCase();
-                avatar.style.background = 'var(--primary-color)';
+            clientId = new URLSearchParams(window.location.search).get('id') || sessionStorage.getItem('clientId') || localStorage.getItem('clientId');
+            if (!clientId) {
+                window.location.replace('client-login.html');
+                return;
             }
-        }
+            sessionStorage.setItem('clientId', clientId);
+            localStorage.setItem('clientId', clientId);
 
-        // Setup WhatsApp FAB (must be after client is defined)
-        const fab = document.getElementById('whatsappFab');
-        if (fab && brand && client) {
-            const message = `Hola ${brand.name}, soy ${client.name}. Tengo una consulta.`;
-            const link = generateWhatsAppLink(brand.whatsapp, message);
-            fab.href = link;
-            fab.removeAttribute('target');
-            fab.onclick = function(e) {
-                e.preventDefault();
-                window.location.href = link;
-            };
-        }
+            client = Clients.getById(clientId);
+            if (!client) {
+                const activeId = localStorage.getItem('activeTrainerId') || 'default';
+                window.location.replace('client-login.html?reauth=true&t=' + activeId);
+                return;
+            }
 
-        // Load Cardio Button Visibility (Move here to avoid early returns)
-        const cardioBtn = document.getElementById('cardioBtnContainer');
-        if (cardioBtn && (client.cardioPublished !== false) && (client.cardio || client.cardioUrl)) {
-            cardioBtn.style.display = 'block';
-        }
+            // Redireccionar al Dashboard si está inactivo o tiene pagos pendientes (Opción 3)
+            const isInactive = client.status === 'inactive';
+            const isUnpaid = client.paymentStatus !== 'paid' || client.status === 'unpaid';
+            if (isInactive || isUnpaid) {
+                window.location.replace('client-dashboard.html');
+                return;
+            }
 
-        const blocks = TrainingBlocks.getByClientId(clientId) || [];
-        const publishedBlocks = blocks.filter(b => b.published == true || b.published == 'true' || b.published == 1);
-        
-        if (publishedBlocks.length > 0) {
-            publishedBlocks.sort((a, b) => new Date(b.startDate || 0) - new Date(a.startDate || 0));
-            publishedBlock = publishedBlocks[0];
-            
-            if (publishedBlock.weeks && publishedBlock.weeks.length > 0) {
-                isBlockBased = true;
-                const userLogsInit = TrainingLogs.getByClientId(clientId);
-                window.localUserLogs = userLogsInit; // Cache logs globally to avoid heavy refetching
-                
-                // Auto-select week with current date relevance, or first one that is NOT completely finished
-                currentWeekIdx = publishedBlock.weeks.findIndex((w, idx) => {
-                    const isCompleted = checkWeekCompletion(w, idx, userLogsInit);
-                    const hasExercises = w.days && w.days.some(d => d.exercises && d.exercises.length > 0);
-                    return !isCompleted && hasExercises;
+            if (brand && brand.clientSettings && brand.clientSettings.showRoutine === false) {
+                window.location.replace('client-dashboard.html');
+                return;
+            }
+
+            // Attach input/change listener for autosave early
+            const container = document.getElementById('dayContent');
+            if (container && !container.dataset.hasListener) {
+                container.addEventListener('input', () => {
+                    autosaveSessionDraft();
                 });
-                if (currentWeekIdx === -1) currentWeekIdx = 0; // If all are finished, go to week 1
-
-                renderWeekTabs();
-                switchWeek(currentWeekIdx);
-                return; // loadRoutine is called by switchWeek
+                container.addEventListener('change', () => {
+                    autosaveSessionDraft();
+                });
+                container.dataset.hasListener = "true";
             }
-        }
 
-        if (!routine && client) {
-            routine = client.individualRoutine || (client.assignedRoutine ? Routines.getById(client.assignedRoutine) : null);
-        }
+            // Load Avatar
+            const avatar = document.getElementById('clientProfileAvatar');
+            if (avatar) {
+                if (client.profilePhoto) {
+                    avatar.innerHTML = `<img src="${client.profilePhoto}" style="width:100%;height:100%;object-fit:cover;">`;
+                    avatar.style.background = 'transparent';
+                } else {
+                    avatar.textContent = client.name.charAt(0).toUpperCase();
+                    avatar.style.background = 'var(--primary-color)';
+                }
+            }
 
-        loadRoutine();
+            // Setup WhatsApp FAB (must be after client is defined)
+            const fab = document.getElementById('whatsappFab');
+            if (fab && brand && client) {
+                const message = `Hola ${brand.name}, soy ${client.name}. Tengo una consulta.`;
+                const link = generateWhatsAppLink(brand.whatsapp, message);
+                fab.href = link;
+                fab.removeAttribute('target');
+                fab.onclick = function(e) {
+                    e.preventDefault();
+                    window.location.href = link;
+                };
+            }
+
+            // Load Cardio Button Visibility (Move here to avoid early returns)
+            const cardioBtn = document.getElementById('cardioBtnContainer');
+            if (cardioBtn && (client.cardioPublished !== false) && (client.cardio || client.cardioUrl)) {
+                cardioBtn.style.display = 'block';
+            }
+
+            const blocks = TrainingBlocks.getByClientId(clientId) || [];
+            const publishedBlocks = blocks.filter(b => b.published == true || b.published == 'true' || b.published == 1);
+            
+            if (publishedBlocks.length > 0) {
+                publishedBlocks.sort((a, b) => new Date(b.startDate || 0) - new Date(a.startDate || 0));
+                publishedBlock = publishedBlocks[0];
+                
+                if (publishedBlock.weeks && publishedBlock.weeks.length > 0) {
+                    isBlockBased = true;
+                    const userLogsInit = TrainingLogs.getByClientId(clientId);
+                    window.localUserLogs = userLogsInit; // Cache logs globally to avoid heavy refetching
+                    
+                    // Auto-select week with current date relevance, or first one that is NOT completely finished
+                    currentWeekIdx = publishedBlock.weeks.findIndex((w, idx) => {
+                        const isCompleted = checkWeekCompletion(w, idx, userLogsInit);
+                        const hasExercises = w.days && w.days.some(d => d.exercises && d.exercises.length > 0);
+                        return !isCompleted && hasExercises;
+                    });
+                    if (currentWeekIdx === -1) currentWeekIdx = 0; // If all are finished, go to week 1
+
+                    renderWeekTabs();
+                    switchWeek(currentWeekIdx);
+                    return; // loadRoutine is called by switchWeek
+                }
+            }
+
+            if (!routine && client) {
+                routine = client.individualRoutine || (client.assignedRoutine ? Routines.getById(client.assignedRoutine) : null);
+            }
+
+            loadRoutine();
       } catch (e) {
         updateStatus("Fallo al inicializar: " + e.message);
         console.error("Critical Init Error:", e);

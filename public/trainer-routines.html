@@ -187,7 +187,7 @@
     <script src="js/config.js?v=536"></script>
     <script src="js/auth.js?v=536"></script>
     <script src="js/sheets.js?v=536"></script>
-    <script src="js/data-models.js?v=537"></script>
+    <script src="js/data-models.js?v=538"></script>
     <script src="js/utils.js?v=536"></script>
     <script src="js/custom-exercises.js?v=536"></script>
     <script>
@@ -670,12 +670,25 @@
         loadRoutines();
 
         async function onGoogleAuthSuccess() {
-            if (window.SupabaseService) { window.SupabaseService.init(); await window.syncFromCloud(); }
-            else if (window.FirebaseService) { await window.FirebaseService.init(); await window.syncFromCloud(); }
             if (typeof BrandConfig !== 'undefined') BrandConfig.applyTheme();
             document.getElementById('login-screen').style.display = 'none';
             document.getElementById('app').style.display = 'block';
             loadRoutines();
+
+            const runSync = async () => {
+                try {
+                    if (window.SupabaseService) {
+                        window.SupabaseService.init();
+                        const freshData = await window.syncFromCloud();
+                        if (freshData) loadRoutines();
+                    } else if (window.FirebaseService) {
+                        await window.FirebaseService.init();
+                        const freshData = await window.syncFromCloud();
+                        if (freshData) loadRoutines();
+                    }
+                } catch(e) { console.warn(e); }
+            };
+            runSync();
         }
     </script>
     <script src="js/custom-recipes.js?v=536"></script>
