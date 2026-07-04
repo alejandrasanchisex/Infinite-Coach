@@ -4383,7 +4383,22 @@ const Invoices = {
       description: invoiceData.description || 'Cuota Mensual',
       status: 'paid',
       previousHash: prevHash,
-      hash: "" // Will be calculated below
+      hash: "", // Will be calculated below
+      
+      clientNif: invoiceData.clientNif || '',
+      clientAddress: invoiceData.clientAddress || '',
+      clientZip: invoiceData.clientZip || '',
+      clientCity: invoiceData.clientCity || '',
+      clientProvince: invoiceData.clientProvince || '',
+      clientCountry: invoiceData.clientCountry || 'España',
+      
+      trainerCompanyName: invoiceData.trainerCompanyName || '',
+      trainerNif: invoiceData.trainerNif || '',
+      trainerAddress: invoiceData.trainerAddress || '',
+      trainerZip: invoiceData.trainerZip || '',
+      trainerCity: invoiceData.trainerCity || '',
+      trainerProvince: invoiceData.trainerProvince || '',
+      trainerCountry: invoiceData.trainerCountry || 'España'
     };
 
     // Calculate Hash (Simple SHA-256 simulation or actual WebCrypto)

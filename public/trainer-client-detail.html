@@ -990,11 +990,11 @@
     <script src="js/config.js?v=536"></script>
     <script src="js/auth.js?v=536"></script>
     <script src="js/sheets.js?v=536"></script>
-    <script src="js/data-models.js?v=539"></script>
+    <script src="js/data-models.js?v=540"></script>
     <script src="js/utils.js?v=536"></script>
     <script src="js/custom-recipes.js?v=536"></script>
     <script src="js/custom-exercises.js?v=536"></script>
-    <script src="js/diet-editor-v3.js?v=539"></script>
+    <script src="js/diet-editor-v3.js?v=540"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.29/jspdf.plugin.autotable.min.js"></script>
     <script src="js/export-utils.js?v=536"></script>
@@ -2721,6 +2721,13 @@
                     customOnboardingQuestions: window.tempOnboardingQuestions || [],
                     customFeedbackQuestions: window.tempFeedbackQuestions || [],
                     customPerimeters: window.tempPerimeters || [],
+                    
+                    fiscalNif: document.getElementById('editFiscalNif')?.value?.trim() || '',
+                    fiscalAddress: document.getElementById('editFiscalAddress')?.value?.trim() || '',
+                    fiscalZip: document.getElementById('editFiscalZip')?.value?.trim() || '',
+                    fiscalCity: document.getElementById('editFiscalCity')?.value?.trim() || '',
+                    fiscalProvince: document.getElementById('editFiscalProvince')?.value?.trim() || '',
+                    fiscalCountry: document.getElementById('editFiscalCountry')?.value?.trim() || 'España',
 
                     technicalData: {
                         ...techUpdates,
@@ -4895,11 +4902,31 @@
             }
 
             try {
+                const brand = BrandConfig.get() || {};
+                const fiscal = brand.fiscalData || {};
+
                 await Invoices.create({
                     clientId: clientId,
                     clientName: currentClient.name,
                     amount: amount,
-                    description: desc
+                    description: desc,
+
+                    // Snapshot of Client Fiscal Data
+                    clientNif: currentClient.fiscalNif || '',
+                    clientAddress: currentClient.fiscalAddress || '',
+                    clientZip: currentClient.fiscalZip || '',
+                    clientCity: currentClient.fiscalCity || '',
+                    clientProvince: currentClient.fiscalProvince || '',
+                    clientCountry: currentClient.fiscalCountry || 'España',
+
+                    // Snapshot of Trainer Fiscal Data
+                    trainerCompanyName: fiscal.companyName || brand.name || '',
+                    trainerNif: fiscal.nif || '',
+                    trainerAddress: fiscal.address || '',
+                    trainerZip: fiscal.zip || '',
+                    trainerCity: fiscal.city || '',
+                    trainerProvince: fiscal.province || '',
+                    trainerCountry: fiscal.country || 'España'
                 });
                 
                 showToast('Factura generada con éxito', 'success');
@@ -4920,10 +4947,28 @@
 
             // AEAT verification URL (VeriFactu requirements)
             const qrUrl = `https://www2.agenciatributaria.gob.es/wlpl/YCON-VQR/index.xhtml?` + 
-                          `nif=${fiscal.nif || '00000000X'}&numserie=${inv.number}&` +
+                          `nif=${inv.trainerNif || fiscal.nif || '00000000X'}&numserie=${inv.number}&` +
                           `fecha=${new Date(inv.date).toLocaleDateString('es-ES')}&importe=${inv.amount}`;
 
             const qrImgUrl = `https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${encodeURIComponent(qrUrl)}`;
+
+            // Resolve Trainer (Issuer) fiscal snapshot fields
+            const tName = inv.trainerCompanyName || fiscal.companyName || brand.name || '';
+            const tNif = inv.trainerNif || fiscal.nif || '-';
+            const tAddress = inv.trainerAddress || fiscal.address || '';
+            const tZip = inv.trainerZip || fiscal.zip || '';
+            const tCity = inv.trainerCity || fiscal.city || '';
+            const tProvince = inv.trainerProvince || fiscal.province || '';
+            const tCountry = inv.trainerCountry || fiscal.country || 'España';
+
+            // Resolve Client (Recipient) fiscal snapshot fields
+            const cName = inv.clientName || currentClient.name || 'Cliente';
+            const cNif = inv.clientNif || currentClient.fiscalNif || '';
+            const cAddress = inv.clientAddress || currentClient.fiscalAddress || '';
+            const cZip = inv.clientZip || currentClient.fiscalZip || '';
+            const cCity = inv.clientCity || currentClient.fiscalCity || '';
+            const cProvince = inv.clientProvince || currentClient.fiscalProvince || '';
+            const cCountry = inv.clientCountry || currentClient.fiscalCountry || 'España';
 
             showModal('Detalle de Factura Certificada (v544)', `
                 <div id="invoiceDetailPrint" style="color: #336; background: white; padding: 30px; border-radius: 8px; font-family: 'Inter', sans-serif; box-sizing: border-box; width: 100%;">
@@ -4936,17 +4981,26 @@
                                 <p style="margin: 0; color: #666;">Fecha: ${new Date(inv.date).toLocaleDateString()}</p>
                             </td>
                             <td style="text-align: right; vertical-align: top; width: 50%;">
-                                <strong style="font-size: 1.2rem; display: block; color: #00d9ff;">${fiscal.companyName || brand.name}</strong>
-                                <p style="margin: 5px 0; font-size: 0.9rem; color: #444;">CIF/NIF: ${fiscal.nif || '-'}</p>
-                                <p style="margin: 0; font-size: 0.9rem; color: #444;">${fiscal.address || ''}</p>
-                                <p style="margin: 0; font-size: 0.9rem; color: #444;">${fiscal.zip || ''} ${fiscal.city || ''}</p>
+                                <strong style="font-size: 1.2rem; display: block; color: #00d9ff;">${tName}</strong>
+                                <p style="margin: 5px 0; font-size: 0.9rem; color: #444;">CIF/NIF: ${tNif}</p>
+                                <p style="margin: 0; font-size: 0.9rem; color: #444;">${tAddress}</p>
+                                <p style="margin: 0; font-size: 0.9rem; color: #444;">
+                                    ${tZip} ${tCity}${tProvince ? `, ${tProvince}` : ''}${tCountry ? `, ${tCountry}` : ''}
+                                </p>
                             </td>
                         </tr>
                     </table>
 
                     <div style="background: #f8f9fa; padding: 15px; border-radius: 8px; margin-bottom: 25px; border-left: 4px solid #00d9ff; text-align: left;">
                         <p style="margin: 0; font-size: 0.8rem; color: #666; text-transform: uppercase; letter-spacing: 1px;">Cliente</p>
-                        <strong style="font-size: 1.1rem; color: #1a1a2e;">${inv.clientName}</strong>
+                        <strong style="font-size: 1.1rem; color: #1a1a2e; display: block; margin-bottom: 5px;">${cName}</strong>
+                        ${cNif ? `<p style="margin: 2px 0 0; font-size: 0.9rem; color: #444;"><strong>CIF/NIF:</strong> ${cNif}</p>` : ''}
+                        ${cAddress ? `<p style="margin: 2px 0 0; font-size: 0.9rem; color: #444;"><strong>Dirección:</strong> ${cAddress}</p>` : ''}
+                        ${(cZip || cCity || cProvince || cCountry) ? `
+                            <p style="margin: 2px 0 0; font-size: 0.9rem; color: #444;">
+                                <strong>Ubicación:</strong> ${cZip} ${cCity}${cProvince ? `, ${cProvince}` : ''}${cCountry ? `, ${cCountry}` : ''}
+                            </p>
+                        ` : ''}
                     </div>
 
                     <div style="border-top: 1px solid #eee; border-bottom: 1px solid #eee; padding: 20px 0; margin-bottom: 30px;">
@@ -5790,6 +5844,41 @@
                             <div class="flex gap-xs" style="display: flex; gap: 6px;">
                                 <input type="text" id="newModalPerimeter" class="form-input form-input-sm" placeholder="Nuevo perímetro (Ej: Cuello)..." style="flex: 1; font-size: 0.8rem;">
                                 <button type="button" class="btn btn-sm btn-primary" onclick="window.addModalPerimeter()" style="padding: 0 12px; font-weight: bold;">+</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Datos Fiscales del Cliente -->
+                    <div style="background: rgba(255,255,255,0.02); border: 1.5px solid rgba(255,255,255,0.06); padding: 15px; border-radius: 12px; margin-bottom: 20px; margin-top: 15px;">
+                        <h4 style="color: var(--primary-color); font-size: 0.95rem; font-weight: 700; margin-top: 0; margin-bottom: 10px; display: flex; align-items: center; gap: 8px;">
+                            <span>📄</span> Datos Fiscales del Cliente
+                        </h4>
+                        <div class="form-group">
+                            <label class="form-label" style="font-size: 0.8rem; color: #ccc;">NIF / CIF del Cliente</label>
+                            <input type="text" id="editFiscalNif" class="form-input" style="font-size: 0.85rem;" value="${currentClient.fiscalNif || ''}" placeholder="Ej: 12345678Z">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" style="font-size: 0.8rem; color: #ccc;">Dirección Fiscal del Cliente</label>
+                            <input type="text" id="editFiscalAddress" class="form-input" style="font-size: 0.85rem;" value="${currentClient.fiscalAddress || ''}" placeholder="Calle, número, piso...">
+                        </div>
+                        <div class="grid grid-2 gap-sm" style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                            <div class="form-group">
+                                <label class="form-label" style="font-size: 0.8rem; color: #ccc;">C.P.</label>
+                                <input type="text" id="editFiscalZip" class="form-input" style="font-size: 0.85rem;" value="${currentClient.fiscalZip || ''}" placeholder="00000">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label" style="font-size: 0.8rem; color: #ccc;">Población</label>
+                                <input type="text" id="editFiscalCity" class="form-input" style="font-size: 0.85rem;" value="${currentClient.fiscalCity || ''}" placeholder="Ciudad">
+                            </div>
+                        </div>
+                        <div class="grid grid-2 gap-sm" style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 10px;">
+                            <div class="form-group">
+                                <label class="form-label" style="font-size: 0.8rem; color: #ccc;">Provincia</label>
+                                <input type="text" id="editFiscalProvince" class="form-input" style="font-size: 0.85rem;" value="${currentClient.fiscalProvince || ''}" placeholder="Provincia">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label" style="font-size: 0.8rem; color: #ccc;">País</label>
+                                <input type="text" id="editFiscalCountry" class="form-input" style="font-size: 0.85rem;" value="${currentClient.fiscalCountry || 'España'}" placeholder="España">
                             </div>
                         </div>
                     </div>

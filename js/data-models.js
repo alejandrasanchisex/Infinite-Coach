@@ -136,6 +136,54 @@ const getStorageKey = () => `fitnessAppData_${window.activeTrainerId || 'default
     }
 })();
 
+// 🧹 CLEANUP DUPLICATE ALEJANDRA CLIENTS FOR JULIAN (t-kghykurxf)
+(function() {
+    try {
+        const sKey = 'fitnessAppData_t-kghykurxf';
+        const raw = localStorage.getItem(sKey);
+        if (raw) {
+            const data = JSON.parse(raw);
+            const targetDuplicateIds = ["abf7b31d-35bb-4f87-b293-21b0d3c516f1", "acdf83d0-3415-4f7e-87db-83aaff5198c2"];
+            let hasDuplicates = false;
+            
+            if (data.clients && Array.isArray(data.clients)) {
+                hasDuplicates = data.clients.some(c => targetDuplicateIds.includes(c.id));
+            }
+            
+            if (hasDuplicates) {
+                console.warn("🧹 [JULIAN CLEANUP] Duplicate Alejandra clients detected in local storage. Purging duplicates...");
+                data.clients = data.clients.filter(c => !targetDuplicateIds.includes(c.id));
+                if (data.feedbacks) data.feedbacks = data.feedbacks.filter(f => !targetDuplicateIds.includes(f.clientId));
+                if (data.appointments) data.appointments = data.appointments.filter(a => !targetDuplicateIds.includes(a.clientId));
+                if (data.habits) data.habits = data.habits.filter(h => !targetDuplicateIds.includes(h.clientId));
+                if (data.trainingBlocks) data.trainingBlocks = data.trainingBlocks.filter(b => !targetDuplicateIds.includes(b.clientId));
+                if (data.trainingLogs) data.trainingLogs = data.trainingLogs.filter(l => !targetDuplicateIds.includes(l.clientId));
+                
+                // Write back sanitized data
+                localStorage.setItem(sKey, JSON.stringify(data));
+                
+                // Also purge backup key
+                const backupKey = sKey + '_backup';
+                const backupRaw = localStorage.getItem(backupKey);
+                if (backupRaw) {
+                    try {
+                        const backupData = JSON.parse(backupRaw);
+                        backupData.clients = (backupData.clients || []).filter(c => !targetDuplicateIds.includes(c.id));
+                        if (backupData.feedbacks) backupData.feedbacks = backupData.feedbacks.filter(f => !targetDuplicateIds.includes(f.clientId));
+                        if (backupData.appointments) backupData.appointments = backupData.appointments.filter(a => !targetDuplicateIds.includes(a.clientId));
+                        if (backupData.habits) backupData.habits = backupData.habits.filter(h => !targetDuplicateIds.includes(h.clientId));
+                        if (backupData.trainingBlocks) backupData.trainingBlocks = backupData.trainingBlocks.filter(b => !targetDuplicateIds.includes(b.clientId));
+                        if (backupData.trainingLogs) backupData.trainingLogs = backupData.trainingLogs.filter(l => !targetDuplicateIds.includes(l.clientId));
+                        localStorage.setItem(backupKey, JSON.stringify(backupData));
+                    } catch(e) {}
+                }
+            }
+        }
+    } catch(e) {
+        console.error("[JULIAN CLEANUP] Error cleaning duplicate clients:", e);
+    }
+})();
+
 const updateActiveTrainerId = (newId) => {
     let targetId = newId;
     if (targetId === 'alejandra_asteam_gmail_com') {
@@ -300,6 +348,22 @@ const getData = () => {
         data.feedbacks = data.feedbacks.filter(f => f.id !== '240f5d3a-747d-4faa-8fb8-2592d2413976');
         if (data.feedbacks.length !== originalLength) {
             console.log("🛡️ [Shield] Removed duplicate feedback 240f5d3a-747d-4faa-8fb8-2592d2413976 from local storage.");
+            try { localStorage.setItem(sKey, JSON.stringify(data)); } catch(e){}
+        }
+    }
+
+    // 🛡️ SHIELD FOR DUPLICATE ALEJANDRA SANCHIS CLIENTS (JULIAN t-kghykurxf)
+    if (data.clients && (window.activeTrainerId === 't-kghykurxf' || localStorage.getItem('activeTrainerId') === 't-kghykurxf')) {
+        const targetDuplicateIds = ["abf7b31d-35bb-4f87-b293-21b0d3c516f1", "acdf83d0-3415-4f7e-87db-83aaff5198c2"];
+        const hasDuplicates = data.clients.some(c => targetDuplicateIds.includes(c.id));
+        if (hasDuplicates) {
+            console.log("🛡️ [Shield] Purging duplicate Alejandra Sanchis clients from local storage.");
+            data.clients = data.clients.filter(c => !targetDuplicateIds.includes(c.id));
+            if (data.feedbacks) data.feedbacks = data.feedbacks.filter(f => !targetDuplicateIds.includes(f.clientId));
+            if (data.appointments) data.appointments = data.appointments.filter(a => !targetDuplicateIds.includes(a.clientId));
+            if (data.habits) data.habits = data.habits.filter(h => !targetDuplicateIds.includes(h.clientId));
+            if (data.trainingBlocks) data.trainingBlocks = data.trainingBlocks.filter(b => !targetDuplicateIds.includes(b.clientId));
+            if (data.trainingLogs) data.trainingLogs = data.trainingLogs.filter(l => !targetDuplicateIds.includes(l.clientId));
             try { localStorage.setItem(sKey, JSON.stringify(data)); } catch(e){}
         }
     }
@@ -790,11 +854,19 @@ ${item.date}`.replace('\n', ''); // Safe compile
                             return;
                         }
                     }
-                    if (col === 'appointments' && localItem && cloudItem) {
-                        const localChanged = !prevItem || localItem.status !== prevItem.status || localItem.replyNotes !== prevItem.replyNotes;
-                        if (localChanged) {
-                            const mergedApp = { ...cloudItem, status: localItem.status, replyNotes: localItem.replyNotes };
-                            finalItems.push(mergedApp);
+                    if (col === 'appointments') {
+                        if (localItem && cloudItem) {
+                            const localChanged = !prevItem || JSON.stringify(localItem) !== JSON.stringify(prevItem);
+                            if (localChanged) {
+                                finalItems.push({ ...cloudItem, ...localItem });
+                            } else {
+                                finalItems.push(cloudItem);
+                            }
+                            return;
+                        } else if (localItem) {
+                            if (!prevItem) {
+                                finalItems.push(localItem);
+                            }
                             return;
                         }
                     }
@@ -951,33 +1023,42 @@ const saveData = (data) => {
                           return;
                       }
                   }
-                  if (cloudData.lastModified) {
-                  const cloudTime = new Date(cloudData.lastModified).getTime();
-                  const localTime = localPrevModified ? new Date(localPrevModified).getTime() : 0;
-                  
-                  if (cloudTime > localTime + 2500) {
-                      console.log("🔄 Se detectaron cambios externos más nuevos en la nube. Fusionando antes de subir...");
+                  if (!isTrainer) {
+                      // 🛡️ SECURITY BLOCK: Clients must ALWAYS merge their client-specific edits with cloud config to prevent overwriting brand/settings
+                      console.log("🔒 [Client Save] Fusionando siempre con la nube para proteger la configuración del entrenador...");
+                      const finalData = mergeLocalEdits(mergedWithLocal, cloudData, prevData, isTrainer);
+                      finalData.lastModified = new Date().toISOString();
                       
-                      // Temporarily restore local lastModified to localPrevModified for syncFromCloud comparison
-                      const tempSaved = JSON.parse(localStorage.getItem(getStorageKey()) || '{}');
-                      tempSaved.lastModified = localPrevModified;
-                      localStorage.setItem(getStorageKey(), JSON.stringify(tempSaved));
+                      localStorage.setItem(getStorageKey(), JSON.stringify(finalData));
+                      await window.SupabaseService.saveTrainerData(currentId, finalData);
+                      return;
+                  } else if (cloudData.lastModified) {
+                      const cloudTime = new Date(cloudData.lastModified).getTime();
+                      const localTime = localPrevModified ? new Date(localPrevModified).getTime() : 0;
+                      
+                      if (cloudTime > localTime + 2500) {
+                          console.log("🔄 Se detectaron cambios externos más nuevos en la nube. Fusionando antes de subir...");
+                          
+                          // Temporarily restore local lastModified to localPrevModified for syncFromCloud comparison
+                          const tempSaved = JSON.parse(localStorage.getItem(getStorageKey()) || '{}');
+                          tempSaved.lastModified = localPrevModified;
+                          localStorage.setItem(getStorageKey(), JSON.stringify(tempSaved));
 
-                      const freshData = await window.syncFromCloud();
-                      if (freshData) {
-                          // Obtenemos los datos recién fusionados en local storage
-                          const mergedLocal = JSON.parse(localStorage.getItem(getStorageKey()) || '{}');
-                          
-                          // Aplicamos de forma segura los cambios locales sobre los datos fusionados de la nube
-                          const finalData = mergeLocalEdits(mergedWithLocal, mergedLocal, prevData, isTrainer);
-                          finalData.lastModified = new Date().toISOString();
-                          
-                          localStorage.setItem(getStorageKey(), JSON.stringify(finalData));
-                          await window.SupabaseService.saveTrainerData(currentId, finalData);
-                          return;
+                          const freshData = await window.syncFromCloud();
+                          if (freshData) {
+                              // Obtenemos los datos recién fusionados en local storage
+                              const mergedLocal = JSON.parse(localStorage.getItem(getStorageKey()) || '{}');
+                              
+                              // Aplicamos de forma segura los cambios locales sobre los datos fusionados de la nube
+                              const finalData = mergeLocalEdits(mergedWithLocal, mergedLocal, prevData, isTrainer);
+                              finalData.lastModified = new Date().toISOString();
+                              
+                              localStorage.setItem(getStorageKey(), JSON.stringify(finalData));
+                              await window.SupabaseService.saveTrainerData(currentId, finalData);
+                              return;
+                          }
                       }
                   }
-              }
               }
               await window.SupabaseService.saveTrainerData(currentId, mergedWithLocal);
           } catch (e) {
@@ -1236,6 +1317,8 @@ ${item.date}`.replace('\n', ''); // Safe compile
                                         clientTechFields.forEach(f => {
                                             if (localTime > cloudTime && localTech[f] !== undefined) {
                                                 mergedTech[f] = localTech[f];
+                                            } else if (cloudTech[f] !== undefined) {
+                                                mergedTech[f] = cloudTech[f];
                                             }
                                         });
                                         mergedClient.technicalData = mergedTech;
@@ -1301,11 +1384,8 @@ ${item.date}`.replace('\n', ''); // Safe compile
                                     const mergedAppt = { ...cloudItem }; // Empezar con el del cloud
                                     
                                     if (isTrainer) {
-                                        // Entrenador es máster de status y replyNotes
-                                        mergedAppt.status = localItem.status || cloudItem.status;
-                                        mergedAppt.replyNotes = localItem.replyNotes || cloudItem.replyNotes;
-                                        if (localItem.date && localItem.date !== cloudItem.date) mergedAppt.date = localItem.date;
-                                        if (localItem.time && localItem.time !== cloudItem.time) mergedAppt.time = localItem.time;
+                                        // El entrenador puede editar cualquier campo de la cita (date, time, notes, type, status, etc.)
+                                        Object.assign(mergedAppt, localItem);
                                     } else {
                                         // Cliente acepta la aprobación/rechazo de la nube (del entrenador)
                                         mergedAppt.status = cloudItem.status || localItem.status;
@@ -2892,7 +2972,7 @@ window.Media = {
     personal.forEach(m => {
         const isHidden = hidden.includes(m.id);
         const isSysItem = String(m.id).startsWith('sys-') || (window.SYSTEM_RECIPES || []).some(r => r.id == m.id) || (window.SYSTEM_MEDIA || []).some(sm => sm.id == m.id);
-        let finalItem = { ...m, isSystem: isSysItem, status: isHidden ? 'hidden' : 'active' };
+        let finalItem = { ...m, isSystem: isSysItem, status: (m.status === 'hidden') ? 'hidden' : (isHidden ? 'hidden' : 'active') };
         
         // 🔥 BLINDAJE DE RECETAS: Forzar foto, título e ingredientes originales solo si no ha sido editada por el usuario
         const originalRecipe = (window.SYSTEM_RECIPES || []).find(r => r.id === m.id);
@@ -3840,10 +3920,6 @@ const Feedbacks = {
   }
 };
 
-// ============================================
-// APPOINTMENTS CRUD
-// ============================================
-
 const Appointments = {
   getAll: () => {
     const data = getData();
@@ -3976,11 +4052,13 @@ const TrainingLogs = {
 
   getDraft: (clientId, routineId, dayNumber) => {
     const data = getData();
+    const activeBlock = (data.trainingBlocks || []).find(b => b.clientId == clientId && b.status === 'active');
     return (data.trainingLogs || []).find(l => 
         l.clientId == clientId && 
         l.routineId === routineId && 
         l.dayNumber === dayNumber && 
-        l.completed === false
+        l.completed === false &&
+        (!activeBlock || l.blockId === activeBlock.id)
     );
   },
 
@@ -3996,7 +4074,8 @@ const TrainingLogs = {
         l.clientId == logData.clientId && 
         l.routineId === logData.routineId && 
         l.dayNumber === logData.dayNumber && 
-        l.completed === false
+        l.completed === false &&
+        (!activeBlock || l.blockId === activeBlock.id)
     );
 
     if (draft) {
@@ -4030,12 +4109,15 @@ const TrainingLogs = {
     const data = getData();
     if (!data.trainingLogs) data.trainingLogs = [];
 
+    const activeBlock = (data.trainingBlocks || []).find(b => b.clientId == logData.clientId && b.status === 'active');
+
     // Find and update the existing draft if it exists
     let existingLog = data.trainingLogs.find(l => 
         l.clientId == logData.clientId && 
         l.routineId === logData.routineId && 
         l.dayNumber === logData.dayNumber && 
-        l.completed === false
+        l.completed === false &&
+        (!activeBlock || l.blockId === activeBlock.id)
     );
 
     if (existingLog) {
@@ -4044,13 +4126,15 @@ const TrainingLogs = {
         existingLog.completed = true;
         existingLog.date = new Date().toISOString();
         existingLog.lastModified = new Date().toISOString();
+        if (activeBlock) existingLog.blockId = activeBlock.id;
     } else {
         // Prevent duplication on double-submission by checking for already completed logs
         let duplicateCompleted = data.trainingLogs.find(l => 
             l.clientId == logData.clientId && 
             l.routineId === logData.routineId && 
             l.dayNumber === logData.dayNumber && 
-            l.completed === true
+            l.completed === true &&
+            (!activeBlock || l.blockId === activeBlock.id)
         );
         if (duplicateCompleted) {
             console.warn("Duplicate completed log submission detected. Updating instead of duplicating.");
@@ -4059,7 +4143,6 @@ const TrainingLogs = {
             duplicateCompleted.lastModified = new Date().toISOString();
             existingLog = duplicateCompleted;
         } else {
-            const activeBlock = (data.trainingBlocks || []).find(b => b.clientId == logData.clientId && b.status === 'active');
             existingLog = {
               id: generateUUID(),
               clientId: logData.clientId,
@@ -4300,7 +4383,22 @@ const Invoices = {
       description: invoiceData.description || 'Cuota Mensual',
       status: 'paid',
       previousHash: prevHash,
-      hash: "" // Will be calculated below
+      hash: "", // Will be calculated below
+      
+      clientNif: invoiceData.clientNif || '',
+      clientAddress: invoiceData.clientAddress || '',
+      clientZip: invoiceData.clientZip || '',
+      clientCity: invoiceData.clientCity || '',
+      clientProvince: invoiceData.clientProvince || '',
+      clientCountry: invoiceData.clientCountry || 'España',
+      
+      trainerCompanyName: invoiceData.trainerCompanyName || '',
+      trainerNif: invoiceData.trainerNif || '',
+      trainerAddress: invoiceData.trainerAddress || '',
+      trainerZip: invoiceData.trainerZip || '',
+      trainerCity: invoiceData.trainerCity || '',
+      trainerProvince: invoiceData.trainerProvince || '',
+      trainerCountry: invoiceData.trainerCountry || 'España'
     };
 
     // Calculate Hash (Simple SHA-256 simulation or actual WebCrypto)
@@ -4314,12 +4412,92 @@ const Invoices = {
   },
 
   generateHash: async (text) => {
-    const msgUint8 = new TextEncoder().encode(text);
-    const hashBuffer = await crypto.subtle.digest('SHA-256', msgUint8);
-    const hashArray = Array.from(new Uint8Array(hashBuffer));
-    return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+    if (typeof window !== 'undefined' && window.crypto && window.crypto.subtle) {
+      const msgUint8 = new TextEncoder().encode(text);
+      const hashBuffer = await window.crypto.subtle.digest('SHA-256', msgUint8);
+      const hashArray = Array.from(new Uint8Array(hashBuffer));
+      return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+    } else {
+      // Fallback pure JS SHA-256 for non-secure HTTP contexts
+      return sha256_fallback(text);
+    }
   }
 };
+
+// Standalone helper for SHA-256 calculation when window.crypto.subtle is not available
+function sha256_fallback(ascii) {
+  const h0 = [0x6a09e667, 0xbb67ae85, 0x3c6ef372, 0xa54ff53a, 0x510e527f, 0x9b05688c, 0x1f83d9ab, 0x5be0cd19];
+  const k = [
+    0x428a2f98, 0x71374491, 0xb5c0fbcf, 0xe9b5dba5, 0x3956c25b, 0x59f111f1, 0x923f82a4, 0xab1c5ed5,
+    0xd807aa98, 0x12835b01, 0x243185be, 0x550c7dc3, 0x72be5d74, 0x80deb1fe, 0x9bdc06a7, 0xc19bf174,
+    0xe49b69c1, 0xefbe4786, 0x0fc19dc6, 0x240ca1cc, 0x2de92c6f, 0x4a7484aa, 0x5cb0a9dc, 0x76f988da,
+    0x983e5152, 0xa831c66d, 0xb00327c8, 0xbf597fc7, 0xc6e00bf3, 0xd5a79147, 0x06ca6351, 0x14292967,
+    0x27b70a85, 0x2e1b2138, 0x4d2c6dfc, 0x53380d13, 0x650a7354, 0x766a0abb, 0x81c2c92e, 0x92722c85,
+    0xa2bfe8a1, 0xa81a664b, 0xc24b8b70, 0xc76c51a3, 0xd192e819, 0xd6990624, 0xf40e3585, 0x106aa070,
+    0x19a4c116, 0x1e376c08, 0x2748774c, 0x34b0bcb5, 0x391c0cb3, 0x4ed8aa4a, 0x5b9cca4f, 0x682e6ff3,
+    0x748f82ee, 0x78a5636f, 0x84c87814, 0x8cc70208, 0x90befffa, 0xa4506ceb, 0xbef9a3f7, 0xc67178f2
+  ];
+
+  function rightRotate(value, amount) {
+    return (value >>> amount) | (value << (32 - amount));
+  }
+
+  var words = [];
+  var asciiLength = ascii.length * 8;
+  
+  ascii += '\x80';
+  while (ascii.length % 64 - 56) ascii += '\x00';
+  
+  for (var i = 0; i < ascii.length; i++) {
+    var j = ascii.charCodeAt(i);
+    if (j >> 8) return; // ASCII only
+    words[i >> 2] |= j << ((3 - i % 4) * 8);
+  }
+  
+  words.push((asciiLength / Math.pow(2, 32)) | 0);
+  words.push(asciiLength | 0);
+  
+  var hash = h0.slice(0);
+
+  for (var j = 0; j < words.length; j += 16) {
+    var w = words.slice(j, j + 16);
+    var oldHash = hash.slice(0);
+    
+    for (var i = 0; i < 64; i++) {
+      if (i >= 16) {
+        var w15 = w[i - 15], w2 = w[i - 2];
+        var s0 = rightRotate(w15, 7) ^ rightRotate(w15, 18) ^ (w15 >>> 3);
+        var s1 = rightRotate(w2, 17) ^ rightRotate(w2, 19) ^ (w2 >>> 10);
+        w[i] = (w[i - 16] + s0 + w[i - 7] + s1) | 0;
+      }
+
+      var a = hash[0], b = hash[1], c = hash[2], d = hash[3],
+          e = hash[4], f = hash[5], g = hash[6], h = hash[7];
+
+      var temp1 = (h + (rightRotate(e, 6) ^ rightRotate(e, 11) ^ rightRotate(e, 25)) + ((e & f) ^ (~e & g)) + k[i] + w[i]) | 0;
+      var temp2 = ((rightRotate(a, 2) ^ rightRotate(a, 13) ^ rightRotate(a, 22)) + ((a & b) ^ (a & c) ^ (b & c))) | 0;
+
+      hash = [(temp1 + temp2) | 0].concat(hash);
+      hash[4] = (hash[4] + temp1) | 0;
+      hash.pop();
+    }
+    
+    for (var i = 0; i < 8; i++) {
+      hash[i] = (hash[i] + oldHash[i]) | 0;
+    }
+  }
+  
+  var result = '';
+  for (var i = 0; i < 8; i++) {
+    var aInt = hash[i];
+    if (aInt < 0) {
+      aInt = 0xFFFFFFFF + aInt + 1;
+    }
+    var hex = aInt.toString(16);
+    result += ('00000000' + hex).slice(-8);
+  }
+  return result;
+}
 
 const SupplementationTemplates = {
   getAll: () => {
@@ -4448,7 +4626,7 @@ const BrandConfig = {
     } else if (isLucy) {
         defaultBrand = {
             name: 'Lucy Tundidor',
-            logo: 'https://bieeydhacavxymoosasx.supabase.co/storage/v1/object/public/Media/lucy_logo_cropped.png?v=2',
+            logo: 'https://bieeydhacavxymoosasx.supabase.co/storage/v1/object/public/Media/lucy_logo_cropped.png?v=531',
             configured: true,
             colors: { 
                 primary: '#816e61', 
@@ -4479,36 +4657,7 @@ const BrandConfig = {
 
     let res = data.brand || defaultBrand;
     
-    // If not Alejandra, ensure ASTeam config is cleared and default Infinite Coach is returned/configured
-    if (!isAlejandra) {
-        if (res && (res.name === 'ASTeam' || res.logo === 'https://bieeydhacavxymoosasx.supabase.co/storage/v1/object/public/Media/1779724548154_Gemini_Generated_Image_vse84nvse84nvse8.png' || (res.colors && res.colors.primary === '#fdbfec'))) {
-            res = defaultBrand;
-            if (typeof saveData === 'function') {
-                data.brand = res;
-                saveData(data);
-            }
-        }
-    }
-    // If not Lucy, ensure Lucy config is cleared
-    if (!isLucy) {
-        if (res && (res.name === 'Lucy Tundidor' || res.logo === 'https://bieeydhacavxymoosasx.supabase.co/storage/v1/object/public/Media/lucy_logo_cropped.png' || res.logo === 'https://bieeydhacavxymoosasx.supabase.co/storage/v1/object/public/Media/lucy_logo_cropped.png?v=2' || (res.colors && res.colors.primary === '#816e61'))) {
-            res = defaultBrand;
-            if (typeof saveData === 'function') {
-                data.brand = res;
-                saveData(data);
-            }
-        }
-    }
-    // If not Julian, ensure Julian config is cleared
-    if (!isJulian) {
-        if (res && (res.name === 'Método JFK' || res.logo === 'img/metodo_jfk_logo.png' || (res.colors && res.colors.primary === '#96001E'))) {
-            res = defaultBrand;
-            if (typeof saveData === 'function') {
-                data.brand = res;
-                saveData(data);
-            }
-        }
-    }
+    // Brand config is fully persistent; no auto-resetting blocks for active trainers.
 
     if (res && (res.name === 'MyFitness' || res.name === 'Fitness App' || (res.name === 'Infinite Coach' && defaultBrand.name === 'ASTeam') || (res.name === 'Infinite Coach' && defaultBrand.name === 'Lucy Tundidor') || (res.name === 'Infinite Coach' && defaultBrand.name === 'Método JFK'))) {
         res.name = defaultBrand.name;
@@ -4568,7 +4717,7 @@ const BrandConfig = {
             res.colors = defaultBrand.colors;
             changed = true;
         }
-        if (!res.logo || res.logo === 'img/logo-infinite-coach.png' || res.logo.includes('1779724548154') || res.logo.includes('lucy_logo_v1.png') || !res.logo.includes('lucy_logo_cropped.png?v=2')) {
+        if (!res.logo || res.logo === 'img/logo-infinite-coach.png' || res.logo.includes('1779724548154') || res.logo.includes('lucy_logo_v1.png') || !res.logo.includes('lucy_logo_cropped.png?v=531')) {
             res.logo = defaultBrand.logo;
             changed = true;
         }
@@ -4597,6 +4746,7 @@ const BrandConfig = {
             saveData(data);
         }
     }
+
     // Auto-correct stale or corrupted Julian settings in local cache (forcing correct logo, colors)
     if (isJulian && res && (res.name === 'Método JFK' || defaultBrand.name === 'Método JFK')) {
         let changed = false;
