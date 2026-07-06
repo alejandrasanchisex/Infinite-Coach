@@ -59,6 +59,20 @@ const SupabaseService = {
     async saveTrainerData(trainerId, fullData) {
         if (!this.client) this.init();
         try {
+            // 🛡️ CORTAFUEGOS MULTI-INQUILINO (CATASTRÓFICO):
+            // Si el que guarda es un cliente, verificar que el clientId que realiza la operación realmente exista en el array de clients del trainerId al que intenta guardar
+            const isTrainer = typeof localStorage !== 'undefined' && localStorage.getItem('_trainerAuthed') === '1';
+            const clientId = typeof localStorage !== 'undefined' ? (localStorage.getItem('clientId') || sessionStorage.getItem('clientId')) : null;
+            
+            if (!isTrainer && clientId) {
+                const clientsList = (fullData && fullData.clients) || [];
+                const clientExists = clientsList.some(c => c.id === clientId);
+                if (!clientExists) {
+                    console.error(`🚨 [CORTAFUEGOS SUPABASE] INTENTO DE ACCESO NO AUTORIZADO BLOQUEADO: El cliente ${clientId} intentó guardar datos en el perfil del entrenador ${trainerId}, al cual no pertenece.`);
+                    return false;
+                }
+            }
+
             // 🛡️ CORTAFUEGOS ASTEAM: Evitar contaminación con datos de prueba
             if (trainerId === 't-w0iybl7qb' && fullData) {
                 console.log("🛡️ [ASTEAM CORTAFUEGOS] Aplicando sanitización estricta...");
@@ -159,7 +173,6 @@ const SupabaseService = {
             }
 
             // Si el que guarda es un cliente, preservar la configuración de marca del entrenador de la nube
-            const isTrainer = typeof localStorage !== 'undefined' && localStorage.getItem('_trainerAuthed') === '1';
             if (!isTrainer && trainerId !== 'default') {
                 try {
                     const { data: cloudProfile } = await this.client

@@ -471,7 +471,7 @@ window.renderMealCard = function (meal, idx) {
                                                                                  Foods.getAll().find(dbf => dbf && dbf.name && (dbf.name.toLowerCase().includes(food.name.toLowerCase()) || food.name.toLowerCase().includes(dbf.name.toLowerCase())));
                                                                   if (dbFood) type = dbFood.type || 'g';
                                                               }
-                                                              return type === 'unit' ? `${n} ud` : `${n}g`;
+                                                              return type === 'unit' ? `${n} ${n === 1 ? 'ud' : 'uds'}` : `${n}g`;
                                                           }
                                                           return q;
                                                       })()}
@@ -680,7 +680,7 @@ window.calculateRecipeQuantities = function () {
                         return food.names.some(n => {
                             if (!n) return false;
                             const dbName = n.trim().toLowerCase();
-                            return dbName === nameInput || dbName.includes(nameInput) || nameInput.includes(dbName);
+                            return dbName === nameInput || dbName.includes(nameInput) || n.trim().toLowerCase().includes(nameInput);
                         });
                     });
                 }
@@ -787,7 +787,7 @@ window.calculateRecipeQuantities = function () {
                     let finalQty = 0;
                     if (f._isUnit) {
                         finalQty = Math.max(1, Math.round(newQty));
-                        f.quantity = String(finalQty);
+                        f.quantity = String(`${finalQty} ${finalQty === 1 ? 'ud' : 'uds'}`);
                     } else {
                         finalQty = Math.max(5, Math.round(newQty / 5) * 5);
                         f.quantity = finalQty + "g";
@@ -878,7 +878,7 @@ window.addFood = function (mealIdx, optionNum) {
                                Foods.getAll().find(dbf => dbf && dbf.name && (dbf.name.toLowerCase().includes(name.toLowerCase()) || name.toLowerCase().includes(dbf.name.toLowerCase())));
                 if (dbFood) type = dbFood.type || 'g';
             }
-            normalizedQty = type === 'unit' ? `${n} ud` : `${n}g`;
+            normalizedQty = type === 'unit' ? `${n} ${n === 1 ? 'ud' : 'uds'}` : `${n}g`;
         }
     }
 
@@ -1781,6 +1781,7 @@ window.foodDatabase = [
     { names: ['Aceitunas'], cals: 115, p: 0.8, c: 6.3, f: 10.7 },
     { names: ['Pesto'], cals: 529, p: 5.2, c: 6, f: 53 },
     { names: ['Mayonesa ligera'], cals: 180, p: 0.9, c: 8, f: 16 },
+    { names: ['Salmorejo'], cals: 70, p: 1, c: 6, f: 4.5 },
     { names: ['Salsa de yogur light', 'Salsa de yogur'], cals: 80, p: 3.5, c: 7, f: 4 },
     { names: ['Canela'], cals: 247, p: 4, c: 81, f: 1.2 },
     { names: ['Cúrcuma'], cals: 354, p: 8, c: 65, f: 10 }

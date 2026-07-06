@@ -140,6 +140,16 @@ async function seed() {
             fullData.clients = fullData.clients.filter(c => c.id !== oldClientUuid);
         });
         
+        // 1.1. Limpieza estricta de datos huérfanos residuales (evitar acumulación de feedbacks basura)
+        const activeClientIds = new Set(fullData.clients.map(c => c.id));
+        fullData.feedbacks = (fullData.feedbacks || []).filter(f => activeClientIds.has(f.clientId));
+        fullData.trainingLogs = (fullData.trainingLogs || []).filter(l => activeClientIds.has(l.clientId));
+        fullData.habits = (fullData.habits || []).filter(h => activeClientIds.has(h.clientId));
+        fullData.trainingBlocks = (fullData.trainingBlocks || []).filter(b => activeClientIds.has(b.clientId));
+        if (fullData.appointments) {
+            fullData.appointments = fullData.appointments.filter(a => activeClientIds.has(a.clientId));
+        }
+        
         const clientUuid = generateUUID();
         const accessCode = generateAccessCode(fullData.clients);
         
@@ -196,7 +206,7 @@ async function seed() {
                     optionPhotos: { "1": "img/tortilla_francesa_queso_fresco_1781257604552.png" },
                     optionIngredients: { "1": "Bate los 2 huevos medianos. Añade una pizca de sal. En una sartén caliente con 10g de aceite de oliva, vierte los huevos y dobla a la mitad cuando cuajen. Acompaña con una rebanada de pan de molde integral tostada." },
                     foods: [
-                        { name: "Huevo entero", quantity: "2 unidades", option: 1, protein: 13, carbs: 1, fat: 10, calories: 145 },
+                        { name: "Huevo entero", quantity: "2 uds", option: 1, protein: 13, carbs: 1, fat: 10, calories: 145 },
                         { name: "Pan de molde integral", quantity: "1 rebanada (30g)", option: 1, protein: 3, carbs: 15, fat: 1, calories: 80 },
                         { name: "Aceite de oliva virgen extra", quantity: "10g", option: 1, protein: 0, carbs: 0, fat: 10, calories: 90 }
                     ]
@@ -620,7 +630,7 @@ async function seed() {
                         id: `meal_template_${Date.now()}_1`,
                         name: "Desayuno",
                         foods: [
-                            { name: "Huevo entero", quantity: "2 unidades", option: 1, protein: 13, carbs: 1, fat: 10, calories: 145 },
+                            { name: "Huevo entero", quantity: "2 uds", option: 1, protein: 13, carbs: 1, fat: 10, calories: 145 },
                             { name: "Avena en copos", quantity: "60g", option: 1, protein: 8, carbs: 40, fat: 4, calories: 230 }
                         ]
                     },

@@ -740,6 +740,7 @@ ${item.date}`.replace('\n', ''); // Safe compile
                     }
                     
                     const mergedClient = { ...cloudClient };
+                    mergedClient.updatedAt = new Date().toISOString();
                     if (isTrainer) {
                         const trainerFields = ['email', 'phone', 'gender', 'status', 'reviewDay', 'monthlyFee', 'assignedDiet', 'assignedDiets', 'publishedDiets', 'dietPublished', 'assignedRoutine', 'activeBlockId', 'cardio', 'cardioUrl', 'cardioPublished', 'supplementation', 'supplementationPublished', 'supplementationUrl', 'supplementationUrlVisible', 'paymentStatus', 'paymentExpiry', 'subscriptionType', 'subscriptionAmount', 'reviewFrequency', 'reviewDaysOfMonth', 'specificReviewDate', 'assignedTrainerId', 'customOnboardingQuestions', 'customFeedbackQuestions', 'customPerimeters', 'weightHistory'];
                         trainerFields.forEach(f => {
@@ -799,8 +800,12 @@ ${item.date}`.replace('\n', ''); // Safe compile
                 } else if (localClient) {
                     if (prevClient) {
                         const localChanged = JSON.stringify(localClient) !== JSON.stringify(prevClient);
-                        if (localChanged) finalClients.push(localClient);
+                        if (localChanged) {
+                            localClient.updatedAt = new Date().toISOString();
+                            finalClients.push(localClient);
+                        }
                     } else {
+                        localClient.updatedAt = localClient.createdAt || new Date().toISOString();
                         finalClients.push(localClient);
                     }
                 } else if (cloudClient) {
@@ -883,6 +888,7 @@ ${item.date}`.replace('\n', ''); // Safe compile
                 if (localItem && cloudItem) {
                     const localChanged = !prevItem || JSON.stringify(localItem) !== JSON.stringify(prevItem);
                     if (localChanged) {
+                        localItem.updatedAt = new Date().toISOString();
                         finalItems.push(localItem);
                     } else {
                         finalItems.push(cloudItem);
@@ -891,6 +897,7 @@ ${item.date}`.replace('\n', ''); // Safe compile
                     if (prevItem) {
                         const localChanged = JSON.stringify(localItem) !== JSON.stringify(prevItem);
                         if (localChanged) {
+                            localItem.updatedAt = new Date().toISOString();
                             finalItems.push(localItem);
                         } else {
                             // Check if it's a new local item created after the last sync
@@ -904,6 +911,9 @@ ${item.date}`.replace('\n', ''); // Safe compile
                             }
                         }
                     } else {
+                        if (!localItem.updatedAt) {
+                            localItem.updatedAt = localItem.createdAt || new Date().toISOString();
+                        }
                         finalItems.push(localItem);
                     }
                 } else if (cloudItem) {
@@ -1084,10 +1094,51 @@ const setLastSyncTime = (trainerId) => {
 };
 
 window.syncFromCloud = async () => {
-    const currentId = window.activeTrainerId || localStorage.getItem('activeTrainerId') || 'default';
+    let currentId = window.activeTrainerId || localStorage.getItem('activeTrainerId') || 'default';
     if (currentId === 'default' || !window.SupabaseService) return null;
+    
+    // 🛡️ FILTRO DE SEGURIDAD MULTI-INQUILINO: Impedir cruce de datos de cliente
+    const clientId = typeof localStorage !== 'undefined' ? (localStorage.getItem('clientId') || sessionStorage.getItem('clientId')) : null;
+    const isTrainer = typeof localStorage !== 'undefined' && localStorage.getItem('_trainerAuthed') === '1';
+    
     try {
-        const cloudData = await window.SupabaseService.getTrainerData(currentId);
+        let cloudData = await window.SupabaseService.getTrainerData(currentId);
+        
+        if (clientId && !isTrainer) {
+            // Verificar si el cliente pertenece a este entrenador
+            const clientExists = cloudData && cloudData.clients && cloudData.clients.some(c => c.id === clientId);
+            if (!clientExists) {
+                console.warn(`⚠️ [Cruce de Datos Detectado] El cliente con ID ${clientId} no pertenece a ${currentId}. Buscando entrenador correcto...`);
+                // Búsqueda cruzada asíncrona en Supabase en caliente
+                if (window.SupabaseService.client) {
+                    const { data: profiles, error: scanError } = await window.SupabaseService.client
+                        .from('trainer_profiles')
+                        .select('trainer_id, full_data');
+                    
+                    if (!scanError && profiles) {
+                        let correctTid = null;
+                        let correctData = null;
+                        for (let i = 0; i < profiles.length; i++) {
+                            const p = profiles[i];
+                            const clientsList = (p.full_data && p.full_data.clients) || [];
+                            if (clientsList.some(c => c.id === clientId)) {
+                                correctTid = p.trainer_id;
+                                correctData = p.full_data;
+                                break;
+                            }
+                        }
+                        if (correctTid) {
+                            console.log(`✅ [Cruce de Datos Corregido] Cliente pertenece al entrenador: ${correctTid}`);
+                            localStorage.setItem('activeTrainerId', correctTid);
+                            window.activeTrainerId = correctTid;
+                            currentId = correctTid;
+                            localStorage.setItem('fitnessAppData_' + correctTid, JSON.stringify(correctData));
+                            cloudData = correctData;
+                        }
+                    }
+                }
+            }
+        }
         
         // Obtener datos locales actuales
         const localRaw = localStorage.getItem(getStorageKey());
@@ -1336,7 +1387,14 @@ ${item.date}`.replace('\n', ''); // Safe compile
                                     mergedItems.push(cloudItem);
                                 }
                             } else if (localItem) {
-                                mergedItems.push(localItem);
+                                const lastSyncTime = getLastSyncTime(currentId);
+                                const itemCreatedAt = localItem.createdAt ? new Date(localItem.createdAt).getTime() : 0;
+                                const isNewLocal = itemCreatedAt >= lastSyncTime || lastSyncTime === 0 || itemCreatedAt === 0;
+                                if (isNewLocal) {
+                                    mergedItems.push(localItem);
+                                } else {
+                                    dataChanged = true;
+                                }
                             } else if (cloudItem) {
                                 const isExplicitlyDeleted = localData.deletedIds && localData.deletedIds.includes(cloudItem.id);
                                 if (!isExplicitlyDeleted) {
@@ -1366,7 +1424,11 @@ ${item.date}`.replace('\n', ''); // Safe compile
                                     mergedItems.push(cloudItem);
                                 }
                             } else if (localItem) {
-                                mergedItems.push(localItem);
+                                if (!isTrainer) {
+                                    mergedItems.push(localItem);
+                                } else {
+                                    dataChanged = true;
+                                }
                             } else if (cloudItem) {
                                 const isExplicitlyDeleted = localData.deletedIds && localData.deletedIds.includes(cloudItem.id);
                                 if (!isExplicitlyDeleted) {
@@ -1398,7 +1460,14 @@ ${item.date}`.replace('\n', ''); // Safe compile
                                     mergedItems.push(cloudItem);
                                 }
                             } else if (localItem) {
-                                mergedItems.push(localItem);
+                                const lastSyncTime = getLastSyncTime(currentId);
+                                const itemCreatedAt = localItem.createdAt ? new Date(localItem.createdAt).getTime() : 0;
+                                const isNewLocal = itemCreatedAt >= lastSyncTime || lastSyncTime === 0 || itemCreatedAt === 0;
+                                if (isNewLocal) {
+                                    mergedItems.push(localItem);
+                                } else {
+                                    dataChanged = true;
+                                }
                             } else if (cloudItem) {
                                 const isExplicitlyDeleted = localData.deletedIds && localData.deletedIds.includes(cloudItem.id);
                                 if (!isExplicitlyDeleted) {
@@ -1416,7 +1485,9 @@ ${item.date}`.replace('\n', ''); // Safe compile
                                 if (isTrainer) {
                                     // Si es Entrenador: manda él para sus colecciones. Para colecciones del Cliente manda la Nube.
                                     if (trainerCollections.includes(col)) {
-                                        if (localTime > cloudTime) {
+                                        const localItemTime = new Date(localItem.lastModified || localItem.updatedAt || localItem.date || localItem.createdAt || 0).getTime();
+                                        const cloudItemTime = new Date(cloudItem.lastModified || cloudItem.updatedAt || cloudItem.date || cloudItem.createdAt || 0).getTime();
+                                        if (localItemTime > cloudItemTime) {
                                             mergedItems.push(localItem);
                                         } else {
                                             mergedItems.push(cloudItem);
@@ -3394,8 +3465,16 @@ const Clients = {
     if (initialCount !== finalCount) {
       if (!data.deletedIds) data.deletedIds = [];
       data.deletedIds.push(id);
+      
+      // 🛡️ LIMPIEZA MULTI-INQUILINO/ORPHANS: Limpiar datos relacionados del cliente eliminado para evitar basura y crossovers
+      if (data.feedbacks) data.feedbacks = data.feedbacks.filter(f => f.clientId !== id);
+      if (data.appointments) data.appointments = data.appointments.filter(a => a.clientId !== id);
+      if (data.trainingLogs) data.trainingLogs = data.trainingLogs.filter(l => l.clientId !== id);
+      if (data.habits) data.habits = data.habits.filter(h => h.clientId !== id);
+      if (data.trainingBlocks) data.trainingBlocks = data.trainingBlocks.filter(b => b.clientId !== id);
+
       saveData(data);
-      console.log('DataModels: Cliente eliminado con éxito.');
+      console.log('DataModels: Cliente y sus datos relacionados eliminados con éxito.');
       return true;
     }
     console.warn('DataModels: No se encontró el cliente con ID:', id);
@@ -3672,6 +3751,7 @@ const SYSTEM_FOODS = [
   { name: "Quinoa cocida", calories: 370, protein: 14, carbs: 64, fat: 6 },
   { name: "Requesón", calories: 100, protein: 12, carbs: 3, fat: 4 },
   { name: "Salmón", calories: 180, protein: 20, carbs: 0, fat: 11 },
+  { name: "Salmorejo", calories: 70, protein: 1, carbs: 6, fat: 4.5 },
   { name: "Salsa de yogur light", calories: 80, protein: 3.5, carbs: 7, fat: 4 },
   { name: "Salsa Pesto", calories: 529, protein: 5.2, carbs: 6, fat: 53 },
   { name: "Semillas (Chía, Lino, Calabaza)", calories: 530, protein: 19, carbs: 30, fat: 43 },
@@ -3855,6 +3935,10 @@ const Feedbacks = {
     const data = getData();
     let feedbacks = data.feedbacks || [];
     
+    // 🛡️ FILTRO DE SEGURIDAD MULTI-INQUILINO: Filtrar para que solo devuelva feedbacks de clientes reales en este perfil
+    const clientIds = new Set((data.clients || []).map(c => String(c.id)));
+    feedbacks = feedbacks.filter(f => clientIds.has(String(f.clientId)));
+    
     // Filtro global para sub-entrenadores
     if (localStorage.getItem('_isSubTrainer') === 'true') {
       const subTrainerId = localStorage.getItem('_subTrainerId');
@@ -3870,6 +3954,10 @@ const Feedbacks = {
 
   getByClientId: (clientId) => {
     const data = getData();
+    // 🛡️ FILTRO DE SEGURIDAD MULTI-INQUILINO
+    const clientExists = (data.clients || []).some(c => String(c.id) === String(clientId));
+    if (!clientExists) return [];
+    
     return (data.feedbacks || []).filter(f => f.clientId == clientId);
   },
 
@@ -3924,6 +4012,10 @@ const Appointments = {
   getAll: () => {
     const data = getData();
     let appointments = data.appointments || [];
+    
+    // 🛡️ FILTRO DE SEGURIDAD MULTI-INQUILINO: Solo citas de clientes reales en este perfil
+    const clientIds = new Set((data.clients || []).map(c => String(c.id)));
+    appointments = appointments.filter(a => clientIds.has(String(a.clientId)));
     
     // Filtro global para sub-entrenadores
     if (localStorage.getItem('_isSubTrainer') === 'true') {
@@ -4042,11 +4134,21 @@ const MuscleGroups = {
 const TrainingLogs = {
   getAll: () => {
     const data = getData();
-    return (data.trainingLogs || []).filter(l => l.completed !== false);
+    let logs = data.trainingLogs || [];
+    
+    // 🛡️ FILTRO DE SEGURIDAD MULTI-INQUILINO: Solo logs de clientes reales en este perfil
+    const clientIds = new Set((data.clients || []).map(c => String(c.id)));
+    logs = logs.filter(l => clientIds.has(String(l.clientId)));
+    
+    return logs.filter(l => l.completed !== false);
   },
 
   getByClientId: (clientId) => {
     const data = getData();
+    // 🛡️ FILTRO DE SEGURIDAD MULTI-INQUILINO
+    const clientExists = (data.clients || []).some(c => String(c.id) === String(clientId));
+    if (!clientExists) return [];
+    
     return (data.trainingLogs || []).filter(l => l.clientId == clientId && l.completed !== false);
   },
 
@@ -4215,10 +4317,21 @@ const TrainingLogs = {
 const Habits = {
   getAll: () => {
     const data = getData();
-    return data.habits || [];
+    let habits = data.habits || [];
+    
+    // 🛡️ FILTRO DE SEGURIDAD MULTI-INQUILINO: Solo hábitos de clientes reales en este perfil
+    const clientIds = new Set((data.clients || []).map(c => String(c.id)));
+    habits = habits.filter(h => clientIds.has(String(h.clientId)));
+    
+    return habits;
   },
 
   getByClientId: (clientId) => {
+    const data = getData();
+    // 🛡️ FILTRO DE SEGURIDAD MULTI-INQUILINO
+    const clientExists = (data.clients || []).some(c => String(c.id) === String(clientId));
+    if (!clientExists) return [];
+    
     return Habits.getAll().filter(h => String(h.clientId) === String(clientId));
   },
 

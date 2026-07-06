@@ -5,7 +5,7 @@
     <script>
         // Force PWA cache bust / reload
         (function() {
-            const CURRENT_VERSION = '536';
+            const CURRENT_VERSION = '547';
             const savedVersion = localStorage.getItem('app_version');
             if (savedVersion !== CURRENT_VERSION) {
                 localStorage.setItem('app_version', CURRENT_VERSION);
@@ -28,7 +28,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Gestión de Clientes - ASTeam</title>
-  <link rel="stylesheet" href="styles/theme.css?v=536">
+  <link rel="stylesheet" href="styles/theme.css?v=547">
   <link rel="stylesheet" href="styles/components.css">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 </head>
@@ -58,14 +58,14 @@
           </div>
           <button class="menu-toggle" onclick="toggleMenu()">☰</button>
           <ul class="nav-links" id="navLinks">
-            <li><a href="trainer-dashboard.html?v=536" class="nav-link">Dashboard</a></li>
-            <li><a href="trainer-clients.html?v=536" class="nav-link active">Clientes</a></li>
-            <li><a href="trainer-routines.html?v=536" class="nav-link">Rutinas</a></li>
-            <li><a href="trainer-diets.html?v=536" class="nav-link">Dietas</a></li>
-            <li><a href="trainer-feedbacks.html?v=536" class="nav-link">Revisiones</a></li>
-            <li><a href="trainer-media.html?v=536" class="nav-link">Biblioteca</a></li>
-            <li><a href="trainer-appointments.html?v=536" class="nav-link">Agenda</a></li>
-            <li><a href="trainer-settings.html?v=536" class="nav-link">Configuración</a></li>
+            <li><a href="trainer-dashboard.html?v=547" class="nav-link">Dashboard</a></li>
+            <li><a href="trainer-clients.html?v=547" class="nav-link active">Clientes</a></li>
+            <li><a href="trainer-routines.html?v=547" class="nav-link">Rutinas</a></li>
+            <li><a href="trainer-diets.html?v=547" class="nav-link">Dietas</a></li>
+            <li><a href="trainer-feedbacks.html?v=547" class="nav-link">Revisiones</a></li>
+            <li><a href="trainer-media.html?v=547" class="nav-link">Biblioteca</a></li>
+            <li><a href="trainer-appointments.html?v=547" class="nav-link">Agenda</a></li>
+            <li><a href="trainer-settings.html?v=547" class="nav-link">Configuración</a></li>
             <li><a href="#" onclick="if(typeof AUTH !== 'undefined') { AUTH.signOut() } else { window.location.reload() }; return false;" class="nav-link" style="color:var(--error-color)">🚪 Salir</a></li>
           </ul>
         </nav>
@@ -161,14 +161,14 @@
 
   <!-- Supabase SDK & Service -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script src="js/supabase-service.js?v=536"></script>
+  <script src="js/supabase-service.js?v=547"></script>
 
-  <script src="js/config.js?v=536"></script>
-  <script src="js/auth.js?v=536"></script>
-  <script src="js/sheets.js?v=536"></script>
-  <script src="js/data-models.js?v=540"></script>
-  <script src="js/custom-exercises.js?v=536"></script>
-  <script src="js/utils.js?v=536"></script>
+  <script src="js/config.js?v=547"></script>
+  <script src="js/auth.js?v=547"></script>
+  <script src="js/sheets.js?v=547"></script>
+  <script src="js/data-models.js?v=547"></script>
+  <script src="js/custom-exercises.js?v=547"></script>
+  <script src="js/utils.js?v=547"></script>
   <script>
     const daysMapShort = { '1': 'Lun', '2': 'Mar', '3': 'Mié', '4': 'Jue', '5': 'Vie', '6': 'Sáb', '7': 'Dom' };
 
@@ -179,8 +179,22 @@
       if (!select) return;
       
       let currentValue = select.value;
-      const brand = (typeof BrandConfig !== 'undefined' && BrandConfig.get) ? BrandConfig.get() : {};
-      const savedQuota = brand.clientListFilters ? brand.clientListFilters.quota : null;
+      const activeId = localStorage.getItem('activeTrainerId') || 'default';
+      const storageKey = `clientListFilters_${activeId}`;
+      let savedQuota = null;
+      try {
+        const raw = localStorage.getItem(storageKey);
+        if (raw) {
+          const parsed = JSON.parse(raw);
+          savedQuota = parsed.quota;
+        }
+      } catch(e) {}
+      
+      if (!savedQuota) {
+        const brand = (typeof BrandConfig !== 'undefined' && BrandConfig.get) ? BrandConfig.get() : {};
+        savedQuota = brand.clientListFilters ? brand.clientListFilters.quota : null;
+      }
+      
       if ((!currentValue || currentValue === 'all') && savedQuota) {
         currentValue = savedQuota;
       }
@@ -216,9 +230,21 @@
       const quotaEl = document.getElementById('quotaFilter');
       const searchEl = document.getElementById('searchInput');
 
+      const activeId = localStorage.getItem('activeTrainerId') || 'default';
+      const storageKey = `clientListFilters_${activeId}`;
+
       if (!filtersInitialized) {
-        const brand = (typeof BrandConfig !== 'undefined' && BrandConfig.get) ? BrandConfig.get() : {};
-        const savedFilters = brand.clientListFilters || {};
+        let savedFilters = {};
+        try {
+          const raw = localStorage.getItem(storageKey);
+          if (raw) savedFilters = JSON.parse(raw);
+        } catch(e) {}
+        
+        if (!savedFilters.status) {
+          const brand = (typeof BrandConfig !== 'undefined' && BrandConfig.get) ? BrandConfig.get() : {};
+          savedFilters = brand.clientListFilters || {};
+        }
+        
         if (savedFilters.status && statusEl) statusEl.value = savedFilters.status;
         if (savedFilters.payment && paymentEl) paymentEl.value = savedFilters.payment;
         if (savedFilters.search && searchEl) searchEl.value = savedFilters.search;
@@ -238,17 +264,22 @@
       const paymentFilter = paymentEl ? paymentEl.value : 'all';
       const quotaFilter = quotaEl ? quotaEl.value : 'all';
 
-      // Save filter preferences to the cloud (debounced)
+      // Save filter preferences to localStorage and the cloud (debounced)
+      const currentFilters = {
+        status: statusFilter,
+        payment: paymentFilter,
+        quota: quotaFilter,
+        search: searchEl ? searchEl.value : ''
+      };
+      
+      try {
+        localStorage.setItem(storageKey, JSON.stringify(currentFilters));
+      } catch(e) {}
+
       if (typeof BrandConfig !== 'undefined' && BrandConfig.set) {
         if (window.saveFiltersTimeout) clearTimeout(window.saveFiltersTimeout);
         window.saveFiltersTimeout = setTimeout(() => {
           const brandObj = BrandConfig.get() || {};
-          const currentFilters = {
-            status: statusFilter,
-            payment: paymentFilter,
-            quota: quotaFilter,
-            search: searchEl ? searchEl.value : ''
-          };
           const oldFilters = brandObj.clientListFilters || {};
           if (JSON.stringify(currentFilters) !== JSON.stringify(oldFilters)) {
             BrandConfig.set({ clientListFilters: currentFilters });
@@ -576,6 +607,6 @@
       runSync();
     }
   </script>
-    <script src="js/custom-recipes.js?v=536"></script></body>
+    <script src="js/custom-recipes.js?v=547"></script></body>
 
 </html>

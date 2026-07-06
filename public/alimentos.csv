@@ -1,4 +1,4 @@
-﻿Alimento;Tipo de Medición;Calorías (kcal);Proteínas (g);Carbohidratos (g);Grasas (g)
+Alimento;Tipo de Medición;Calorías (kcal);Proteínas (g);Carbohidratos (g);Grasas (g)
 "Aceite de oliva virgen extra";"Gramos (x 100g)";884;0;0;100
 "Aguacate";"Gramos (x 100g)";160;2;9;15
 "Almendras naturales";"Gramos (x 100g)";579;21;22;49
@@ -91,6 +91,7 @@
 "Quinoa cocida";"Gramos (x 100g)";370;14;64;6
 "Requesón";"Gramos (x 100g)";100;12;3;4
 "Salmón";"Gramos (x 100g)";180;20;0;11
+"Salmorejo";"Gramos (x 100g)";70;1;6;4.5
 "Salsa de yogur light";"Gramos (x 100g)";80;3.5;7;4
 "Salsa Pesto";"Gramos (x 100g)";529;5.2;6;53
 "Semillas (Chía, Lino, Calabaza)";"Gramos (x 100g)";530;19;30;43
