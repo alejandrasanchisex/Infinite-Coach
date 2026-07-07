@@ -399,19 +399,19 @@ export default function PhoenixProtocolLanding() {
             {transformations.map((t, idx) => (
               <div 
                 key={idx}
-                className="min-w-[240px] sm:min-w-[280px] bg-[#141313] border border-white/5 rounded-2xl p-5 snap-start shrink-0 flex flex-col justify-between"
+                className="min-w-[190px] sm:min-w-[230px] bg-[#141313] border border-white/5 rounded-2xl p-4 snap-start shrink-0 flex flex-col justify-between animate-fadeIn"
               >
                 <div>
-                  <div className="w-full aspect-[4/5] relative rounded-xl mb-4 overflow-hidden border border-white/5 bg-black">
+                  <div className="w-full aspect-[4/3] relative rounded-xl mb-4 overflow-hidden border border-white/5 bg-black flex items-center justify-center">
                     <img 
                       src={t.image} 
                       alt={t.label} 
                       className="w-full h-full object-contain"
                     />
                   </div>
-                  <h3 className="font-extrabold uppercase text-white mb-1 text-sm sm:text-base">{t.name}</h3>
-                  <p className="text-xs text-[#E50914] font-bold uppercase tracking-wider mb-2">{t.label}</p>
-                  <p className="text-xs sm:text-sm text-gray-400 leading-relaxed">{t.desc}</p>
+                  <h3 className="font-extrabold uppercase text-white mb-1 text-xs sm:text-sm">{t.name}</h3>
+                  <p className="text-[10px] text-[#E50914] font-bold uppercase tracking-wider mb-2">{t.label}</p>
+                  <p className="text-[11px] sm:text-xs text-gray-400 leading-relaxed">{t.desc}</p>
                 </div>
               </div>
             ))}
