@@ -391,12 +391,12 @@ export default function PhoenixProtocolLanding() {
 
           <div 
             ref={carouselRef}
-            className="flex gap-6 overflow-x-auto snap-x snap-mandatory scrollbar-none pb-4"
+            className="flex gap-4 overflow-x-auto snap-x snap-mandatory scrollbar-none pb-4"
           >
             {transformations.map((t, idx) => (
               <div 
                 key={idx}
-                className="min-w-[150px] sm:min-w-[180px] bg-[#141313] border border-white/5 rounded-xl p-3 snap-start shrink-0 flex flex-col justify-between animate-fadeIn"
+                className="w-[calc(50%-8px)] sm:w-[calc(33.333%-11px)] md:w-[calc(25%-12px)] lg:w-[calc(20%-13px)] shrink-0 bg-[#141313] border border-white/5 rounded-xl p-3 snap-start flex flex-col justify-between animate-fadeIn"
               >
                 <div>
                   <div className="w-full aspect-[4/5] relative rounded-lg mb-3 overflow-hidden border border-white/5 bg-black flex items-center justify-center">
