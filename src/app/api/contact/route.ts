@@ -22,7 +22,22 @@ export async function POST(request: Request) {
 
     const targetBrand = brand || "ASTeam";
     const targetColor = primaryColor || "#fdbfec";
-    const targetEmail = toEmail || "alejandra.asteam@gmail.com";
+    
+    // Brand-specific fallback emails
+    let targetEmail = toEmail;
+    if (!targetEmail) {
+      if (targetBrand === "Phoenix Protocol") {
+        targetEmail = "brianarribas@gmail.com";
+      } else if (targetBrand === "Toledo The Bull") {
+        targetEmail = "vtoledom99@gmail.com";
+      } else if (targetBrand === "Lucy Tundidor") {
+        targetEmail = "lucytundidor@gmail.com";
+      } else if (targetBrand === "Método JFK") {
+        targetEmail = "josesanchis.96@gmail.com";
+      } else {
+        targetEmail = "alejandra.asteam@gmail.com";
+      }
+    }
 
     // Configurar el contenido del correo
     // If the subject is generic, replace it with a cleaner, dynamic subject.
