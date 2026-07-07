@@ -403,7 +403,7 @@ export default function PhoenixProtocolLanding() {
                     <img 
                       src={t.image} 
                       alt={t.label} 
-                      className="w-full h-full object-contain"
+                      className="w-full h-full object-cover"
                     />
                   </div>
                   <h3 className="font-extrabold uppercase text-white mb-1 text-[11px] sm:text-xs leading-tight">{t.name}</h3>
