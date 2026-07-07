@@ -399,19 +399,19 @@ export default function PhoenixProtocolLanding() {
             {transformations.map((t, idx) => (
               <div 
                 key={idx}
-                className="min-w-[190px] sm:min-w-[230px] bg-[#141313] border border-white/5 rounded-2xl p-4 snap-start shrink-0 flex flex-col justify-between animate-fadeIn"
+                className="min-w-[150px] sm:min-w-[180px] bg-[#141313] border border-white/5 rounded-xl p-3 snap-start shrink-0 flex flex-col justify-between animate-fadeIn"
               >
                 <div>
-                  <div className="w-full aspect-[4/3] relative rounded-xl mb-4 overflow-hidden border border-white/5 bg-black flex items-center justify-center">
+                  <div className="w-full aspect-[4/5] relative rounded-lg mb-3 overflow-hidden border border-white/5 bg-black flex items-center justify-center">
                     <img 
                       src={t.image} 
                       alt={t.label} 
                       className="w-full h-full object-contain"
                     />
                   </div>
-                  <h3 className="font-extrabold uppercase text-white mb-1 text-xs sm:text-sm">{t.name}</h3>
-                  <p className="text-[10px] text-[#E50914] font-bold uppercase tracking-wider mb-2">{t.label}</p>
-                  <p className="text-[11px] sm:text-xs text-gray-400 leading-relaxed">{t.desc}</p>
+                  <h3 className="font-extrabold uppercase text-white mb-1 text-[11px] sm:text-xs leading-tight">{t.name}</h3>
+                  <p className="text-[9px] text-[#E50914] font-bold uppercase tracking-wider mb-1.5">{t.label}</p>
+                  <p className="text-[10px] sm:text-[11px] text-gray-400 leading-relaxed">{t.desc}</p>
                 </div>
               </div>
             ))}
