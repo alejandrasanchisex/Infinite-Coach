@@ -399,19 +399,19 @@ export default function PhoenixProtocolLanding() {
             {transformations.map((t, idx) => (
               <div 
                 key={idx}
-                className="min-w-[280px] sm:min-w-[350px] bg-[#141313] border border-white/5 rounded-2xl p-6 snap-start shrink-0 flex flex-col justify-between"
+                className="min-w-[240px] sm:min-w-[280px] bg-[#141313] border border-white/5 rounded-2xl p-5 snap-start shrink-0 flex flex-col justify-between"
               >
                 <div>
-                  <div className="w-full aspect-[4/5] relative rounded-xl mb-4 overflow-hidden border border-white/5 bg-black/40">
+                  <div className="w-full aspect-[4/5] relative rounded-xl mb-4 overflow-hidden border border-white/5 bg-black">
                     <img 
                       src={t.image} 
                       alt={t.label} 
-                      className="w-full h-full object-cover"
+                      className="w-full h-full object-contain"
                     />
                   </div>
-                  <h3 className="font-extrabold uppercase text-white mb-1">{t.name}</h3>
+                  <h3 className="font-extrabold uppercase text-white mb-1 text-sm sm:text-base">{t.name}</h3>
                   <p className="text-xs text-[#E50914] font-bold uppercase tracking-wider mb-2">{t.label}</p>
-                  <p className="text-sm text-gray-400 leading-relaxed">{t.desc}</p>
+                  <p className="text-xs sm:text-sm text-gray-400 leading-relaxed">{t.desc}</p>
                 </div>
               </div>
             ))}
@@ -424,13 +424,17 @@ export default function PhoenixProtocolLanding() {
             <div className="absolute top-0 right-0 p-6 opacity-[0.02] pointer-events-none text-[#E50914]">
               <Flame size={140} />
             </div>
-            <div className="flex items-center gap-4 mb-4">
-              <div className="w-10 h-10 rounded-lg bg-black flex items-center justify-center p-1 border border-[#E50914]/20 shadow-md">
-                <svg viewBox="0 0 24 24" fill="none" className="w-full h-full text-[#E50914]" stroke="currentColor" strokeWidth="1.5">
+            <div className="flex items-center gap-3 mb-4">
+              <div className="w-12 h-12 rounded-xl bg-black flex items-center justify-center p-1.5 shadow-lg shadow-[#E50914]/25 border border-[#E50914]/30">
+                <svg viewBox="0 0 24 24" fill="none" className="w-full h-full text-[#E50914] drop-shadow-[0_0_8px_#E50914]" stroke="currentColor" strokeWidth="1.5">
                   <path strokeLinecap="round" strokeLinejoin="round" d="M15.362 5.214A8.252 8.252 0 0 1 12 21 8.25 8.25 0 0 1 6.038 7.047 8.287 8.287 0 0 0 9 9.601a8.983 8.983 0 0 1 3.361-6.867 8.21 8.21 0 0 0 3 2.48z" />
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M12 18a3.75 3.75 0 0 0 .495-7.467 5.99 5.99 0 0 0-1.925 3.546 5.974 5.974 0 0 1-2.133-1A3.75 3.75 0 0 0 12 18z" />
                 </svg>
               </div>
-              <h2 className="text-2xl sm:text-3xl font-black uppercase tracking-tight text-white">Unirse al Equipo</h2>
+              <div>
+                <span className="font-extrabold text-xl tracking-tight block uppercase text-white leading-none mb-1">Phoenix Protocol</span>
+                <span className="text-[10px] text-[#E50914] block font-bold tracking-widest uppercase leading-none">Brian Arribas</span>
+              </div>
             </div>
             <p className="text-gray-400 text-sm sm:text-base leading-relaxed">
               Completa el cuestionario a continuación con la máxima precisión posible. Analizaré personalmente tu caso y me pondré en contacto contigo para valorar tu admisión en Phoenix Protocol.
