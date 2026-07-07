@@ -259,9 +259,9 @@ export default function PhoenixProtocolLanding() {
 
         {/* Metodo Section */}
         <section id="metodo" className="mb-24 md:mb-36 scroll-mt-20">
-          <div className="bg-[#141313] rounded-3xl border border-white/5 p-8 md:p-12 shadow-2xl relative overflow-hidden">
+          <div className="bg-[#141313] rounded-3xl border border-white/5 p-8 md:p-12 shadow-2xl relative overflow-hidden grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
             <div className="absolute top-0 right-0 w-64 h-64 bg-[#E50914]/5 rounded-full blur-3xl pointer-events-none" />
-            <div className="max-w-2xl space-y-6">
+            <div className="space-y-6 relative z-10">
               <span className="text-[#E50914] text-xs font-extrabold uppercase tracking-widest block">El Concepto</span>
               <h2 className="text-3xl sm:text-4xl font-black uppercase tracking-tight text-white">
                 No es solo entrenar. <span className="text-[#E50914] italic">Es renacer.</span>
@@ -276,23 +276,8 @@ export default function PhoenixProtocolLanding() {
               </div>
             </div>
 
-            {/* Metodología posts grid */}
-            <div className="mt-12 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-              <div className="rounded-2xl overflow-hidden border border-white/5 bg-black/40 aspect-[4/5] shadow-lg shadow-black/50">
-                <img src="/img/phoenix_metodo_1.jpg" alt="Metodología 1" className="w-full h-full object-cover" />
-              </div>
-              <div className="rounded-2xl overflow-hidden border border-white/5 bg-black/40 aspect-[4/5] shadow-lg shadow-black/50">
-                <img src="/img/phoenix_metodo_2.jpg" alt="Metodología 2" className="w-full h-full object-cover" />
-              </div>
-              <div className="rounded-2xl overflow-hidden border border-white/5 bg-black/40 aspect-[4/5] shadow-lg shadow-black/50">
-                <img src="/img/phoenix_metodo_3.jpg" alt="Metodología 3" className="w-full h-full object-cover" />
-              </div>
-              <div className="rounded-2xl overflow-hidden border border-white/5 bg-black/40 aspect-[4/5] shadow-lg shadow-black/50">
-                <img src="/img/phoenix_metodo_4.jpg" alt="Metodología 4" className="w-full h-full object-cover" />
-              </div>
-              <div className="rounded-2xl overflow-hidden border border-white/5 bg-black/40 aspect-[4/5] shadow-lg shadow-black/50 col-span-1 sm:col-span-2 md:col-span-1">
-                <img src="/img/phoenix_metodo_5.jpg" alt="Metodología 5" className="w-full h-full object-cover" />
-              </div>
+            <div className="rounded-2xl overflow-hidden border border-white/5 bg-black/40 aspect-[4/5] shadow-2xl relative z-10">
+              <img src="/img/phoenix_metodo_1.jpg" alt="Phoenix Protocol Concepto" className="w-full h-full object-cover" />
             </div>
           </div>
         </section>
