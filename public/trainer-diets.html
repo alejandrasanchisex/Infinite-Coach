@@ -5,7 +5,7 @@
     <script>
         // Force PWA cache bust / reload
         (function() {
-            const CURRENT_VERSION = '547';
+            const CURRENT_VERSION = '548';
             const savedVersion = localStorage.getItem('app_version');
             if (savedVersion !== CURRENT_VERSION) {
                 localStorage.setItem('app_version', CURRENT_VERSION);
@@ -31,7 +31,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="styles/theme.css?v=547">
+    <link rel="stylesheet" href="styles/theme.css?v=548">
     <link rel="stylesheet" href="styles/components.css">
 </head>
 
@@ -60,14 +60,14 @@
                     </div>
                     <button class="menu-toggle" onclick="toggleMenu()">☰</button>
                     <ul class="nav-links" id="navLinks">
-                        <li><a href="trainer-dashboard.html?v=547" class="nav-link">Dashboard</a></li>
-                        <li><a href="trainer-clients.html?v=547" class="nav-link">Clientes</a></li>
-                        <li><a href="trainer-routines.html?v=547" class="nav-link">Rutinas</a></li>
-                        <li><a href="trainer-diets.html?v=547" class="nav-link active">Dietas</a></li>
-                        <li><a href="trainer-feedbacks.html?v=547" class="nav-link">Revisiones</a></li>
-                        <li><a href="trainer-media.html?v=547" class="nav-link">Biblioteca</a></li>
-                        <li><a href="trainer-appointments.html?v=547" class="nav-link">Agenda</a></li>
-                        <li><a href="trainer-settings.html?v=547" class="nav-link">Configuración</a></li>
+                        <li><a href="trainer-dashboard.html?v=548" class="nav-link">Dashboard</a></li>
+                        <li><a href="trainer-clients.html?v=548" class="nav-link">Clientes</a></li>
+                        <li><a href="trainer-routines.html?v=548" class="nav-link">Rutinas</a></li>
+                        <li><a href="trainer-diets.html?v=548" class="nav-link active">Dietas</a></li>
+                        <li><a href="trainer-feedbacks.html?v=548" class="nav-link">Revisiones</a></li>
+                        <li><a href="trainer-media.html?v=548" class="nav-link">Biblioteca</a></li>
+                        <li><a href="trainer-appointments.html?v=548" class="nav-link">Agenda</a></li>
+                        <li><a href="trainer-settings.html?v=548" class="nav-link">Configuración</a></li>
                         <li><a href="#" onclick="if(typeof AUTH !== 'undefined') { AUTH.signOut() } else { window.location.reload() }; return false;" class="nav-link" style="color:var(--error-color)">🚪 Salir</a></li>
                     </ul>
                 </nav>
@@ -180,15 +180,15 @@
 
     <!-- Supabase SDK & Service -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="js/supabase-service.js?v=547"></script>
+    <script src="js/supabase-service.js?v=548"></script>
 
     <!-- Nuevos Scripts de Google -->
-    <script src="js/config.js?v=547"></script>
-    <script src="js/auth.js?v=547"></script>
-    <script src="js/sheets.js?v=547"></script>
-    <script src="js/data-models.js?v=547"></script>
-    <script src="js/utils.js?v=547"></script>
-    <script src="js/diet-editor-v3.js?v=547"></script>
+    <script src="js/config.js?v=548"></script>
+    <script src="js/auth.js?v=548"></script>
+    <script src="js/sheets.js?v=548"></script>
+    <script src="js/data-models.js?v=548"></script>
+    <script src="js/utils.js?v=548"></script>
+    <script src="js/diet-editor-v3.js?v=548"></script>
     <script>
         // if (!BrandConfig.isConfigured()) window.location.href = 'index.html';
 
@@ -942,6 +942,6 @@
             if (typeof loadFoods === 'function') loadFoods();
         }
     </script>
-    <script src="js/custom-recipes.js?v=547"></script></body>
+    <script src="js/custom-recipes.js?v=548"></script></body>
 
 </html>

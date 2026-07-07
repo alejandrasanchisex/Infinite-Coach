@@ -4621,7 +4621,7 @@ const SupplementationTemplates = {
   getById: (id) => {
     const data = getData();
     if (!data.supplementationTemplates) data.supplementationTemplates = [];
-    return data.supplementationTemplates.find(t => t.id === id);
+    return data.supplementationTemplates.find(t => t.id == id);
   },
   create: (templateData) => {
     const data = getData();
@@ -4641,7 +4641,7 @@ const SupplementationTemplates = {
   update: (id, updates) => {
     const data = getData();
     if (!data.supplementationTemplates) data.supplementationTemplates = [];
-    const index = data.supplementationTemplates.findIndex(t => t.id === id);
+    const index = data.supplementationTemplates.findIndex(t => t.id == id);
     if (index !== -1) {
       data.supplementationTemplates[index] = { ...data.supplementationTemplates[index], ...updates };
       saveData(data);
@@ -4652,7 +4652,7 @@ const SupplementationTemplates = {
   delete: (id) => {
     const data = getData();
     if (!data.supplementationTemplates) data.supplementationTemplates = [];
-    data.supplementationTemplates = data.supplementationTemplates.filter(t => t.id !== id);
+    data.supplementationTemplates = data.supplementationTemplates.filter(t => t.id != id);
     saveData(data);
   }
 };
