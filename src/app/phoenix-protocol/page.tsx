@@ -60,61 +60,61 @@ export default function PhoenixProtocolLanding() {
 
   const transformations = [
     {
-      image: "/img/phoenix_transform_1.jpg",
+      image: "/img/phoenix_transform_1.jpg?v=2",
       name: "Cambio Físico Radical",
       desc: "Recomposición corporal con pérdida de grasa y ganancia muscular simultánea.",
       label: "-6 KG EN 20 SEMANAS"
     },
     {
-      image: "/img/phoenix_transform_2.jpg",
+      image: "/img/phoenix_transform_2.jpg?v=2",
       name: "Construcción de Masa Muscular",
       desc: "Transformación a largo plazo ganando densidad, fuerza y volumen muscular limpio.",
       label: "+20 KG EN 6 AÑOS"
     },
     {
-      image: "/img/phoenix_transform_3.jpg",
+      image: "/img/phoenix_transform_3.jpg?v=2",
       name: "Definición y Pérdida de Grasa",
       desc: "Reducción drástica del porcentaje de grasa corporal revelando la musculatura.",
       label: "-9 KG EN 20 SEMANAS"
     },
     {
-      image: "/img/phoenix_transform_4.jpg",
+      image: "/img/phoenix_transform_4.jpg?v=2",
       name: "Recomposición Rápida",
-      desc: "Pérdida de grasa rebelde en la zona abdominal y tonificación general.",
+      desc: "Pérdida de grasa rebelde en la zona abdominal and tonificación general.",
       label: "-7 KG EN 12 SEMANAS"
     },
     {
-      image: "/img/phoenix_transform_5.jpg",
+      image: "/img/phoenix_transform_5.jpg?v=2",
       name: "Evolución de Ectomorfo",
       desc: "Superación del estado 'skinny-fat' para lograr un físico atlético, fuerte y saludable.",
       label: "+5 KG EN 24 SEMANAS"
     },
     {
-      image: "/img/phoenix_transform_6.jpg",
+      image: "/img/phoenix_transform_6.jpg?v=2",
       name: "Definición y Vientre Plano",
       desc: "Pérdida de grasa localizada en el abdomen y mejora en la definición de la musculatura abdominal.",
       label: "-4 KG EN 24 SEMANAS"
     },
     {
-      image: "/img/phoenix_transform_7.jpg",
+      image: "/img/phoenix_transform_7.jpg?v=2",
       name: "Recomposición Muscular Estética",
       desc: "Reducción de grasa y aumento de masa muscular magra en el mismo peso, logrando un físico más estético.",
       label: "= KG EN 8 SEMANAS"
     },
     {
-      image: "/img/phoenix_transform_8.jpg",
+      image: "/img/phoenix_transform_8.jpg?v=2",
       name: "Pérdida de Peso y Volumen",
       desc: "Eliminación de grasa corporal general y retención de líquidos con marcada mejora en la postura.",
       label: "-7 KG EN 24 SEMANAS"
     },
     {
-      image: "/img/phoenix_transform_9.jpg",
+      image: "/img/phoenix_transform_9.jpg?v=2",
       name: "Definición y Densidad",
       desc: "Mantenimiento del peso total pero con una ganancia notable en densidad muscular y reducción de porcentaje graso.",
       label: "= KG EN 8 SEMANAS"
     },
     {
-      image: "/img/phoenix_transform_10.jpg",
+      image: "/img/phoenix_transform_10.jpg?v=2",
       name: "Definición Corporal Avanzada",
       desc: "Pérdida de grasa subcutánea y mejora del tono muscular en todo el core.",
       label: "-6 KG EN 20 SEMANAS"
@@ -277,7 +277,7 @@ export default function PhoenixProtocolLanding() {
             </div>
 
             <div className="rounded-2xl overflow-hidden border border-white/5 bg-black/40 aspect-[4/5] shadow-2xl relative z-10">
-              <img src="/img/phoenix_metodo_1.jpg" alt="Phoenix Protocol Concepto" className="w-full h-full object-cover" />
+              <img src="/img/phoenix_metodo_1.jpg?v=2" alt="Phoenix Protocol Concepto" className="w-full h-full object-cover" />
             </div>
           </div>
         </section>
