@@ -90,31 +90,31 @@ export default function PhoenixProtocolLanding() {
       label: "+5 KG EN 24 SEMANAS"
     },
     {
-      image: "/img/phoenix_transform_6.png",
+      image: "/img/phoenix_transform_6.jpg",
       name: "Definición y Vientre Plano",
       desc: "Pérdida de grasa localizada en el abdomen y mejora en la definición de la musculatura abdominal.",
       label: "-4 KG EN 24 SEMANAS"
     },
     {
-      image: "/img/phoenix_transform_7.png",
+      image: "/img/phoenix_transform_7.jpg",
       name: "Recomposición Muscular Estética",
       desc: "Reducción de grasa y aumento de masa muscular magra en el mismo peso, logrando un físico más estético.",
       label: "= KG EN 8 SEMANAS"
     },
     {
-      image: "/img/phoenix_transform_8.png",
+      image: "/img/phoenix_transform_8.jpg",
       name: "Pérdida de Peso y Volumen",
       desc: "Eliminación de grasa corporal general y retención de líquidos con marcada mejora en la postura.",
       label: "-7 KG EN 24 SEMANAS"
     },
     {
-      image: "/img/phoenix_transform_9.png",
+      image: "/img/phoenix_transform_9.jpg",
       name: "Definición y Densidad",
       desc: "Mantenimiento del peso total pero con una ganancia notable en densidad muscular y reducción de porcentaje graso.",
       label: "= KG EN 8 SEMANAS"
     },
     {
-      image: "/img/phoenix_transform_10.png",
+      image: "/img/phoenix_transform_10.jpg",
       name: "Definición Corporal Avanzada",
       desc: "Pérdida de grasa subcutánea y mejora del tono muscular en todo el core.",
       label: "-6 KG EN 20 SEMANAS"
@@ -273,6 +273,25 @@ export default function PhoenixProtocolLanding() {
                 <p className="text-sm text-gray-400 italic">
                   "Phoenix Protocol no es para todos. Es para hombres hartos de ir a medias, dispuestos a invertir 6 meses para hacerlo bien de una vez."
                 </p>
+              </div>
+            </div>
+
+            {/* Metodología posts grid */}
+            <div className="mt-12 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+              <div className="rounded-2xl overflow-hidden border border-white/5 bg-black/40 aspect-[4/5] shadow-lg shadow-black/50">
+                <img src="/img/phoenix_metodo_1.jpg" alt="Metodología 1" className="w-full h-full object-cover" />
+              </div>
+              <div className="rounded-2xl overflow-hidden border border-white/5 bg-black/40 aspect-[4/5] shadow-lg shadow-black/50">
+                <img src="/img/phoenix_metodo_2.jpg" alt="Metodología 2" className="w-full h-full object-cover" />
+              </div>
+              <div className="rounded-2xl overflow-hidden border border-white/5 bg-black/40 aspect-[4/5] shadow-lg shadow-black/50">
+                <img src="/img/phoenix_metodo_3.jpg" alt="Metodología 3" className="w-full h-full object-cover" />
+              </div>
+              <div className="rounded-2xl overflow-hidden border border-white/5 bg-black/40 aspect-[4/5] shadow-lg shadow-black/50">
+                <img src="/img/phoenix_metodo_4.jpg" alt="Metodología 4" className="w-full h-full object-cover" />
+              </div>
+              <div className="rounded-2xl overflow-hidden border border-white/5 bg-black/40 aspect-[4/5] shadow-lg shadow-black/50 col-span-1 sm:col-span-2 md:col-span-1">
+                <img src="/img/phoenix_metodo_5.jpg" alt="Metodología 5" className="w-full h-full object-cover" />
               </div>
             </div>
           </div>
