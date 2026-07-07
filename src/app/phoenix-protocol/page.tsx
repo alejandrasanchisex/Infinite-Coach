@@ -88,6 +88,36 @@ export default function PhoenixProtocolLanding() {
       name: "Evolución de Ectomorfo",
       desc: "Superación del estado 'skinny-fat' para lograr un físico atlético, fuerte y saludable.",
       label: "+5 KG EN 24 SEMANAS"
+    },
+    {
+      image: "/img/phoenix_transform_6.png",
+      name: "Definición y Vientre Plano",
+      desc: "Pérdida de grasa localizada en el abdomen y mejora en la definición de la musculatura abdominal.",
+      label: "-4 KG EN 24 SEMANAS"
+    },
+    {
+      image: "/img/phoenix_transform_7.png",
+      name: "Recomposición Muscular Estética",
+      desc: "Reducción de grasa y aumento de masa muscular magra en el mismo peso, logrando un físico más estético.",
+      label: "= KG EN 8 SEMANAS"
+    },
+    {
+      image: "/img/phoenix_transform_8.png",
+      name: "Pérdida de Peso y Volumen",
+      desc: "Eliminación de grasa corporal general y retención de líquidos con marcada mejora en la postura.",
+      label: "-7 KG EN 24 SEMANAS"
+    },
+    {
+      image: "/img/phoenix_transform_9.png",
+      name: "Definición y Densidad",
+      desc: "Mantenimiento del peso total pero con una ganancia notable en densidad muscular y reducción de porcentaje graso.",
+      label: "= KG EN 8 SEMANAS"
+    },
+    {
+      image: "/img/phoenix_transform_10.png",
+      name: "Definición Corporal Avanzada",
+      desc: "Pérdida de grasa subcutánea y mejora del tono muscular en todo el core.",
+      label: "-6 KG EN 20 SEMANAS"
     }
   ];
 
