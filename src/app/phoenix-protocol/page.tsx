@@ -208,11 +208,8 @@ export default function PhoenixProtocolLanding() {
         <header className="flex justify-between items-center mb-16 md:mb-24">
           <div className="flex items-center gap-3">
             {/* Custom Glowing SVG Phoenix Logo */}
-            <div className="w-12 h-12 rounded-xl bg-black flex items-center justify-center p-1.5 shadow-lg shadow-[#E50914]/25 border border-[#E50914]/30">
-              <svg viewBox="0 0 24 24" fill="none" className="w-full h-full text-[#E50914] drop-shadow-[0_0_8px_#E50914]" stroke="currentColor" strokeWidth="1.5">
-                <path strokeLinecap="round" strokeLinejoin="round" d="M15.362 5.214A8.252 8.252 0 0 1 12 21 8.25 8.25 0 0 1 6.038 7.047 8.287 8.287 0 0 0 9 9.601a8.983 8.983 0 0 1 3.361-6.867 8.21 8.21 0 0 0 3 2.48z" />
-                <path strokeLinecap="round" strokeLinejoin="round" d="M12 18a3.75 3.75 0 0 0 .495-7.467 5.99 5.99 0 0 0-1.925 3.546 5.974 5.974 0 0 1-2.133-1A3.75 3.75 0 0 0 12 18z" />
-              </svg>
+            <div className="w-12 h-12 rounded-xl bg-black flex items-center justify-center p-1 shadow-lg shadow-[#E50914]/25 border border-[#E50914]/30 overflow-hidden">
+              <img src="https://bieeydhacavxymoosasx.supabase.co/storage/v1/object/public/Media/1780593803077_ChatGPT_Image_4_jun_2026_18_24_46.png" alt="Phoenix Protocol Logo" className="w-full h-full object-contain rounded-lg" />
             </div>
             <div>
               <span className="font-extrabold text-xl tracking-tight block uppercase text-white">Phoenix Protocol</span>
@@ -425,11 +422,8 @@ export default function PhoenixProtocolLanding() {
               <Flame size={140} />
             </div>
             <div className="flex items-center gap-3 mb-4">
-              <div className="w-12 h-12 rounded-xl bg-black flex items-center justify-center p-1.5 shadow-lg shadow-[#E50914]/25 border border-[#E50914]/30">
-                <svg viewBox="0 0 24 24" fill="none" className="w-full h-full text-[#E50914] drop-shadow-[0_0_8px_#E50914]" stroke="currentColor" strokeWidth="1.5">
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M15.362 5.214A8.252 8.252 0 0 1 12 21 8.25 8.25 0 0 1 6.038 7.047 8.287 8.287 0 0 0 9 9.601a8.983 8.983 0 0 1 3.361-6.867 8.21 8.21 0 0 0 3 2.48z" />
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M12 18a3.75 3.75 0 0 0 .495-7.467 5.99 5.99 0 0 0-1.925 3.546 5.974 5.974 0 0 1-2.133-1A3.75 3.75 0 0 0 12 18z" />
-                </svg>
+              <div className="w-12 h-12 rounded-xl bg-black flex items-center justify-center p-1 shadow-lg shadow-[#E50914]/25 border border-[#E50914]/30 overflow-hidden">
+                <img src="https://bieeydhacavxymoosasx.supabase.co/storage/v1/object/public/Media/1780593803077_ChatGPT_Image_4_jun_2026_18_24_46.png" alt="Phoenix Protocol Logo" className="w-full h-full object-contain rounded-lg" />
               </div>
               <div>
                 <span className="font-extrabold text-xl tracking-tight block uppercase text-white leading-none mb-1">Phoenix Protocol</span>
