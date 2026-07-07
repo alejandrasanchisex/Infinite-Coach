@@ -60,19 +60,34 @@ export default function PhoenixProtocolLanding() {
 
   const transformations = [
     {
-      name: "Caso 1 (Placeholder)",
-      desc: "Transformación física en 6 meses de asesoría",
-      label: "Físico y rendimiento optimizados"
+      image: "/img/phoenix_transform_1.jpg",
+      name: "Cambio Físico Radical",
+      desc: "Recomposición corporal con pérdida de grasa y ganancia muscular simultánea.",
+      label: "-6 KG EN 20 SEMANAS"
     },
     {
-      name: "Caso 2 (Placeholder)",
-      desc: "Ganancia de masa muscular limpia y hábitos de acero",
-      label: "Definición y fuerza"
+      image: "/img/phoenix_transform_2.jpg",
+      name: "Construcción de Masa Muscular",
+      desc: "Transformación a largo plazo ganando densidad, fuerza y volumen muscular limpio.",
+      label: "+20 KG EN 6 AÑOS"
     },
     {
-      name: "Caso 3 (Placeholder)",
-      desc: "Recomposición corporal y bienestar integral",
-      label: "Reconstrucción física completa"
+      image: "/img/phoenix_transform_3.jpg",
+      name: "Definición y Pérdida de Grasa",
+      desc: "Reducción drástica del porcentaje de grasa corporal revelando la musculatura.",
+      label: "-9 KG EN 20 SEMANAS"
+    },
+    {
+      image: "/img/phoenix_transform_4.jpg",
+      name: "Recomposición Rápida",
+      desc: "Pérdida de grasa rebelde en la zona abdominal y tonificación general.",
+      label: "-7 KG EN 12 SEMANAS"
+    },
+    {
+      image: "/img/phoenix_transform_5.jpg",
+      name: "Evolución de Ectomorfo",
+      desc: "Superación del estado 'skinny-fat' para lograr un físico atlético, fuerte y saludable.",
+      label: "+5 KG EN 24 SEMANAS"
     }
   ];
 
@@ -353,10 +368,12 @@ export default function PhoenixProtocolLanding() {
                 className="min-w-[280px] sm:min-w-[350px] bg-[#141313] border border-white/5 rounded-2xl p-6 snap-start shrink-0 flex flex-col justify-between"
               >
                 <div>
-                  <div className="w-full aspect-[4/5] bg-black/40 rounded-xl mb-4 border border-white/5 flex flex-col items-center justify-center text-center p-4">
-                    <Flame size={32} className="text-white/20 mb-3" />
-                    <span className="text-xs text-gray-500 font-bold uppercase tracking-wider text-white">Imagen del Caso de Éxito</span>
-                    <span className="text-[10px] text-gray-600 mt-1 uppercase">(Se adjuntará próximamente)</span>
+                  <div className="w-full aspect-[4/5] relative rounded-xl mb-4 overflow-hidden border border-white/5 bg-black/40">
+                    <img 
+                      src={t.image} 
+                      alt={t.label} 
+                      className="w-full h-full object-cover"
+                    />
                   </div>
                   <h3 className="font-extrabold uppercase text-white mb-1">{t.name}</h3>
                   <p className="text-xs text-[#E50914] font-bold uppercase tracking-wider mb-2">{t.label}</p>
