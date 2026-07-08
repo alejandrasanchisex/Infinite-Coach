@@ -7,7 +7,7 @@
   <script>
       // Force PWA cache bust / reload
       (function() {
-          const CURRENT_VERSION = '553';
+          const CURRENT_VERSION = '554';
           const savedVersion = localStorage.getItem('app_version');
           if (savedVersion !== CURRENT_VERSION) {
               localStorage.setItem('app_version', CURRENT_VERSION);
@@ -31,9 +31,9 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="styles/theme.css?v=553">
-  <link rel="stylesheet" href="styles/components.css?v=553">
-  <link rel="stylesheet" href="styles/mobile.css?v=553">
+  <link rel="stylesheet" href="styles/theme.css?v=554">
+  <link rel="stylesheet" href="styles/components.css?v=554">
+  <link rel="stylesheet" href="styles/mobile.css?v=554">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <script>
@@ -145,10 +145,10 @@
           <span id="brandName">Infinite Coach</span>
         </div>
         <ul class="nav-links" id="navLinks">
-          <li><a href="client-dashboard.html?v=553" class="nav-link">Inicio</a></li>
-          <li><a href="client-profile.html?v=553" class="nav-link">Ficha Técnica</a></li>
+          <li><a href="client-dashboard.html?v=554" class="nav-link">Inicio</a></li>
+          <li><a href="client-profile.html?v=554" class="nav-link">Ficha Técnica</a></li>
 
-          <li><a href="client-login.html?v=553" class="nav-link">Salir</a></li>
+          <li><a href="client-login.html?v=554" class="nav-link">Salir</a></li>
         </ul>
         <button class="menu-toggle" onclick="toggleMenu()" style="margin-left: auto;">☰</button>
       </nav>
@@ -215,12 +215,12 @@
 
   <!-- Supabase SDK & Service -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script src="js/supabase-service.js?v=553"></script>
+  <script src="js/supabase-service.js?v=554"></script>
 
-  <script src="js/config.js?v=553"></script>
-  <script src="js/data-models.js?v=553"></script>
-  <script src="js/custom-exercises.js?v=553"></script>
-  <script src="js/utils.js?v=553"></script>
+  <script src="js/config.js?v=554"></script>
+  <script src="js/data-models.js?v=554"></script>
+  <script src="js/custom-exercises.js?v=554"></script>
+  <script src="js/utils.js?v=554"></script>
   <script>
     // --- RESOLUCIÓN DE TRAINER ID (FALLBACK SEGURO) ---
     (function() {
@@ -443,8 +443,7 @@
                     
                     selectEl.innerHTML = publishedBlocks.map(b => {
                         const isSelected = b.id === selectedBlockId ? 'selected' : '';
-                        const dateStr = b.startDate ? ` (${new Date(b.startDate).toLocaleDateString()})` : '';
-                        return `<option value="${b.id}" ${isSelected}>${b.name}${dateStr}</option>`;
+                        return `<option value="${b.id}" ${isSelected}>${b.name || 'Programa'}</option>`;
                     }).join('');
                 }
             } else {
@@ -1198,6 +1197,6 @@
     // Trigger App Initialization
     initializeApp();
   </script>
-    <script src="js/custom-recipes.js?v=553"></script></body>
+    <script src="js/custom-recipes.js?v=554"></script></body>
 
 </html>
