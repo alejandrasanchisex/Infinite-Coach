@@ -7,7 +7,7 @@
   <script>
       // Force PWA cache bust / reload
       (function() {
-          const CURRENT_VERSION = '548';
+          const CURRENT_VERSION = '553';
           const savedVersion = localStorage.getItem('app_version');
           if (savedVersion !== CURRENT_VERSION) {
               localStorage.setItem('app_version', CURRENT_VERSION);
@@ -31,9 +31,9 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="styles/theme.css?v=548">
-  <link rel="stylesheet" href="styles/components.css?v=548">
-  <link rel="stylesheet" href="styles/mobile.css?v=548">
+  <link rel="stylesheet" href="styles/theme.css?v=553">
+  <link rel="stylesheet" href="styles/components.css?v=553">
+  <link rel="stylesheet" href="styles/mobile.css?v=553">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <script>
@@ -145,10 +145,10 @@
           <span id="brandName">Infinite Coach</span>
         </div>
         <ul class="nav-links" id="navLinks">
-          <li><a href="client-dashboard.html?v=548" class="nav-link">Inicio</a></li>
-          <li><a href="client-profile.html?v=548" class="nav-link">Ficha Técnica</a></li>
+          <li><a href="client-dashboard.html?v=553" class="nav-link">Inicio</a></li>
+          <li><a href="client-profile.html?v=553" class="nav-link">Ficha Técnica</a></li>
 
-          <li><a href="client-login.html?v=548" class="nav-link">Salir</a></li>
+          <li><a href="client-login.html?v=553" class="nav-link">Salir</a></li>
         </ul>
         <button class="menu-toggle" onclick="toggleMenu()" style="margin-left: auto;">☰</button>
       </nav>
@@ -173,6 +173,14 @@
                 Estructura semanal
             </button>
         </div>
+      </div>
+
+      <!-- Block Selector (Only if there are multiple active/published blocks) -->
+      <div id="blockSelectorContainer" style="display: none; margin-bottom: 15px; background: rgba(255,255,255,0.02); border: 1.5px solid rgba(255,255,255,0.06); padding: 12px; border-radius: 12px;">
+        <label for="blockSelect" style="font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase; font-weight: 700; display: block; margin-bottom: 6px;">Programa de entrenamiento:</label>
+        <select id="blockSelect" class="form-select" style="background: rgba(255,255,255,0.05); color: #fff; border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; font-size: 0.9rem; padding: 10px 12px; width: 100%; box-sizing: border-box; cursor: pointer; outline: none; font-family: 'Inter', sans-serif;" onchange="window.switchBlock(this.value)">
+          <!-- populated dynamically -->
+        </select>
       </div>
 
       <!-- Week Tabs (Only if there are multiple weeks) -->
@@ -207,12 +215,12 @@
 
   <!-- Supabase SDK & Service -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script src="js/supabase-service.js?v=548"></script>
+  <script src="js/supabase-service.js?v=553"></script>
 
-  <script src="js/config.js?v=548"></script>
-  <script src="js/data-models.js?v=548"></script>
-  <script src="js/custom-exercises.js?v=548"></script>
-  <script src="js/utils.js?v=548"></script>
+  <script src="js/config.js?v=553"></script>
+  <script src="js/data-models.js?v=553"></script>
+  <script src="js/custom-exercises.js?v=553"></script>
+  <script src="js/utils.js?v=553"></script>
   <script>
     // --- RESOLUCIÓN DE TRAINER ID (FALLBACK SEGURO) ---
     (function() {
@@ -255,6 +263,8 @@
     let routine = null; // This will hold the "Active Week" if block-based
     let isBlockBased = false;
     let publishedBlock = null;
+    let publishedBlocks = [];
+    let selectedBlockId = null;
     let currentWeekIdx = 0;
     let currentDayNumber = null;
 
@@ -417,13 +427,39 @@
             }
 
             const blocks = TrainingBlocks.getByClientId(clientId) || [];
-            const publishedBlocks = blocks.filter(b => b.published == true || b.published == 'true' || b.published == 1);
+            publishedBlocks = blocks.filter(b => b.published == true || b.published == 'true' || b.published == 1);
             
-            if (publishedBlocks.length > 0) {
-                publishedBlocks.sort((a, b) => new Date(b.startDate || 0) - new Date(a.startDate || 0));
-                publishedBlock = publishedBlocks[0];
+            const selectorContainer = document.getElementById('blockSelectorContainer');
+            const selectEl = document.getElementById('blockSelect');
+
+            if (publishedBlocks.length > 1) {
+                if (selectorContainer && selectEl) {
+                    selectorContainer.style.display = 'block';
+                    publishedBlocks.sort((a, b) => new Date(b.startDate || 0) - new Date(a.startDate || 0));
+                    
+                    if (!selectedBlockId || !publishedBlocks.some(b => b.id === selectedBlockId)) {
+                        selectedBlockId = publishedBlocks[0].id;
+                    }
+                    
+                    selectEl.innerHTML = publishedBlocks.map(b => {
+                        const isSelected = b.id === selectedBlockId ? 'selected' : '';
+                        const dateStr = b.startDate ? ` (${new Date(b.startDate).toLocaleDateString()})` : '';
+                        return `<option value="${b.id}" ${isSelected}>${b.name}${dateStr}</option>`;
+                    }).join('');
+                }
+            } else {
+                if (selectorContainer) selectorContainer.style.display = 'none';
+                if (publishedBlocks.length === 1) {
+                    selectedBlockId = publishedBlocks[0].id;
+                } else {
+                    selectedBlockId = null;
+                }
+            }
+
+            if (selectedBlockId) {
+                publishedBlock = publishedBlocks.find(b => b.id === selectedBlockId);
                 
-                if (publishedBlock.weeks && publishedBlock.weeks.length > 0) {
+                if (publishedBlock && publishedBlock.weeks && publishedBlock.weeks.length > 0) {
                     isBlockBased = true;
                     const userLogsInit = TrainingLogs.getByClientId(clientId);
                     window.localUserLogs = userLogsInit; // Cache logs globally to avoid heavy refetching
@@ -440,6 +476,11 @@
                     switchWeek(currentWeekIdx);
                     return; // loadRoutine is called by switchWeek
                 }
+            } else {
+                isBlockBased = false;
+                publishedBlock = null;
+                const wTabs = document.getElementById('weekTabs');
+                if (wTabs) wTabs.style.display = 'none';
             }
 
             if (!routine && client) {
@@ -498,6 +539,11 @@
         buttons.forEach((btn, i) => btn.classList.toggle('active', i === idx));
         
         loadRoutine();
+    }
+
+    window.switchBlock = function(blockId) {
+        selectedBlockId = blockId;
+        renderRoutinePage();
     }
 
     function loadRoutine() {
@@ -1152,6 +1198,6 @@
     // Trigger App Initialization
     initializeApp();
   </script>
-    <script src="js/custom-recipes.js?v=548"></script></body>
+    <script src="js/custom-recipes.js?v=553"></script></body>
 
 </html>

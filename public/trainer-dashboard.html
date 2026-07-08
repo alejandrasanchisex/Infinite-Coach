@@ -5,7 +5,7 @@
     <script>
         // Force PWA cache bust / reload
         (function() {
-            const CURRENT_VERSION = '548';
+            const CURRENT_VERSION = '553';
             const savedVersion = localStorage.getItem('app_version');
             if (savedVersion !== CURRENT_VERSION) {
                 localStorage.setItem('app_version', CURRENT_VERSION);
@@ -31,8 +31,8 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="styles/theme.css?v=548">
-    <link rel="stylesheet" href="styles/components.css?v=548">
+    <link rel="stylesheet" href="styles/theme.css?v=553">
+    <link rel="stylesheet" href="styles/components.css?v=553">
 </head>
 
 <body>
@@ -61,14 +61,14 @@
                     </div>
                     <button class="menu-toggle" onclick="toggleMenu()">☰</button>
                     <ul class="nav-links" id="navLinks">
-                        <li><a href="trainer-dashboard.html?v=548" class="nav-link active">Dashboard</a></li>
-                        <li><a href="trainer-clients.html?v=548" class="nav-link">Clientes</a></li>
-                        <li><a href="trainer-routines.html?v=548" class="nav-link">Rutinas</a></li>
-                        <li><a href="trainer-diets.html?v=548" class="nav-link">Dietas</a></li>
-                        <li><a href="trainer-feedbacks.html?v=548" class="nav-link">Revisiones</a></li>
-                        <li><a href="trainer-media.html?v=548" class="nav-link">Biblioteca</a></li>
-                        <li><a href="trainer-appointments.html?v=548" class="nav-link">Agenda</a></li>
-                        <li><a href="trainer-settings.html?v=548" class="nav-link">Configuración</a></li>
+                        <li><a href="trainer-dashboard.html?v=553" class="nav-link active">Dashboard</a></li>
+                        <li><a href="trainer-clients.html?v=553" class="nav-link">Clientes</a></li>
+                        <li><a href="trainer-routines.html?v=553" class="nav-link">Rutinas</a></li>
+                        <li><a href="trainer-diets.html?v=553" class="nav-link">Dietas</a></li>
+                        <li><a href="trainer-feedbacks.html?v=553" class="nav-link">Revisiones</a></li>
+                        <li><a href="trainer-media.html?v=553" class="nav-link">Biblioteca</a></li>
+                        <li><a href="trainer-appointments.html?v=553" class="nav-link">Agenda</a></li>
+                        <li><a href="trainer-settings.html?v=553" class="nav-link">Configuración</a></li>
                         <li><a href="#" onclick="if(typeof AUTH !== 'undefined') { AUTH.signOut() } else { window.location.reload() }; return false;" class="nav-link" style="color:var(--error-color)">🚪 Salir</a></li>
                     </ul>
                 </nav>
@@ -269,14 +269,14 @@
 
     <!-- Supabase SDK & Service -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="js/supabase-service.js?v=548"></script>
+    <script src="js/supabase-service.js?v=553"></script>
 
     <!-- UI Scripts -->
-    <script src="js/config.js?v=548"></script>
-    <script src="js/auth.js?v=548"></script>
-    <script src="js/sheets.js?v=548"></script>
-    <script src="js/data-models.js?v=548"></script>
-    <script src="js/utils.js?v=548"></script>
+    <script src="js/config.js?v=553"></script>
+    <script src="js/auth.js?v=553"></script>
+    <script src="js/sheets.js?v=553"></script>
+    <script src="js/data-models.js?v=553"></script>
+    <script src="js/utils.js?v=553"></script>
     <script>
         // Branding is handled via onGoogleAuthSuccess() and global listeners
 
@@ -1260,10 +1260,13 @@
                 
                 const missingBlocks = [];
                 const missingDiets = [];
+                const missingCardios = [];
+                const missingSupps = [];
                 
                 const currentBlockIds = new Set((currentData.trainingBlocks || []).map(b => b.id));
                 const currentDietIds = new Set((currentData.diets || []).map(d => d.id));
                 const clientsMap = new Map((currentData.clients || []).map(c => [c.id, c.name]));
+                const currentClientsMap = new Map((currentData.clients || []).map(c => [c.id, c]));
                 
                 (backupData.trainingBlocks || []).forEach(block => {
                     if (block.id && !currentBlockIds.has(block.id)) {
@@ -1284,13 +1287,30 @@
                     }
                 });
                 
-                if (missingBlocks.length > 0 || missingDiets.length > 0) {
-                    console.log("⚠️ [Recovery] Se han encontrado elementos perdidos en el backup:", { missingBlocks, missingDiets });
+                (backupData.clients || []).forEach(bc => {
+                    const cc = currentClientsMap.get(bc.id);
+                    if (cc) {
+                        const bcCardioClean = (bc.cardio || '').trim().replace(/<[^>]*>/g, '');
+                        const ccCardioClean = (cc.cardio || '').trim().replace(/<[^>]*>/g, '');
+                        if (bcCardioClean.length > 0 && bc.cardio !== cc.cardio && bcCardioClean.length > ccCardioClean.length) {
+                            missingCardios.push({ clientId: cc.id, clientName: cc.name, cardio: bc.cardio, published: bc.cardioPublished, url: bc.cardioUrl, urlVisible: bc.cardioUrlVisible });
+                        }
+                        
+                        const bcSuppClean = (bc.supplementation || '').trim().replace(/<[^>]*>/g, '');
+                        const ccSuppClean = (cc.supplementation || '').trim().replace(/<[^>]*>/g, '');
+                        if (bcSuppClean.length > 0 && bc.supplementation !== cc.supplementation && bcSuppClean.length > ccSuppClean.length) {
+                            missingSupps.push({ clientId: cc.id, clientName: cc.name, supplementation: bc.supplementation, published: bc.supplementationPublished, url: bc.supplementationUrl, urlVisible: bc.supplementationUrlVisible });
+                        }
+                    }
+                });
+                
+                if (missingBlocks.length > 0 || missingDiets.length > 0 || missingCardios.length > 0 || missingSupps.length > 0) {
+                    console.log("⚠️ [Recovery] Se han encontrado elementos perdidos en el backup:", { missingBlocks, missingDiets, missingCardios, missingSupps });
                     
                     let content = `
                         <div style="padding: 10px 0; font-size: 0.95rem; line-height: 1.4;">
                             <p style="margin-bottom: 12px; color: var(--primary-color); font-weight: 700;">
-                                ⚠️ Se han detectado elementos de entrenamiento/dieta creados recientemente que no están en la nube (debido al conflicto de sincronización multi-dispositivo anterior).
+                                ⚠️ Se han detectado elementos de planificación (entrenamientos, cardio, suplementación o dietas) en la copia de seguridad de tu navegador que no están en la nube.
                             </p>
                             <p style="margin-bottom: 16px; font-size: 0.85rem; color: var(--text-muted);">
                                 Puedes restaurarlos y sincronizarlos de nuevo marcando las opciones deseadas:
@@ -1329,6 +1349,40 @@
                         });
                     }
                     
+                    if (missingCardios.length > 0) {
+                        if (missingBlocks.length > 0 || missingDiets.length > 0) content += `<hr style="border: 0; border-top: 1px solid rgba(255,255,255,0.08); margin: 12px 0;">`;
+                        content += `<h4 style="margin-bottom: 8px; font-size: 0.9rem; text-transform: uppercase; color: var(--primary-color);">Planificaciones de Cardio</h4>`;
+                        missingCardios.forEach(c => {
+                            const cleanText = c.cardio.replace(/<[^>]*>/g, '').trim();
+                            content += `
+                                <label style="display: flex; align-items: flex-start; gap: 8px; margin-bottom: 8px; cursor: pointer;">
+                                    <input type="checkbox" class="recover-item-chk" data-type="cardio" data-id="${c.clientId}" checked style="margin-top: 3px;">
+                                    <div>
+                                        <strong>Cardio de ${c.clientName}</strong><br>
+                                        <span style="font-size: 0.75rem; color: var(--text-muted);">Texto: "${cleanText.substring(0, 60)}${cleanText.length > 60 ? '...' : ''}"</span>
+                                    </div>
+                                </label>
+                            `;
+                        });
+                    }
+                    
+                    if (missingSupps.length > 0) {
+                        if (missingBlocks.length > 0 || missingDiets.length > 0 || missingCardios.length > 0) content += `<hr style="border: 0; border-top: 1px solid rgba(255,255,255,0.08); margin: 12px 0;">`;
+                        content += `<h4 style="margin-bottom: 8px; font-size: 0.9rem; text-transform: uppercase; color: var(--primary-color);">Planificaciones de Suplementación</h4>`;
+                        missingSupps.forEach(s => {
+                            const cleanText = s.supplementation.replace(/<[^>]*>/g, '').trim();
+                            content += `
+                                <label style="display: flex; align-items: flex-start; gap: 8px; margin-bottom: 8px; cursor: pointer;">
+                                    <input type="checkbox" class="recover-item-chk" data-type="supplementation" data-id="${s.clientId}" checked style="margin-top: 3px;">
+                                    <div>
+                                        <strong>Suplementación de ${s.clientName}</strong><br>
+                                        <span style="font-size: 0.75rem; color: var(--text-muted);">Texto: "${cleanText.substring(0, 60)}${cleanText.length > 60 ? '...' : ''}"</span>
+                                    </div>
+                                </label>
+                            `;
+                        });
+                    }
+                    
                     content += `
                             </div>
                         </div>
@@ -1353,7 +1407,6 @@
                                         freshCurrentData.trainingBlocks.push(blockToRestore);
                                         count++;
                                         
-                                        // Asegurar que si el cliente no tiene activeBlockId apuntando a este bloque y este bloque es active, restauramos la referencia
                                         if (blockToRestore.status === 'active') {
                                             const client = freshCurrentData.clients?.find(c => c.id === blockToRestore.clientId);
                                             if (client) {
@@ -1367,7 +1420,6 @@
                                         freshCurrentData.diets.push(dietToRestore);
                                         count++;
                                         
-                                        // Restaurar referencias en el cliente en el backup
                                         const clientInBackup = backupData.clients?.find(c => c.assignedDiet === id || (c.assignedDiets && c.assignedDiets.includes(id)));
                                         if (clientInBackup) {
                                             const client = freshCurrentData.clients?.find(c => c.id === clientInBackup.id);
@@ -1380,6 +1432,30 @@
                                             }
                                         }
                                     }
+                                } else if (type === 'cardio') {
+                                    const clientCardio = missingCardios.find(mc => mc.clientId === id);
+                                    if (clientCardio) {
+                                        const client = freshCurrentData.clients?.find(c => c.id === id);
+                                        if (client) {
+                                            client.cardio = clientCardio.cardio;
+                                            client.cardioPublished = clientCardio.published;
+                                            client.cardioUrl = clientCardio.url;
+                                            client.cardioUrlVisible = clientCardio.urlVisible;
+                                            count++;
+                                        }
+                                    }
+                                } else if (type === 'supplementation') {
+                                    const clientSupp = missingSupps.find(ms => ms.clientId === id);
+                                    if (clientSupp) {
+                                        const client = freshCurrentData.clients?.find(c => c.id === id);
+                                        if (client) {
+                                            client.supplementation = clientSupp.supplementation;
+                                            client.supplementationPublished = clientSupp.published;
+                                            client.supplementationUrl = clientSupp.url;
+                                            client.supplementationUrlVisible = clientSupp.urlVisible;
+                                            count++;
+                                        }
+                                    }
                                 }
                             }
                         });
@@ -1388,7 +1464,6 @@
                             freshCurrentData.lastModified = new Date().toISOString();
                             localStorage.setItem(`fitnessAppData_${trainerId}`, JSON.stringify(freshCurrentData));
                             
-                            // Guardar en Supabase directamente
                             if (window.SupabaseService) {
                                 window.SupabaseService.init();
                                 await window.SupabaseService.saveTrainerData(trainerId, freshCurrentData);
@@ -1428,6 +1503,6 @@
             }
         }
     </script>
-    <script src="js/custom-recipes.js?v=548"></script></body>
+    <script src="js/custom-recipes.js?v=553"></script></body>
 
 </html>

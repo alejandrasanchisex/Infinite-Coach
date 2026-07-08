@@ -726,8 +726,8 @@ ${item.date}`.replace('\n', ''); // Safe compile
                 const isExplicitlyDeleted = localNew.deletedIds && localNew.deletedIds.includes(id);
                 if (isExplicitlyDeleted) return;
                 
-                // If we are on client-detail for client A, never apply local edits for client B
-                if (activeClientId && id !== activeClientId) {
+                // If we are on client-detail for client A, never apply local edits for client B (only for client-side to prevent leaks)
+                if (!isTrainer && activeClientId && id !== activeClientId) {
                     if (cloudClient) finalClients.push(cloudClient);
                     return;
                 }
@@ -842,9 +842,9 @@ ${item.date}`.replace('\n', ''); // Safe compile
                 const isExplicitlyDeleted = localNew.deletedIds && localNew.deletedIds.includes(id);
                 if (isExplicitlyDeleted) return;
                 
-                // If we are on client-detail for client A, never apply local edits for items belonging to client B
+                // If we are on client-detail for client A, never apply local edits for items belonging to client B (only for client-side)
                 const itemClientId = localItem?.clientId || cloudItem?.clientId || prevItem?.clientId;
-                if (activeClientId && itemClientId && itemClientId !== activeClientId) {
+                if (!isTrainer && activeClientId && itemClientId && itemClientId !== activeClientId) {
                     if (cloudItem) finalItems.push(cloudItem);
                     return;
                 }

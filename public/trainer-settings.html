@@ -31,7 +31,7 @@
 
         // Force PWA cache bust / reload
         (function() {
-            const CURRENT_VERSION = '548';
+            const CURRENT_VERSION = '553';
             const savedVersion = localStorage.getItem('app_version');
             if (savedVersion !== CURRENT_VERSION) {
                 localStorage.setItem('app_version', CURRENT_VERSION);
@@ -57,8 +57,8 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="styles/theme.css?v=548">
-    <link rel="stylesheet" href="styles/components.css?v=548">
+    <link rel="stylesheet" href="styles/theme.css?v=553">
+    <link rel="stylesheet" href="styles/components.css?v=553">
     <style>
         .settings-section {
             margin-bottom: var(--spacing-xl);
@@ -139,14 +139,14 @@
                 </div>
                 <button class="menu-toggle" onclick="toggleMenu()">☰</button>
                 <ul class="nav-links" id="navLinks">
-                    <li><a href="trainer-dashboard.html?v=548" class="nav-link">Dashboard</a></li>
-                    <li><a href="trainer-clients.html?v=548" class="nav-link">Clientes</a></li>
-                    <li><a href="trainer-routines.html?v=548" class="nav-link">Rutinas</a></li>
-                    <li><a href="trainer-diets.html?v=548" class="nav-link">Dietas</a></li>
-                    <li><a href="trainer-feedbacks.html?v=548" class="nav-link">Revisiones</a></li>
-                    <li><a href="trainer-media.html?v=548" class="nav-link">Biblioteca</a></li>
-                    <li><a href="trainer-appointments.html?v=548" class="nav-link">Agenda</a></li>
-                    <li><a href="trainer-settings.html?v=548" class="nav-link active">Configuración</a></li>
+                    <li><a href="trainer-dashboard.html?v=553" class="nav-link">Dashboard</a></li>
+                    <li><a href="trainer-clients.html?v=553" class="nav-link">Clientes</a></li>
+                    <li><a href="trainer-routines.html?v=553" class="nav-link">Rutinas</a></li>
+                    <li><a href="trainer-diets.html?v=553" class="nav-link">Dietas</a></li>
+                    <li><a href="trainer-feedbacks.html?v=553" class="nav-link">Revisiones</a></li>
+                    <li><a href="trainer-media.html?v=553" class="nav-link">Biblioteca</a></li>
+                    <li><a href="trainer-appointments.html?v=553" class="nav-link">Agenda</a></li>
+                    <li><a href="trainer-settings.html?v=553" class="nav-link active">Configuración</a></li>
                     <li><a href="#" onclick="if(typeof AUTH !== 'undefined') { AUTH.signOut() } else { window.location.reload() }; return false;" class="nav-link" style="color:var(--error-color)">🚪 Salir</a></li>
                 </ul>
             </nav>
@@ -761,8 +761,14 @@
                         </div>
                         <div class="card-body">
                             <p class="text-xs text-muted mb-md">Descarga una copia completa de tu base de datos de clientes, facturas y configuraciones en formato Excel.</p>
-                            <button class="btn btn-outline" style="width: 100%;" onclick="exportMasterExcel()">
+                            <button class="btn btn-outline" style="width: 100%; margin-bottom: 12px;" onclick="exportMasterExcel()">
                                 📥 Descargar Backup Maestro (.xlsx)
+                            </button>
+                            <div class="divider" style="margin: 12px 0;"></div>
+                            <h3 class="text-xs font-bold mb-xs" style="color: var(--primary-color);">Recuperador de Seguridad</h3>
+                            <p class="text-xs text-muted mb-md">Si has tenido algún conflicto al guardar datos o cambiar de dispositivo, puedes inspeccionar y recuperar bloques de entrenamiento, cardios, suplementación o dietas directamente de las copias de seguridad de este navegador.</p>
+                            <button class="btn btn-primary" style="width: 100%;" onclick="window.manuallyTriggerBackupRecovery()">
+                                🛡️ Abrir Panel de Recuperación Local
                             </button>
                         </div>
                     </div>
@@ -806,16 +812,16 @@
 
     <!-- Supabase SDK & Service -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="js/supabase-service.js?v=548"></script>
+    <script src="js/supabase-service.js?v=553"></script>
 
     <!-- UI Scripts -->
-    <script src="js/config.js?v=548"></script>
-    <script src="js/auth.js?v=548"></script>
-    <script src="js/sheets.js?v=548"></script>
-    <script src="js/data-models.js?v=548"></script>
-    <script src="js/cloud-storage.js?v=548"></script>
-    <script src="js/utils.js?v=548"></script>
-    <script src="js/excel-manager.js?v=548"></script>
+    <script src="js/config.js?v=553"></script>
+    <script src="js/auth.js?v=553"></script>
+    <script src="js/sheets.js?v=553"></script>
+    <script src="js/data-models.js?v=553"></script>
+    <script src="js/cloud-storage.js?v=553"></script>
+    <script src="js/utils.js?v=553"></script>
+    <script src="js/excel-manager.js?v=553"></script>
     <script>
         // Global Variables
         let feedbackQuestions = [];
@@ -2477,20 +2483,6 @@
 
     <script>
         async function onGoogleAuthSuccess() {
-            // Sincronizar con la nube (Supabase es ahora el primario)
-            if (window.SupabaseService) {
-                window.SupabaseService.init();
-                await window.syncFromCloud();
-            } else if (window.FirebaseService) {
-                await window.FirebaseService.init();
-                await window.syncFromCloud();
-            }
-
-            // Aplicar tema (Logo y colores)
-            if (typeof BrandConfig !== 'undefined') {
-                BrandConfig.applyTheme();
-            }
-
             document.getElementById('login-screen').style.display = 'none';
             document.getElementById('app').style.display = 'block';
 
@@ -2501,6 +2493,27 @@
                 loadSettings();
             }
 
+            // Sincronizar con la nube en segundo plano
+            setTimeout(async () => {
+                try {
+                    if (window.SupabaseService) {
+                        window.SupabaseService.init();
+                        await window.syncFromCloud();
+                    } else if (window.FirebaseService) {
+                        await window.FirebaseService.init();
+                        await window.syncFromCloud();
+                    }
+                    if (typeof BrandConfig !== 'undefined') {
+                        BrandConfig.applyTheme();
+                    }
+                    if (typeof initSettingsUI === 'function') {
+                        initSettingsUI();
+                    } else if (typeof loadSettings === 'function') {
+                        loadSettings();
+                    }
+                } catch(e) { console.warn(e); }
+            }, 100);
+
             // Trigger diagnostic log upload
             setTimeout(() => {
                 if (typeof window.uploadDebugLogs === 'function') {
@@ -2508,7 +2521,244 @@
                 }
             }, 2500);
         }
+
+        window.manuallyTriggerBackupRecovery = async function() {
+            const trainerId = localStorage.getItem('activeTrainerId') || 'default';
+            if (trainerId === 'default') {
+                showToast('Servicio no disponible', 'error');
+                return;
+            }
+            
+            const backupKey = `fitnessAppData_${trainerId}_backup`;
+            const backupRaw = localStorage.getItem(backupKey);
+            
+            if (!backupRaw) {
+                showModal('Recuperación Local', `
+                    <div style="padding: 15px; text-align: center;">
+                        <p style="color: var(--error-color); font-weight: bold; margin-bottom: 10px;">⚠️ No se encontró copia de seguridad local</p>
+                        <p class="text-sm text-muted">No hay ninguna copia de seguridad guardada en la caché de este navegador web. Asegúrate de estar usando el mismo ordenador y navegador desde donde realizaste los cambios.</p>
+                    </div>
+                `, [{ text: 'Cerrar', class: 'btn-secondary', onclick: 'window.closeModal()' }]);
+                return;
+            }
+            
+            try {
+                const backupData = JSON.parse(backupRaw);
+                const currentData = JSON.parse(localStorage.getItem(`fitnessAppData_${trainerId}`) || '{}');
+                
+                const backupClients = backupData.clients || [];
+                const backupBlocks = backupData.trainingBlocks || [];
+                const backupDiets = backupData.diets || [];
+                
+                const currentClientsMap = new Map((currentData.clients || []).map(c => [c.id, c]));
+                
+                let content = `
+                    <div style="padding: 5px 0; font-size: 0.9rem; line-height: 1.4;">
+                        <p style="margin-bottom: 12px; font-weight: 500;">
+                            📂 Copia de seguridad encontrada en este navegador.<br>
+                            <span class="text-muted" style="font-size: 0.8rem;">Puedes forzar la restauración de cualquier planificación, cardio o bloque seleccionándolo de la lista:</span>
+                        </p>
+                        <div style="background: rgba(255,255,255,0.03); border: 1.5px solid rgba(255,255,255,0.08); border-radius: 10px; padding: 12px; max-height: 350px; overflow-y: auto; margin-bottom: 20px;">
+                `;
+                
+                let hasItems = false;
+                
+                // 1. Bloques de Entrenamiento
+                if (backupBlocks.length > 0) {
+                    hasItems = true;
+                    content += `<h4 style="margin-bottom: 8px; font-size: 0.85rem; text-transform: uppercase; color: var(--primary-color);">Bloques de Entrenamiento</h4>`;
+                    backupBlocks.forEach(b => {
+                        const client = backupClients.find(c => c.id === b.clientId) || currentData.clients?.find(c => c.id === b.clientId);
+                        const clientName = client ? client.name : "Cliente desconocido";
+                        content += `
+                            <label style="display: flex; align-items: flex-start; gap: 8px; margin-bottom: 8px; cursor: pointer;">
+                                <input type="checkbox" class="man-recover-chk" data-type="block" data-id="${b.id}" style="margin-top: 3px;">
+                                <div>
+                                    <strong>${b.name || 'Sin nombre'}</strong> (${b.weeks ? b.weeks.length : 0} semanas)<br>
+                                    <span style="font-size: 0.75rem; color: var(--text-muted);">Asesorado: ${clientName}</span>
+                                </div>
+                            </label>
+                        `;
+                    });
+                }
+                
+                // 2. Cardios
+                const clientsWithCardio = backupClients.filter(bc => {
+                    const cleanText = (bc.cardio || '').replace(/<[^>]*>/g, '').trim();
+                    return cleanText.length > 0;
+                });
+                
+                if (clientsWithCardio.length > 0) {
+                    if (hasItems) content += `<hr style="border: 0; border-top: 1px solid rgba(255,255,255,0.08); margin: 12px 0;">`;
+                    hasItems = true;
+                    content += `<h4 style="margin-bottom: 8px; font-size: 0.85rem; text-transform: uppercase; color: var(--primary-color);">Planificaciones de Cardio</h4>`;
+                    clientsWithCardio.forEach(c => {
+                        const cleanText = c.cardio.replace(/<[^>]*>/g, '').trim();
+                        content += `
+                            <label style="display: flex; align-items: flex-start; gap: 8px; margin-bottom: 8px; cursor: pointer;">
+                                <input type="checkbox" class="man-recover-chk" data-type="cardio" data-id="${c.id}" style="margin-top: 3px;">
+                                <div>
+                                    <strong>Cardio de ${c.name}</strong><br>
+                                    <span style="font-size: 0.75rem; color: var(--text-muted);">Contenido: "${cleanText.substring(0, 70)}..."</span>
+                                </div>
+                            </label>
+                        `;
+                    });
+                }
+                
+                // 3. Suplementaciones
+                const clientsWithSupp = backupClients.filter(bc => {
+                    const cleanText = (bc.supplementation || '').replace(/<[^>]*>/g, '').trim();
+                    return cleanText.length > 0;
+                });
+                
+                if (clientsWithSupp.length > 0) {
+                    if (hasItems) content += `<hr style="border: 0; border-top: 1px solid rgba(255,255,255,0.08); margin: 12px 0;">`;
+                    hasItems = true;
+                    content += `<h4 style="margin-bottom: 8px; font-size: 0.85rem; text-transform: uppercase; color: var(--primary-color);">Planificaciones de Suplementación</h4>`;
+                    clientsWithSupp.forEach(s => {
+                        const cleanText = s.supplementation.replace(/<[^>]*>/g, '').trim();
+                        content += `
+                            <label style="display: flex; align-items: flex-start; gap: 8px; margin-bottom: 8px; cursor: pointer;">
+                                <input type="checkbox" class="man-recover-chk" data-type="supplementation" data-id="${s.id}" style="margin-top: 3px;">
+                                <div>
+                                    <strong>Suplementación de ${s.name}</strong><br>
+                                    <span style="font-size: 0.75rem; color: var(--text-muted);">Contenido: "${cleanText.substring(0, 70)}..."</span>
+                                </div>
+                            </label>
+                        `;
+                    });
+                }
+                
+                // 4. Dietas
+                if (backupDiets.length > 0) {
+                    if (hasItems) content += `<hr style="border: 0; border-top: 1px solid rgba(255,255,255,0.08); margin: 12px 0;">`;
+                    hasItems = true;
+                    content += `<h4 style="margin-bottom: 8px; font-size: 0.85rem; text-transform: uppercase; color: var(--primary-color);">Planes Nutricionales / Dietas</h4>`;
+                    backupDiets.forEach(d => {
+                        const clientAssigned = backupClients.find(c => c.assignedDiet === d.id) || currentData.clients?.find(c => c.assignedDiet === d.id);
+                        const clientName = clientAssigned ? clientAssigned.name : "Plantilla / Sin asignar";
+                        content += `
+                            <label style="display: flex; align-items: flex-start; gap: 8px; margin-bottom: 8px; cursor: pointer;">
+                                <input type="checkbox" class="man-recover-chk" data-type="diet" data-id="${d.id}" style="margin-top: 3px;">
+                                <div>
+                                    <strong>${d.name || 'Sin nombre'}</strong><br>
+                                    <span style="font-size: 0.75rem; color: var(--text-muted);">Asesorado: ${clientName}</span>
+                                </div>
+                            </label>
+                        `;
+                    });
+                }
+                
+                if (!hasItems) {
+                    content += `<p style="text-align: center; color: var(--text-muted); font-size: 0.85rem;">La copia de seguridad no contiene elementos para restaurar.</p>`;
+                }
+                
+                content += `
+                        </div>
+                    </div>
+                `;
+                
+                window.doManualRecover = async function() {
+                    const chks = document.querySelectorAll('.man-recover-chk');
+                    let count = 0;
+                    
+                    const freshCurrentData = JSON.parse(localStorage.getItem(`fitnessAppData_${trainerId}`) || '{}');
+                    if (!freshCurrentData.trainingBlocks) freshCurrentData.trainingBlocks = [];
+                    if (!freshCurrentData.diets) freshCurrentData.diets = [];
+                    if (!freshCurrentData.clients) freshCurrentData.clients = [];
+                    
+                    chks.forEach(chk => {
+                        if (chk.checked) {
+                            const id = chk.getAttribute('data-id');
+                            const type = chk.getAttribute('data-type');
+                            
+                            if (type === 'block') {
+                                const blockToRestore = backupData.trainingBlocks.find(b => b.id === id);
+                                if (blockToRestore) {
+                                    freshCurrentData.trainingBlocks = freshCurrentData.trainingBlocks.filter(b => b.id !== id);
+                                    freshCurrentData.trainingBlocks.push(blockToRestore);
+                                    count++;
+                                    
+                                    if (blockToRestore.status === 'active') {
+                                        const client = freshCurrentData.clients.find(c => c.id === blockToRestore.clientId);
+                                        if (client) client.activeBlockId = blockToRestore.id;
+                                    }
+                                }
+                            } else if (type === 'diet') {
+                                const dietToRestore = backupData.diets.find(d => d.id === id);
+                                if (dietToRestore) {
+                                    freshCurrentData.diets = freshCurrentData.diets.filter(d => d.id !== id);
+                                    freshCurrentData.diets.push(dietToRestore);
+                                    count++;
+                                    
+                                    const clientInBackup = backupClients.find(c => c.assignedDiet === id || (c.assignedDiets && c.assignedDiets.includes(id)));
+                                    if (clientInBackup) {
+                                        const client = freshCurrentData.clients.find(c => c.id === clientInBackup.id);
+                                        if (client) {
+                                            if (clientInBackup.assignedDiet === id) client.assignedDiet = id;
+                                            if (clientInBackup.assignedDiets && clientInBackup.assignedDiets.includes(id)) {
+                                                if (!client.assignedDiets) client.assignedDiets = [];
+                                                if (!client.assignedDiets.includes(id)) client.assignedDiets.push(id);
+                                            }
+                                        }
+                                    }
+                                }
+                            } else if (type === 'cardio') {
+                                const backupClient = backupClients.find(c => c.id === id);
+                                if (backupClient) {
+                                    const client = freshCurrentData.clients.find(c => c.id === id);
+                                    if (client) {
+                                        client.cardio = backupClient.cardio;
+                                        client.cardioPublished = backupClient.cardioPublished;
+                                        client.cardioUrl = backupClient.cardioUrl;
+                                        client.cardioUrlVisible = backupClient.cardioUrlVisible;
+                                        count++;
+                                    }
+                                }
+                            } else if (type === 'supplementation') {
+                                const backupClient = backupClients.find(c => c.id === id);
+                                if (backupClient) {
+                                    const client = freshCurrentData.clients.find(c => c.id === id);
+                                    if (client) {
+                                        client.supplementation = backupClient.supplementation;
+                                        client.supplementationPublished = backupClient.supplementationPublished;
+                                        client.supplementationUrl = backupClient.supplementationUrl;
+                                        client.supplementationUrlVisible = backupClient.supplementationUrlVisible;
+                                        count++;
+                                    }
+                                }
+                            }
+                        }
+                    });
+                    
+                    if (count > 0) {
+                        freshCurrentData.lastModified = new Date().toISOString();
+                        localStorage.setItem(`fitnessAppData_${trainerId}`, JSON.stringify(freshCurrentData));
+                        
+                        if (window.SupabaseService) {
+                            window.SupabaseService.init();
+                            await window.SupabaseService.saveTrainerData(trainerId, freshCurrentData);
+                        }
+                        
+                        showToast(`Restaurados ${count} elementos con éxito`, 'success');
+                    } else {
+                        showToast('No se seleccionó ningún elemento', 'warning');
+                    }
+                    closeModal();
+                };
+                
+                showModal('Recuperación Local Completa', content, [
+                    { text: 'Restaurar Seleccionados', class: 'btn-primary', onclick: 'window.doManualRecover()' },
+                    { text: 'Cancelar', class: 'btn-secondary', onclick: 'window.closeModal()' }
+                ], 'modal-md');
+                
+            } catch (err) {
+                console.error("Error running manual recovery dialog:", err);
+                showToast('Error al analizar la copia de seguridad', 'error');
+            }
+        };
     </script>
-    <script src="js/custom-recipes.js?v=548" defer></script></body>
+    <script src="js/custom-recipes.js?v=553" defer></script></body>
 
 </html>
