@@ -5,7 +5,7 @@
     <script>
         // Force PWA cache bust / reload
         (function() {
-            const CURRENT_VERSION = '559';
+            const CURRENT_VERSION = '560';
             const savedVersion = localStorage.getItem('app_version');
             if (savedVersion !== CURRENT_VERSION) {
                 localStorage.setItem('app_version', CURRENT_VERSION);
@@ -31,8 +31,8 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="styles/theme.css?v=559">
-    <link rel="stylesheet" href="styles/components.css?v=559">
+    <link rel="stylesheet" href="styles/theme.css?v=560">
+    <link rel="stylesheet" href="styles/components.css?v=560">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <style>
         /* Bulletproof sizing override for routine editor and xl modals */
@@ -299,14 +299,14 @@
                     </div>
                     <button class="menu-toggle" onclick="toggleMenu()">☰</button>
                     <ul class="nav-links" id="navLinks">
-                        <li><a href="trainer-dashboard.html?v=559" class="nav-link">Dashboard</a></li>
-                        <li><a href="trainer-clients.html?v=559" class="nav-link active">Clientes</a></li>
-                        <li><a href="trainer-routines.html?v=559" class="nav-link">Rutinas</a></li>
-                        <li><a href="trainer-diets.html?v=559" class="nav-link">Dietas</a></li>
-                        <li><a href="trainer-feedbacks.html?v=559" class="nav-link">Revisiones</a></li>
-                        <li><a href="trainer-media.html?v=559" class="nav-link">Biblioteca</a></li>
-                        <li><a href="trainer-appointments.html?v=559" class="nav-link">Agenda</a></li>
-                        <li><a href="trainer-settings.html?v=559" class="nav-link">Configuración</a></li>
+                        <li><a href="trainer-dashboard.html?v=560" class="nav-link">Dashboard</a></li>
+                        <li><a href="trainer-clients.html?v=560" class="nav-link active">Clientes</a></li>
+                        <li><a href="trainer-routines.html?v=560" class="nav-link">Rutinas</a></li>
+                        <li><a href="trainer-diets.html?v=560" class="nav-link">Dietas</a></li>
+                        <li><a href="trainer-feedbacks.html?v=560" class="nav-link">Revisiones</a></li>
+                        <li><a href="trainer-media.html?v=560" class="nav-link">Biblioteca</a></li>
+                        <li><a href="trainer-appointments.html?v=560" class="nav-link">Agenda</a></li>
+                        <li><a href="trainer-settings.html?v=560" class="nav-link">Configuración</a></li>
                         <li><a href="#" onclick="if(typeof AUTH !== 'undefined') { AUTH.signOut() } else { window.location.reload() }; return false;" class="nav-link" style="color:var(--error-color)">🚪 Salir</a></li>
                     </ul>
                 </nav>
@@ -934,7 +934,7 @@
                                     </div>
                                     <div class="card-body">
                                         <div id="stripeNotConfigured" style="display: none;">
-                                            <p class="text-xs text-muted mb-md">Configura tus claves de Stripe en los <a href="trainer-settings.html?v=559" style="color: var(--primary-color);">Ajustes</a> para habilitar cobros automáticos.</p>
+                                            <p class="text-xs text-muted mb-md">Configura tus claves de Stripe en los <a href="trainer-settings.html?v=560" style="color: var(--primary-color);">Ajustes</a> para habilitar cobros automáticos.</p>
                                         </div>
                                         <div id="stripeActiveConfig">
                                             <p class="text-xs text-muted mb-md">Genera un enlace de pago recurrente para este cliente usando tus planes configurados.</p>
@@ -985,23 +985,40 @@
 
     <!-- Supabase SDK & Service -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="js/supabase-service.js?v=559"></script>
+    <script src="js/supabase-service.js?v=560"></script>
 
-    <script src="js/config.js?v=559"></script>
-    <script src="js/auth.js?v=559"></script>
-    <script src="js/sheets.js?v=559"></script>
-    <script src="js/data-models.js?v=559"></script>
-    <script src="js/utils.js?v=559"></script>
-    <script src="js/custom-recipes.js?v=559"></script>
-    <script src="js/custom-exercises.js?v=559"></script>
-    <script src="js/diet-editor-v3.js?v=559"></script>
+    <script src="js/config.js?v=560"></script>
+    <script src="js/auth.js?v=560"></script>
+    <script src="js/sheets.js?v=560"></script>
+    <script src="js/data-models.js?v=560"></script>
+    <script src="js/utils.js?v=560"></script>
+    <script src="js/custom-recipes.js?v=560"></script>
+    <script src="js/custom-exercises.js?v=560"></script>
+    <script src="js/diet-editor-v3.js?v=560"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.29/jspdf.plugin.autotable.min.js"></script>
-    <script src="js/export-utils.js?v=559"></script>
+    <script src="js/export-utils.js?v=560"></script>
     <script>
         const pageUrlParams = new URLSearchParams(window.location.search);
         const clientId = pageUrlParams.get('id');
         let currentClient = null;
+
+        window.toggleCollapsibleSection = function (contentId, headerEl) {
+            const content = document.getElementById(contentId);
+            if (!content) return;
+            const arrow = headerEl.querySelector('.toggle-arrow');
+            if (content.style.display === 'none') {
+                content.style.display = 'block';
+                if (arrow) {
+                    arrow.textContent = '▼';
+                }
+            } else {
+                content.style.display = 'none';
+                if (arrow) {
+                    arrow.textContent = '▶';
+                }
+            }
+        };
 
         function formatDoc(cmd, value = null) {
             document.execCommand(cmd, false, value);
@@ -5134,7 +5151,7 @@
                         <div style="max-width: 800px; margin: 0 auto; border: 1px solid #eee; padding: 30px; border-radius: 8px;">
                             ${content}
                         </div>
-                        <script src="js/custom-recipes.js?v=559"><\/script></body>
+                        <script src="js/custom-recipes.js?v=560"><\/script></body>
                 </html>
             `);
             printWindow.document.close();
@@ -5796,75 +5813,81 @@
 
                     <!-- Personalización Individual del Cliente -->
                     <div style="background: rgba(255,255,255,0.02); border: 1.5px solid rgba(255,255,255,0.06); padding: 15px; border-radius: 12px; margin-bottom: 20px; margin-top: 20px;">
-                        <h4 style="color: var(--primary-color); font-size: 0.95rem; font-weight: 700; margin-top: 0; margin-bottom: 10px; display: flex; align-items: center; gap: 8px;">
+                        <h4 onclick="window.toggleCollapsibleSection('collapsibleContentPersonalizacion', this)" style="color: var(--primary-color); font-size: 0.95rem; font-weight: 700; margin: 0; display: flex; align-items: center; gap: 8px; cursor: pointer; user-select: none;">
                             <span>🎨</span> Personalización Individual
+                            <span class="toggle-arrow" style="margin-left: auto; font-size: 0.8rem; color: #888; transition: transform 0.2s;">▶</span>
                         </h4>
-                        <p class="text-xs text-muted mb-md" style="margin-bottom: 12px; line-height: 1.4; color: #888;">
-                            Si se dejan vacíos, se usarán los valores globales configurados en Ajustes.
-                        </p>
+                        <div id="collapsibleContentPersonalizacion" style="display: none; margin-top: 12px;">
+                            <p class="text-xs text-muted mb-md" style="margin-bottom: 12px; line-height: 1.4; color: #888;">
+                                Si se dejan vacíos, se usarán los valores globales configurados en Ajustes.
+                            </p>
 
-                        <!-- Onboarding Questions Overrides -->
-                        <div style="margin-bottom: 15px;">
-                            <label class="form-label" style="font-weight: 600; font-size: 0.8rem; color: #ccc;">Onboarding (Cuestionario Inicial)</label>
-                            <div id="modalOnboardingQuestionsList" style="display: flex; flex-direction: column; gap: 6px; margin-bottom: 8px;"></div>
-                            <div class="flex gap-xs" style="display: flex; gap: 6px;">
-                                <input type="text" id="newModalOnboardingQuestion" class="form-input form-input-sm" placeholder="Nueva pregunta de bienvenida..." style="flex: 1; font-size: 0.8rem;">
-                                <button type="button" class="btn btn-sm btn-primary" onclick="window.addModalOnboardingQuestion()" style="padding: 0 12px; font-weight: bold;">+</button>
+                            <!-- Onboarding Questions Overrides -->
+                            <div style="margin-bottom: 15px;">
+                                <label class="form-label" style="font-weight: 600; font-size: 0.8rem; color: #ccc;">Onboarding (Cuestionario Inicial)</label>
+                                <div id="modalOnboardingQuestionsList" style="display: flex; flex-direction: column; gap: 6px; margin-bottom: 8px;"></div>
+                                <div class="flex gap-xs" style="display: flex; gap: 6px;">
+                                    <input type="text" id="newModalOnboardingQuestion" class="form-input form-input-sm" placeholder="Nueva pregunta de bienvenida..." style="flex: 1; font-size: 0.8rem;">
+                                    <button type="button" class="btn btn-sm btn-primary" onclick="window.addModalOnboardingQuestion()" style="padding: 0 12px; font-weight: bold;">+</button>
+                                </div>
                             </div>
-                        </div>
 
-                        <!-- Feedback Questions Overrides -->
-                        <div style="margin-bottom: 15px; border-top: 1px dashed rgba(255,255,255,0.05); padding-top: 15px;">
-                            <label class="form-label" style="font-weight: 600; font-size: 0.8rem; color: #ccc;">Preguntas de Revisión (Check-ins)</label>
-                            <div id="modalFeedbackQuestionsList" style="display: flex; flex-direction: column; gap: 6px; margin-bottom: 8px;"></div>
-                            <div class="flex gap-xs" style="display: flex; gap: 6px;">
-                                <input type="text" id="newModalFeedbackQuestion" class="form-input form-input-sm" placeholder="Nueva pregunta de revisión..." style="flex: 1; font-size: 0.8rem;">
-                                <button type="button" class="btn btn-sm btn-primary" onclick="window.addModalFeedbackQuestion()" style="padding: 0 12px; font-weight: bold;">+</button>
+                            <!-- Feedback Questions Overrides -->
+                            <div style="margin-bottom: 15px; border-top: 1px dashed rgba(255,255,255,0.05); padding-top: 15px;">
+                                <label class="form-label" style="font-weight: 600; font-size: 0.8rem; color: #ccc;">Preguntas de Revisión (Check-ins)</label>
+                                <div id="modalFeedbackQuestionsList" style="display: flex; flex-direction: column; gap: 6px; margin-bottom: 8px;"></div>
+                                <div class="flex gap-xs" style="display: flex; gap: 6px;">
+                                    <input type="text" id="newModalFeedbackQuestion" class="form-input form-input-sm" placeholder="Nueva pregunta de revisión..." style="flex: 1; font-size: 0.8rem;">
+                                    <button type="button" class="btn btn-sm btn-primary" onclick="window.addModalFeedbackQuestion()" style="padding: 0 12px; font-weight: bold;">+</button>
+                                </div>
                             </div>
-                        </div>
 
-                        <!-- Perimeters Overrides -->
-                        <div style="border-top: 1px dashed rgba(255,255,255,0.05); padding-top: 15px;">
-                            <label class="form-label" style="font-weight: 600; font-size: 0.8rem; color: #ccc;">Perímetros a Medir</label>
-                            <div id="modalPerimetersList" style="display: flex; flex-direction: column; gap: 6px; margin-bottom: 8px;"></div>
-                            <div class="flex gap-xs" style="display: flex; gap: 6px;">
-                                <input type="text" id="newModalPerimeter" class="form-input form-input-sm" placeholder="Nuevo perímetro (Ej: Cuello)..." style="flex: 1; font-size: 0.8rem;">
-                                <button type="button" class="btn btn-sm btn-primary" onclick="window.addModalPerimeter()" style="padding: 0 12px; font-weight: bold;">+</button>
+                            <!-- Perimeters Overrides -->
+                            <div style="border-top: 1px dashed rgba(255,255,255,0.05); padding-top: 15px;">
+                                <label class="form-label" style="font-weight: 600; font-size: 0.8rem; color: #ccc;">Perímetros a Medir</label>
+                                <div id="modalPerimetersList" style="display: flex; flex-direction: column; gap: 6px; margin-bottom: 8px;"></div>
+                                <div class="flex gap-xs" style="display: flex; gap: 6px;">
+                                    <input type="text" id="newModalPerimeter" class="form-input form-input-sm" placeholder="Nuevo perímetro (Ej: Cuello)..." style="flex: 1; font-size: 0.8rem;">
+                                    <button type="button" class="btn btn-sm btn-primary" onclick="window.addModalPerimeter()" style="padding: 0 12px; font-weight: bold;">+</button>
+                                </div>
                             </div>
                         </div>
                     </div>
 
                     <!-- Datos Fiscales del Cliente -->
                     <div style="background: rgba(255,255,255,0.02); border: 1.5px solid rgba(255,255,255,0.06); padding: 15px; border-radius: 12px; margin-bottom: 20px; margin-top: 15px;">
-                        <h4 style="color: var(--primary-color); font-size: 0.95rem; font-weight: 700; margin-top: 0; margin-bottom: 10px; display: flex; align-items: center; gap: 8px;">
+                        <h4 onclick="window.toggleCollapsibleSection('collapsibleContentFiscal', this)" style="color: var(--primary-color); font-size: 0.95rem; font-weight: 700; margin: 0; display: flex; align-items: center; gap: 8px; cursor: pointer; user-select: none;">
                             <span>📄</span> Datos Fiscales del Cliente
+                            <span class="toggle-arrow" style="margin-left: auto; font-size: 0.8rem; color: #888; transition: transform 0.2s;">▶</span>
                         </h4>
-                        <div class="form-group">
-                            <label class="form-label" style="font-size: 0.8rem; color: #ccc;">NIF / CIF del Cliente</label>
-                            <input type="text" id="editFiscalNif" class="form-input" style="font-size: 0.85rem;" value="${currentClient.fiscalNif || ''}" placeholder="Ej: 12345678Z">
-                        </div>
-                        <div class="form-group">
-                            <label class="form-label" style="font-size: 0.8rem; color: #ccc;">Dirección Fiscal del Cliente</label>
-                            <input type="text" id="editFiscalAddress" class="form-input" style="font-size: 0.85rem;" value="${currentClient.fiscalAddress || ''}" placeholder="Calle, número, piso...">
-                        </div>
-                        <div class="grid grid-2 gap-sm" style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                        <div id="collapsibleContentFiscal" style="display: none; margin-top: 12px;">
                             <div class="form-group">
-                                <label class="form-label" style="font-size: 0.8rem; color: #ccc;">C.P.</label>
-                                <input type="text" id="editFiscalZip" class="form-input" style="font-size: 0.85rem;" value="${currentClient.fiscalZip || ''}" placeholder="00000">
+                                <label class="form-label" style="font-size: 0.8rem; color: #ccc;">NIF / CIF del Cliente</label>
+                                <input type="text" id="editFiscalNif" class="form-input" style="font-size: 0.85rem;" value="${currentClient.fiscalNif || ''}" placeholder="Ej: 12345678Z">
                             </div>
                             <div class="form-group">
-                                <label class="form-label" style="font-size: 0.8rem; color: #ccc;">Población</label>
-                                <input type="text" id="editFiscalCity" class="form-input" style="font-size: 0.85rem;" value="${currentClient.fiscalCity || ''}" placeholder="Ciudad">
+                                <label class="form-label" style="font-size: 0.8rem; color: #ccc;">Dirección Fiscal del Cliente</label>
+                                <input type="text" id="editFiscalAddress" class="form-input" style="font-size: 0.85rem;" value="${currentClient.fiscalAddress || ''}" placeholder="Calle, número, piso...">
                             </div>
-                        </div>
-                        <div class="grid grid-2 gap-sm" style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 10px;">
-                            <div class="form-group">
-                                <label class="form-label" style="font-size: 0.8rem; color: #ccc;">Provincia</label>
-                                <input type="text" id="editFiscalProvince" class="form-input" style="font-size: 0.85rem;" value="${currentClient.fiscalProvince || ''}" placeholder="Provincia">
+                            <div class="grid grid-2 gap-sm" style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                                <div class="form-group">
+                                    <label class="form-label" style="font-size: 0.8rem; color: #ccc;">C.P.</label>
+                                    <input type="text" id="editFiscalZip" class="form-input" style="font-size: 0.85rem;" value="${currentClient.fiscalZip || ''}" placeholder="00000">
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label" style="font-size: 0.8rem; color: #ccc;">Población</label>
+                                    <input type="text" id="editFiscalCity" class="form-input" style="font-size: 0.85rem;" value="${currentClient.fiscalCity || ''}" placeholder="Ciudad">
+                                </div>
                             </div>
-                            <div class="form-group">
-                                <label class="form-label" style="font-size: 0.8rem; color: #ccc;">País</label>
-                                <input type="text" id="editFiscalCountry" class="form-input" style="font-size: 0.85rem;" value="${currentClient.fiscalCountry || 'España'}" placeholder="España">
+                            <div class="grid grid-2 gap-sm" style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 10px;">
+                                <div class="form-group">
+                                    <label class="form-label" style="font-size: 0.8rem; color: #ccc;">Provincia</label>
+                                    <input type="text" id="editFiscalProvince" class="form-input" style="font-size: 0.85rem;" value="${currentClient.fiscalProvince || ''}" placeholder="Provincia">
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label" style="font-size: 0.8rem; color: #ccc;">País</label>
+                                    <input type="text" id="editFiscalCountry" class="form-input" style="font-size: 0.85rem;" value="${currentClient.fiscalCountry || 'España'}" placeholder="España">
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -6888,6 +6911,6 @@
             }
         });
     </script>
-    <script src="js/custom-recipes.js?v=559"></script></body>
+    <script src="js/custom-recipes.js?v=560"></script></body>
 
 </html>
