@@ -912,13 +912,27 @@ window.addFood = function (mealIdx, optionNum) {
         // Guardar en base de datos global de alimentos si no existe
         const existingFood = Foods.getAll().find(f => f.name.toLowerCase() === name.toLowerCase());
         if (!existingFood) {
+            let detectedType = 'g';
+            const qtyStr = String(quantity || '');
+            if (/[a-zA-Z]/.test(qtyStr)) {
+                if (/unidade?s?|uds?|ración|raciones/i.test(qtyStr)) {
+                    detectedType = 'unit';
+                }
+            } else {
+                const n = parseFloat(qtyStr);
+                if (!isNaN(n) && n <= 20) {
+                    if (getWeightPerUnit(name) !== null) {
+                        detectedType = 'unit';
+                    }
+                }
+            }
             Foods.create({
                 name: food.name,
                 calories: food.calories,
                 protein: food.protein,
                 carbs: food.carbs,
                 fat: food.fat,
-                type: 'unit'
+                type: detectedType
             });
         }
     }

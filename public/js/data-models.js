@@ -452,6 +452,75 @@ const getData = () => {
         }
     }
 
+    // 🔥 MIGRACIÓN: Corregir tipo de alimentos y cantidades en dietas que se guardaron erróneamente como unidades
+    if (!localStorage.getItem('v316_fix_food_types_and_diets_v3')) {
+        let modified = false;
+        const knownUnitKeywords = [
+            'plátano', 'banana', 'manzana', 'pera', 'naranja', 'melocotón', 'durazno',
+            'kiwi', 'mandarina', 'limón', 'huevo', 'clara', 'dátil', 'tostada', 'rebanada',
+            'pan', 'tortita', 'tortilla', 'quesito', 'yogur', 'lata', 'atún', 'patata',
+            'papa', 'boniato', 'batata', 'aguacate', 'tomate', 'zanahoria'
+        ];
+
+        // 1. Corregir base de datos de alimentos del entrenador (Foods)
+        if (data.foods && Array.isArray(data.foods)) {
+            data.foods.forEach(food => {
+                if (food.type === 'unit') {
+                    const lowerName = food.name.toLowerCase().trim();
+                    const isKnownUnit = knownUnitKeywords.some(keyword => lowerName.includes(keyword));
+                    if (!isKnownUnit) {
+                        food.type = 'g';
+                        modified = true;
+                        console.log(`🔧 Corregido tipo de alimento de base de datos "${food.name}" de 'unit' a 'g'`);
+                    }
+                }
+            });
+        }
+
+        // 2. Corregir alimentos guardados dentro de las dietas existentes
+        if (data.diets && Array.isArray(data.diets)) {
+            data.diets.forEach(diet => {
+                let dietModified = false;
+                (diet.meals || []).forEach(meal => {
+                    (meal.foods || []).forEach(food => {
+                        if (food.name) {
+                            const name = food.name.toLowerCase().trim();
+                            const isKnownUnit = knownUnitKeywords.some(keyword => name.includes(keyword));
+                            if (!isKnownUnit) {
+                                // Si la cantidad tiene 'ud' o 'uds', o si las calorías son sospechosamente altas (> 1000)
+                                const hasUd = typeof food.quantity === 'string' && /unidade?s?|uds?|ración|raciones/i.test(food.quantity);
+                                const isHighCal = parseFloat(food.calories) > 1000;
+                                
+                                if (hasUd || isHighCal) {
+                                    const qtyNum = parseFloat(food.quantity);
+                                    if (!isNaN(qtyNum) && qtyNum > 0) {
+                                        // Cambiar cantidad a gramos (ej: "15g")
+                                        food.quantity = `${qtyNum}g`;
+                                        
+                                        // Dividir calorías y macros por 100 para corregir el cálculo
+                                        food.calories = Math.round((parseFloat(food.calories) || 0) / 100);
+                                        food.protein = parseFloat(((parseFloat(food.protein) || 0) / 100).toFixed(1));
+                                        food.carbs = parseFloat(((parseFloat(food.carbs) || 0) / 100).toFixed(1));
+                                        food.fat = parseFloat(((parseFloat(food.fat) || 0) / 100).toFixed(1));
+                                        
+                                        dietModified = true;
+                                        modified = true;
+                                        console.log(`🔧 Corregido alimento "${food.name}" en dieta "${diet.name}": cambiado a gramos y corregido macros.`);
+                                    }
+                                }
+                            }
+                        }
+                    });
+                });
+            });
+        }
+
+        if (modified) {
+            try { localStorage.setItem(sKey, JSON.stringify(data)); } catch(e){}
+        }
+        localStorage.setItem('v316_fix_food_types_and_diets_v3', 'true');
+    }
+
     // 🔥 PURGA DE RECETAS NO OFICIALES (Blindaje 145)
     if (data.media && Array.isArray(data.media)) {
         const initialLen = data.media.length;
