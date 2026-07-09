@@ -7,7 +7,7 @@
     <script>
         // Force PWA cache bust / reload
         (function() {
-            const CURRENT_VERSION = '560';
+            const CURRENT_VERSION = '561';
             const savedVersion = localStorage.getItem('app_version');
             if (savedVersion !== CURRENT_VERSION) {
                 localStorage.setItem('app_version', CURRENT_VERSION);
@@ -31,9 +31,9 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="styles/theme.css?v=560">
-    <link rel="stylesheet" href="styles/components.css?v=560">
-    <link rel="stylesheet" href="styles/mobile.css?v=560">
+    <link rel="stylesheet" href="styles/theme.css?v=561">
+    <link rel="stylesheet" href="styles/components.css?v=561">
+    <link rel="stylesheet" href="styles/mobile.css?v=561">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <script>
@@ -104,10 +104,10 @@
                     <span id="brandName">Infinite Coach</span>
                 </div>
                 <ul class="nav-links" id="navLinks">
-                    <li><a href="client-dashboard.html?v=560" class="nav-link active">Inicio</a></li>
-                    <li><a href="client-profile.html?v=560" class="nav-link">Ficha Técnica</a></li>
+                    <li><a href="client-dashboard.html?v=561" class="nav-link active">Inicio</a></li>
+                    <li><a href="client-profile.html?v=561" class="nav-link">Ficha Técnica</a></li>
 
-                    <li><a href="client-login.html?v=560" class="nav-link">Salir</a></li>
+                    <li><a href="client-login.html?v=561" class="nav-link">Salir</a></li>
                 </ul>
                 <button class="menu-toggle" onclick="toggleMenu()" style="margin-left: auto;">☰</button>
             </nav>
@@ -210,12 +210,12 @@
 
     <!-- Supabase SDK & Service -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="js/supabase-service.js?v=560"></script>
+    <script src="js/supabase-service.js?v=561"></script>
 
-    <script src="js/config.js?v=560"></script>
-    <script src="js/data-models.js?v=560"></script>
-    <script src="js/utils.js?v=560"></script>
-    <script src="js/custom-exercises.js?v=560"></script>
+    <script src="js/config.js?v=561"></script>
+    <script src="js/data-models.js?v=561"></script>
+    <script src="js/utils.js?v=561"></script>
+    <script src="js/custom-exercises.js?v=561"></script>
     <script>
         // CLIENT INITIALIZATION
         const dashboardUrlParams = new URLSearchParams(window.location.search);
@@ -414,8 +414,41 @@
                             }
                         } catch(errQuota) { console.warn('Error inside quota button render:', errQuota); }
 
-                        // Onboarding desactivado — el overlay siempre permanece oculto
-                        try { const oo = document.getElementById('onboardingOverlay'); if (oo) oo.style.display = 'none'; } catch(e) {}
+                        // Verificar Onboarding (Cuestionario Inicial) - Auto-sanar clientes veteranos
+                        try {
+                            const onboardingOverlay = document.getElementById('onboardingOverlay');
+                            if (onboardingOverlay) {
+                                // 1. Determinar de forma inteligente si es un cliente veterano para evitar bloquearle
+                                const hasWeightHistory = client.weightHistory && client.weightHistory.length > 0;
+                                const hasAssignedRoutine = !!client.assignedRoutine || !!client.activeBlockId;
+                                const hasAssignedDiets = client.assignedDiets && client.assignedDiets.length > 0;
+                                
+                                const isVeteran = hasWeightHistory || hasAssignedRoutine || hasAssignedDiets;
+
+                                if (isVeteran && client.initialSetupDone !== true && client.initialSetupDone !== 'true') {
+                                    // Si es veterano pero no tiene la marca, se la ponemos en segundo plano sin molestarle
+                                    client.initialSetupDone = true;
+                                    Clients.update(client.id, { initialSetupDone: true });
+                                    if (window.syncFromCloud) {
+                                        window.syncFromCloud().catch(() => {});
+                                    }
+                                }
+
+                                // 2. Mostrar onboarding solo si es un cliente nuevo real
+                                if (withOnboardingCheck && !isVeteran && client.initialSetupDone !== true && client.initialSetupDone !== 'true') {
+                                    console.log("[Onboarding Check] Cliente nuevo detectado. Mostrando cuestionario...");
+                                    onboardingOverlay.style.display = 'flex';
+                                    try {
+                                        initOnboardingForm(client);
+                                    } catch (errInit) {
+                                        console.error("[Onboarding Check] Error al iniciar formulario:", errInit);
+                                    }
+                                    return; // Bloquear ejecución posterior
+                                } else if (client.initialSetupDone === true || client.initialSetupDone === 'true') {
+                                    onboardingOverlay.style.display = 'none';
+                                }
+                            }
+                        } catch(errOnboarding) { console.warn('Error in onboarding check:', errOnboarding); }
 
                         // Verificar bloqueos de acceso (Opción 3)
                         try {
@@ -1099,7 +1132,7 @@
     </style>
 
 
-    <script src="js/custom-recipes.js?v=560"></script>
-    <script src="js/pwa-install.js?v=560"></script>
+    <script src="js/custom-recipes.js?v=561"></script>
+    <script src="js/pwa-install.js?v=561"></script>
 </body>
 </html>
