@@ -31,7 +31,7 @@
 
         // Force PWA cache bust / reload
         (function() {
-            const CURRENT_VERSION = '561';
+            const CURRENT_VERSION = '562';
             const savedVersion = localStorage.getItem('app_version');
             if (savedVersion !== CURRENT_VERSION) {
                 localStorage.setItem('app_version', CURRENT_VERSION);
@@ -57,8 +57,8 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="styles/theme.css?v=561">
-    <link rel="stylesheet" href="styles/components.css?v=561">
+    <link rel="stylesheet" href="styles/theme.css?v=562">
+    <link rel="stylesheet" href="styles/components.css?v=562">
     <style>
         .settings-section {
             margin-bottom: var(--spacing-xl);
@@ -139,14 +139,14 @@
                 </div>
                 <button class="menu-toggle" onclick="toggleMenu()">☰</button>
                 <ul class="nav-links" id="navLinks">
-                    <li><a href="trainer-dashboard.html?v=561" class="nav-link">Dashboard</a></li>
-                    <li><a href="trainer-clients.html?v=561" class="nav-link">Clientes</a></li>
-                    <li><a href="trainer-routines.html?v=561" class="nav-link">Rutinas</a></li>
-                    <li><a href="trainer-diets.html?v=561" class="nav-link">Dietas</a></li>
-                    <li><a href="trainer-feedbacks.html?v=561" class="nav-link">Revisiones</a></li>
-                    <li><a href="trainer-media.html?v=561" class="nav-link">Biblioteca</a></li>
-                    <li><a href="trainer-appointments.html?v=561" class="nav-link">Agenda</a></li>
-                    <li><a href="trainer-settings.html?v=561" class="nav-link active">Configuración</a></li>
+                    <li><a href="trainer-dashboard.html?v=562" class="nav-link">Dashboard</a></li>
+                    <li><a href="trainer-clients.html?v=562" class="nav-link">Clientes</a></li>
+                    <li><a href="trainer-routines.html?v=562" class="nav-link">Rutinas</a></li>
+                    <li><a href="trainer-diets.html?v=562" class="nav-link">Dietas</a></li>
+                    <li><a href="trainer-feedbacks.html?v=562" class="nav-link">Revisiones</a></li>
+                    <li><a href="trainer-media.html?v=562" class="nav-link">Biblioteca</a></li>
+                    <li><a href="trainer-appointments.html?v=562" class="nav-link">Agenda</a></li>
+                    <li><a href="trainer-settings.html?v=562" class="nav-link active">Configuración</a></li>
                     <li><a href="#" onclick="if(typeof AUTH !== 'undefined') { AUTH.signOut() } else { window.location.reload() }; return false;" class="nav-link" style="color:var(--error-color)">🚪 Salir</a></li>
                 </ul>
             </nav>
@@ -605,8 +605,17 @@
                             <h2 class="card-title">📋 Cuestionario de Onboarding</h2>
                         </div>
                         <div class="card-body">
-                            <p class="text-xs text-muted mb-md">Configura preguntas personalizadas adicionales que tus clientes deberán responder obligatoriamente la primera vez que accedan a la aplicación.</p>
+                            <p class="text-xs text-muted mb-md">Configura si deseas activar el cuestionario inicial y las preguntas personalizadas adicionales que tus clientes deberán responder obligatoriamente la primera vez que accedan a la aplicación.</p>
                             
+                            <div class="checkbox-group mb-lg" style="margin-bottom: 20px;">
+                                <label class="checkbox-label" style="font-weight: 700; color: #fff; display: flex; align-items: center; gap: 8px;">
+                                    <input type="checkbox" id="enableOnboardingToggle"> Habilitar Proceso de Onboarding para Nuevos Clientes
+                                </label>
+                                <p class="text-xs text-muted" style="margin-top: 4px; margin-left: 24px; color: #888;">
+                                    Si está desactivado (opción por defecto), los nuevos clientes no tendrán que rellenar el formulario de bienvenida y accederán directamente a la aplicación.
+                                </p>
+                            </div>
+
                             <div class="mb-lg">
                                 <label class="form-label">Preguntas de Onboarding Personalizadas</label>
                                 <div id="onboardingQuestionsList" class="flex-col gap-xs mb-md">
@@ -812,16 +821,16 @@
 
     <!-- Supabase SDK & Service -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="js/supabase-service.js?v=561"></script>
+    <script src="js/supabase-service.js?v=562"></script>
 
     <!-- UI Scripts -->
-    <script src="js/config.js?v=561"></script>
-    <script src="js/auth.js?v=561"></script>
-    <script src="js/sheets.js?v=561"></script>
-    <script src="js/data-models.js?v=561"></script>
-    <script src="js/cloud-storage.js?v=561"></script>
-    <script src="js/utils.js?v=561"></script>
-    <script src="js/excel-manager.js?v=561"></script>
+    <script src="js/config.js?v=562"></script>
+    <script src="js/auth.js?v=562"></script>
+    <script src="js/sheets.js?v=562"></script>
+    <script src="js/data-models.js?v=562"></script>
+    <script src="js/cloud-storage.js?v=562"></script>
+    <script src="js/utils.js?v=562"></script>
+    <script src="js/excel-manager.js?v=562"></script>
     <script>
         // Global Variables
         let feedbackQuestions = [];
@@ -1221,6 +1230,10 @@
             if (document.getElementById('clientShowFeedback')) document.getElementById('clientShowFeedback').checked = clientSettings.showFeedback !== false;
             if (document.getElementById('clientShowLibrary')) document.getElementById('clientShowLibrary').checked = clientSettings.showLibrary !== false;
 
+            if (document.getElementById('enableOnboardingToggle')) {
+                document.getElementById('enableOnboardingToggle').checked = b.enableOnboarding === true || b.enableOnboarding === 'true';
+            }
+
             // WhatsApp templates loading
             const templates = b.whatsappTemplates || {};
             if (document.getElementById('waGeneralChat')) document.getElementById('waGeneralChat').value = templates.generalChat || 'Hola {name}, soy {trainerName}...';
@@ -1365,7 +1378,8 @@
                         showEvolution: document.getElementById('clientShowEvolution').checked,
                         showFeedback: document.getElementById('clientShowFeedback').checked,
                         showLibrary: document.getElementById('clientShowLibrary').checked
-                    }
+                    },
+                    enableOnboarding: document.getElementById('enableOnboardingToggle') ? document.getElementById('enableOnboardingToggle').checked : false
                 };
                 
                 BrandConfig.set(updated);
@@ -1437,7 +1451,8 @@
                         showEvolution: document.getElementById('clientShowEvolution').checked,
                         showFeedback: document.getElementById('clientShowFeedback').checked,
                         showLibrary: document.getElementById('clientShowLibrary').checked
-                    }
+                    },
+                    enableOnboarding: document.getElementById('enableOnboardingToggle') ? document.getElementById('enableOnboardingToggle').checked : false
                 };
                 BrandConfig.set(updated);
                 BrandConfig.applyTheme();
@@ -1543,7 +1558,7 @@
                 'pdfShowCalories', 'pdfShowMacros', 'clientShowVideos', 'clientShowCalories',
                 'clientShowMacros', 'clientShowRIR', 'clientShowWeightHabit',
                 'clientShowDiet', 'clientShowRoutine', 'clientShowHabits', 'clientShowEvolution', 'clientShowFeedback',
-                'clientShowLibrary', 'waGeneralChat', 'waPaymentReminder', 'waRenewalReminder', 'waReviewReception', 'waAppointmentCoordination'
+                'clientShowLibrary', 'waGeneralChat', 'waPaymentReminder', 'waRenewalReminder', 'waReviewReception', 'waAppointmentCoordination', 'enableOnboardingToggle'
             ].includes(id)) {
                 window.triggerSilentSaveBrand();
             } else if (['stripePublicKey', 'stripeSecretKey'].includes(id)) {
@@ -1569,7 +1584,7 @@
                 'pdfShowCalories', 'pdfShowMacros', 'clientShowVideos', 'clientShowCalories',
                 'clientShowMacros', 'clientShowRIR', 'clientShowWeightHabit',
                 'clientShowDiet', 'clientShowRoutine', 'clientShowHabits', 'clientShowEvolution', 'clientShowFeedback',
-                'clientShowLibrary', 'waGeneralChat', 'waPaymentReminder', 'waRenewalReminder', 'waReviewReception', 'waAppointmentCoordination'
+                'clientShowLibrary', 'waGeneralChat', 'waPaymentReminder', 'waRenewalReminder', 'waReviewReception', 'waAppointmentCoordination', 'enableOnboardingToggle'
             ].includes(id)) {
                 window.triggerSilentSaveBrand();
             } else if (['stripePublicKey', 'stripeSecretKey'].includes(id)) {
@@ -2195,8 +2210,12 @@
         }
 
         function saveOnboardingQuestions() {
-            BrandConfig.set({ onboardingQuestions: onboardingQuestions });
-            showToast('Preguntas de onboarding guardadas', 'success');
+            const enableVal = document.getElementById('enableOnboardingToggle') ? document.getElementById('enableOnboardingToggle').checked : false;
+            BrandConfig.set({ 
+                onboardingQuestions: onboardingQuestions,
+                enableOnboarding: enableVal
+            });
+            showToast('Ajustes de Onboarding guardados', 'success');
             setTimeout(() => location.reload(), 500);
         }
 
@@ -2759,6 +2778,6 @@
             }
         };
     </script>
-    <script src="js/custom-recipes.js?v=561" defer></script></body>
+    <script src="js/custom-recipes.js?v=562" defer></script></body>
 
 </html>

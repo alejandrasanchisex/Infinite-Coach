@@ -5,7 +5,7 @@
     <script>
         // Force PWA cache bust / reload
         (function() {
-            const CURRENT_VERSION = '561';
+            const CURRENT_VERSION = '562';
             const savedVersion = localStorage.getItem('app_version');
             if (savedVersion !== CURRENT_VERSION) {
                 localStorage.setItem('app_version', CURRENT_VERSION);
@@ -31,8 +31,8 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="styles/theme.css?v=561">
-    <link rel="stylesheet" href="styles/components.css?v=561">
+    <link rel="stylesheet" href="styles/theme.css?v=562">
+    <link rel="stylesheet" href="styles/components.css?v=562">
 </head>
 
 <body>
@@ -61,14 +61,14 @@
                     </div>
                     <button class="menu-toggle" onclick="toggleMenu()">☰</button>
                     <ul class="nav-links" id="navLinks">
-                        <li><a href="trainer-dashboard.html?v=561" class="nav-link active">Dashboard</a></li>
-                        <li><a href="trainer-clients.html?v=561" class="nav-link">Clientes</a></li>
-                        <li><a href="trainer-routines.html?v=561" class="nav-link">Rutinas</a></li>
-                        <li><a href="trainer-diets.html?v=561" class="nav-link">Dietas</a></li>
-                        <li><a href="trainer-feedbacks.html?v=561" class="nav-link">Revisiones</a></li>
-                        <li><a href="trainer-media.html?v=561" class="nav-link">Biblioteca</a></li>
-                        <li><a href="trainer-appointments.html?v=561" class="nav-link">Agenda</a></li>
-                        <li><a href="trainer-settings.html?v=561" class="nav-link">Configuración</a></li>
+                        <li><a href="trainer-dashboard.html?v=562" class="nav-link active">Dashboard</a></li>
+                        <li><a href="trainer-clients.html?v=562" class="nav-link">Clientes</a></li>
+                        <li><a href="trainer-routines.html?v=562" class="nav-link">Rutinas</a></li>
+                        <li><a href="trainer-diets.html?v=562" class="nav-link">Dietas</a></li>
+                        <li><a href="trainer-feedbacks.html?v=562" class="nav-link">Revisiones</a></li>
+                        <li><a href="trainer-media.html?v=562" class="nav-link">Biblioteca</a></li>
+                        <li><a href="trainer-appointments.html?v=562" class="nav-link">Agenda</a></li>
+                        <li><a href="trainer-settings.html?v=562" class="nav-link">Configuración</a></li>
                         <li><a href="#" onclick="if(typeof AUTH !== 'undefined') { AUTH.signOut() } else { window.location.reload() }; return false;" class="nav-link" style="color:var(--error-color)">🚪 Salir</a></li>
                     </ul>
                 </nav>
@@ -269,14 +269,14 @@
 
     <!-- Supabase SDK & Service -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="js/supabase-service.js?v=561"></script>
+    <script src="js/supabase-service.js?v=562"></script>
 
     <!-- UI Scripts -->
-    <script src="js/config.js?v=561"></script>
-    <script src="js/auth.js?v=561"></script>
-    <script src="js/sheets.js?v=561"></script>
-    <script src="js/data-models.js?v=561"></script>
-    <script src="js/utils.js?v=561"></script>
+    <script src="js/config.js?v=562"></script>
+    <script src="js/auth.js?v=562"></script>
+    <script src="js/sheets.js?v=562"></script>
+    <script src="js/data-models.js?v=562"></script>
+    <script src="js/utils.js?v=562"></script>
     <script>
         // Branding is handled via onGoogleAuthSuccess() and global listeners
 
@@ -1503,6 +1503,6 @@
             }
         }
     </script>
-    <script src="js/custom-recipes.js?v=561"></script></body>
+    <script src="js/custom-recipes.js?v=562"></script></body>
 
 </html>
