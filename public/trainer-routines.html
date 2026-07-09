@@ -4,7 +4,7 @@
 <head>
     <script>
         (function() {
-            const CURRENT_VERSION = '562';
+            const CURRENT_VERSION = '563';
             const savedVersion = localStorage.getItem('app_version');
             if (savedVersion !== CURRENT_VERSION) {
                 localStorage.setItem('app_version', CURRENT_VERSION);
@@ -21,8 +21,8 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="styles/theme.css?v=562">
-    <link rel="stylesheet" href="styles/components.css?v=562">
+    <link rel="stylesheet" href="styles/theme.css?v=563">
+    <link rel="stylesheet" href="styles/components.css?v=563">
     <style>
         #inlineEditorSection { display: none; animation: fadeInUp 0.25s ease; }
         @keyframes fadeInUp { from{opacity:0;transform:translateY(12px)} to{opacity:1;transform:translateY(0)} }
@@ -86,14 +86,14 @@
                     </div>
                     <button class="menu-toggle" onclick="toggleMenu()">☰</button>
                     <ul class="nav-links" id="navLinks">
-                        <li><a href="trainer-dashboard.html?v=562" class="nav-link">Dashboard</a></li>
-                        <li><a href="trainer-clients.html?v=562" class="nav-link">Clientes</a></li>
-                        <li><a href="trainer-routines.html?v=562" class="nav-link active">Rutinas</a></li>
-                        <li><a href="trainer-diets.html?v=562" class="nav-link">Dietas</a></li>
-                        <li><a href="trainer-feedbacks.html?v=562" class="nav-link">Revisiones</a></li>
-                        <li><a href="trainer-media.html?v=562" class="nav-link">Biblioteca</a></li>
-                        <li><a href="trainer-appointments.html?v=562" class="nav-link">Agenda</a></li>
-                        <li><a href="trainer-settings.html?v=562" class="nav-link">Configuración</a></li>
+                        <li><a href="trainer-dashboard.html?v=563" class="nav-link">Dashboard</a></li>
+                        <li><a href="trainer-clients.html?v=563" class="nav-link">Clientes</a></li>
+                        <li><a href="trainer-routines.html?v=563" class="nav-link active">Rutinas</a></li>
+                        <li><a href="trainer-diets.html?v=563" class="nav-link">Dietas</a></li>
+                        <li><a href="trainer-feedbacks.html?v=563" class="nav-link">Revisiones</a></li>
+                        <li><a href="trainer-media.html?v=563" class="nav-link">Biblioteca</a></li>
+                        <li><a href="trainer-appointments.html?v=563" class="nav-link">Agenda</a></li>
+                        <li><a href="trainer-settings.html?v=563" class="nav-link">Configuración</a></li>
                         <li><a href="#" onclick="if(typeof AUTH!=='undefined'){AUTH.signOut()}else{window.location.reload()};return false;" class="nav-link" style="color:var(--error-color)">🚪 Salir</a></li>
                     </ul>
                 </nav>
@@ -158,6 +158,17 @@
                         </div>
                     </div>
 
+                    <!-- Weeks bar -->
+                    <div id="inlineWeeksBar" style="display:flex;align-items:center;gap:8px;margin-bottom:16px;background:rgba(255,255,255,0.02);padding:10px;border-radius:12px;border:1px solid rgba(255,255,255,0.05);overflow-x:auto;">
+                        <!-- Rendered dynamically -->
+                    </div>
+
+                    <!-- Week name editor -->
+                    <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px;">
+                        <span style="font-size:0.85rem;color:var(--text-muted);font-weight:700;">Nombre de la semana activa:</span>
+                        <input type="text" id="inlineWeekName" class="form-input" placeholder="Ej: Semana 1 - Adaptación" oninput="window.updateWeekName(this.value)" style="font-size:0.85rem;padding:6px 12px;width:240px;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.1);color:#fff;border-radius:8px;">
+                    </div>
+
                     <!-- Editor body -->
                     <div style="display:flex;gap:24px;">
 
@@ -183,13 +194,13 @@
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="js/supabase-service.js?v=562"></script>
-    <script src="js/config.js?v=562"></script>
-    <script src="js/auth.js?v=562"></script>
-    <script src="js/sheets.js?v=562"></script>
-    <script src="js/data-models.js?v=562"></script>
-    <script src="js/utils.js?v=562"></script>
-    <script src="js/custom-exercises.js?v=562"></script>
+    <script src="js/supabase-service.js?v=563"></script>
+    <script src="js/config.js?v=563"></script>
+    <script src="js/auth.js?v=563"></script>
+    <script src="js/sheets.js?v=563"></script>
+    <script src="js/data-models.js?v=563"></script>
+    <script src="js/utils.js?v=563"></script>
+    <script src="js/custom-exercises.js?v=563"></script>
     <script>
         // Brand
         if (typeof BrandConfig !== 'undefined' && typeof BrandConfig.applyTheme === 'function') BrandConfig.applyTheme();
@@ -410,10 +421,48 @@
             document.getElementById('routineExercisesList').innerHTML = all.map(ex => `<option value="${ex.name}">${ex.name} (${ex.group})</option>`).join('');
         }
 
+        let activeWeekIdx = 0;
+
         window.openInlineEditor = function(id) {
             const routine = Routines.getById(id);
             if (!routine) return showToast('Plantilla no encontrada','error');
             editingRoutine = JSON.parse(JSON.stringify(routine));
+            
+            // Initialize weeks structure if not present (legacy template)
+            if (!editingRoutine.weeks || editingRoutine.weeks.length === 0) {
+                const daysByWeek = {};
+                (editingRoutine.days || []).forEach(day => {
+                    const wNum = day.weekNumber || 1;
+                    if (!daysByWeek[wNum]) daysByWeek[wNum] = [];
+                    daysByWeek[wNum].push(day);
+                });
+                const wNumbers = Object.keys(daysByWeek).map(Number).sort((a,b)=>a-b);
+                
+                if (wNumbers.length > 0) {
+                    editingRoutine.weeks = wNumbers.map(wNum => {
+                        return {
+                            id: 'week_' + generateUUID(),
+                            name: daysByWeek[wNum][0]?.weekName || `Semana ${wNum}`,
+                            days: daysByWeek[wNum].map(d => {
+                                const cleanDay = { ...d };
+                                delete cleanDay.weekNumber;
+                                delete cleanDay.weekName;
+                                return cleanDay;
+                            })
+                        };
+                    });
+                } else {
+                    editingRoutine.weeks = [
+                        {
+                            id: 'week_' + generateUUID(),
+                            name: 'Semana 1',
+                            days: editingRoutine.days || []
+                        }
+                    ];
+                }
+            }
+
+            activeWeekIdx = 0;
             activeInlineDayIdx = 0;
             document.getElementById('listSection').style.display = 'none';
             document.getElementById('inlineEditorSection').style.display = 'block';
@@ -430,21 +479,97 @@
             loadRoutines();
         }
 
-        function renderInlineEditor() { renderInlineDayTabs(); renderInlineDayContent(); }
+        function renderInlineEditor() { 
+            renderInlineWeeksBar(); 
+            renderInlineDayTabs(); 
+            renderInlineDayContent(); 
+        }
+
+        function renderInlineWeeksBar() {
+            const container = document.getElementById('inlineWeeksBar');
+            if (!container) return;
+            const weeks = editingRoutine.weeks || [];
+            
+            // Update active week input name value
+            const weekNameInput = document.getElementById('inlineWeekName');
+            if (weekNameInput && weeks[activeWeekIdx]) {
+                weekNameInput.value = weeks[activeWeekIdx].name || '';
+            }
+
+            container.innerHTML = `
+                <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;width:100%;">
+                    ${weeks.map((w, idx) => `
+                        <div class="week-tab ${idx === activeWeekIdx ? 'active' : ''}" onclick="window.selectWeek(${idx})" style="padding:8px 16px;border-radius:8px;background:${idx === activeWeekIdx ? 'var(--primary-color)' : 'rgba(255,255,255,0.04)'};color:${idx === activeWeekIdx ? '#000' : '#ccc'};font-weight:700;font-size:0.85rem;cursor:pointer;display:flex;align-items:center;gap:8px;transition:all 0.2s;border:1px solid ${idx === activeWeekIdx ? 'var(--primary-color)' : 'rgba(255,255,255,0.08)'};">
+                            <span>${w.name || `Semana ${idx + 1}`}</span>
+                            ${weeks.length > 1 ? `<span onclick="event.stopPropagation(); window.removeWeek(${idx});" style="font-size:0.75rem;opacity:0.6;cursor:pointer;" onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0.6'">❌</span>` : ''}
+                        </div>
+                    `).join('')}
+                    <button onclick="window.addWeek()" class="btn btn-sm btn-outline" style="padding:6px 12px;font-size:0.8rem;border-style:dashed;border-color:rgba(255,255,255,0.25);color:#fff;">+ Nueva Semana</button>
+                </div>
+            `;
+        }
+
+        window.selectWeek = function(idx) {
+            activeWeekIdx = idx;
+            activeInlineDayIdx = 0;
+            renderInlineEditor();
+        }
+
+        window.addWeek = function() {
+            if (!editingRoutine.weeks) editingRoutine.weeks = [];
+            const wNum = editingRoutine.weeks.length + 1;
+            editingRoutine.weeks.push({
+                id: 'week_' + generateUUID(),
+                name: `Semana ${wNum}`,
+                days: []
+            });
+            activeWeekIdx = editingRoutine.weeks.length - 1;
+            activeInlineDayIdx = 0;
+            renderInlineEditor();
+            window.autosaveInlineRoutine();
+        }
+
+        window.removeWeek = function(idx) {
+            if (!confirm(`¿Eliminar la Semana ${idx + 1} y todas sus sesiones?`)) return;
+            editingRoutine.weeks.splice(idx, 1);
+            // Re-index week names if they are default
+            editingRoutine.weeks.forEach((w, i) => {
+                if (w.name.startsWith('Semana ')) {
+                    w.name = `Semana ${i + 1}`;
+                }
+            });
+            activeWeekIdx = Math.max(0, idx - 1);
+            activeInlineDayIdx = 0;
+            renderInlineEditor();
+            window.autosaveInlineRoutine();
+        }
+
+        window.updateWeekName = function(val) {
+            const week = editingRoutine.weeks[activeWeekIdx];
+            if (week) {
+                week.name = val;
+                renderInlineWeeksBar();
+                window.autosaveInlineRoutine();
+            }
+        }
 
         function renderInlineDayTabs() {
             const tabs = document.getElementById('inlineDayTabs');
-            const days = editingRoutine.days || [];
-            if (!days.length) { tabs.innerHTML = `<div style="font-size:0.78rem;color:var(--text-muted);text-align:center;padding:16px 0;">Pulsa + para añadir una sesión</div>`; return; }
+            if (!tabs) return;
+            const week = editingRoutine.weeks[activeWeekIdx];
+            const days = week ? (week.days || []) : [];
+            if (!days.length) { tabs.innerHTML = `<div style="font-size:0.78rem;color:var(--text-muted);text-align:center;padding:16px 0;width:100%;">Pulsa + para añadir una sesión</div>`; return; }
             tabs.innerHTML = days.map((d,i) => `<div class="day-sidebar-item ${i===activeInlineDayIdx?'active':''}" onclick="setInlineDay(${i})">${d.name||'Día '+(i+1)}</div>`).join('');
         }
 
         function renderInlineDayContent() {
             const container = document.getElementById('inlineDayContent');
-            const days = editingRoutine.days || [];
+            if (!container) return;
+            const week = editingRoutine.weeks[activeWeekIdx];
+            const days = week ? (week.days || []) : [];
             const day = days[activeInlineDayIdx];
             if (!day) {
-                container.innerHTML = `<div class="card p-lg text-center" style="opacity:0.5;"><p>No hay sesiones. Pulsa <strong>+</strong> para crear la primera.</p></div>`;
+                container.innerHTML = `<div class="card p-lg text-center" style="opacity:0.5;"><p>No hay sesiones en esta semana. Pulsa <strong>+</strong> para crear la primera.</p></div>`;
                 return;
             }
             const exercises = day.exercises || [];
@@ -452,16 +577,16 @@
                 <div class="card p-md" style="background:linear-gradient(135deg,rgba(0,217,255,0.06) 0%,rgba(0,217,255,0.02) 100%);border:1px solid rgba(0,217,255,0.15);border-radius:12px;">
                     <!-- Day header -->
                     <div class="flex-between align-center mb-md">
-                        <div style="display:flex;align-items:center;gap:12px;">
+                        <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;">
                             <div style="background:var(--accent-color,#ff6b6b);color:#fff;font-weight:800;padding:4px 10px;border-radius:6px;font-size:0.9rem;">D${activeInlineDayIdx+1}</div>
                             <input type="text" id="inlineDayName" class="form-input" value="${(day.name||'').replace(/"/g,'&quot;')}" placeholder="Nombre del día (Ej: Glúteo, Empuje…)"
-                                onchange="updateInlineDayNameVal(${activeInlineDayIdx},this.value)"
+                                onchange="window.updateInlineDayNameVal(${activeInlineDayIdx},this.value)"
                                 style="font-size:1rem;font-weight:700;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);min-width:240px;">
                         </div>
                         <div style="display:flex;align-items:center;gap:4px;">
-                            <button onclick="moveInlineDayByIdx(-1)" class="btn btn-sm btn-outline" title="Mover Izquierda" style="padding: 6px 10px; ${activeInlineDayIdx === 0 ? 'opacity: 0.3; pointer-events: none;' : ''}" ${activeInlineDayIdx === 0 ? 'disabled' : ''}>◀</button>
-                            <button onclick="moveInlineDayByIdx(1)" class="btn btn-sm btn-outline" title="Mover Derecha" style="padding: 6px 10px; ${activeInlineDayIdx === days.length - 1 ? 'opacity: 0.3; pointer-events: none;' : ''}" ${activeInlineDayIdx === days.length - 1 ? 'disabled' : ''}>▶</button>
-                            <button onclick="removeInlineDayByIdx(${activeInlineDayIdx})" class="btn btn-sm btn-outline" style="color:var(--error-color);border-color:rgba(239,68,68,0.25);">🗑️ Eliminar Día</button>
+                            <button onclick="window.moveInlineDayByIdx(-1)" class="btn btn-sm btn-outline" title="Mover Izquierda" style="padding: 6px 10px; ${activeInlineDayIdx === 0 ? 'opacity: 0.3; pointer-events: none;' : ''}" ${activeInlineDayIdx === 0 ? 'disabled' : ''}>◀</button>
+                            <button onclick="window.moveInlineDayByIdx(1)" class="btn btn-sm btn-outline" title="Mover Derecha" style="padding: 6px 10px; ${activeInlineDayIdx === days.length - 1 ? 'opacity: 0.3; pointer-events: none;' : ''}" ${activeInlineDayIdx === days.length - 1 ? 'disabled' : ''}>▶</button>
+                            <button onclick="window.removeInlineDayByIdx(${activeInlineDayIdx})" class="btn btn-sm btn-outline" style="color:var(--error-color);border-color:rgba(239,68,68,0.25);">🗑️ Eliminar Día</button>
                         </div>
                     </div>
 
@@ -482,8 +607,8 @@
 
                     <!-- Buttons -->
                     <div style="display:flex;gap:12px;margin-top:16px;">
-                        <button class="btn btn-sm btn-outline" onclick="addInlineExercise()" style="flex:2;border-style:dashed;border-color:rgba(0,217,255,0.3);color:var(--primary-color);">➕ Añadir Ejercicio</button>
-                        <button class="btn btn-sm btn-primary" onclick="showAnatomicalMapModal()" style="flex:1;display:flex;align-items:center;justify-content:center;gap:6px;">🗺️ Mapa Muscular</button>
+                        <button class="btn btn-sm btn-outline" onclick="window.addInlineExercise()" style="flex:2;border-style:dashed;border-color:rgba(0,217,255,0.3);color:var(--primary-color);">➕ Añadir Ejercicio</button>
+                        <button class="btn btn-sm btn-primary" onclick="window.showAnatomicalMapModal()" style="flex:1;display:flex;align-items:center;justify-content:center;gap:6px;">🗺️ Mapa Muscular</button>
                     </div>
                 </div>`;
         }
@@ -523,13 +648,17 @@
             const dayNameEl = document.getElementById('inlineDayName');
             if (nameEl) editingRoutine.name = nameEl.value.trim() || editingRoutine.name;
             if (descEl) editingRoutine.description = descEl.value.trim();
-            if (dayNameEl && editingRoutine.days[activeInlineDayIdx]) {
-                editingRoutine.days[activeInlineDayIdx].name = dayNameEl.value;
+            
+            const week = editingRoutine.weeks ? editingRoutine.weeks[activeWeekIdx] : null;
+            if (week && dayNameEl && week.days[activeInlineDayIdx]) {
+                week.days[activeInlineDayIdx].name = dayNameEl.value;
             }
+            
             // Capture exercise row values live
+            const weekDays = week ? (week.days || []) : [];
             document.querySelectorAll('#inlineExerciseRows .ex-grid').forEach((row, i) => {
                 const inputs = row.querySelectorAll('input');
-                const exArr = editingRoutine.days[activeInlineDayIdx]?.exercises;
+                const exArr = weekDays[activeInlineDayIdx]?.exercises;
                 if (inputs.length >= 5 && exArr && exArr[i]) {
                     exArr[i].name      = inputs[0].value;
                     exArr[i].notes     = inputs[1].value;
@@ -539,6 +668,22 @@
                 }
             });
             if (!editingRoutine.name) return; // Name is empty, skip save
+            
+            // Flatten weeks into days array for compatibility with older displays
+            editingRoutine.days = [];
+            (editingRoutine.weeks || []).forEach((w, wIdx) => {
+                (w.days || []).forEach(day => {
+                    editingRoutine.days.push({
+                        ...day,
+                        weekNumber: wIdx + 1,
+                        weekName: w.name || `Semana ${wIdx + 1}`
+                    });
+                });
+            });
+            
+            // Calculate total weeks duration
+            editingRoutine.duration = `${editingRoutine.weeks ? editingRoutine.weeks.length : 1} semanas`;
+            
             try {
                 Routines.update(editingRoutine.id, editingRoutine);
             } catch(e) {
@@ -547,58 +692,79 @@
         };
 
         window.addInlineDay = function() {
-            if (!editingRoutine.days) editingRoutine.days = [];
-            editingRoutine.days.push({ name:`Día ${editingRoutine.days.length+1}`, exercises:[] });
-            activeInlineDayIdx = editingRoutine.days.length - 1;
+            const week = editingRoutine.weeks[activeWeekIdx];
+            if (!week) return;
+            if (!week.days) week.days = [];
+            week.days.push({ name:`Día ${week.days.length+1}`, exercises:[] });
+            activeInlineDayIdx = week.days.length - 1;
             renderInlineEditor();
             window.autosaveInlineRoutine();
         }
+
         window.removeInlineDayByIdx = function(idx) {
+            const week = editingRoutine.weeks[activeWeekIdx];
+            if (!week || !week.days) return;
             if (!confirm('¿Eliminar esta sesión?')) return;
-            editingRoutine.days.splice(idx, 1);
+            week.days.splice(idx, 1);
             activeInlineDayIdx = Math.max(0, idx - 1);
             renderInlineEditor();
             window.autosaveInlineRoutine();
         }
+
         window.moveInlineDayByIdx = function(direction) {
-            if (!editingRoutine || !editingRoutine.days) return;
+            const week = editingRoutine.weeks[activeWeekIdx];
+            if (!week || !week.days) return;
             const targetIdx = activeInlineDayIdx + direction;
-            if (targetIdx < 0 || targetIdx >= editingRoutine.days.length) return;
+            if (targetIdx < 0 || targetIdx >= week.days.length) return;
             
             // Swap days
-            const temp = editingRoutine.days[activeInlineDayIdx];
-            editingRoutine.days[activeInlineDayIdx] = editingRoutine.days[targetIdx];
-            editingRoutine.days[targetIdx] = temp;
+            const temp = week.days[activeInlineDayIdx];
+            week.days[activeInlineDayIdx] = week.days[targetIdx];
+            week.days[targetIdx] = temp;
             
             activeInlineDayIdx = targetIdx;
             renderInlineEditor();
             window.autosaveInlineRoutine();
         };
+
         window.updateInlineDayNameVal = function(idx, val) { 
-            editingRoutine.days[idx].name = val; 
+            const week = editingRoutine.weeks[activeWeekIdx];
+            if (!week || !week.days || !week.days[idx]) return;
+            week.days[idx].name = val; 
             renderInlineDayTabs(); 
             window.autosaveInlineRoutine();
         }
 
         // Exercise handlers
         window.addInlineExercise = function() {
-            const day = editingRoutine.days[activeInlineDayIdx]; if (!day) return;
+            const week = editingRoutine.weeks[activeWeekIdx];
+            if (!week) return;
+            const day = week.days[activeInlineDayIdx]; if (!day) return;
             if (!day.exercises) day.exercises = [];
             day.exercises.push({ name:'', sets:'', reps:'', intensity:'', notes:'' });
             renderInlineDayContent();
             window.autosaveInlineRoutine();
         }
+
         window.removeInlineEx = function(exIdx) { 
-            editingRoutine.days[activeInlineDayIdx].exercises.splice(exIdx,1); 
+            const week = editingRoutine.weeks[activeWeekIdx];
+            if (!week || !week.days || !week.days[activeInlineDayIdx]) return;
+            week.days[activeInlineDayIdx].exercises.splice(exIdx,1); 
             renderInlineDayContent(); 
             window.autosaveInlineRoutine();
         }
+
         window.updateInlineEx = function(exIdx, field, val) { 
-            editingRoutine.days[activeInlineDayIdx].exercises[exIdx][field] = val; 
+            const week = editingRoutine.weeks[activeWeekIdx];
+            if (!week || !week.days || !week.days[activeInlineDayIdx]) return;
+            week.days[activeInlineDayIdx].exercises[exIdx][field] = val; 
             window.autosaveInlineRoutine();
         }
+
         window.moveInlineEx = function(exIdx, dir) {
-            const arr = editingRoutine.days[activeInlineDayIdx].exercises;
+            const week = editingRoutine.weeks[activeWeekIdx];
+            if (!week || !week.days || !week.days[activeInlineDayIdx]) return;
+            const arr = week.days[activeInlineDayIdx].exercises;
             const target = exIdx + dir;
             if (target < 0 || target >= arr.length) return;
             [arr[exIdx], arr[target]] = [arr[target], arr[exIdx]];
@@ -608,35 +774,15 @@
 
         // Save — captures live input values before persisting
         window.saveInlineRoutine = function() {
-            const nameEl = document.getElementById('editorRoutineName');
-            const descEl = document.getElementById('editorRoutineDesc');
-            const dayNameEl = document.getElementById('inlineDayName');
-            if (nameEl) editingRoutine.name = nameEl.value.trim() || editingRoutine.name;
-            if (descEl) editingRoutine.description = descEl.value.trim();
-            if (dayNameEl && editingRoutine.days[activeInlineDayIdx]) {
-                editingRoutine.days[activeInlineDayIdx].name = dayNameEl.value;
-            }
-            // Capture exercise row values live
-            document.querySelectorAll('#inlineExerciseRows .ex-grid').forEach((row, i) => {
-                const inputs = row.querySelectorAll('input');
-                const exArr = editingRoutine.days[activeInlineDayIdx]?.exercises;
-                if (inputs.length >= 5 && exArr && exArr[i]) {
-                    exArr[i].name      = inputs[0].value;
-                    exArr[i].notes     = inputs[1].value;
-                    exArr[i].sets      = inputs[2].value;
-                    exArr[i].reps      = inputs[3].value;
-                    exArr[i].intensity = inputs[4].value;
-                }
-            });
+            window.autosaveInlineRoutine();
             if (!editingRoutine.name) { showToast('El nombre es obligatorio','error'); return; }
-            Routines.update(editingRoutine.id, editingRoutine);
             showToast('✅ Plantilla guardada','success');
         }
 
         // Global listener for routine editor inputs
         document.addEventListener('input', function(e) {
             const id = e.target.id;
-            if (id === 'editorRoutineName' || id === 'editorRoutineDesc' || id === 'inlineDayName') {
+            if (id === 'editorRoutineName' || id === 'editorRoutineDesc' || id === 'inlineDayName' || id === 'inlineWeekName') {
                 window.triggerAutosaveInlineRoutine();
             }
             if (e.target.closest('#inlineExerciseRows')) {
@@ -691,6 +837,6 @@
             runSync();
         }
     </script>
-    <script src="js/custom-recipes.js?v=562"></script>
+    <script src="js/custom-recipes.js?v=563"></script>
 </body>
 </html>
