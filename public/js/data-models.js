@@ -419,7 +419,7 @@ const getData = () => {
             }
         });
         localStorage.setItem('v316_seed_foods_done_v4', 'true');
-        setTimeout(() => { saveData(data); }, 50);
+        try { localStorage.setItem(sKey, JSON.stringify(data)); } catch(e){}
     }
 
     // 🔥 MIGRACIÓN: Eliminar alimentos anteriores/duplicados obsoletos
@@ -443,7 +443,7 @@ const getData = () => {
             if (data.foods.length !== initialLen) {
                 console.log(`🧹 Eliminados ${initialLen - data.foods.length} alimentos duplicados u obsoletos.`);
                 localStorage.setItem('v316_clean_duplicates_done_v5', 'true');
-                setTimeout(() => { saveData(data); }, 100);
+                try { localStorage.setItem(sKey, JSON.stringify(data)); } catch(e){}
             } else {
                 localStorage.setItem('v316_clean_duplicates_done_v5', 'true');
             }

@@ -204,7 +204,7 @@ window.renderDietEditor = function () {
                 return weights[key];
             }
         }
-        return 100;
+        return null;
     }
 
     // Auto-sanar alimentos con 0 kcal buscando en base de datos de forma dinámica
@@ -243,9 +243,11 @@ window.renderDietEditor = function () {
                     let isUnit = (found.type === 'unit' || found.unit === 'unit');
                     const isQtyUnitInput = /unidade?s?|uds?|ración|raciones/i.test(qtyStr);
                     const isQtyGramInput = /g(r|ram(o|s|os)?)?s?\b/i.test(qtyStr.trim());
+                    const weightPerUnit = getWeightPerUnit(nameInput);
+                    
                     if (isQtyGramInput) {
                         isUnit = false;
-                    } else if (!isUnit && (isQtyUnitInput || (qtyVal <= 20 && qtyVal > 0))) {
+                    } else if (!isUnit && (isQtyUnitInput || (qtyVal <= 20 && qtyVal > 0 && weightPerUnit !== null))) {
                         isUnit = true;
                     }
 
@@ -254,8 +256,8 @@ window.renderDietEditor = function () {
                         if (found.type === 'unit' || found.unit === 'unit') {
                             factor = qtyVal;
                         } else {
-                            const weightPerUnit = getWeightPerUnit(nameInput);
-                            factor = (qtyVal * weightPerUnit) / 100;
+                            const finalWeight = weightPerUnit !== null ? weightPerUnit : 100;
+                            factor = (qtyVal * finalWeight) / 100;
                         }
                     } else {
                         factor = qtyVal / 100;
@@ -606,7 +608,7 @@ window.calculateRecipeQuantities = function () {
                 return weights[key];
             }
         }
-        return 100;
+        return null;
     }
 
     const targetCals = parseFloat(diet.calories) || 0;
@@ -704,17 +706,19 @@ window.calculateRecipeQuantities = function () {
                     // Determinar si es una cantidad basada en unidades o gramos
                     const isQtyUnitInput = /unidade?s?|uds?|ración|raciones/i.test(qtyStr);
                     const isQtyGramInput = /g(r|ram(o|s|os)?)?s?\b/i.test(qtyStr.trim());
+                    const weightPerUnit = getWeightPerUnit(nameInput);
+                    
                     if (isQtyGramInput) {
                         isUnit = false;
-                    } else if (!isUnit && (isQtyUnitInput || (qtyVal > 0 && qtyVal <= 20))) {
+                    } else if (!isUnit && (isQtyUnitInput || (qtyVal > 0 && qtyVal <= 20 && weightPerUnit !== null))) {
                         isUnit = true;
                     }
-
+ 
                     if (isUnit) {
                         // Adaptar macros base de 100g a 1 unidad si no es de tipo unit
                         if (found.type !== 'unit' && found.unit !== 'unit') {
-                            const weightPerUnit = getWeightPerUnit(nameInput);
-                            const unitFactor = weightPerUnit / 100;
+                            const finalWeight = weightPerUnit !== null ? weightPerUnit : 100;
+                            const unitFactor = finalWeight / 100;
                             baseCals = baseCals * unitFactor;
                             baseP = baseP * unitFactor;
                             baseC = baseC * unitFactor;
@@ -1871,7 +1875,7 @@ window.checkFoodMacros = function (mealIdx, optionNum) {
                 return weights[key];
             }
         }
-        return 100;
+        return null;
     }
 
     const qty = parseSpanishQuantity(qtyInput);
@@ -1908,10 +1912,11 @@ window.checkFoodMacros = function (mealIdx, optionNum) {
         const isQtyUnitInput = /unidade?s?|uds?|ración|raciones/i.test(qtyInput);
         const isQtyGramInput = /g(r|ram(o|s|os)?)?s?\b/i.test(qtyInput.trim());
         let isUnit = (found.type === 'unit' || found.unit === 'unit');
+        const weightPerUnit = getWeightPerUnit(nameInput);
         
         if (isQtyGramInput) {
             isUnit = false;
-        } else if (!isUnit && (isQtyUnitInput || (qty <= 20 && qty > 0))) {
+        } else if (!isUnit && (isQtyUnitInput || (qty <= 20 && qty > 0 && weightPerUnit !== null))) {
             isUnit = true;
         }
 
@@ -1921,8 +1926,8 @@ window.checkFoodMacros = function (mealIdx, optionNum) {
                 factor = qty; // Multiplicamos directo
             } else {
                 // Alimento en gramos pero ingresado por unidades: buscar peso por unidad
-                const weightPerUnit = getWeightPerUnit(nameInput);
-                factor = (qty * weightPerUnit) / 100;
+                const finalWeight = weightPerUnit !== null ? weightPerUnit : 100;
+                factor = (qty * finalWeight) / 100;
             }
         } else {
             // Por defecto asumimos gramos (cada 100g)
