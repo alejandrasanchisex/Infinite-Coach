@@ -635,7 +635,56 @@ window.calculateRecipeQuantities = function () {
         return null;
     }
 
+    // Helper para obtener porciones mínimas lógicas
+    function getMinQuantity(foodName) {
+        const name = (foodName || '').trim().toLowerCase();
+        
+        // Grasas, aceites, condimentos, semillas, suplementos
+        const microWeightKeywords = [
+            'aceite', 'oliva', 'crema de cacahuete', 'mantequilla', 'cacahuete', 'nuez', 'nueces',
+            'almendra', 'chía', 'chia', 'lino', 'sésamo', 'semillas', 'mayonesa', 'aguacate',
+            'quesito', 'queso rallado', 'proteína', 'creatina', 'cacao', 'canela', 'sal', 'especias'
+        ];
+        if (microWeightKeywords.some(kw => name.includes(kw))) {
+            return 5;
+        }
+        
+        // Proteínas principales (carnes, pescados, huevos, tofu, etc.)
+        const proteinKeywords = [
+            'pollo', 'pavo', 'ternera', 'cerdo', 'merluza', 'salmón', 'salmon', 'bacalao', 'atún', 'atun',
+            'lubina', 'dorada', 'pescado', 'carne', 'pechuga', 'muslo', 'solomillo', 'hamburguesa',
+            'tofu', 'seitan', 'seitán', 'queso fresco', 'queso cottage', 'skyr', 'yogur griego'
+        ];
+        if (proteinKeywords.some(kw => name.includes(kw))) {
+            return 80;
+        }
+        
+        // Carbohidratos principales (arroz, pasta, patata, pan, avena)
+        const carbKeywords = [
+            'arroz', 'pasta', 'patata', 'papa', 'boniato', 'batata', 'pan', 'avena', 'quinoa', 'legumbres',
+            'lentejas', 'garbanzos', 'alubias'
+        ];
+        if (carbKeywords.some(kw => name.includes(kw))) {
+            return 40;
+        }
+        
+        // Frutas y verduras
+        const fruitVegKeywords = [
+            'manzana', 'pera', 'plátano', 'banana', 'fresa', 'arándanos', 'naranja', 'tomate', 'zanahoria',
+            'lechuga', 'espinacas', 'brócoli', 'brocoli', 'calabacín', 'cebolla', 'pimiento'
+        ];
+        if (fruitVegKeywords.some(kw => name.includes(kw))) {
+            return 50;
+        }
+        
+        return 30;
+    }
+
     const targetCals = parseFloat(diet.calories) || 0;
+    const targetP = parseFloat(diet.macros?.protein) || 0;
+    const targetC = parseFloat(diet.macros?.carbs) || 0;
+    const targetF = parseFloat(diet.macros?.fat) || 0;
+
     if (targetCals <= 0) {
         showToast('⚠️ Por favor, define primero un objetivo de calorías mayor a 0.', 'warning');
         return;
@@ -646,7 +695,14 @@ window.calculateRecipeQuantities = function () {
         return;
     }
 
-    const targetMealCals = targetCals / diet.meals.length;
+    const numMeals = diet.meals.length;
+    const targetMealCals = targetCals / numMeals;
+    const targetMealP = targetP / numMeals;
+    const targetMealC = targetC / numMeals;
+    const targetMealF = targetF / numMeals;
+
+    // Saber si ajustamos basándonos en los macros objetivos de la calculadora
+    const calculateByMacros = targetP > 0 && targetC > 0 && targetF > 0;
 
     // Calcular la suma de calorías actuales de la Opción 1 de todas las comidas
     const totalOption1Cals = diet.meals.reduce((sum, meal) => {
@@ -796,28 +852,64 @@ window.calculateRecipeQuantities = function () {
                 let factor = isUnit ? refQty : (refQty / 100);
                 
                 f._refCals = baseCals * factor;
+                f._refP = baseP * factor;
+                f._refC = baseC * factor;
+                f._refF = baseF * factor;
                 f._baseCals = baseCals;
                 f._baseP = baseP;
                 f._baseC = baseC;
                 f._baseF = baseF;
                 f._refQty = refQty;
                 f._isUnit = isUnit;
+
+                // Determinar el macro dominante para escalado inteligente
+                const pCals = (parseFloat(baseP) || 0) * 4;
+                const cCals = (parseFloat(baseC) || 0) * 4;
+                const fCals = (parseFloat(baseF) || 0) * 9;
+                const maxCals = Math.max(pCals, cCals, fCals);
+                
+                if (maxCals === pCals && pCals > 0) {
+                    f._dominant = 'protein';
+                } else if (maxCals === cCals && cCals > 0) {
+                    f._dominant = 'carbs';
+                } else if (maxCals === fCals && fCals > 0) {
+                    f._dominant = 'fat';
+                } else {
+                    f._dominant = 'calories';
+                }
             });
 
-            // 2. Sumar total de calorías de referencia
+            // 2. Sumar totales de referencia de la opción
             const totalRefCals = optFoods.reduce((sum, f) => sum + (f._refCals || 0), 0);
+            const totalRefP = optFoods.reduce((sum, f) => sum + (f._refP || 0), 0);
+            const totalRefC = optFoods.reduce((sum, f) => sum + (f._refC || 0), 0);
+            const totalRefF = optFoods.reduce((sum, f) => sum + (f._refF || 0), 0);
 
-            // 3. Aplicar escalado si es mayor que 0
+            // 3. Calcular factores de escala
+            let sCals = totalRefCals > 0 ? (mealTargetCals / totalRefCals) : 1;
+            let sP = totalRefP > 0 ? (targetMealP / totalRefP) : 1;
+            let sC = totalRefC > 0 ? (targetMealC / totalRefC) : 1;
+            let sF = totalRefF > 0 ? (targetMealF / totalRefF) : 1;
+
             if (totalRefCals > 0) {
-                const S = mealTargetCals / totalRefCals;
                 optFoods.forEach(f => {
+                    // Elegir factor de escala según dominant macro si calculamos por macros
+                    let S = sCals;
+                    if (calculateByMacros) {
+                        if (f._dominant === 'protein') S = sP;
+                        else if (f._dominant === 'carbs') S = sC;
+                        else if (f._dominant === 'fat') S = sF;
+                    }
+
                     const newQty = f._refQty * S;
                     let finalQty = 0;
                     if (f._isUnit) {
                         finalQty = Math.max(1, Math.round(newQty));
                         f.quantity = String(`${finalQty} ${finalQty === 1 ? 'ud' : 'uds'}`);
                     } else {
-                        finalQty = Math.max(5, Math.round(newQty / 5) * 5);
+                        // Obtener cantidad mínima lógica
+                        const minQty = getMinQuantity(f.name);
+                        finalQty = Math.max(minQty, Math.round(newQty / 5) * 5);
                         f.quantity = finalQty + "g";
                     }
 
@@ -832,12 +924,16 @@ window.calculateRecipeQuantities = function () {
             // Limpiar variables temporales
             optFoods.forEach(f => {
                 delete f._refCals;
+                delete f._refP;
+                delete f._refC;
+                delete f._refF;
                 delete f._baseCals;
                 delete f._baseP;
                 delete f._baseC;
                 delete f._baseF;
                 delete f._refQty;
                 delete f._isUnit;
+                delete f._dominant;
             });
         });
     });
