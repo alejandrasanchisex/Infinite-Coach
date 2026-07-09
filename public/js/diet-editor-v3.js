@@ -5,6 +5,30 @@
 window.editingDietId = null;
 window.activeMealForm = null;
 
+window.getWeightPerUnit = function(foodName) {
+    const name = (foodName || '').trim().toLowerCase();
+    if (typeof window.foodDatabase !== 'undefined' && Array.isArray(window.foodDatabase)) {
+        const dbMatch = window.foodDatabase.find(f => f && f.names && Array.isArray(f.names) && f.names.some(n => n && typeof n === 'string' && (n.trim().toLowerCase() === name || name.includes(n.trim().toLowerCase()) || n.trim().toLowerCase().includes(name))));
+        if (dbMatch && dbMatch.weightPerUnit) {
+            return dbMatch.weightPerUnit;
+        }
+    }
+    const weights = {
+        'plátano': 120, 'banana': 120, 'manzana': 150, 'pera': 150, 'naranja': 150,
+        'melocotón': 150, 'durazno': 150, 'kiwi': 75, 'mandarina': 80, 'limón': 100,
+        'huevo': 55, 'clara': 35, 'dátil': 8, 'tostada': 30, 'rebanada': 30,
+        'pan': 30, 'tortita': 8, 'tortilla': 30, 'quesito': 15, 'yogur': 125,
+        'lata': 60, 'atún': 60, 'patata': 150, 'papa': 150, 'boniato': 150,
+        'batata': 150, 'aguacate': 150, 'tomate': 120, 'zanahoria': 80
+    };
+    for (const key in weights) {
+        if (name.includes(key)) {
+            return weights[key];
+        }
+    }
+    return null;
+};
+
 window.onDietEditorClosed = function () {
     console.log('Diet editor closed');
 };
@@ -921,7 +945,7 @@ window.addFood = function (mealIdx, optionNum) {
             } else {
                 const n = parseFloat(qtyStr);
                 if (!isNaN(n) && n <= 20) {
-                    if (getWeightPerUnit(name) !== null) {
+                    if (window.getWeightPerUnit(name) !== null) {
                         detectedType = 'unit';
                     }
                 }

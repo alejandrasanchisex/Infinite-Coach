@@ -7,7 +7,7 @@
     <script>
         // Force PWA cache bust / reload
         (function() {
-            const CURRENT_VERSION = '556';
+            const CURRENT_VERSION = '557';
             const savedVersion = localStorage.getItem('app_version');
             if (savedVersion !== CURRENT_VERSION) {
                 localStorage.setItem('app_version', CURRENT_VERSION);
@@ -310,7 +310,7 @@
 
         <p class="footer">¿No tienes código?<br>Contacta con tu entrenador personal.</p>
         <p class="footer" style="margin-top: 15px; border-top: 1px solid rgba(255,255,255,0.05); padding-top: 15px;">
-            <a href="trainer-login.html?v=556" style="color: var(--gold-light); text-decoration: none; font-size: 0.8rem; font-weight: 600;">Acceso Entrenadores 🔐</a>
+            <a href="trainer-login.html?v=557" style="color: var(--gold-light); text-decoration: none; font-size: 0.8rem; font-weight: 600;">Acceso Entrenadores 🔐</a>
         </p>
     </div>
 </div>
@@ -319,10 +319,10 @@
 
 <!-- ── Scripts ──────────────────────────────────────────────────── -->
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="js/supabase-service.js?v=556"></script>
-<script src="js/config.js?v=556"></script>
-<script src="js/data-models.js?v=556"></script>
-<script src="js/utils.js?v=556"></script>
+<script src="js/supabase-service.js?v=557"></script>
+<script src="js/config.js?v=557"></script>
+<script src="js/data-models.js?v=557"></script>
+<script src="js/utils.js?v=557"></script>
 <script>
 
 // ── Auto-Redirección (Mantener sesión activa) ─────────────────────
@@ -330,7 +330,7 @@
     var storedClientId = localStorage.getItem('clientId') || sessionStorage.getItem('clientId');
     var params = new URLSearchParams(window.location.search);
     if (storedClientId && params.get('logout') !== 'true' && params.get('reauth') !== 'true') {
-        window.location.replace('client-dashboard.html?v=556');
+        window.location.replace('client-dashboard.html?v=557');
     }
 })();
 
@@ -590,7 +590,7 @@ async function doLogin() {
     }
 }
 </script>
-<script src="js/custom-recipes.js?v=556"></script>
-<script src="js/pwa-install.js?v=556"></script>
+<script src="js/custom-recipes.js?v=557"></script>
+<script src="js/pwa-install.js?v=557"></script>
 </body>
 </html>
