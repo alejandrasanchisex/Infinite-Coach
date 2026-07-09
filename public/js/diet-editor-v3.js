@@ -29,6 +29,18 @@ window.getWeightPerUnit = function(foodName) {
     return null;
 };
 
+window.isForcedGramFood = function(foodName) {
+    const name = (foodName || '').trim().toLowerCase();
+    const forcedGramKeywords = [
+        'verdura', 'ensalada', 'vegetal', 'hortaliza', 'judía', 'judia', 'espinaca', 'acelga',
+        'pollo', 'pavo', 'ternera', 'cerdo', 'carne', 'pechuga', 'solomillo',
+        'pescado', 'merluza', 'salmón', 'salmon', 'atún', 'atun', 'bacalao',
+        'arroz', 'pasta', 'avena', 'harina', 'quinoa', 'legumbre', 'lenteja',
+        'aceite', 'mantequilla', 'crema', 'proteína', 'creatina'
+    ];
+    return forcedGramKeywords.some(kw => name.includes(kw));
+};
+
 window.onDietEditorClosed = function () {
     console.log('Diet editor closed');
 };
@@ -269,7 +281,7 @@ window.renderDietEditor = function () {
                     const isQtyGramInput = /g(r|ram(o|s|os)?)?s?\b/i.test(qtyStr.trim());
                     const weightPerUnit = getWeightPerUnit(nameInput);
                     
-                    if (isQtyGramInput) {
+                    if (isQtyGramInput || window.isForcedGramFood(nameInput)) {
                         isUnit = false;
                     } else if (!isUnit && (isQtyUnitInput || (qtyVal <= 20 && qtyVal > 0 && weightPerUnit !== null))) {
                         isUnit = true;
@@ -788,7 +800,7 @@ window.calculateRecipeQuantities = function () {
                     const isQtyGramInput = /g(r|ram(o|s|os)?)?s?\b/i.test(qtyStr.trim());
                     const weightPerUnit = getWeightPerUnit(nameInput);
                     
-                    if (isQtyGramInput) {
+                    if (isQtyGramInput || window.isForcedGramFood(nameInput)) {
                         isUnit = false;
                     } else if (!isUnit && (isQtyUnitInput || (qtyVal > 0 && qtyVal <= 20 && weightPerUnit !== null))) {
                         isUnit = true;
@@ -997,7 +1009,9 @@ window.addFood = function (mealIdx, optionNum) {
         const n = parseFloat(normalizedQty);
         if (!isNaN(n)) {
             let type = 'g';
-            if (typeof Foods !== 'undefined') {
+            if (window.isForcedGramFood(name)) {
+                type = 'g';
+            } else if (typeof Foods !== 'undefined') {
                 const dbFood = Foods.getAll().find(dbf => dbf && dbf.name && dbf.name.toLowerCase() === name.toLowerCase()) ||
                                Foods.getAll().find(dbf => dbf && dbf.name && (dbf.name.toLowerCase().includes(name.toLowerCase()) || name.toLowerCase().includes(dbf.name.toLowerCase())));
                 if (dbFood) type = dbFood.type || 'g';
@@ -1033,16 +1047,20 @@ window.addFood = function (mealIdx, optionNum) {
         const existingFood = Foods.getAll().find(f => f.name.toLowerCase() === name.toLowerCase());
         if (!existingFood) {
             let detectedType = 'g';
-            const qtyStr = String(quantity || '');
-            if (/[a-zA-Z]/.test(qtyStr)) {
-                if (/unidade?s?|uds?|ración|raciones/i.test(qtyStr)) {
-                    detectedType = 'unit';
-                }
+            if (window.isForcedGramFood(name)) {
+                detectedType = 'g';
             } else {
-                const n = parseFloat(qtyStr);
-                if (!isNaN(n) && n <= 20) {
-                    if (window.getWeightPerUnit(name) !== null) {
+                const qtyStr = String(quantity || '');
+                if (/[a-zA-Z]/.test(qtyStr)) {
+                    if (/unidade?s?|uds?|ración|raciones/i.test(qtyStr)) {
                         detectedType = 'unit';
+                    }
+                } else {
+                    const n = parseFloat(qtyStr);
+                    if (!isNaN(n) && n <= 20) {
+                        if (window.getWeightPerUnit(name) !== null) {
+                            detectedType = 'unit';
+                        }
                     }
                 }
             }
@@ -2048,7 +2066,7 @@ window.checkFoodMacros = function (mealIdx, optionNum) {
         let isUnit = (found.type === 'unit' || found.unit === 'unit');
         const weightPerUnit = getWeightPerUnit(nameInput);
         
-        if (isQtyGramInput) {
+        if (isQtyGramInput || window.isForcedGramFood(nameInput)) {
             isUnit = false;
         } else if (!isUnit && (isQtyUnitInput || (qty <= 20 && qty > 0 && weightPerUnit !== null))) {
             isUnit = true;

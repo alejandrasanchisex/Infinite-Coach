@@ -453,13 +453,20 @@ const getData = () => {
     }
 
     // 🔥 MIGRACIÓN: Corregir tipo de alimentos y cantidades en dietas que se guardaron erróneamente como unidades
-    if (!localStorage.getItem('v316_fix_food_types_and_diets_v3')) {
+    if (!localStorage.getItem('v316_fix_food_types_and_diets_v4')) {
         let modified = false;
         const knownUnitKeywords = [
             'plátano', 'banana', 'manzana', 'pera', 'naranja', 'melocotón', 'durazno',
             'kiwi', 'mandarina', 'limón', 'huevo', 'clara', 'dátil', 'tostada', 'rebanada',
             'pan', 'tortita', 'tortilla', 'quesito', 'yogur', 'lata', 'atún', 'patata',
             'papa', 'boniato', 'batata', 'aguacate', 'tomate', 'zanahoria'
+        ];
+        const forcedGramKeywords = [
+            'verdura', 'ensalada', 'vegetal', 'hortaliza', 'judía', 'judia', 'espinaca', 'acelga',
+            'pollo', 'pavo', 'ternera', 'cerdo', 'carne', 'pechuga', 'solomillo',
+            'pescado', 'merluza', 'salmón', 'salmon', 'atún', 'atun', 'bacalao',
+            'arroz', 'pasta', 'avena', 'harina', 'quinoa', 'legumbre', 'lenteja',
+            'aceite', 'mantequilla', 'crema', 'proteína', 'creatina'
         ];
 
         // 1. Corregir base de datos de alimentos del entrenador (Foods)
@@ -468,7 +475,8 @@ const getData = () => {
                 if (food.type === 'unit') {
                     const lowerName = food.name.toLowerCase().trim();
                     const isKnownUnit = knownUnitKeywords.some(keyword => lowerName.includes(keyword));
-                    if (!isKnownUnit) {
+                    const isForcedGram = forcedGramKeywords.some(keyword => lowerName.includes(keyword));
+                    if (!isKnownUnit || isForcedGram) {
                         food.type = 'g';
                         modified = true;
                         console.log(`🔧 Corregido tipo de alimento de base de datos "${food.name}" de 'unit' a 'g'`);
@@ -486,7 +494,9 @@ const getData = () => {
                         if (food.name) {
                             const name = food.name.toLowerCase().trim();
                             const isKnownUnit = knownUnitKeywords.some(keyword => name.includes(keyword));
-                            if (!isKnownUnit) {
+                            const isForcedGram = forcedGramKeywords.some(keyword => name.includes(keyword));
+                            
+                            if (!isKnownUnit || isForcedGram) {
                                 // Si la cantidad tiene 'ud' o 'uds', o si las calorías son sospechosamente altas (> 1000)
                                 const hasUd = typeof food.quantity === 'string' && /unidade?s?|uds?|ración|raciones/i.test(food.quantity);
                                 const isHighCal = parseFloat(food.calories) > 1000;
@@ -497,11 +507,13 @@ const getData = () => {
                                         // Cambiar cantidad a gramos (ej: "15g")
                                         food.quantity = `${qtyNum}g`;
                                         
-                                        // Dividir calorías y macros por 100 para corregir el cálculo
-                                        food.calories = Math.round((parseFloat(food.calories) || 0) / 100);
-                                        food.protein = parseFloat(((parseFloat(food.protein) || 0) / 100).toFixed(1));
-                                        food.carbs = parseFloat(((parseFloat(food.carbs) || 0) / 100).toFixed(1));
-                                        food.fat = parseFloat(((parseFloat(food.fat) || 0) / 100).toFixed(1));
+                                        // Si tiene calorías desproporcionadas, corregimos dividiendo por 100
+                                        if (isHighCal) {
+                                            food.calories = Math.round((parseFloat(food.calories) || 0) / 100);
+                                            food.protein = parseFloat(((parseFloat(food.protein) || 0) / 100).toFixed(1));
+                                            food.carbs = parseFloat(((parseFloat(food.carbs) || 0) / 100).toFixed(1));
+                                            food.fat = parseFloat(((parseFloat(food.fat) || 0) / 100).toFixed(1));
+                                        }
                                         
                                         dietModified = true;
                                         modified = true;
@@ -518,7 +530,7 @@ const getData = () => {
         if (modified) {
             try { localStorage.setItem(sKey, JSON.stringify(data)); } catch(e){}
         }
-        localStorage.setItem('v316_fix_food_types_and_diets_v3', 'true');
+        localStorage.setItem('v316_fix_food_types_and_diets_v4', 'true');
     }
 
     // 🔥 PURGA DE RECETAS NO OFICIALES (Blindaje 145)
