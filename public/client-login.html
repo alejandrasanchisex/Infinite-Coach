@@ -7,7 +7,9 @@
     <script>
         // Force PWA cache bust / reload
         (function() {
-            const CURRENT_VERSION = '566';
+            const CURRENT_VERSION = '567';
+            window.APP_VERSION = CURRENT_VERSION;;
+            window.APP_VERSION = CURRENT_VERSION;;
             window.APP_VERSION = CURRENT_VERSION;;
             window.APP_VERSION = CURRENT_VERSION;;
             window.APP_VERSION = CURRENT_VERSION;;
@@ -316,7 +318,7 @@
 
         <p class="footer">¿No tienes código?<br>Contacta con tu entrenador personal.</p>
         <p class="footer" style="margin-top: 15px; border-top: 1px solid rgba(255,255,255,0.05); padding-top: 15px;">
-            <a href="trainer-login.html?v=566" style="color: var(--gold-light); text-decoration: none; font-size: 0.8rem; font-weight: 600;">Acceso Entrenadores 🔐</a>
+            <a href="trainer-login.html?v=567" style="color: var(--gold-light); text-decoration: none; font-size: 0.8rem; font-weight: 600;">Acceso Entrenadores 🔐</a>
         </p>
     </div>
 </div>
@@ -325,10 +327,10 @@
 
 <!-- ── Scripts ──────────────────────────────────────────────────── -->
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="js/supabase-service.js?v=566"></script>
-<script src="js/config.js?v=566"></script>
-<script src="js/data-models.js?v=566"></script>
-<script src="js/utils.js?v=566"></script>
+<script src="js/supabase-service.js?v=567"></script>
+<script src="js/config.js?v=567"></script>
+<script src="js/data-models.js?v=567"></script>
+<script src="js/utils.js?v=567"></script>
 <script>
 
 // ── Auto-Redirección (Mantener sesión activa) ─────────────────────
@@ -336,7 +338,7 @@
     var storedClientId = localStorage.getItem('clientId') || sessionStorage.getItem('clientId');
     var params = new URLSearchParams(window.location.search);
     if (storedClientId && params.get('logout') !== 'true' && params.get('reauth') !== 'true') {
-        window.location.replace('client-dashboard.html?v=566');
+        window.location.replace('client-dashboard.html?v=567');
     }
 })();
 
@@ -596,7 +598,7 @@ async function doLogin() {
     }
 }
 </script>
-<script src="js/custom-recipes.js?v=566"></script>
-<script src="js/pwa-install.js?v=566"></script>
+<script src="js/custom-recipes.js?v=567"></script>
+<script src="js/pwa-install.js?v=567"></script>
 </body>
 </html>

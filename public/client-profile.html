@@ -7,7 +7,9 @@
     <script>
         // Force PWA cache bust / reload
         (function() {
-            const CURRENT_VERSION = '566';
+            const CURRENT_VERSION = '567';
+            window.APP_VERSION = CURRENT_VERSION;;
+            window.APP_VERSION = CURRENT_VERSION;;
             window.APP_VERSION = CURRENT_VERSION;;
             window.APP_VERSION = CURRENT_VERSION;;
             window.APP_VERSION = CURRENT_VERSION;;
@@ -37,9 +39,9 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="styles/theme.css?v=566">
-    <link rel="stylesheet" href="styles/components.css?v=566">
-    <link rel="stylesheet" href="styles/mobile.css?v=566">
+    <link rel="stylesheet" href="styles/theme.css?v=567">
+    <link rel="stylesheet" href="styles/components.css?v=567">
+    <link rel="stylesheet" href="styles/mobile.css?v=567">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <script>
@@ -110,10 +112,10 @@
                     <span id="brandName">Infinite Coach</span>
                 </div>
                 <ul class="nav-links" id="navLinks">
-                    <li><a href="client-dashboard.html?v=566" class="nav-link">Inicio</a></li>
-                    <li><a href="client-profile.html?v=566" class="nav-link active">Ficha Técnica</a></li>
+                    <li><a href="client-dashboard.html?v=567" class="nav-link">Inicio</a></li>
+                    <li><a href="client-profile.html?v=567" class="nav-link active">Ficha Técnica</a></li>
 
-                    <li><a href="client-login.html?v=566" class="nav-link">Salir</a></li>
+                    <li><a href="client-login.html?v=567" class="nav-link">Salir</a></li>
                 </ul>
                 <button class="menu-toggle" onclick="toggleMenu()" style="margin-left: auto;">☰</button>
             </nav>
@@ -243,12 +245,12 @@
 
     <!-- Supabase SDK & Service -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="js/supabase-service.js?v=566"></script>
+    <script src="js/supabase-service.js?v=567"></script>
 
-    <script src="js/config.js?v=566"></script>
-    <script src="js/data-models.js?v=566"></script>
-    <script src="js/cloud-storage.js?v=566"></script>
-    <script src="js/utils.js?v=566"></script>
+    <script src="js/config.js?v=567"></script>
+    <script src="js/data-models.js?v=567"></script>
+    <script src="js/cloud-storage.js?v=567"></script>
+    <script src="js/utils.js?v=567"></script>
     <script>
         const clientId = sessionStorage.getItem('clientId') || localStorage.getItem('clientId');
         if (!clientId) {
@@ -617,6 +619,6 @@
 
         // Load data on start
     </script>
-    <script src="js/custom-recipes.js?v=566"></script></body>
+    <script src="js/custom-recipes.js?v=567"></script></body>
 
 </html>
