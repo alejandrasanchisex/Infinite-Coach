@@ -4,7 +4,9 @@
 <head>
     <script>
         (function() {
-            const CURRENT_VERSION = '565';
+            const CURRENT_VERSION = '566';
+            window.APP_VERSION = CURRENT_VERSION;;
+            window.APP_VERSION = CURRENT_VERSION;;
             window.APP_VERSION = CURRENT_VERSION;;
             window.APP_VERSION = CURRENT_VERSION;;
             window.APP_VERSION = CURRENT_VERSION;;
@@ -25,8 +27,8 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="styles/theme.css?v=565">
-    <link rel="stylesheet" href="styles/components.css?v=565">
+    <link rel="stylesheet" href="styles/theme.css?v=566">
+    <link rel="stylesheet" href="styles/components.css?v=566">
     <style>
         #inlineEditorSection { display: none; animation: fadeInUp 0.25s ease; }
         @keyframes fadeInUp { from{opacity:0;transform:translateY(12px)} to{opacity:1;transform:translateY(0)} }
@@ -90,14 +92,14 @@
                     </div>
                     <button class="menu-toggle" onclick="toggleMenu()">☰</button>
                     <ul class="nav-links" id="navLinks">
-                        <li><a href="trainer-dashboard.html?v=565" class="nav-link">Dashboard</a></li>
-                        <li><a href="trainer-clients.html?v=565" class="nav-link">Clientes</a></li>
-                        <li><a href="trainer-routines.html?v=565" class="nav-link active">Rutinas</a></li>
-                        <li><a href="trainer-diets.html?v=565" class="nav-link">Dietas</a></li>
-                        <li><a href="trainer-feedbacks.html?v=565" class="nav-link">Revisiones</a></li>
-                        <li><a href="trainer-media.html?v=565" class="nav-link">Biblioteca</a></li>
-                        <li><a href="trainer-appointments.html?v=565" class="nav-link">Agenda</a></li>
-                        <li><a href="trainer-settings.html?v=565" class="nav-link">Configuración</a></li>
+                        <li><a href="trainer-dashboard.html?v=566" class="nav-link">Dashboard</a></li>
+                        <li><a href="trainer-clients.html?v=566" class="nav-link">Clientes</a></li>
+                        <li><a href="trainer-routines.html?v=566" class="nav-link active">Rutinas</a></li>
+                        <li><a href="trainer-diets.html?v=566" class="nav-link">Dietas</a></li>
+                        <li><a href="trainer-feedbacks.html?v=566" class="nav-link">Revisiones</a></li>
+                        <li><a href="trainer-media.html?v=566" class="nav-link">Biblioteca</a></li>
+                        <li><a href="trainer-appointments.html?v=566" class="nav-link">Agenda</a></li>
+                        <li><a href="trainer-settings.html?v=566" class="nav-link">Configuración</a></li>
                         <li><a href="#" onclick="if(typeof AUTH!=='undefined'){AUTH.signOut()}else{window.location.reload()};return false;" class="nav-link" style="color:var(--error-color)">🚪 Salir</a></li>
                     </ul>
                 </nav>
@@ -198,13 +200,13 @@
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="js/supabase-service.js?v=565"></script>
-    <script src="js/config.js?v=565"></script>
-    <script src="js/auth.js?v=565"></script>
-    <script src="js/sheets.js?v=565"></script>
-    <script src="js/data-models.js?v=565"></script>
-    <script src="js/utils.js?v=565"></script>
-    <script src="js/custom-exercises.js?v=565"></script>
+    <script src="js/supabase-service.js?v=566"></script>
+    <script src="js/config.js?v=566"></script>
+    <script src="js/auth.js?v=566"></script>
+    <script src="js/sheets.js?v=566"></script>
+    <script src="js/data-models.js?v=566"></script>
+    <script src="js/utils.js?v=566"></script>
+    <script src="js/custom-exercises.js?v=566"></script>
     <script>
         // Brand
         if (typeof BrandConfig !== 'undefined' && typeof BrandConfig.applyTheme === 'function') BrandConfig.applyTheme();
@@ -360,7 +362,7 @@
                     const uniqueDaysInWeek1 = (r.days || []).filter(d => (d.weekNumber || 1) === 1).length;
                     return uniqueDaysInWeek1 || (r.days || []).length;
                 })();
-                const daysLabel = totalWeeks > 1 ? `${daysPerWeek} días/sem` : `${daysPerWeek} día(s)`;
+                const daysLabel = `${daysPerWeek} ${daysPerWeek === 1 ? 'día' : 'días'}`;
 
                 return `<div class="card p-md" style="border:1px solid rgba(255,255,255,0.07);transition:border 0.2s;" onmouseover="this.style.borderColor='rgba(0,217,255,0.35)'" onmouseout="this.style.borderColor='rgba(255,255,255,0.07)'">
                     <div class="flex-between mb-sm align-center">
@@ -857,6 +859,6 @@
             runSync();
         }
     </script>
-    <script src="js/custom-recipes.js?v=565"></script>
+    <script src="js/custom-recipes.js?v=566"></script>
 </body>
 </html>

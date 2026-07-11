@@ -4,7 +4,9 @@
     <script>
         // Force PWA cache bust / reload
         (function() {
-            const CURRENT_VERSION = '565';
+            const CURRENT_VERSION = '566';
+            window.APP_VERSION = CURRENT_VERSION;;
+            window.APP_VERSION = CURRENT_VERSION;;
             window.APP_VERSION = CURRENT_VERSION;;
             window.APP_VERSION = CURRENT_VERSION;;
             window.APP_VERSION = CURRENT_VERSION;;
@@ -74,9 +76,9 @@
                 const activeTrainerId = localStorage.getItem('activeTrainerId') || 'default';
                 window.location.replace('trainer-dashboard.html?t=' + activeTrainerId);
             } else if (localStorage.getItem('clientId')) {
-                window.location.replace('client-dashboard.html?v=565');
+                window.location.replace('client-dashboard.html?v=566');
             } else if (window.location.hostname.includes('infinitecoach.es')) {
-                window.location.replace('client-login.html?v=565');
+                window.location.replace('client-login.html?v=566');
             } else {
                 window.location.replace('trainer-login.html');
             }
