@@ -1624,14 +1624,17 @@ ${item.date}`.replace('\n', ''); // Safe compile
                 localStorage.setItem(getStorageKey(), JSON.stringify(mergedData));
                 setLastSyncTime(currentId); // Update last sync time
                 
-                // 💾 Actualizar backup con datos frescos
-                const mergedHasRealData = (
-                    (mergedData.clients && mergedData.clients.length > 0) ||
-                    (mergedData.routines && mergedData.routines.length > 0) ||
-                    (mergedData.trainingBlocks && mergedData.trainingBlocks.length > 0)
-                );
-                if (mergedHasRealData) {
-                    try { localStorage.setItem(getStorageKey() + '_backup', JSON.stringify(mergedData)); } catch(e) {}
+                // 💾 Conservar el backup local intacto. Solo guardar si no existía uno previo para no pisar las ediciones locales del entrenador.
+                const hasExistingBackup = !!localStorage.getItem(getStorageKey() + '_backup');
+                if (!hasExistingBackup) {
+                    const mergedHasRealData = (
+                        (mergedData.clients && mergedData.clients.length > 0) ||
+                        (mergedData.routines && mergedData.routines.length > 0) ||
+                        (mergedData.trainingBlocks && mergedData.trainingBlocks.length > 0)
+                    );
+                    if (mergedHasRealData) {
+                        try { localStorage.setItem(getStorageKey() + '_backup', JSON.stringify(mergedData)); } catch(e) {}
+                    }
                 }
                 return mergedData;
             }
@@ -5267,12 +5270,28 @@ console.log("🏁 v311 BLINDAJE TOTAL: Sistema Cargado con protección máxima d
     // 1. Escuchar cuando el usuario regresa a la app (cambio de pestaña, desbloqueo de móvil)
     document.addEventListener('visibilitychange', () => {
         if (document.visibilityState === 'visible') {
+            if (window.APP_VERSION) {
+                const savedVersion = localStorage.getItem('app_version');
+                if (savedVersion && savedVersion !== window.APP_VERSION) {
+                    console.log("🔄 [AutoSync] Nueva versión detectada en localStorage (" + savedVersion + " vs " + window.APP_VERSION + "). Recargando pestaña...");
+                    window.location.reload(true);
+                    return;
+                }
+            }
             console.log("📱 [AutoSync] App visible de nuevo. Ejecutando sincronización...");
             triggerAutomaticSync();
         }
     });
 
     window.addEventListener('focus', () => {
+        if (window.APP_VERSION) {
+            const savedVersion = localStorage.getItem('app_version');
+            if (savedVersion && savedVersion !== window.APP_VERSION) {
+                console.log("🔄 [AutoSync] Nueva versión detectada en focus (" + savedVersion + " vs " + window.APP_VERSION + "). Recargando pestaña...");
+                window.location.reload(true);
+                return;
+            }
+        }
         console.log("🖥️ [AutoSync] Foco recuperado en la ventana. Ejecutando sincronización...");
         triggerAutomaticSync();
     });

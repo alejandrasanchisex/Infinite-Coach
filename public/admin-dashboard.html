@@ -5,7 +5,11 @@
     <script>
         // Force PWA cache bust / reload
         (function() {
-            const CURRENT_VERSION = '563';
+            const CURRENT_VERSION = '565';
+            window.APP_VERSION = CURRENT_VERSION;;
+            window.APP_VERSION = CURRENT_VERSION;;
+            window.APP_VERSION = CURRENT_VERSION;;
+            window.APP_VERSION = CURRENT_VERSION;;
             const savedVersion = localStorage.getItem('app_version');
             if (savedVersion !== CURRENT_VERSION) {
                 localStorage.setItem('app_version', CURRENT_VERSION);
@@ -31,8 +35,8 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="styles/theme.css?v=563">
-    <link rel="stylesheet" href="styles/components.css?v=563">
+    <link rel="stylesheet" href="styles/theme.css?v=565">
+    <link rel="stylesheet" href="styles/components.css?v=565">
     <style>
         :root {
             --admin-primary: #8B5CF6; /* Purple for Master Admin */
@@ -581,9 +585,9 @@
 
     <!-- Supabase SDK & Service -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="js/supabase-service.js?v=563"></script>
+    <script src="js/supabase-service.js?v=565"></script>
 
-    <script src="js/utils.js?v=563"></script>
+    <script src="js/utils.js?v=565"></script>
 
     <script>
         // MASTER STATE CONTROL
@@ -1562,5 +1566,5 @@
             });
         });
     </script>
-    <script src="js/custom-recipes.js?v=563"></script></body>
+    <script src="js/custom-recipes.js?v=565"></script></body>
 </html>
