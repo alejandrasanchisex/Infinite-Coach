@@ -84,15 +84,18 @@
     <script>
         // Redirigir de inmediato al destino correcto
         try {
+            const params = new URLSearchParams(window.location.search);
+            params.set('v', CURRENT_VERSION);
+            
             if (window.location.hostname.includes('licencias.ingeniaia.es')) {
                 window.location.replace('admin-login.html');
             } else if (localStorage.getItem('_trainerAuthed') === '1') {
                 const activeTrainerId = localStorage.getItem('activeTrainerId') || 'default';
                 window.location.replace('trainer-dashboard.html?t=' + activeTrainerId);
             } else if (localStorage.getItem('clientId')) {
-                window.location.replace('client-dashboard.html?v=578');
+                window.location.replace('client-dashboard.html?' + params.toString());
             } else if (window.location.hostname.includes('infinitecoach.es')) {
-                window.location.replace('client-login.html?v=578');
+                window.location.replace('client-login.html?' + params.toString());
             } else {
                 window.location.replace('trainer-login.html');
             }
