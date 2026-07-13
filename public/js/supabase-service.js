@@ -33,7 +33,24 @@ const SupabaseService = {
             return false;
         }
         if (this.client) return true; // Prevenir múltiples instancias
-        this.client = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+        
+        const clientOptions = {};
+        const isClientPage = typeof window !== 'undefined' && 
+            window.location && 
+            window.location.pathname && 
+            !window.location.pathname.includes('trainer-') && 
+            !window.location.pathname.includes('admin-');
+            
+        if (isClientPage) {
+            console.log("ℹ️ [Supabase Client] Configurando cliente sin persistencia de sesión para página de clientes.");
+            clientOptions.auth = {
+                persistSession: false,
+                autoRefreshToken: false,
+                detectSessionInUrl: false
+            };
+        }
+
+        this.client = supabase.createClient(SUPABASE_URL, SUPABASE_KEY, clientOptions);
         console.log("Supabase listo ✅");
         return true;
     },
