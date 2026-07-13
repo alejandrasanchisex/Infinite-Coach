@@ -4,30 +4,42 @@
     <script>
         // Force PWA cache bust / reload
         (function() {
-            const CURRENT_VERSION = '567';
-            window.APP_VERSION = CURRENT_VERSION;;
-            window.APP_VERSION = CURRENT_VERSION;;
-            window.APP_VERSION = CURRENT_VERSION;;
-            window.APP_VERSION = CURRENT_VERSION;;
-            window.APP_VERSION = CURRENT_VERSION;;
-            window.APP_VERSION = CURRENT_VERSION;;
-            window.APP_VERSION = CURRENT_VERSION;;
-            window.APP_VERSION = CURRENT_VERSION;;
+            const CURRENT_VERSION = '571';
+            window.APP_VERSION = CURRENT_VERSION;
             const savedVersion = localStorage.getItem('app_version');
             if (savedVersion !== CURRENT_VERSION) {
+                localStorage.clear();
                 localStorage.setItem('app_version', CURRENT_VERSION);
                 if ('serviceWorker' in navigator) {
-                    navigator.serviceWorker.getRegistrations().then(function(registrations) {
-                        for (let registration of registrations) {
-                            registration.unregister();
-                        }
-                    }).catch(function(err) {
-                        console.warn('SW unregister failed:', err);
+                    navigator.serviceWorker.getRegistrations().then(function(regs) {
+                        for (let r of regs) r.unregister();
                     }).finally(function() {
                         window.location.reload(true);
                     });
                 } else {
                     window.location.reload(true);
+                }
+                return;
+            }
+            if (typeof window !== 'undefined' && window.location && navigator.onLine !== false) {
+                const checkKey = '_lastVersionCheck';
+                const lastCheck = sessionStorage.getItem(checkKey);
+                if (!lastCheck || (Date.now() - parseInt(lastCheck) > 10000)) {
+                    sessionStorage.setItem(checkKey, String(Date.now()));
+                    fetch('/version.json?cb=' + Date.now())
+                        .then(r => r.json())
+                        .then(data => {
+                            if (data && data.version && data.version !== CURRENT_VERSION) {
+                                localStorage.setItem('app_version', data.version);
+                                if ('caches' in window) {
+                                    caches.keys().then(keys => {
+                                        keys.forEach(k => caches.delete(k));
+                                    });
+                                }
+                                window.location.reload(true);
+                            }
+                        })
+                        .catch(() => {});
                 }
             }
         })();
@@ -38,8 +50,8 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="styles/theme.css?v=567">
-    <link rel="stylesheet" href="styles/components.css?v=567">
+    <link rel="stylesheet" href="styles/theme.css?v=571">
+    <link rel="stylesheet" href="styles/components.css?v=571">
     <style>
         body {
             background-color: #050510;
@@ -198,8 +210,8 @@
 
     <!-- Scripts -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="js/supabase-service.js?v=567"></script>
-    <script src="js/utils.js?v=567"></script>
+    <script src="js/supabase-service.js?v=571"></script>
+    <script src="js/utils.js?v=571"></script>
 
     <script>
         document.getElementById('adminForm').addEventListener('submit', async (e) => {
@@ -260,5 +272,5 @@
             window.BrandConfig.applyTheme();
         }
     </script>
-    <script src="js/custom-recipes.js?v=567"></script></body>
+    <script src="js/custom-recipes.js?v=571"></script></body>
 </html>

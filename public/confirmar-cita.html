@@ -1,12 +1,55 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
+    <script>
+        // Force PWA cache bust / reload
+        (function() {
+            const CURRENT_VERSION = '571';
+            window.APP_VERSION = CURRENT_VERSION;
+            const savedVersion = localStorage.getItem('app_version');
+            if (savedVersion !== CURRENT_VERSION) {
+                localStorage.clear();
+                localStorage.setItem('app_version', CURRENT_VERSION);
+                if ('serviceWorker' in navigator) {
+                    navigator.serviceWorker.getRegistrations().then(function(regs) {
+                        for (let r of regs) r.unregister();
+                    }).finally(function() {
+                        window.location.reload(true);
+                    });
+                } else {
+                    window.location.reload(true);
+                }
+                return;
+            }
+            if (typeof window !== 'undefined' && window.location && navigator.onLine !== false) {
+                const checkKey = '_lastVersionCheck';
+                const lastCheck = sessionStorage.getItem(checkKey);
+                if (!lastCheck || (Date.now() - parseInt(lastCheck) > 10000)) {
+                    sessionStorage.setItem(checkKey, String(Date.now()));
+                    fetch('/version.json?cb=' + Date.now())
+                        .then(r => r.json())
+                        .then(data => {
+                            if (data && data.version && data.version !== CURRENT_VERSION) {
+                                localStorage.setItem('app_version', data.version);
+                                if ('caches' in window) {
+                                    caches.keys().then(keys => {
+                                        keys.forEach(k => caches.delete(k));
+                                    });
+                                }
+                                window.location.reload(true);
+                            }
+                        })
+                        .catch(() => {});
+                }
+            }
+        })();
+    </script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Cita Confirmada | Ingenia IA</title>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="styles/theme.css?v=567">
-    <link rel="stylesheet" href="styles/components.css?v=567">
+    <link rel="stylesheet" href="styles/theme.css?v=571">
+    <link rel="stylesheet" href="styles/components.css?v=571">
     <style>
         body {
             background-color: #0B0B1A;

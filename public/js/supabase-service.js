@@ -6,6 +6,24 @@
 const SUPABASE_URL = "https://bieeydhacavxymoosasx.supabase.co";
 const SUPABASE_KEY = "sb_publishable_ffxbK3z-Am1wVmqV5Szs_w_zOv8RLWQ";
 
+const delay = ms => new Promise(resolve => setTimeout(resolve, ms));
+
+async function retryOp(operation, maxAttempts = 3, initialDelay = 1000) {
+    let lastError = null;
+    for (let attempt = 1; attempt <= maxAttempts; attempt++) {
+        try {
+            return await operation();
+        } catch (err) {
+            lastError = err;
+            console.warn(`[Supabase Retry] Attempt ${attempt}/${maxAttempts} failed:`, err.message || err);
+            if (attempt < maxAttempts) {
+                await delay(initialDelay * Math.pow(2, attempt - 1));
+            }
+        }
+    }
+    throw lastError;
+}
+
 const SupabaseService = {
     client: null,
 
@@ -26,18 +44,24 @@ const SupabaseService = {
     async getTrainerData(trainerId) {
         if (!this.client) this.init();
         try {
-            const { data, error } = await this.client
-                .from('trainer_profiles')
-                .select('full_data')
-                .eq('trainer_id', trainerId)
-                .single();
+            const runQuery = async () => {
+                const { data, error } = await this.client
+                    .from('trainer_profiles')
+                    .select('full_data')
+                    .eq('trainer_id', trainerId)
+                    .single();
 
-            if (error) {
-                if (error.code === 'PGRST116') return null; // No existe registro aún
-                throw error;
-            }
-            
-            const fd = data.full_data;
+                if (error) {
+                    if (error.code === 'PGRST116') return { full_data: null }; // Retornar envoltura para PGRST116
+                    throw error;
+                }
+                return data;
+            };
+
+            const result = await retryOp(runQuery, 3, 1000);
+            if (!result || !result.full_data) return null;
+
+            const fd = result.full_data;
             if (trainerId === 't-w0iybl7qb' && fd && fd.clients) {
                 fd.clients.forEach(c => {
                     if (c.id === '20f2e6c2-2699-4ccc-a982-1e9fb141b9bb' || c.id === '0db0ea7a-c413-44cb-b99e-dfd9790383eb') {
@@ -48,7 +72,7 @@ const SupabaseService = {
             }
             return fd;
         } catch (error) {
-            console.error("Error cargando desde Supabase:", error);
+            console.error("Error cargando desde Supabase despues de reintentos:", error);
             return null;
         }
     },
@@ -62,11 +86,16 @@ const SupabaseService = {
             // 🛡️ RESET BLINDAJE GLOBAL: Bloquear escrituras de sesiones obsoletas que intentan pisar un reset limpio
             if (trainerId && trainerId !== 'default') {
                 try {
-                    const { data: cloudProfile } = await this.client
-                        .from('trainer_profiles')
-                        .select('full_data')
-                        .eq('trainer_id', trainerId)
-                        .single();
+                    const fetchResetProfile = async () => {
+                        const { data, error } = await this.client
+                            .from('trainer_profiles')
+                            .select('full_data')
+                            .eq('trainer_id', trainerId)
+                            .single();
+                        if (error && error.code !== 'PGRST116') throw error;
+                        return data;
+                    };
+                    const cloudProfile = await retryOp(fetchResetProfile, 3, 1000);
                     
                     if (cloudProfile && cloudProfile.full_data && cloudProfile.full_data.__reset_version) {
                         const cloudReset = cloudProfile.full_data.__reset_version;
@@ -229,11 +258,16 @@ const SupabaseService = {
             // Si el que guarda es un cliente, preservar la configuración de marca del entrenador de la nube
             if (!isTrainer && trainerId !== 'default') {
                 try {
-                    const { data: cloudProfile } = await this.client
-                        .from('trainer_profiles')
-                        .select('full_data')
-                        .eq('trainer_id', trainerId)
-                        .single();
+                    const fetchBrandProfile = async () => {
+                        const { data, error } = await this.client
+                            .from('trainer_profiles')
+                            .select('full_data')
+                            .eq('trainer_id', trainerId)
+                            .single();
+                        if (error && error.code !== 'PGRST116') throw error;
+                        return data;
+                    };
+                    const cloudProfile = await retryOp(fetchBrandProfile, 3, 1000);
                     
                     if (cloudProfile && cloudProfile.full_data && cloudProfile.full_data.brand) {
                         console.log("💾 Sincronización de Cliente: Preservando configuración de marca de la nube.");
@@ -244,18 +278,23 @@ const SupabaseService = {
                 }
             }
 
-            const { error } = await this.client
-                .from('trainer_profiles')
-                .upsert({ 
-                    trainer_id: trainerId, 
-                    full_data: fullData,
-                    updated_at: new Date().toISOString()
-                }, { onConflict: 'trainer_id' });
+            const runUpsert = async () => {
+                const { error } = await this.client
+                    .from('trainer_profiles')
+                    .upsert({ 
+                        trainer_id: trainerId, 
+                        full_data: fullData,
+                        updated_at: new Date().toISOString()
+                    }, { onConflict: 'trainer_id' });
 
-            if (error) throw error;
+                if (error) throw error;
+                return true;
+            };
+
+            await retryOp(runUpsert, 3, 1000);
             return true;
         } catch (error) {
-            console.error("Error guardando en Supabase DB:", error);
+            console.error("Error guardando en Supabase DB despues de reintentos:", error);
             return false;
         }
     },

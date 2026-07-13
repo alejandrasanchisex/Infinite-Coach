@@ -1,13 +1,56 @@
 <!DOCTYPE html>
 <html lang="es" class="scroll-smooth">
 <head>
+    <script>
+        // Force PWA cache bust / reload
+        (function() {
+            const CURRENT_VERSION = '571';
+            window.APP_VERSION = CURRENT_VERSION;
+            const savedVersion = localStorage.getItem('app_version');
+            if (savedVersion !== CURRENT_VERSION) {
+                localStorage.clear();
+                localStorage.setItem('app_version', CURRENT_VERSION);
+                if ('serviceWorker' in navigator) {
+                    navigator.serviceWorker.getRegistrations().then(function(regs) {
+                        for (let r of regs) r.unregister();
+                    }).finally(function() {
+                        window.location.reload(true);
+                    });
+                } else {
+                    window.location.reload(true);
+                }
+                return;
+            }
+            if (typeof window !== 'undefined' && window.location && navigator.onLine !== false) {
+                const checkKey = '_lastVersionCheck';
+                const lastCheck = sessionStorage.getItem(checkKey);
+                if (!lastCheck || (Date.now() - parseInt(lastCheck) > 10000)) {
+                    sessionStorage.setItem(checkKey, String(Date.now()));
+                    fetch('/version.json?cb=' + Date.now())
+                        .then(r => r.json())
+                        .then(data => {
+                            if (data && data.version && data.version !== CURRENT_VERSION) {
+                                localStorage.setItem('app_version', data.version);
+                                if ('caches' in window) {
+                                    caches.keys().then(keys => {
+                                        keys.forEach(k => caches.delete(k));
+                                    });
+                                }
+                                window.location.reload(true);
+                            }
+                        })
+                        .catch(() => {});
+                }
+            }
+        })();
+    </script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Lucy Tundidor | Asesorías</title>
     
     <!-- Favicon Lucy Tundidor -->
-    <link rel="icon" type="image/png" href="https://bieeydhacavxymoosasx.supabase.co/storage/v1/object/public/Media/lucy_logo_cropped.png?v=567">
-    <link rel="apple-touch-icon" href="https://bieeydhacavxymoosasx.supabase.co/storage/v1/object/public/Media/lucy_logo_cropped.png?v=567">
+    <link rel="icon" type="image/png" href="https://bieeydhacavxymoosasx.supabase.co/storage/v1/object/public/Media/lucy_logo_cropped.png?v=571">
+    <link rel="apple-touch-icon" href="https://bieeydhacavxymoosasx.supabase.co/storage/v1/object/public/Media/lucy_logo_cropped.png?v=571">
     
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -71,7 +114,7 @@
         <header class="flex justify-between items-center mb-16 md:mb-24">
             <div class="flex items-center gap-3">
                 <img 
-                  src="https://bieeydhacavxymoosasx.supabase.co/storage/v1/object/public/Media/lucy_logo_cropped.png?v=567" 
+                  src="https://bieeydhacavxymoosasx.supabase.co/storage/v1/object/public/Media/lucy_logo_cropped.png?v=571" 
                   alt="Lucy Tundidor Logo" 
                   class="w-12 h-12 rounded-xl object-contain bg-white p-0.5 shadow-md shadow-primary/10 border border-primary/20"
                 />
@@ -225,7 +268,7 @@
                 </div>
                 <div class="flex items-center gap-4 mb-4">
                     <img 
-                      src="https://bieeydhacavxymoosasx.supabase.co/storage/v1/object/public/Media/lucy_logo_cropped.png?v=567" 
+                      src="https://bieeydhacavxymoosasx.supabase.co/storage/v1/object/public/Media/lucy_logo_cropped.png?v=571" 
                       alt="Lucy Tundidor Logo Mini" 
                       class="w-10 h-10 rounded-lg object-contain bg-bgLight p-0.5 border border-gray-100"
                     />

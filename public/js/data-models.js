@@ -1025,6 +1025,14 @@ ${item.date}`.replace('\n', ''); // Safe compile
 };
 
 let saveQueuePromise = Promise.resolve();
+const enqueue = (op) => {
+  const nextPromise = saveQueuePromise.then(op).catch(err => {
+    console.error("Queue operation failed:", err);
+    return null;
+  });
+  saveQueuePromise = nextPromise;
+  return nextPromise;
+};
 
 const saveData = (data) => {
   // Sync clients with latest feedback metrics before saving
@@ -1092,9 +1100,20 @@ const saveData = (data) => {
   if (window.SupabaseService) {
     const currentId = window.activeTrainerId || localStorage.getItem('activeTrainerId') || 'default';
     if (currentId !== 'default') {
-      // Evitar sobrescrituras accidentales por pestañas abiertas con caché local obsoleta.
-      // Verificamos si la nube tiene datos más nuevos antes de subir.
-      saveQueuePromise = saveQueuePromise.then(async () => {
+            enqueue(async () => {
+          const clearLocalDeletedIds = () => {
+              try {
+                  const currentLocal = JSON.parse(localStorage.getItem(getStorageKey()) || '{}');
+                  if (currentLocal.deletedIds && currentLocal.deletedIds.length > 0) {
+                      currentLocal.deletedIds = [];
+                      localStorage.setItem(getStorageKey(), JSON.stringify(currentLocal));
+                      console.log("🧹 [saveData] List of deletedIds cleared after successful upload.");
+                  }
+              } catch (errClear) {
+                  console.warn("Failed to clear deletedIds:", errClear);
+              }
+          };
+
           try {
               const cloudData = await window.SupabaseService.getTrainerData(currentId);
               if (cloudData) {
@@ -1122,6 +1141,7 @@ const saveData = (data) => {
                       
                       localStorage.setItem(getStorageKey(), JSON.stringify(finalData));
                       await window.SupabaseService.saveTrainerData(currentId, finalData);
+                      clearLocalDeletedIds();
                       return;
                   } else if (cloudData.lastModified) {
                       const cloudTime = new Date(cloudData.lastModified).getTime();
@@ -1134,8 +1154,8 @@ const saveData = (data) => {
                           const tempSaved = JSON.parse(localStorage.getItem(getStorageKey()) || '{}');
                           tempSaved.lastModified = localPrevModified;
                           localStorage.setItem(getStorageKey(), JSON.stringify(tempSaved));
-
-                          const freshData = await window.syncFromCloud();
+ 
+                          const freshData = await doSyncFromCloud();
                           if (freshData) {
                               // Obtenemos los datos recién fusionados en local storage
                               const mergedLocal = JSON.parse(localStorage.getItem(getStorageKey()) || '{}');
@@ -1146,15 +1166,17 @@ const saveData = (data) => {
                               
                               localStorage.setItem(getStorageKey(), JSON.stringify(finalData));
                               await window.SupabaseService.saveTrainerData(currentId, finalData);
+                              clearLocalDeletedIds();
                               return;
                           }
                       }
                   }
               }
               await window.SupabaseService.saveTrainerData(currentId, mergedWithLocal);
+              clearLocalDeletedIds();
           } catch (e) {
               console.warn('Supabase DB Sync Error (Safe Merge failed, fallback directly):', e);
-              await window.SupabaseService.saveTrainerData(currentId, mergedWithLocal).catch(() => {});
+              await window.SupabaseService.saveTrainerData(currentId, mergedWithLocal).then(clearLocalDeletedIds).catch(() => {});
           }
       });
     }
@@ -1174,16 +1196,16 @@ const setLastSyncTime = (trainerId) => {
     localStorage.setItem(key, new Date().toISOString());
 };
 
-window.syncFromCloud = async () => {
-    let currentId = window.activeTrainerId || localStorage.getItem('activeTrainerId') || 'default';
-    if (currentId === 'default' || !window.SupabaseService) return null;
-    
-    // 🛡️ FILTRO DE SEGURIDAD MULTI-INQUILINO: Impedir cruce de datos de cliente
-    const clientId = typeof localStorage !== 'undefined' ? (localStorage.getItem('clientId') || sessionStorage.getItem('clientId')) : null;
-    const isTrainer = typeof localStorage !== 'undefined' && localStorage.getItem('_trainerAuthed') === '1';
-    
-    try {
-        let cloudData = await window.SupabaseService.getTrainerData(currentId);
+const doSyncFromCloud = async () => {
+        let currentId = window.activeTrainerId || localStorage.getItem('activeTrainerId') || 'default';
+        if (currentId === 'default' || !window.SupabaseService) return null;
+        
+        // 🛡️ FILTRO DE SEGURIDAD MULTI-INQUILINO: Impedir cruce de datos de cliente
+        const clientId = typeof localStorage !== 'undefined' ? (localStorage.getItem('clientId') || sessionStorage.getItem('clientId')) : null;
+        const isTrainer = typeof localStorage !== 'undefined' && localStorage.getItem('_trainerAuthed') === '1';
+        
+        try {
+            let cloudData = await window.SupabaseService.getTrainerData(currentId);
         
         if (clientId && !isTrainer) {
             // Verificar si el cliente pertenece a este entrenador
@@ -1740,6 +1762,10 @@ ${item.date}`.replace('\n', ''); // Safe compile
         }
     } catch (e) { console.error("Sync Error:", e); }
     return null;
+};
+
+window.syncFromCloud = () => {
+    return enqueue(doSyncFromCloud);
 };
 
 // BIBLIOTECA MAESTRA (100+ EJERCICIOS)
@@ -5270,7 +5296,7 @@ console.log("🏁 v311 BLINDAJE TOTAL: Sistema Cargado con protección máxima d
             console.log("🔄 [AutoSync] Iniciando sincronización automática en segundo plano...");
             const prevDataStr = localStorage.getItem(getStorageKey());
             
-            const freshData = await window.syncFromCloud();
+            const freshData = await doSyncFromCloud();
             lastSyncTime = Date.now();
 
             if (freshData) {

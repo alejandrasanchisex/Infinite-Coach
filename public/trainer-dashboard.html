@@ -5,30 +5,42 @@
     <script>
         // Force PWA cache bust / reload
         (function() {
-            const CURRENT_VERSION = '567';
-            window.APP_VERSION = CURRENT_VERSION;;
-            window.APP_VERSION = CURRENT_VERSION;;
-            window.APP_VERSION = CURRENT_VERSION;;
-            window.APP_VERSION = CURRENT_VERSION;;
-            window.APP_VERSION = CURRENT_VERSION;;
-            window.APP_VERSION = CURRENT_VERSION;;
-            window.APP_VERSION = CURRENT_VERSION;;
-            window.APP_VERSION = CURRENT_VERSION;;
+            const CURRENT_VERSION = '571';
+            window.APP_VERSION = CURRENT_VERSION;
             const savedVersion = localStorage.getItem('app_version');
             if (savedVersion !== CURRENT_VERSION) {
+                localStorage.clear();
                 localStorage.setItem('app_version', CURRENT_VERSION);
                 if ('serviceWorker' in navigator) {
-                    navigator.serviceWorker.getRegistrations().then(function(registrations) {
-                        for (let registration of registrations) {
-                            registration.unregister();
-                        }
-                    }).catch(function(err) {
-                        console.warn('SW unregister failed:', err);
+                    navigator.serviceWorker.getRegistrations().then(function(regs) {
+                        for (let r of regs) r.unregister();
                     }).finally(function() {
                         window.location.reload(true);
                     });
                 } else {
                     window.location.reload(true);
+                }
+                return;
+            }
+            if (typeof window !== 'undefined' && window.location && navigator.onLine !== false) {
+                const checkKey = '_lastVersionCheck';
+                const lastCheck = sessionStorage.getItem(checkKey);
+                if (!lastCheck || (Date.now() - parseInt(lastCheck) > 10000)) {
+                    sessionStorage.setItem(checkKey, String(Date.now()));
+                    fetch('/version.json?cb=' + Date.now())
+                        .then(r => r.json())
+                        .then(data => {
+                            if (data && data.version && data.version !== CURRENT_VERSION) {
+                                localStorage.setItem('app_version', data.version);
+                                if ('caches' in window) {
+                                    caches.keys().then(keys => {
+                                        keys.forEach(k => caches.delete(k));
+                                    });
+                                }
+                                window.location.reload(true);
+                            }
+                        })
+                        .catch(() => {});
                 }
             }
         })();
@@ -39,8 +51,8 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="styles/theme.css?v=567">
-    <link rel="stylesheet" href="styles/components.css?v=567">
+    <link rel="stylesheet" href="styles/theme.css?v=571">
+    <link rel="stylesheet" href="styles/components.css?v=571">
 </head>
 
 <body>
@@ -69,14 +81,14 @@
                     </div>
                     <button class="menu-toggle" onclick="toggleMenu()">☰</button>
                     <ul class="nav-links" id="navLinks">
-                        <li><a href="trainer-dashboard.html?v=567" class="nav-link active">Dashboard</a></li>
-                        <li><a href="trainer-clients.html?v=567" class="nav-link">Clientes</a></li>
-                        <li><a href="trainer-routines.html?v=567" class="nav-link">Rutinas</a></li>
-                        <li><a href="trainer-diets.html?v=567" class="nav-link">Dietas</a></li>
-                        <li><a href="trainer-feedbacks.html?v=567" class="nav-link">Revisiones</a></li>
-                        <li><a href="trainer-media.html?v=567" class="nav-link">Biblioteca</a></li>
-                        <li><a href="trainer-appointments.html?v=567" class="nav-link">Agenda</a></li>
-                        <li><a href="trainer-settings.html?v=567" class="nav-link">Configuración</a></li>
+                        <li><a href="trainer-dashboard.html?v=571" class="nav-link active">Dashboard</a></li>
+                        <li><a href="trainer-clients.html?v=571" class="nav-link">Clientes</a></li>
+                        <li><a href="trainer-routines.html?v=571" class="nav-link">Rutinas</a></li>
+                        <li><a href="trainer-diets.html?v=571" class="nav-link">Dietas</a></li>
+                        <li><a href="trainer-feedbacks.html?v=571" class="nav-link">Revisiones</a></li>
+                        <li><a href="trainer-media.html?v=571" class="nav-link">Biblioteca</a></li>
+                        <li><a href="trainer-appointments.html?v=571" class="nav-link">Agenda</a></li>
+                        <li><a href="trainer-settings.html?v=571" class="nav-link">Configuración</a></li>
                         <li><a href="#" onclick="if(typeof AUTH !== 'undefined') { AUTH.signOut() } else { window.location.reload() }; return false;" class="nav-link" style="color:var(--error-color)">🚪 Salir</a></li>
                     </ul>
                 </nav>
@@ -277,14 +289,14 @@
 
     <!-- Supabase SDK & Service -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="js/supabase-service.js?v=567"></script>
+    <script src="js/supabase-service.js?v=571"></script>
 
     <!-- UI Scripts -->
-    <script src="js/config.js?v=567"></script>
-    <script src="js/auth.js?v=567"></script>
-    <script src="js/sheets.js?v=567"></script>
-    <script src="js/data-models.js?v=567"></script>
-    <script src="js/utils.js?v=567"></script>
+    <script src="js/config.js?v=571"></script>
+    <script src="js/auth.js?v=571"></script>
+    <script src="js/sheets.js?v=571"></script>
+    <script src="js/data-models.js?v=571"></script>
+    <script src="js/utils.js?v=571"></script>
     <script>
         // Branding is handled via onGoogleAuthSuccess() and global listeners
 
@@ -1541,6 +1553,6 @@
             }
         }
     </script>
-    <script src="js/custom-recipes.js?v=567"></script></body>
+    <script src="js/custom-recipes.js?v=571"></script></body>
 
 </html>

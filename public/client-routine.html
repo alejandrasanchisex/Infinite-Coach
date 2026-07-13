@@ -5,43 +5,55 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <script>
-      // Force PWA cache bust / reload
-      (function() {
-          const CURRENT_VERSION = '567';
-            window.APP_VERSION = CURRENT_VERSION;;
-            window.APP_VERSION = CURRENT_VERSION;;
-            window.APP_VERSION = CURRENT_VERSION;;
-            window.APP_VERSION = CURRENT_VERSION;;
-            window.APP_VERSION = CURRENT_VERSION;;
-            window.APP_VERSION = CURRENT_VERSION;;
-            window.APP_VERSION = CURRENT_VERSION;;
-            window.APP_VERSION = CURRENT_VERSION;;
-          const savedVersion = localStorage.getItem('app_version');
-          if (savedVersion !== CURRENT_VERSION) {
-              localStorage.setItem('app_version', CURRENT_VERSION);
-              if ('serviceWorker' in navigator) {
-                  navigator.serviceWorker.getRegistrations().then(function(registrations) {
-                      for (let registration of registrations) {
-                          registration.unregister();
-                      }
-                  }).catch(function(err) {
-                      console.warn('SW unregister failed:', err);
-                  }).finally(function() {
-                      window.location.reload(true);
-                  });
-              } else {
-                  window.location.reload(true);
-              }
-          }
-      })();
-  </script>
+        // Force PWA cache bust / reload
+        (function() {
+            const CURRENT_VERSION = '571';
+            window.APP_VERSION = CURRENT_VERSION;
+            const savedVersion = localStorage.getItem('app_version');
+            if (savedVersion !== CURRENT_VERSION) {
+                localStorage.clear();
+                localStorage.setItem('app_version', CURRENT_VERSION);
+                if ('serviceWorker' in navigator) {
+                    navigator.serviceWorker.getRegistrations().then(function(regs) {
+                        for (let r of regs) r.unregister();
+                    }).finally(function() {
+                        window.location.reload(true);
+                    });
+                } else {
+                    window.location.reload(true);
+                }
+                return;
+            }
+            if (typeof window !== 'undefined' && window.location && navigator.onLine !== false) {
+                const checkKey = '_lastVersionCheck';
+                const lastCheck = sessionStorage.getItem(checkKey);
+                if (!lastCheck || (Date.now() - parseInt(lastCheck) > 10000)) {
+                    sessionStorage.setItem(checkKey, String(Date.now()));
+                    fetch('/version.json?cb=' + Date.now())
+                        .then(r => r.json())
+                        .then(data => {
+                            if (data && data.version && data.version !== CURRENT_VERSION) {
+                                localStorage.setItem('app_version', data.version);
+                                if ('caches' in window) {
+                                    caches.keys().then(keys => {
+                                        keys.forEach(k => caches.delete(k));
+                                    });
+                                }
+                                window.location.reload(true);
+                            }
+                        })
+                        .catch(() => {});
+                }
+            }
+        })();
+    </script>
   <title>Mi Rutina - Infinite Coach</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="styles/theme.css?v=567">
-  <link rel="stylesheet" href="styles/components.css?v=567">
-  <link rel="stylesheet" href="styles/mobile.css?v=567">
+  <link rel="stylesheet" href="styles/theme.css?v=571">
+  <link rel="stylesheet" href="styles/components.css?v=571">
+  <link rel="stylesheet" href="styles/mobile.css?v=571">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <script>
@@ -153,10 +165,10 @@
           <span id="brandName">Infinite Coach</span>
         </div>
         <ul class="nav-links" id="navLinks">
-          <li><a href="client-dashboard.html?v=567" class="nav-link">Inicio</a></li>
-          <li><a href="client-profile.html?v=567" class="nav-link">Ficha Técnica</a></li>
+          <li><a href="client-dashboard.html?v=571" class="nav-link">Inicio</a></li>
+          <li><a href="client-profile.html?v=571" class="nav-link">Ficha Técnica</a></li>
 
-          <li><a href="client-login.html?v=567" class="nav-link">Salir</a></li>
+          <li><a href="client-login.html?v=571" class="nav-link">Salir</a></li>
         </ul>
         <button class="menu-toggle" onclick="toggleMenu()" style="margin-left: auto;">☰</button>
       </nav>
@@ -223,12 +235,12 @@
 
   <!-- Supabase SDK & Service -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script src="js/supabase-service.js?v=567"></script>
+  <script src="js/supabase-service.js?v=571"></script>
 
-  <script src="js/config.js?v=567"></script>
-  <script src="js/data-models.js?v=567"></script>
-  <script src="js/custom-exercises.js?v=567"></script>
-  <script src="js/utils.js?v=567"></script>
+  <script src="js/config.js?v=571"></script>
+  <script src="js/data-models.js?v=571"></script>
+  <script src="js/custom-exercises.js?v=571"></script>
+  <script src="js/utils.js?v=571"></script>
   <script>
     // --- RESOLUCIÓN DE TRAINER ID (FALLBACK SEGURO) ---
     (function() {
@@ -1205,6 +1217,6 @@
     // Trigger App Initialization
     initializeApp();
   </script>
-    <script src="js/custom-recipes.js?v=567"></script></body>
+    <script src="js/custom-recipes.js?v=571"></script></body>
 
 </html>

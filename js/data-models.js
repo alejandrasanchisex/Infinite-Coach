@@ -452,6 +452,87 @@ const getData = () => {
         }
     }
 
+    // 🔥 MIGRACIÓN: Corregir tipo de alimentos y cantidades en dietas que se guardaron erróneamente como unidades
+    if (!localStorage.getItem('v316_fix_food_types_and_diets_v4')) {
+        let modified = false;
+        const knownUnitKeywords = [
+            'plátano', 'banana', 'manzana', 'pera', 'naranja', 'melocotón', 'durazno',
+            'kiwi', 'mandarina', 'limón', 'huevo', 'clara', 'dátil', 'tostada', 'rebanada',
+            'pan', 'tortita', 'tortilla', 'quesito', 'yogur', 'lata', 'atún', 'patata',
+            'papa', 'boniato', 'batata', 'aguacate', 'tomate', 'zanahoria'
+        ];
+        const forcedGramKeywords = [
+            'verdura', 'ensalada', 'vegetal', 'hortaliza', 'judía', 'judia', 'espinaca', 'acelga',
+            'pollo', 'pavo', 'ternera', 'cerdo', 'carne', 'pechuga', 'solomillo',
+            'pescado', 'merluza', 'salmón', 'salmon', 'atún', 'atun', 'bacalao',
+            'arroz', 'pasta', 'avena', 'harina', 'quinoa', 'legumbre', 'lenteja',
+            'aceite', 'mantequilla', 'crema', 'proteína', 'creatina'
+        ];
+
+        // 1. Corregir base de datos de alimentos del entrenador (Foods)
+        if (data.foods && Array.isArray(data.foods)) {
+            data.foods.forEach(food => {
+                if (food.type === 'unit') {
+                    const lowerName = food.name.toLowerCase().trim();
+                    const isKnownUnit = knownUnitKeywords.some(keyword => lowerName.includes(keyword));
+                    const isForcedGram = forcedGramKeywords.some(keyword => lowerName.includes(keyword));
+                    if (!isKnownUnit || isForcedGram) {
+                        food.type = 'g';
+                        modified = true;
+                        console.log(`🔧 Corregido tipo de alimento de base de datos "${food.name}" de 'unit' a 'g'`);
+                    }
+                }
+            });
+        }
+
+        // 2. Corregir alimentos guardados dentro de las dietas existentes
+        if (data.diets && Array.isArray(data.diets)) {
+            data.diets.forEach(diet => {
+                let dietModified = false;
+                (diet.meals || []).forEach(meal => {
+                    (meal.foods || []).forEach(food => {
+                        if (food.name) {
+                            const name = food.name.toLowerCase().trim();
+                            const isKnownUnit = knownUnitKeywords.some(keyword => name.includes(keyword));
+                            const isForcedGram = forcedGramKeywords.some(keyword => name.includes(keyword));
+                            
+                            if (!isKnownUnit || isForcedGram) {
+                                // Si la cantidad tiene 'ud' o 'uds', o si las calorías son sospechosamente altas (> 1000)
+                                const hasUd = typeof food.quantity === 'string' && /unidade?s?|uds?|ración|raciones/i.test(food.quantity);
+                                const isHighCal = parseFloat(food.calories) > 1000;
+                                
+                                if (hasUd || isHighCal) {
+                                    const qtyNum = parseFloat(food.quantity);
+                                    if (!isNaN(qtyNum) && qtyNum > 0) {
+                                        // Cambiar cantidad a gramos (ej: "15g")
+                                        food.quantity = `${qtyNum}g`;
+                                        
+                                        // Si tiene calorías desproporcionadas, corregimos dividiendo por 100
+                                        if (isHighCal) {
+                                            food.calories = Math.round((parseFloat(food.calories) || 0) / 100);
+                                            food.protein = parseFloat(((parseFloat(food.protein) || 0) / 100).toFixed(1));
+                                            food.carbs = parseFloat(((parseFloat(food.carbs) || 0) / 100).toFixed(1));
+                                            food.fat = parseFloat(((parseFloat(food.fat) || 0) / 100).toFixed(1));
+                                        }
+                                        
+                                        dietModified = true;
+                                        modified = true;
+                                        console.log(`🔧 Corregido alimento "${food.name}" en dieta "${diet.name}": cambiado a gramos y corregido macros.`);
+                                    }
+                                }
+                            }
+                        }
+                    });
+                });
+            });
+        }
+
+        if (modified) {
+            try { localStorage.setItem(sKey, JSON.stringify(data)); } catch(e){}
+        }
+        localStorage.setItem('v316_fix_food_types_and_diets_v4', 'true');
+    }
+
     // 🔥 PURGA DE RECETAS NO OFICIALES (Blindaje 145)
     if (data.media && Array.isArray(data.media)) {
         const initialLen = data.media.length;
@@ -944,6 +1025,14 @@ ${item.date}`.replace('\n', ''); // Safe compile
 };
 
 let saveQueuePromise = Promise.resolve();
+const enqueue = (op) => {
+  const nextPromise = saveQueuePromise.then(op).catch(err => {
+    console.error("Queue operation failed:", err);
+    return null;
+  });
+  saveQueuePromise = nextPromise;
+  return nextPromise;
+};
 
 const saveData = (data) => {
   // Sync clients with latest feedback metrics before saving
@@ -1011,9 +1100,20 @@ const saveData = (data) => {
   if (window.SupabaseService) {
     const currentId = window.activeTrainerId || localStorage.getItem('activeTrainerId') || 'default';
     if (currentId !== 'default') {
-      // Evitar sobrescrituras accidentales por pestañas abiertas con caché local obsoleta.
-      // Verificamos si la nube tiene datos más nuevos antes de subir.
-      saveQueuePromise = saveQueuePromise.then(async () => {
+            enqueue(async () => {
+          const clearLocalDeletedIds = () => {
+              try {
+                  const currentLocal = JSON.parse(localStorage.getItem(getStorageKey()) || '{}');
+                  if (currentLocal.deletedIds && currentLocal.deletedIds.length > 0) {
+                      currentLocal.deletedIds = [];
+                      localStorage.setItem(getStorageKey(), JSON.stringify(currentLocal));
+                      console.log("🧹 [saveData] List of deletedIds cleared after successful upload.");
+                  }
+              } catch (errClear) {
+                  console.warn("Failed to clear deletedIds:", errClear);
+              }
+          };
+
           try {
               const cloudData = await window.SupabaseService.getTrainerData(currentId);
               if (cloudData) {
@@ -1041,6 +1141,7 @@ const saveData = (data) => {
                       
                       localStorage.setItem(getStorageKey(), JSON.stringify(finalData));
                       await window.SupabaseService.saveTrainerData(currentId, finalData);
+                      clearLocalDeletedIds();
                       return;
                   } else if (cloudData.lastModified) {
                       const cloudTime = new Date(cloudData.lastModified).getTime();
@@ -1053,8 +1154,8 @@ const saveData = (data) => {
                           const tempSaved = JSON.parse(localStorage.getItem(getStorageKey()) || '{}');
                           tempSaved.lastModified = localPrevModified;
                           localStorage.setItem(getStorageKey(), JSON.stringify(tempSaved));
-
-                          const freshData = await window.syncFromCloud();
+ 
+                          const freshData = await doSyncFromCloud();
                           if (freshData) {
                               // Obtenemos los datos recién fusionados en local storage
                               const mergedLocal = JSON.parse(localStorage.getItem(getStorageKey()) || '{}');
@@ -1065,15 +1166,17 @@ const saveData = (data) => {
                               
                               localStorage.setItem(getStorageKey(), JSON.stringify(finalData));
                               await window.SupabaseService.saveTrainerData(currentId, finalData);
+                              clearLocalDeletedIds();
                               return;
                           }
                       }
                   }
               }
               await window.SupabaseService.saveTrainerData(currentId, mergedWithLocal);
+              clearLocalDeletedIds();
           } catch (e) {
               console.warn('Supabase DB Sync Error (Safe Merge failed, fallback directly):', e);
-              await window.SupabaseService.saveTrainerData(currentId, mergedWithLocal).catch(() => {});
+              await window.SupabaseService.saveTrainerData(currentId, mergedWithLocal).then(clearLocalDeletedIds).catch(() => {});
           }
       });
     }
@@ -1093,16 +1196,16 @@ const setLastSyncTime = (trainerId) => {
     localStorage.setItem(key, new Date().toISOString());
 };
 
-window.syncFromCloud = async () => {
-    let currentId = window.activeTrainerId || localStorage.getItem('activeTrainerId') || 'default';
-    if (currentId === 'default' || !window.SupabaseService) return null;
-    
-    // 🛡️ FILTRO DE SEGURIDAD MULTI-INQUILINO: Impedir cruce de datos de cliente
-    const clientId = typeof localStorage !== 'undefined' ? (localStorage.getItem('clientId') || sessionStorage.getItem('clientId')) : null;
-    const isTrainer = typeof localStorage !== 'undefined' && localStorage.getItem('_trainerAuthed') === '1';
-    
-    try {
-        let cloudData = await window.SupabaseService.getTrainerData(currentId);
+const doSyncFromCloud = async () => {
+        let currentId = window.activeTrainerId || localStorage.getItem('activeTrainerId') || 'default';
+        if (currentId === 'default' || !window.SupabaseService) return null;
+        
+        // 🛡️ FILTRO DE SEGURIDAD MULTI-INQUILINO: Impedir cruce de datos de cliente
+        const clientId = typeof localStorage !== 'undefined' ? (localStorage.getItem('clientId') || sessionStorage.getItem('clientId')) : null;
+        const isTrainer = typeof localStorage !== 'undefined' && localStorage.getItem('_trainerAuthed') === '1';
+        
+        try {
+            let cloudData = await window.SupabaseService.getTrainerData(currentId);
         
         if (clientId && !isTrainer) {
             // Verificar si el cliente pertenece a este entrenador
@@ -1659,6 +1762,10 @@ ${item.date}`.replace('\n', ''); // Safe compile
         }
     } catch (e) { console.error("Sync Error:", e); }
     return null;
+};
+
+window.syncFromCloud = () => {
+    return enqueue(doSyncFromCloud);
 };
 
 // BIBLIOTECA MAESTRA (100+ EJERCICIOS)
@@ -5189,7 +5296,7 @@ console.log("🏁 v311 BLINDAJE TOTAL: Sistema Cargado con protección máxima d
             console.log("🔄 [AutoSync] Iniciando sincronización automática en segundo plano...");
             const prevDataStr = localStorage.getItem(getStorageKey());
             
-            const freshData = await window.syncFromCloud();
+            const freshData = await doSyncFromCloud();
             lastSyncTime = Date.now();
 
             if (freshData) {
