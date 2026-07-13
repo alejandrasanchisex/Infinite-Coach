@@ -422,7 +422,9 @@ document.getElementById('accessCode').addEventListener('keydown', function(e) {
     window.activeTrainerId = tid;
     try { localStorage.setItem('activeTrainerId', tid); } catch(e) {}
     try { sessionStorage.setItem('activeTrainerId', tid); } catch(e) {}
-    if (typeof updateActiveTrainerId === 'function') updateActiveTrainerId(tid);
+    try {
+        if (typeof updateActiveTrainerId === 'function') updateActiveTrainerId(tid);
+    } catch(e) {}
 
     // Apply brand theme instantly on page load
     try {
