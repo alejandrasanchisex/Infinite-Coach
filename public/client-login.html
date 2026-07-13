@@ -576,7 +576,9 @@ async function doLogin() {
 
         if (foundClient) {
             // Actualizar activeTrainerId al del coach del cliente
-            localStorage.setItem('activeTrainerId', foundTrainerId);
+            // Siempre guardar en sessionStorage como garantía (localStorage puede estar lleno en iOS WebView)
+            try { localStorage.setItem('activeTrainerId', foundTrainerId); } catch(e) {}
+            try { sessionStorage.setItem('activeTrainerId', foundTrainerId); } catch(e) {}
             window.activeTrainerId = foundTrainerId;
             if (typeof updateActiveTrainerId === 'function') updateActiveTrainerId(foundTrainerId);
 

@@ -20,7 +20,8 @@ let activeTrainerId = (function() {
         }
     }
     
-    let storedTrainerId = localStorage.getItem('activeTrainerId');
+    // Leer activeTrainerId: localStorage primero, sessionStorage como fallback (iOS WebView con cuota llena)
+    let storedTrainerId = localStorage.getItem('activeTrainerId') || sessionStorage.getItem('activeTrainerId');
     if (storedTrainerId) {
         storedTrainerId = storedTrainerId.trim();
     }
