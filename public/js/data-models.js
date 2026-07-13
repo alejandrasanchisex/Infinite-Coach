@@ -67,6 +67,7 @@ let activeTrainerId = (function() {
             }
         }
     }
+    }
     
     // 3. Si hay tParam específico, priorizarlo
     if (tParam && tParam !== 'default' && tParam !== 'admin') {
