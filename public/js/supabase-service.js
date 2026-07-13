@@ -115,6 +115,52 @@ const SupabaseService = {
             const clientId = typeof localStorage !== 'undefined' ? (localStorage.getItem('clientId') || sessionStorage.getItem('clientId')) : null;
             
             if (!isTrainer && clientId) {
+                try {
+                    const fetchFullProfile = async () => {
+                        const { data, error } = await this.client
+                            .from('trainer_profiles')
+                            .select('full_data')
+                            .eq('trainer_id', trainerId)
+                            .single();
+                        if (error && error.code !== 'PGRST116') throw error;
+                        return data ? data.full_data : null;
+                    };
+                    const cloudData = await retryOp(fetchFullProfile, 3, 1000);
+                    
+                    if (cloudData) {
+                        console.log("🛡️ [Fusión Cliente Cortafuegos] Fusionando cambios del cliente en el perfil completo del entrenador...");
+                        
+                        // 1. Clonar cloudData
+                        const merged = { ...cloudData };
+                        
+                        // 2. Reemplazar a este cliente en la lista
+                        if (merged.clients && fullData.clients) {
+                            const localClient = fullData.clients.find(c => c.id === clientId);
+                            if (localClient) {
+                                merged.clients = merged.clients.map(c => c.id === clientId ? localClient : c);
+                            }
+                        }
+                        
+                        // 3. Reemplazar colecciones específicas del cliente
+                        const clientSpecificCols = ['feedbacks', 'appointments', 'trainingLogs', 'habits'];
+                        clientSpecificCols.forEach(col => {
+                            if (fullData[col]) {
+                                // Eliminar los registros antiguos de este cliente en cloudData
+                                const otherClientsItems = (merged[col] || []).filter(item => item.clientId !== clientId);
+                                // Obtener los nuevos registros de este cliente
+                                const localClientItems = fullData[col].filter(item => item.clientId === clientId);
+                                // Unir
+                                merged[col] = [...otherClientsItems, ...localClientItems];
+                            }
+                        });
+                        
+                        // Reemplazar fullData con merged
+                        fullData = merged;
+                    }
+                } catch (errMergeCloud) {
+                    console.error("Error fusionando datos del cliente con la nube:", errMergeCloud);
+                }
+
                 const clientsList = (fullData && fullData.clients) || [];
                 const clientExists = clientsList.some(c => c.id === clientId);
                 if (!clientExists) {

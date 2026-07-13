@@ -578,6 +578,9 @@ async function doLogin() {
             // Guardar datos del entrenador recuperados localmente para agilizar carga
             // (wrapped in try-catch: iOS WebViews can have very limited quota)
             if (foundTrainerData) {
+                if (window.stripDatabaseForClient) {
+                    foundTrainerData = window.stripDatabaseForClient(foundTrainerData, foundClient.id);
+                }
                 try {
                     localStorage.setItem('fitnessAppData_' + foundTrainerId, JSON.stringify(foundTrainerData));
                 } catch(quotaErr) {

@@ -815,6 +815,58 @@ const getData = () => {
 };
 window.getData = getData;
 
+const stripDatabaseForClient = (data, clientId) => {
+    if (!data || !clientId) return data;
+    try {
+        const optimized = { ...data };
+        
+        // 1. Conservar solo el cliente logueado
+        if (optimized.clients) {
+            optimized.clients = optimized.clients.filter(c => c.id === clientId);
+        }
+        
+        // 2. Conseguir IDs de dietas y rutinas asociadas a este cliente
+        const assignedRoutineIds = new Set();
+        const assignedDietIds = new Set();
+        if (optimized.clients && optimized.clients[0]) {
+            const cli = optimized.clients[0];
+            if (cli.routineId) assignedRoutineIds.add(cli.routineId);
+            if (cli.routineIds) cli.routineIds.forEach(id => assignedRoutineIds.add(id));
+            if (cli.assignedDiet) assignedDietIds.add(cli.assignedDiet);
+            if (cli.assignedDiets) cli.assignedDiets.forEach(id => assignedDietIds.add(id));
+        }
+        
+        // 3. Filtrar rutinas y dietas
+        if (optimized.routines) {
+            optimized.routines = optimized.routines.filter(r => assignedRoutineIds.has(r.id));
+        }
+        if (optimized.diets) {
+            optimized.diets = optimized.diets.filter(d => assignedDietIds.has(d.id));
+        }
+        
+        // 4. Filtrar otras colecciones específicas del cliente
+        if (optimized.trainingBlocks) {
+            optimized.trainingBlocks = optimized.trainingBlocks.filter(b => b.clientId === clientId);
+        }
+        if (optimized.trainingLogs) {
+            optimized.trainingLogs = optimized.trainingLogs.filter(l => l.clientId === clientId);
+        }
+        if (optimized.feedbacks) {
+            optimized.feedbacks = optimized.feedbacks.filter(f => f.clientId === clientId);
+        }
+        if (optimized.appointments) {
+            optimized.appointments = optimized.appointments.filter(a => a.clientId === clientId);
+        }
+        
+        return optimized;
+    } catch(e) {
+        console.error("Error optimizando base de datos para cliente:", e);
+        return data;
+    }
+};
+window.stripDatabaseForClient = stripDatabaseForClient;
+
+
 const mergeLocalEdits = (localNew, cloudMerged, localPrev, isTrainer) => {
     const collections = ['clients', 'routines', 'diets', 'foods', 'media', 'feedbacks', 'appointments', 'invoices', 'trainingBlocks', 'trainingLogs', 'habits', 'supplementationTemplates', 'library'];
     const trainerCollections = ['routines', 'diets', 'foods', 'media', 'trainingBlocks', 'supplementationTemplates', 'invoices', 'library'];
@@ -1369,6 +1421,9 @@ const doSyncFromCloud = async () => {
                     }
                 }
             }
+        }
+        if (clientId && !isTrainer && cloudData) {
+            cloudData = stripDatabaseForClient(cloudData, clientId);
         }
         
         // Obtener datos locales actuales
