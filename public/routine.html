@@ -440,8 +440,8 @@
                 alert(`DIAGNÓSTICO RUTINA:\n` +
                       `- clientId buscado: ${clientId}\n` +
                       `- window.activeTrainerId: ${window.activeTrainerId}\n` +
-                      `- localData existe: ${!!localData} (clientes: ${localClients.map(c => c.name + '/' + c.id).join(', ')})\n` +
-                      `- sessionData existe: ${!!sessionData} (clientes: ${sessionClients.map(c => c.name + '/' + c.id).join(', ')})\n` +
+                      `- localData existe: ${!!localData} (long: ${localData ? localData.length : 0}, inicio: ${localData ? localData.substring(0, 80) : 'vacío'})\n` +
+                      `- sessionData existe: ${!!sessionData} (long: ${sessionData ? sessionData.length : 0}, inicio: ${sessionData ? sessionData.substring(0, 80) : 'vacío'})\n` +
                       `- activeTrainerId en storage: ${activeId}\n` +
                       `- Consulta real-time Supabase: ${fetchResult}\n` +
                       `- URL search: ${window.location.search}`
