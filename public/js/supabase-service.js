@@ -305,25 +305,39 @@ const SupabaseService = {
     async getGlobalConfig() {
         if (!this.client) this.init();
         try {
-            const { data, error } = await this.client
-                .from('saas_config')
-                .select('data')
-                .eq('id', 'config')
-                .single();
-            if (error) throw error;
-            return data.data;
-        } catch (e) { return null; }
+            const fetchConfig = async () => {
+                const { data, error } = await this.client
+                    .from('saas_config')
+                    .select('data')
+                    .eq('id', 'config')
+                    .single();
+                if (error) throw error;
+                return data;
+            };
+            const result = await retryOp(fetchConfig, 3, 1000);
+            return result ? result.data : null;
+        } catch (e) { 
+            console.error("Error cargando config global desde Supabase:", e);
+            return null; 
+        }
     },
 
     async saveGlobalConfig(configData) {
         if (!this.client) this.init();
         try {
-            const { error } = await this.client
-                .from('saas_config')
-                .upsert({ id: 'config', data: configData, updated_at: new Date().toISOString() });
-            if (error) throw error;
+            const runUpsert = async () => {
+                const { error } = await this.client
+                    .from('saas_config')
+                    .upsert({ id: 'config', data: configData, updated_at: new Date().toISOString() });
+                if (error) throw error;
+                return true;
+            };
+            await retryOp(runUpsert, 3, 1000);
             return true;
-        } catch (e) { return false; }
+        } catch (e) { 
+            console.error("Error guardando config global en Supabase:", e);
+            return false; 
+        }
     },
 
     /**

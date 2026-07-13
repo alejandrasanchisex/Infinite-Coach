@@ -5296,7 +5296,7 @@ console.log("🏁 v311 BLINDAJE TOTAL: Sistema Cargado con protección máxima d
             console.log("🔄 [AutoSync] Iniciando sincronización automática en segundo plano...");
             const prevDataStr = localStorage.getItem(getStorageKey());
             
-            const freshData = await doSyncFromCloud();
+            const freshData = await window.syncFromCloud();
             lastSyncTime = Date.now();
 
             if (freshData) {

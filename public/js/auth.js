@@ -12,7 +12,7 @@ const AUTH = {
 
     renderSignInButton: () => {
         console.log("Redirecting to official trainer login page...");
-        window.location.href = 'trainer-login.html?v=531';
+        window.location.href = 'trainer-login.html';
     },
 
     handleManualLogin: () => {
