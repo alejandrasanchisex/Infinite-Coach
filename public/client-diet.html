@@ -803,21 +803,6 @@
           }
       }
 
-      if (client && clientDiets.length === 0) {
-          const sKey = 'fitnessAppData_' + (window.activeTrainerId || 'default');
-          const rawLocal = localStorage.getItem(sKey);
-          let rawParsed = null;
-          try { if (rawLocal) rawParsed = JSON.parse(rawLocal); } catch(e) {}
-          alert(`DIAGNÓSTICO DIETA COMPLETO:\n` +
-                `- clientId: ${clientId}\n` +
-                `- dietPublished: ${client ? client.dietPublished : 'N/A'}\n` +
-                `- assignedDiet: ${client ? client.assignedDiet : 'N/A'}\n` +
-                `- assignedDiets: ${client ? JSON.stringify(client.assignedDiets) : 'N/A'}\n` +
-                `- Diets count in local storage: ${rawParsed ? rawParsed.diets?.length : 0}\n` +
-                `- Diets list in local storage: ${rawParsed ? JSON.stringify(rawParsed.diets?.map(d => ({ id: d.id, name: d.name }))) : 'N/A'}`
-          );
-      }
-
       // Handle multiple diets selector
       const selectorContainer = document.getElementById('dietSelectorContainer');
       const dietSelect = document.getElementById('dietSelect');

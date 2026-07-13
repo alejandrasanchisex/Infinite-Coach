@@ -510,17 +510,7 @@
             const blocks = TrainingBlocks.getByClientId(clientId) || [];
             publishedBlocks = blocks.filter(b => b.published == true || b.published == 'true' || b.published == 1);
             
-            if (client && publishedBlocks.length === 0) {
-                const sKey = 'fitnessAppData_' + (window.activeTrainerId || 'default');
-                const rawLocal = localStorage.getItem(sKey);
-                let rawParsed = null;
-                try { if (rawLocal) rawParsed = JSON.parse(rawLocal); } catch(e) {}
-                alert(`DIAGNÓSTICO RUTINA COMPLETO:\n` +
-                      `- clientId: ${clientId}\n` +
-                      `- Blocks total in local storage: ${rawParsed ? rawParsed.trainingBlocks?.length : 0}\n` +
-                      `- Client blocks in local storage: ${rawParsed ? JSON.stringify(rawParsed.trainingBlocks?.filter(b => b.clientId === clientId).map(b => ({ id: b.id, name: b.name, published: b.published }))) : 'N/A'}`
-                );
-            }
+
             
             const selectorContainer = document.getElementById('blockSelectorContainer');
             const selectEl = document.getElementById('blockSelect');
