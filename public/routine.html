@@ -402,6 +402,23 @@
             client = Clients.getById(clientId);
             if (!client) {
                 const activeId = localStorage.getItem('activeTrainerId') || 'default';
+                const sKey = 'fitnessAppData_' + (window.activeTrainerId || 'default');
+                const localData = localStorage.getItem(sKey);
+                const sessionData = sessionStorage.getItem(sKey);
+                let localClients = [];
+                let sessionClients = [];
+                try { if (localData) localClients = JSON.parse(localData).clients || []; } catch(e) {}
+                try { if (sessionData) sessionClients = JSON.parse(sessionData).clients || []; } catch(e) {}
+
+                alert(`DIAGNÓSTICO RUTINA:\n` +
+                      `- clientId buscado: ${clientId}\n` +
+                      `- window.activeTrainerId: ${window.activeTrainerId}\n` +
+                      `- localData existe: ${!!localData} (clientes: ${localClients.map(c => c.name + '/' + c.id).join(', ')})\n` +
+                      `- sessionData existe: ${!!sessionData} (clientes: ${sessionClients.map(c => c.name + '/' + c.id).join(', ')})\n` +
+                      `- activeTrainerId en storage: ${activeId}\n` +
+                      `- URL search: ${window.location.search}`
+                );
+
                 window.location.replace('client-login.html?reauth=true&t=' + activeId);
                 return;
             }
