@@ -1216,17 +1216,16 @@ const doSyncFromCloud = async () => {
                 if (window.SupabaseService.client) {
                     const { data: profiles, error: scanError } = await window.SupabaseService.client
                         .from('trainer_profiles')
-                        .select('trainer_id, full_data');
+                        .select('trainer_id, clients:full_data->clients');
                     
                     if (!scanError && profiles) {
                         let correctTid = null;
                         let correctData = null;
                         for (let i = 0; i < profiles.length; i++) {
                             const p = profiles[i];
-                            const clientsList = (p.full_data && p.full_data.clients) || [];
+                            const clientsList = p.clients || [];
                             if (clientsList.some(c => c.id === clientId)) {
                                 correctTid = p.trainer_id;
-                                correctData = p.full_data;
                                 break;
                             }
                         }
@@ -1235,8 +1234,21 @@ const doSyncFromCloud = async () => {
                             localStorage.setItem('activeTrainerId', correctTid);
                             window.activeTrainerId = correctTid;
                             currentId = correctTid;
-                            localStorage.setItem('fitnessAppData_' + correctTid, JSON.stringify(correctData));
-                            cloudData = correctData;
+                            
+                            try {
+                                const { data: trainerProfile } = await window.SupabaseService.client
+                                    .from('trainer_profiles')
+                                    .select('full_data')
+                                    .eq('trainer_id', correctTid)
+                                    .single();
+                                if (trainerProfile && trainerProfile.full_data) {
+                                    correctData = trainerProfile.full_data;
+                                    localStorage.setItem('fitnessAppData_' + correctTid, JSON.stringify(correctData));
+                                    cloudData = correctData;
+                                }
+                            } catch (fetchErr) {
+                                console.warn("Failed to fetch full data for correct trainer:", fetchErr);
+                            }
                         }
                     }
                 }

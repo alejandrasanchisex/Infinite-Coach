@@ -187,7 +187,7 @@ const SupabaseService = {
                     // Fetch all other trainer profiles from Supabase to check for collisions
                     const { data: otherProfiles, error: fetchErr } = await this.client
                         .from('trainer_profiles')
-                        .select('trainer_id, full_data')
+                        .select('trainer_id, clients:full_data->clients')
                         .neq('trainer_id', trainerId);
 
                     if (!fetchErr && otherProfiles) {
@@ -195,7 +195,7 @@ const SupabaseService = {
                         const otherAccessCodes = new Map(); // accessCode -> trainer_id
 
                         otherProfiles.forEach(p => {
-                            const clients = (p.full_data && p.full_data.clients) || [];
+                            const clients = p.clients || [];
                             clients.forEach(c => {
                                 if (c.id) otherClientIds.set(c.id, p.trainer_id);
                                 if (c.accessCode) {

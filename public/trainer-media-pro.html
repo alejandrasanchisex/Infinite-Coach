@@ -4,7 +4,7 @@
     <script>
         // Force PWA cache bust / reload
         (function() {
-            const CURRENT_VERSION = '576';
+            const CURRENT_VERSION = '577';
             window.APP_VERSION = CURRENT_VERSION;
             const savedVersion = localStorage.getItem('app_version');
             if (savedVersion !== CURRENT_VERSION) {
@@ -51,8 +51,8 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <link rel="stylesheet" href="styles/theme.css?v=576">
-    <link rel="stylesheet" href="styles/components.css?v=576">
+    <link rel="stylesheet" href="styles/theme.css?v=577">
+    <link rel="stylesheet" href="styles/components.css?v=577">
     <style>
         .media-container { padding: 1.5rem 0; }
         .tabs-nav { display: flex; gap: 2rem; margin-bottom: 2rem; border-bottom: 1px solid rgba(255,255,255,0.05); }
@@ -188,14 +188,14 @@
                     </div>
                     <button class="menu-toggle" onclick="toggleMenu()">☰</button>
                     <ul class="nav-links" id="navLinks">
-                        <li><a href="trainer-dashboard.html?v=576" class="nav-link">Dashboard</a></li>
-                        <li><a href="trainer-clients.html?v=576" class="nav-link">Clientes</a></li>
-                        <li><a href="trainer-routines.html?v=576" class="nav-link">Rutinas</a></li>
-                        <li><a href="trainer-diets.html?v=576" class="nav-link">Dietas</a></li>
-                        <li><a href="trainer-feedbacks.html?v=576" class="nav-link">Revisiones</a></li>
-                        <li><a href="trainer-media.html?v=576" class="nav-link active">Biblioteca</a></li>
-                        <li><a href="trainer-appointments.html?v=576" class="nav-link">Agenda</a></li>
-                        <li><a href="trainer-settings.html?v=576" class="nav-link">Configuración</a></li>
+                        <li><a href="trainer-dashboard.html?v=577" class="nav-link">Dashboard</a></li>
+                        <li><a href="trainer-clients.html?v=577" class="nav-link">Clientes</a></li>
+                        <li><a href="trainer-routines.html?v=577" class="nav-link">Rutinas</a></li>
+                        <li><a href="trainer-diets.html?v=577" class="nav-link">Dietas</a></li>
+                        <li><a href="trainer-feedbacks.html?v=577" class="nav-link">Revisiones</a></li>
+                        <li><a href="trainer-media.html?v=577" class="nav-link active">Biblioteca</a></li>
+                        <li><a href="trainer-appointments.html?v=577" class="nav-link">Agenda</a></li>
+                        <li><a href="trainer-settings.html?v=577" class="nav-link">Configuración</a></li>
                         <li><a href="#" onclick="window.location.reload(); return false;" class="nav-link" style="color:var(--error-color)">🚪 Salir</a></li>
                     </ul>
                 </nav>
@@ -356,8 +356,8 @@
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="js/supabase-service.js?v=576"></script>
-    <script src="js/data-models.js?v=576"></script>
+    <script src="js/supabase-service.js?v=577"></script>
+    <script src="js/data-models.js?v=577"></script>
     <script src="js/utils.js"></script>
     <script src="js/cloud-storage.js"></script>
 
