@@ -653,12 +653,40 @@
                 try { if (localData) localClients = JSON.parse(localData).clients || []; } catch(e) {}
                 try { if (sessionData) sessionClients = JSON.parse(sessionData).clients || []; } catch(e) {}
 
+                // Real-time Supabase query test
+                let fetchResult = "no intentado";
+                try {
+                    if (window.SupabaseService) {
+                        if (!window.SupabaseService.client) window.SupabaseService.init();
+                        if (window.SupabaseService.client) {
+                            const { data, error } = await window.SupabaseService.client
+                                .from('trainer_profiles')
+                                .select('full_data')
+                                .eq('trainer_id', window.activeTrainerId)
+                                .single();
+                            if (error) {
+                                fetchResult = `error: ${error.message} (code: ${error.code})`;
+                            } else {
+                                const clients = (data && data.full_data) ? (data.full_data.clients || []) : [];
+                                fetchResult = `éxito (clientes en db: ${clients.length}, primeros: ${clients.slice(0, 2).map(c => c.name).join(', ')})`;
+                            }
+                        } else {
+                            fetchResult = "Supabase client no inicializado tras init";
+                        }
+                    } else {
+                        fetchResult = "SupabaseService no disponible en window";
+                    }
+                } catch(err) {
+                    fetchResult = `excepción: ${err.message}`;
+                }
+
                 alert(`DIAGNÓSTICO APP:\n` +
                       `- clientId buscado: ${clientId}\n` +
                       `- window.activeTrainerId: ${window.activeTrainerId}\n` +
                       `- localData existe: ${!!localData} (clientes: ${localClients.map(c => c.name + '/' + c.id).join(', ')})\n` +
                       `- sessionData existe: ${!!sessionData} (clientes: ${sessionClients.map(c => c.name + '/' + c.id).join(', ')})\n` +
                       `- activeTrainerId en storage: ${activeId}\n` +
+                      `- Consulta real-time Supabase: ${fetchResult}\n` +
                       `- URL search: ${window.location.search}`
                 );
 
