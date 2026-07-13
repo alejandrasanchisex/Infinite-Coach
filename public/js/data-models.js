@@ -5128,6 +5128,7 @@ const BrandConfig = {
                 (res.name === 'Infinite Coach' && defaultBrand.name === 'ASTeam') || 
                 (res.name === 'Infinite Coach' && defaultBrand.name === 'Lucy Tundidor') || 
                 (res.name === 'Infinite Coach' && defaultBrand.name === 'Método JFK') ||
+                (res.name === 'Infinite Coach' && defaultBrand.name === 'Toledo The Bull') ||
                 (res.name === 'Infinite Coach' && defaultBrand.name === 'Phoenix Protocol'))) {
         res.name = defaultBrand.name;
         res.colors = defaultBrand.colors;

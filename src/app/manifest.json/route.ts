@@ -29,6 +29,11 @@ export async function GET(request: NextRequest) {
         logoToUse = 'https://bieeydhacavxymoosasx.supabase.co/storage/v1/object/public/Media/1781711106755_toledo_the_bull.png';
         primaryColor = '#E60026';
         secondaryColor = '#0A0A0E';
+    } else if (tid === 't-kt1hgr95s') {
+        brandName = 'Phoenix Protocol';
+        logoToUse = 'https://bieeydhacavxymoosasx.supabase.co/storage/v1/object/public/Media/1780593803077_ChatGPT_Image_4_jun_2026_18_24_46.png';
+        primaryColor = '#ff0000';
+        secondaryColor = '#000000';
     } else if (tid !== 'default') {
         try {
             const { data, error } = await supabase
@@ -54,7 +59,7 @@ export async function GET(request: NextRequest) {
     const manifest = {
         name: brandName,
         short_name: brandName,
-        start_url: `/client-login.html?t=${tid}`,
+        start_url: `/acceso.html?t=${tid}`,
         display: "standalone",
         background_color: secondaryColor,
         theme_color: primaryColor,

@@ -20,7 +20,7 @@
         })();
         // Force PWA cache bust / reload
         (function() {
-            const CURRENT_VERSION = '586';
+            const CURRENT_VERSION = '587';
             window.APP_VERSION = CURRENT_VERSION;
             const savedVersion = localStorage.getItem('app_version');
             if (savedVersion !== CURRENT_VERSION) {
@@ -66,9 +66,9 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="styles/theme.css?v=586">
-    <link rel="stylesheet" href="styles/components.css?v=586">
-    <link rel="stylesheet" href="styles/mobile.css?v=586">
+    <link rel="stylesheet" href="styles/theme.css?v=587">
+    <link rel="stylesheet" href="styles/components.css?v=587">
+    <link rel="stylesheet" href="styles/mobile.css?v=587">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <script>
@@ -139,10 +139,10 @@
                     <span id="brandName">Infinite Coach</span>
                 </div>
                 <ul class="nav-links" id="navLinks">
-                    <li><a href="dashboard.html?v=586" class="nav-link active">Inicio</a></li>
-                    <li><a href="profile.html?v=586" class="nav-link">Ficha Técnica</a></li>
+                    <li><a href="dashboard.html?v=587" class="nav-link active">Inicio</a></li>
+                    <li><a href="profile.html?v=587" class="nav-link">Ficha Técnica</a></li>
 
-                    <li><a href="client-login.html?v=586" class="nav-link">Salir</a></li>
+                    <li><a href="acceso.html?v=587" class="nav-link">Salir</a></li>
                 </ul>
                 <button class="menu-toggle" onclick="toggleMenu()" style="margin-left: auto;">☰</button>
             </nav>
@@ -238,19 +238,19 @@
             </style>
             
             <div style="text-align: center; color: rgba(255,255,255,0.15); font-size: 0.75rem; margin: 30px 0 10px; font-weight: 500;">
-                Versión de la App: v586
+                Versión de la App: v587
             </div>
         </div>
     </main>
 
     <!-- Supabase SDK & Service -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="js/supabase-service.js?v=586"></script>
+    <script src="js/supabase-service.js?v=587"></script>
 
-    <script src="js/config.js?v=586"></script>
-    <script src="js/data-models.js?v=586"></script>
-    <script src="js/utils.js?v=586"></script>
-    <script src="js/custom-exercises.js?v=586"></script>
+    <script src="js/config.js?v=587"></script>
+    <script src="js/data-models.js?v=587"></script>
+    <script src="js/utils.js?v=587"></script>
+    <script src="js/custom-exercises.js?v=587"></script>
     <script>
         // CLIENT INITIALIZATION
         const dashboardUrlParams = new URLSearchParams(window.location.search);
@@ -289,7 +289,7 @@
 
         const clientId = clientIdFromUrl || sessionStorage.getItem('clientId') || localStorage.getItem('clientId');
         if (!clientId) {
-            window.location.replace('client-login.html');
+            window.location.replace('acceso.html');
         } else {
             try { sessionStorage.setItem('clientId', clientId); } catch(e) {}
             try { localStorage.setItem('clientId', clientId); } catch(e) {}
@@ -646,7 +646,7 @@
             if (!client) {
                 // NUNCA borrar clientId de localStorage para respetar la persistencia deseada por el usuario
                 const activeId = localStorage.getItem('activeTrainerId') || 'default';
-                window.location.replace('client-login.html?reauth=true&t=' + activeId);
+                window.location.replace('acceso.html?reauth=true&t=' + activeId);
                 return;
             }
 
@@ -878,7 +878,7 @@
             const clientId = sessionStorage.getItem('clientId') || localStorage.getItem('clientId');
             if (!clientId) {
                 alert("Error de sesión. Por favor inicia sesión de nuevo.");
-                window.location.replace('client-login.html');
+                window.location.replace('acceso.html');
                 return;
             }
             
@@ -1187,7 +1187,7 @@
     </style>
 
 
-    <script src="js/custom-recipes.js?v=586"></script>
-    <script src="js/pwa-install.js?v=586"></script>
+    <script src="js/custom-recipes.js?v=587"></script>
+    <script src="js/pwa-install.js?v=587"></script>
 </body>
 </html>

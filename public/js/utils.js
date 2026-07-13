@@ -138,7 +138,7 @@ function initUtils() {
     // Interceptar clicks en links de "Salir" (login) para limpiar sesión local
     document.addEventListener('click', function(e) {
         const target = e.target.closest('a');
-        if (target && target.getAttribute('href') && target.getAttribute('href').includes('client-login.html')) {
+        if (target && target.getAttribute('href') && target.getAttribute('href').includes('acceso.html')) {
             localStorage.removeItem('clientId');
             sessionStorage.removeItem('clientId');
             const href = target.getAttribute('href');
