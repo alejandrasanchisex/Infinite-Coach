@@ -28,22 +28,41 @@ let activeTrainerId = (function() {
     // 2. Si el cliente está logueado, buscar su base de datos correspondiente (para restaurar contexto en PWA)
     let clientId = localStorage.getItem('clientId') || sessionStorage.getItem('clientId');
     if (clientId) {
-        for (let i = 0; i < localStorage.length; i++) {
-            const key = localStorage.key(i);
-            if (key && key.startsWith('fitnessAppData_') && !key.endsWith('_backup')) {
-                const raw = localStorage.getItem(key);
-                if (raw) {
-                    try {
-                        const parsed = JSON.parse(raw);
-                        if (parsed && parsed.clients && parsed.clients.some(c => c.id === clientId)) {
-                            const foundTid = key.replace('fitnessAppData_', '');
-                            if (foundTid && foundTid !== 'default' && foundTid !== 'admin') {
-                                console.log(`[data-models] Cliente detectado en base de datos: ${foundTid}. Restaurando contexto.`);
-                                return foundTid;
-                            }
+        // Buscar en localStorage
+    for (let i = 0; i < localStorage.length; i++) {
+        const key = localStorage.key(i);
+        if (key && key.startsWith('fitnessAppData_') && !key.endsWith('_backup')) {
+            const raw = localStorage.getItem(key);
+            if (raw) {
+                try {
+                    const parsed = JSON.parse(raw);
+                    if (parsed && parsed.clients && parsed.clients.some(c => c.id === clientId)) {
+                        const foundTid = key.replace('fitnessAppData_', '');
+                        if (foundTid && foundTid !== 'default' && foundTid !== 'admin') {
+                            console.log(`[data-models] Cliente detectado en localStorage: ${foundTid}. Restaurando contexto.`);
+                            return foundTid;
                         }
-                    } catch(e) {}
-                }
+                    }
+                } catch(e) {}
+            }
+        }
+    }
+    // Fallback: buscar en sessionStorage (p.ej. iOS WebView con cuota localStorage llena)
+    for (let i = 0; i < sessionStorage.length; i++) {
+        const key = sessionStorage.key(i);
+        if (key && key.startsWith('fitnessAppData_') && !key.endsWith('_backup')) {
+            const raw = sessionStorage.getItem(key);
+            if (raw) {
+                try {
+                    const parsed = JSON.parse(raw);
+                    if (parsed && parsed.clients && parsed.clients.some(c => c.id === clientId)) {
+                        const foundTid = key.replace('fitnessAppData_', '');
+                        if (foundTid && foundTid !== 'default' && foundTid !== 'admin') {
+                            console.log(`[data-models] Cliente detectado en sessionStorage (fallback): ${foundTid}. Restaurando contexto.`);
+                            return foundTid;
+                        }
+                    }
+                } catch(e) {}
             }
         }
     }
@@ -77,7 +96,7 @@ if (!activeTrainerId || activeTrainerId === 'default' || activeTrainerId === 'ad
     activeTrainerId = 'default';
 }
 
-localStorage.setItem('activeTrainerId', activeTrainerId);
+try { localStorage.setItem('activeTrainerId', activeTrainerId); } catch(e) {}
 window.activeTrainerId = activeTrainerId;
 const getStorageKey = () => `fitnessAppData_${window.activeTrainerId || 'default'}`;
 
@@ -299,7 +318,8 @@ const syncClientWithLatestFeedback = (client, feedbacks) => {
 
 const getData = () => {
   const sKey = getStorageKey();
-  const raw = localStorage.getItem(sKey);
+  // Leer de localStorage; si no hay datos (cuota llena en iOS WebView), usar sessionStorage como fallback
+  const raw = localStorage.getItem(sKey) || sessionStorage.getItem(sKey);
   
     
 

@@ -287,8 +287,8 @@
         if (!clientId) {
             window.location.replace('client-login.html');
         } else {
-            sessionStorage.setItem('clientId', clientId);
-            localStorage.setItem('clientId', clientId);
+            try { sessionStorage.setItem('clientId', clientId); } catch(e) {}
+            try { localStorage.setItem('clientId', clientId); } catch(e) {}
         }
 
         async function initDashboard() {
@@ -607,7 +607,7 @@
                                 const found = clientsList.find(c => c.id === clientId);
                                 if (found) {
                                     console.log(`[dashboard] Cliente recuperado mediante búsqueda cruzada en la nube: ${p.trainer_id}`);
-                                    localStorage.setItem('activeTrainerId', p.trainer_id);
+                                    try { localStorage.setItem('activeTrainerId', p.trainer_id); } catch(e) {}
                                     window.activeTrainerId = p.trainer_id;
                                     
                                     try {
@@ -617,7 +617,11 @@
                                             .eq('trainer_id', p.trainer_id)
                                             .single();
                                         if (trainerProfile && trainerProfile.full_data) {
-                                            localStorage.setItem('fitnessAppData_' + p.trainer_id, JSON.stringify(trainerProfile.full_data));
+                                            try {
+                                                localStorage.setItem('fitnessAppData_' + p.trainer_id, JSON.stringify(trainerProfile.full_data));
+                                            } catch(quotaErr) {
+                                                try { sessionStorage.setItem('fitnessAppData_' + p.trainer_id, JSON.stringify(trainerProfile.full_data)); } catch(e2) {}
+                                            }
                                         }
                                     } catch (fetchErr) {
                                         console.warn("Failed to fetch full data for found trainer:", fetchErr);
