@@ -481,15 +481,15 @@ async function doLogin() {
         var foundTrainerId = null;
         var foundTrainerData = null;
 
-        // 1. Prioridad: Buscar en Supabase en tiempo real en todos los perfiles de entrenadores
+        // 1. Prioridad: Buscar en Supabase en tiempo real en todos los perfiles de entrenadores (un solo fetch para evitar fallos de red intermitentes)
         if (window.SupabaseService && window.SupabaseService.client) {
             try {
                 const { data: profiles, error } = await window.SupabaseService.client
                     .from('trainer_profiles')
-                    .select('trainer_id, clients:full_data->clients');
+                    .select('trainer_id, full_data');
                 
                 if (!error && profiles) {
-                    // Sort profiles to prefer active trainer, deprioritize generics (admin, default), and prefer recently updated profiles
+                    // Ordenar perfiles para priorizar el entrenador activo actual y evitar genéricos
                     profiles.sort(function(a, b) {
                         var aIsActive = (a.trainer_id === window.activeTrainerId);
                         var bIsActive = (b.trainer_id === window.activeTrainerId);
@@ -501,37 +501,23 @@ async function doLogin() {
                         if (aIsGeneric && !bIsGeneric) return 1;
                         if (!aIsGeneric && bIsGeneric) return -1;
 
-                        return new Date(b.updated_at || 0) - new Date(a.updated_at || 0);
+                        return 0;
                     });
 
                     for (var i = 0; i < profiles.length; i++) {
                         var p = profiles[i];
-                        var clientsList = p.clients || [];
+                        var fd = p.full_data || {};
+                        var clientsList = fd.clients || [];
                         for (var j = 0; j < clientsList.length; j++) {
                             var c = clientsList[j];
                             if ((c.accessCode || '').trim().toUpperCase() === code) {
                                 foundClient = c;
                                 foundTrainerId = p.trainer_id;
+                                foundTrainerData = fd;
                                 break;
                             }
                         }
                         if (foundClient) break;
-                    }
-
-                    // Fetch full data for only the matched trainer
-                    if (foundClient) {
-                        try {
-                            const { data: trainerProfile } = await window.SupabaseService.client
-                                .from('trainer_profiles')
-                                .select('full_data')
-                                .eq('trainer_id', foundTrainerId)
-                                .single();
-                            if (trainerProfile && trainerProfile.full_data) {
-                                foundTrainerData = trainerProfile.full_data;
-                            }
-                        } catch (fetchErr) {
-                            console.warn("Failed to fetch full data for found trainer:", fetchErr);
-                        }
                     }
                 }
             } catch(e) {
