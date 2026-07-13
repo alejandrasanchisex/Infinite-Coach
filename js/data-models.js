@@ -4,6 +4,14 @@
 
 const DB_VERSION = '1.0.1';
 let activeTrainerId = (function() {
+    const isTrainer = typeof localStorage !== 'undefined' && localStorage.getItem('_trainerAuthed') === '1';
+    if (isTrainer) {
+        try {
+            localStorage.removeItem('clientId');
+            sessionStorage.removeItem('clientId');
+        } catch(e) {}
+    }
+
     // 1. Obtener del parámetro de búsqueda de la URL 't'
     let tParam = null;
     if (typeof window !== 'undefined' && window.location && window.location.search) {

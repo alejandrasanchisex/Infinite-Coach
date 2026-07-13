@@ -127,8 +127,12 @@ const SupabaseService = {
                     };
                     const cloudData = await retryOp(fetchFullProfile, 3, 1000);
                     
-                    if (cloudData) {
-                        console.log("🛡️ [Fusión Cliente Cortafuegos] Fusionando cambios del cliente en el perfil completo del entrenador...");
+                    if (!cloudData || !cloudData.clients) {
+                        console.error("🚨 [CORTAFUEGOS SUPABASE] ABORTANDO GUARDADO: No se pudieron obtener los datos válidos del entrenador de la nube. Cancelando operación del cliente para proteger datos.");
+                        return false;
+                    }
+                    
+                    console.log("🛡️ [Fusión Cliente Cortafuegos] Fusionando cambios del cliente en el perfil completo del entrenador...");
                         
                         // 1. Clonar cloudData
                         const merged = { ...cloudData };
@@ -159,6 +163,7 @@ const SupabaseService = {
                     }
                 } catch (errMergeCloud) {
                     console.error("Error fusionando datos del cliente con la nube:", errMergeCloud);
+                    return false;
                 }
 
                 const clientsList = (fullData && fullData.clients) || [];
