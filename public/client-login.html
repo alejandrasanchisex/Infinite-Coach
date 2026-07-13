@@ -572,6 +572,9 @@ async function doLogin() {
             window.activeTrainerId = foundTrainerId;
             if (typeof updateActiveTrainerId === 'function') updateActiveTrainerId(foundTrainerId);
 
+            try { sessionStorage.setItem('clientId', foundClient.id); } catch(e) {}
+            try { localStorage.setItem('clientId', foundClient.id); } catch(e) {}
+
             // Guardar datos del entrenador recuperados localmente para agilizar carga
             // (wrapped in try-catch: iOS WebViews can have very limited quota)
             if (foundTrainerData) {
@@ -582,9 +585,6 @@ async function doLogin() {
                     try { sessionStorage.setItem('fitnessAppData_' + foundTrainerId, JSON.stringify(foundTrainerData)); } catch(e2) {}
                 }
             }
-
-            try { sessionStorage.setItem('clientId', foundClient.id); } catch(e) {}
-            try { localStorage.setItem('clientId', foundClient.id); } catch(e) {}
 
             // Intentar aplicar la marca del coach de inmediato para feedback visual al cliente
             try {

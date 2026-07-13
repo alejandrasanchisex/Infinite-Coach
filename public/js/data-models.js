@@ -5,6 +5,8 @@
 // 🛡️ HOOK DE ESPEJO DE ALMACENAMIENTO PARA WEBVIEWS DE IOS/WHATSAPP (CUOTA LLENA/SANDBOX)
 (function() {
     if (typeof window === 'undefined' || !window.localStorage) return;
+    
+    // 1. Interceptar escrituras (espejar en sessionStorage y limpiar localStorage de clientes si es muy grande)
     const originalSetItem = localStorage.setItem;
     localStorage.setItem = function(key, value) {
         let valueToStoreInLocal = value;
@@ -66,6 +68,18 @@
         
         // Guardar optimizado/original en localStorage
         try { originalSetItem.call(localStorage, key, valueToStoreInLocal); } catch(e) {}
+    };
+
+    // 2. Interceptar lecturas (priorizar sessionStorage sobre localStorage para evitar datos recortados)
+    const originalGetItem = localStorage.getItem;
+    localStorage.getItem = function(key) {
+        if (key && key.indexOf('fitnessAppData_') === 0 && !key.endsWith('_backup')) {
+            try {
+                const sessionVal = sessionStorage.getItem(key);
+                if (sessionVal) return sessionVal;
+            } catch(e) {}
+        }
+        try { return originalGetItem.apply(this, arguments); } catch(e) { return null; }
     };
     
     // Espejar datos iniciales si ya existen en localStorage pero no en sessionStorage
