@@ -20,7 +20,7 @@
         })();
         // Force PWA cache bust / reload
         (function() {
-            const CURRENT_VERSION = '595';
+            const CURRENT_VERSION = '596';
             window.APP_VERSION = CURRENT_VERSION;
             const savedVersion = localStorage.getItem('app_version');
             if (savedVersion !== CURRENT_VERSION) {
@@ -345,7 +345,7 @@
 
         <p class="footer">¿No tienes código?<br>Contacta con tu entrenador personal.</p>
         <p class="footer" style="margin-top: 15px; border-top: 1px solid rgba(255,255,255,0.05); padding-top: 15px;">
-            <a href="trainer-login.html?v=595" style="color: var(--gold-light); text-decoration: none; font-size: 0.8rem; font-weight: 600;">Acceso Entrenadores 🔐</a>
+            <a href="trainer-login.html?v=596" style="color: var(--gold-light); text-decoration: none; font-size: 0.8rem; font-weight: 600;">Acceso Entrenadores 🔐</a>
         </p>
         <p id="app-version-display" style="text-align: center; font-size: 0.65rem; color: var(--muted); margin-top: 10px; opacity: 0.7;"></p>
     </div>
@@ -355,10 +355,10 @@
 
 <!-- ── Scripts ──────────────────────────────────────────────────── -->
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="js/supabase-service.js?v=595"></script>
-<script src="js/config.js?v=595"></script>
-<script src="js/data-models.js?v=595"></script>
-<script src="js/utils.js?v=595"></script>
+<script src="js/supabase-service.js?v=596"></script>
+<script src="js/config.js?v=596"></script>
+<script src="js/data-models.js?v=596"></script>
+<script src="js/utils.js?v=596"></script>
 <script>
 
 // ── Auto-Redirección (Mantener sesión activa) ─────────────────────
@@ -366,7 +366,7 @@
     var storedClientId = localStorage.getItem('clientId') || sessionStorage.getItem('clientId');
     var params = new URLSearchParams(window.location.search);
     if (storedClientId && params.get('logout') !== 'true' && params.get('reauth') !== 'true') {
-        window.location.replace('dashboard.html?v=595');
+        window.location.replace('dashboard.html?v=596');
     }
 })();
 
@@ -491,7 +491,7 @@ async function doLogin() {
             try {
                 const { data: profiles, error } = await window.SupabaseService.client
                     .from('trainer_profiles')
-                    .select('trainer_id, full_data');
+                    .select('trainer_id, clients:full_data->clients');
                 profilesList = profiles;
                 
                 if (error) {
@@ -519,18 +519,32 @@ async function doLogin() {
 
                     for (var i = 0; i < profiles.length; i++) {
                         var p = profiles[i];
-                        var fd = p.full_data || {};
-                        var clientsList = fd.clients || [];
+                        var clientsList = p.clients || [];
                         for (var j = 0; j < clientsList.length; j++) {
                             var c = clientsList[j];
                             if ((c.accessCode || '').trim().toUpperCase() === code) {
                                 foundClient = c;
                                 foundTrainerId = p.trainer_id;
-                                foundTrainerData = fd;
                                 break;
                             }
                         }
                         if (foundClient) break;
+                    }
+
+                    if (foundClient) {
+                        const { data: trainerProfile, error: fetchError } = await window.SupabaseService.client
+                            .from('trainer_profiles')
+                            .select('full_data')
+                            .eq('trainer_id', foundTrainerId)
+                            .single();
+                        if (fetchError) {
+                            console.error("Error fetching trainer data:", fetchError);
+                            showMsg("Error de base de datos al cargar perfil: " + (fetchError.message || JSON.stringify(fetchError)));
+                            btn.disabled = false;
+                            content.textContent = 'Acceder';
+                            return;
+                        }
+                        foundTrainerData = trainerProfile ? trainerProfile.full_data : null;
                     }
                 }
             } catch(e) {
@@ -645,7 +659,7 @@ try {
     document.getElementById('app-version-display').textContent = 'Versión: v' + (window.APP_VERSION || 'desconocida');
 } catch(e) {}
 </script>
-<script src="js/custom-recipes.js?v=595"></script>
-<script src="js/pwa-install.js?v=595"></script>
+<script src="js/custom-recipes.js?v=596"></script>
+<script src="js/pwa-install.js?v=596"></script>
 </body>
 </html>
