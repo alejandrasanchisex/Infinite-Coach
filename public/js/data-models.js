@@ -2,6 +2,30 @@
 // DATA MODELS & STORAGE MANAGEMENT - v311 BLINDAJE TOTAL
 // ============================================
 
+// 🛡️ HOOK DE ESPEJO DE ALMACENAMIENTO PARA WEBVIEWS DE IOS/WHATSAPP (CUOTA LLENA/SANDBOX)
+(function() {
+    if (typeof window === 'undefined' || !window.localStorage) return;
+    const originalSetItem = localStorage.setItem;
+    localStorage.setItem = function(key, value) {
+        try { originalSetItem.apply(this, arguments); } catch(e) {}
+        if (key && (key.indexOf('fitnessAppData_') === 0 || key === 'clientId' || key === 'activeTrainerId')) {
+            try { sessionStorage.setItem(key, value); } catch(e) {}
+        }
+    };
+    
+    // Espejar datos iniciales si ya existen en localStorage pero no en sessionStorage
+    try {
+        for (let i = 0; i < localStorage.length; i++) {
+            const key = localStorage.key(i);
+            if (key && (key.indexOf('fitnessAppData_') === 0 || key === 'clientId' || key === 'activeTrainerId')) {
+                if (!sessionStorage.getItem(key)) {
+                    sessionStorage.setItem(key, localStorage.getItem(key));
+                }
+            }
+        }
+    } catch(e) {}
+})();
+
 const DB_VERSION = '1.0.1';
 let activeTrainerId = (function() {
     // 1. Obtener del parámetro de búsqueda de la URL 't'
