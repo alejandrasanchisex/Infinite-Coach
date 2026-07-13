@@ -1433,6 +1433,30 @@ const doSyncFromCloud = async () => {
             try { localData = JSON.parse(localRaw); } catch(e){}
         }
 
+        // 🛡️ SALVAGUARDA DE COCHE CATASTRÓFICO:
+        // Si somos Entrenador, y los datos de la nube tienen 0 rutinas pero localmente tenemos rutinas,
+        // significa que la nube se corrompió/recortó por el login de un cliente.
+        // En este caso, ignoramos los datos de la nube y subimos los locales directamente para restaurar.
+        if (isTrainer && localData) {
+            const localRoutinesCount = localData.routines ? localData.routines.length : 0;
+            const cloudRoutinesCount = cloudData && cloudData.routines ? cloudData.routines.length : 0;
+            const localClientsCount = localData.clients ? localData.clients.length : 0;
+            const cloudClientsCount = cloudData && cloudData.clients ? cloudData.clients.length : 0;
+
+            if (localRoutinesCount > 0 && cloudRoutinesCount === 0 && localClientsCount > 1 && cloudClientsCount <= 1) {
+                console.warn("🚨 [SALVAGUARDA ENTRENADOR] Se detectó que la nube está vacía/recortada pero el local tiene los datos reales. Subiendo local para restaurar...");
+                localData.lastModified = new Date().toISOString();
+                try {
+                    await window.SupabaseService.saveTrainerData(currentId, localData);
+                } catch(e) {
+                    console.error("Error subiendo datos locales para restaurar:", e);
+                }
+                localStorage.setItem(getStorageKey(), JSON.stringify(localData));
+                setLastSyncTime(currentId);
+                return localData;
+            }
+        }
+
         if (cloudData) {
             // 🛡️ BLINDAJE DE RESET: Si la nube tiene __reset_version, descartar caché local y adoptar nube directamente
             if (cloudData.__reset_version) {
