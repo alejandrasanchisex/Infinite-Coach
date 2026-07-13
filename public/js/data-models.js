@@ -4810,6 +4810,7 @@ const BrandConfig = {
     let isToledo = false;
     let isLucy = false;
     let isJulian = false;
+    let isBrian = false;
     if (typeof window !== 'undefined') {
         const activeId = window.activeTrainerId || localStorage.getItem('activeTrainerId') || '';
         const trainerEmail = localStorage.getItem('_trainerEmail') || '';
@@ -4828,7 +4829,10 @@ const BrandConfig = {
         if (activeId.includes('t-kghykurxf') || (trainerEmail && trainerEmail.toLowerCase() === 'julian@gmail.com')) {
             isJulian = true;
         }
-        console.log(`[BrandConfig] activeId="${activeId}" trainerEmail="${trainerEmail}" => isAlejandra=${isAlejandra}, isToledo=${isToledo}, isLucy=${isLucy}, isJulian=${isJulian}`);
+        if (activeId.includes('t-kt1hgr95s') || (trainerEmail && trainerEmail.toLowerCase() === 'brianarribas@gmail.com')) {
+            isBrian = true;
+        }
+        console.log(`[BrandConfig] activeId="${activeId}" trainerEmail="${trainerEmail}" => isAlejandra=${isAlejandra}, isToledo=${isToledo}, isLucy=${isLucy}, isJulian=${isJulian}, isBrian=${isBrian}`);
     }
 
     // Default brand settings
@@ -4888,13 +4892,32 @@ const BrandConfig = {
             },
             fiscalData: { invoiceSeries: 'FJFK' + new Date().getFullYear() }
         };
+    } else if (isBrian) {
+        defaultBrand = {
+            name: 'Phoenix Protocol',
+            logo: 'https://bieeydhacavxymoosasx.supabase.co/storage/v1/object/public/Media/1780593803077_ChatGPT_Image_4_jun_2026_18_24_46.png',
+            configured: true,
+            colors: { 
+                primary: '#ff0000', 
+                secondary: '#000000', 
+                accent: '#ffa3a3', 
+                themeMode: 'dark', 
+                bgDark: '#0f0f1e' 
+            },
+            whatsapp: '34601357283',
+            fiscalData: { invoiceSeries: 'F' + new Date().getFullYear() }
+        };
     }
 
     let res = data.brand || defaultBrand;
     
     // Brand config is fully persistent; no auto-resetting blocks for active trainers.
 
-    if (res && (res.name === 'MyFitness' || res.name === 'Fitness App' || (res.name === 'Infinite Coach' && defaultBrand.name === 'ASTeam') || (res.name === 'Infinite Coach' && defaultBrand.name === 'Lucy Tundidor') || (res.name === 'Infinite Coach' && defaultBrand.name === 'Método JFK'))) {
+    if (res && (res.name === 'MyFitness' || res.name === 'Fitness App' || 
+                (res.name === 'Infinite Coach' && defaultBrand.name === 'ASTeam') || 
+                (res.name === 'Infinite Coach' && defaultBrand.name === 'Lucy Tundidor') || 
+                (res.name === 'Infinite Coach' && defaultBrand.name === 'Método JFK') ||
+                (res.name === 'Infinite Coach' && defaultBrand.name === 'Phoenix Protocol'))) {
         res.name = defaultBrand.name;
         res.colors = defaultBrand.colors;
         res.logo = defaultBrand.logo;
