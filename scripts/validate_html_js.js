@@ -25,8 +25,9 @@ function validateAllHtmlFiles() {
             const scriptTag = match[0];
             const jsCode = match[1];
 
-            // Skip external script tags
-            if (scriptTag.includes('src=')) {
+            // Skip external script tags by checking only the opening tag
+            const openingTag = (scriptTag.match(/<script\b[^>]*>/i) || [])[0] || '';
+            if (openingTag.includes('src=')) {
                 continue;
             }
 
