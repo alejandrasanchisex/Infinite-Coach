@@ -581,12 +581,18 @@ async function doLogin() {
             if (typeof updateActiveTrainerId === 'function') updateActiveTrainerId(foundTrainerId);
 
             // Guardar datos del entrenador recuperados localmente para agilizar carga
+            // (wrapped in try-catch: iOS WebViews can have very limited quota)
             if (foundTrainerData) {
-                localStorage.setItem('fitnessAppData_' + foundTrainerId, JSON.stringify(foundTrainerData));
+                try {
+                    localStorage.setItem('fitnessAppData_' + foundTrainerId, JSON.stringify(foundTrainerData));
+                } catch(quotaErr) {
+                    console.warn('[Login] No se pudo guardar en localStorage (cuota llena). Guardando en sessionStorage como fallback.');
+                    try { sessionStorage.setItem('fitnessAppData_' + foundTrainerId, JSON.stringify(foundTrainerData)); } catch(e2) {}
+                }
             }
 
-            sessionStorage.setItem('clientId', foundClient.id);
-            localStorage.setItem('clientId', foundClient.id);
+            try { sessionStorage.setItem('clientId', foundClient.id); } catch(e) {}
+            try { localStorage.setItem('clientId', foundClient.id); } catch(e) {}
 
             // Intentar aplicar la marca del coach de inmediato para feedback visual al cliente
             try {
@@ -618,7 +624,7 @@ async function doLogin() {
 
     } catch(err) {
         console.error('[Login] Error:', err);
-        showMsg('Error: ' + err.message + '\nStack: ' + (err.stack ? err.stack.substring(0, 120) : 'no stack'));
+        showMsg('Error de red o base de datos. Inténtalo de nuevo.');
         btn.disabled = false;
         content.textContent = 'Acceder';
     }
