@@ -255,7 +255,8 @@
         // CLIENT INITIALIZATION
         const dashboardUrlParams = new URLSearchParams(window.location.search);
 
-        const clientIdFromUrl = dashboardUrlParams.get('id');
+        // 'cid' = clientId pasado en URL desde login (fiable aunque storage esté vacío en iOS WebView)
+        const clientIdFromUrl = dashboardUrlParams.get('cid') || dashboardUrlParams.get('id');
         let trainerIdFromUrl = dashboardUrlParams.get('t');
         if (trainerIdFromUrl) {
             const lower = trainerIdFromUrl.toLowerCase().trim();
@@ -267,11 +268,12 @@
         }
         
         if (clientIdFromUrl) {
-            sessionStorage.setItem('clientId', clientIdFromUrl);
-            localStorage.setItem('clientId', clientIdFromUrl);
+            try { sessionStorage.setItem('clientId', clientIdFromUrl); } catch(e) {}
+            try { localStorage.setItem('clientId', clientIdFromUrl); } catch(e) {}
         }
 
-        const storedTid = localStorage.getItem('activeTrainerId');
+        // Leer activeTrainerId: URL > localStorage > sessionStorage
+        const storedTid = localStorage.getItem('activeTrainerId') || sessionStorage.getItem('activeTrainerId');
         let finalTid = trainerIdFromUrl;
         if (!finalTid || finalTid === 'default' || finalTid === 'admin') {
             if (storedTid && storedTid !== 'default' && storedTid !== 'admin') {
@@ -280,10 +282,12 @@
                 finalTid = 'default';
             }
         }
-        localStorage.setItem('activeTrainerId', finalTid);
+        try { localStorage.setItem('activeTrainerId', finalTid); } catch(e) {}
+        try { sessionStorage.setItem('activeTrainerId', finalTid); } catch(e) {}
         window.activeTrainerId = finalTid;
+        if (typeof updateActiveTrainerId === 'function') updateActiveTrainerId(finalTid);
 
-        const clientId = sessionStorage.getItem('clientId') || localStorage.getItem('clientId');
+        const clientId = clientIdFromUrl || sessionStorage.getItem('clientId') || localStorage.getItem('clientId');
         if (!clientId) {
             window.location.replace('client-login.html');
         } else {

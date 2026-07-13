@@ -614,7 +614,7 @@ async function doLogin() {
             content.textContent = '✓';
             btn.style.background = 'linear-gradient(110deg,#22c55e,#4ade80)';
             setTimeout(function(){ 
-                window.location.replace('client-dashboard.html?t=' + foundTrainerId); 
+                window.location.replace('client-dashboard.html?t=' + encodeURIComponent(foundTrainerId) + '&cid=' + encodeURIComponent(foundClient.id)); 
             }, 400);
         } else {
             showMsg('Código de acceso incorrecto. Por favor, verifícalo.');
