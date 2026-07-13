@@ -4,7 +4,7 @@
     <script>
         // Force PWA cache bust / reload
         (function() {
-            const CURRENT_VERSION = '579';
+            const CURRENT_VERSION = '580';
             window.APP_VERSION = CURRENT_VERSION;
             const savedVersion = localStorage.getItem('app_version');
             if (savedVersion !== CURRENT_VERSION) {
@@ -36,7 +36,9 @@
                                         keys.forEach(k => caches.delete(k));
                                     });
                                 }
-                                window.location.reload(true);
+                                const params = new URLSearchParams(window.location.search);
+                                params.set('v', data.version);
+                                window.location.replace(window.location.pathname + '?' + params.toString());
                             }
                         })
                         .catch(() => {});
