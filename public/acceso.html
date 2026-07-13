@@ -406,7 +406,7 @@ document.getElementById('accessCode').addEventListener('keydown', function(e) {
         }
     }
     
-    var storedTid = localStorage.getItem('activeTrainerId');
+    var storedTid = localStorage.getItem('activeTrainerId') || sessionStorage.getItem('activeTrainerId');
     var tid = tParam;
     
     // Si no hay tParam o es genérico, pero hay un entrenador específico guardado, lo preservamos
@@ -418,8 +418,10 @@ document.getElementById('accessCode').addEventListener('keydown', function(e) {
         }
     }
     
-    localStorage.setItem('activeTrainerId', tid);
+    // Forzar activeTrainerId en window ANTES de que BrandConfig.get() lo lea
     window.activeTrainerId = tid;
+    try { localStorage.setItem('activeTrainerId', tid); } catch(e) {}
+    try { sessionStorage.setItem('activeTrainerId', tid); } catch(e) {}
     if (typeof updateActiveTrainerId === 'function') updateActiveTrainerId(tid);
 
     // Apply brand theme instantly on page load
