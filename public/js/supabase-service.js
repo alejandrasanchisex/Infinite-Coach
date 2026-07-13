@@ -89,7 +89,7 @@ const SupabaseService = {
                     const fetchResetProfile = async () => {
                         const { data, error } = await this.client
                             .from('trainer_profiles')
-                            .select('full_data')
+                            .select('reset_version:full_data->__reset_version')
                             .eq('trainer_id', trainerId)
                             .single();
                         if (error && error.code !== 'PGRST116') throw error;
@@ -97,8 +97,8 @@ const SupabaseService = {
                     };
                     const cloudProfile = await retryOp(fetchResetProfile, 3, 1000);
                     
-                    if (cloudProfile && cloudProfile.full_data && cloudProfile.full_data.__reset_version) {
-                        const cloudReset = cloudProfile.full_data.__reset_version;
+                    if (cloudProfile && cloudProfile.reset_version) {
+                        const cloudReset = cloudProfile.reset_version;
                         const localReset = fullData ? fullData.__reset_version : null;
                         if (String(localReset) !== String(cloudReset)) {
                             console.error(`🚨 [RESET DB SHIELD] GUARDADO BLOQUEADO: La nube tiene un reset v${cloudReset} y el cliente intentó guardar v${localReset}. Descartando guardado para evitar restaurar datos borrados.`);
@@ -159,15 +159,15 @@ const SupabaseService = {
                 try {
                     const { data: cloudProfile } = await this.client
                         .from('trainer_profiles')
-                        .select('full_data')
+                        .select('clients:full_data->clients, routines:full_data->routines, trainingBlocks:full_data->trainingBlocks')
                         .eq('trainer_id', trainerId)
                         .single();
                     
-                    if (cloudProfile && cloudProfile.full_data) {
+                    if (cloudProfile) {
                         const cloudHasData = (
-                            (cloudProfile.full_data.clients && cloudProfile.full_data.clients.length > 0) ||
-                            (cloudProfile.full_data.routines && cloudProfile.full_data.routines.length > 0) ||
-                            (cloudProfile.full_data.trainingBlocks && cloudProfile.full_data.trainingBlocks.length > 0)
+                            (cloudProfile.clients && cloudProfile.clients.length > 0) ||
+                            (cloudProfile.routines && cloudProfile.routines.length > 0) ||
+                            (cloudProfile.trainingBlocks && cloudProfile.trainingBlocks.length > 0)
                         );
                         if (cloudHasData) {
                             console.error('🚨 [BLINDAJE SUPABASE] BLOQUEADO: Intento de sobrescribir datos reales en la nube con datos vacíos. Operación cancelada para proteger los datos.');
@@ -261,7 +261,7 @@ const SupabaseService = {
                     const fetchBrandProfile = async () => {
                         const { data, error } = await this.client
                             .from('trainer_profiles')
-                            .select('full_data')
+                            .select('brand:full_data->brand')
                             .eq('trainer_id', trainerId)
                             .single();
                         if (error && error.code !== 'PGRST116') throw error;
@@ -269,9 +269,9 @@ const SupabaseService = {
                     };
                     const cloudProfile = await retryOp(fetchBrandProfile, 3, 1000);
                     
-                    if (cloudProfile && cloudProfile.full_data && cloudProfile.full_data.brand) {
+                    if (cloudProfile && cloudProfile.brand) {
                         console.log("💾 Sincronización de Cliente: Preservando configuración de marca de la nube.");
-                        fullData.brand = cloudProfile.full_data.brand;
+                        fullData.brand = cloudProfile.brand;
                     }
                 } catch (errFetch) {
                     console.warn("No se pudo pre-cargar la marca de la nube para fusionar:", errFetch);
