@@ -177,7 +177,6 @@ const SupabaseService = {
                         
                         // Reemplazar fullData con merged
                         fullData = merged;
-                    }
                 } catch (errMergeCloud) {
                     console.error("Error fusionando datos del cliente con la nube:", errMergeCloud);
                     return false;
