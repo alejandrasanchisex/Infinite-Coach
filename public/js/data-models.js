@@ -7,10 +7,65 @@
     if (typeof window === 'undefined' || !window.localStorage) return;
     const originalSetItem = localStorage.setItem;
     localStorage.setItem = function(key, value) {
-        try { originalSetItem.apply(this, arguments); } catch(e) {}
+        let valueToStoreInLocal = value;
+        const clientId = typeof localStorage !== 'undefined' ? (localStorage.getItem('clientId') || sessionStorage.getItem('clientId')) : null;
+        const isTrainer = typeof localStorage !== 'undefined' && localStorage.getItem('_trainerAuthed') === '1';
+
+        // Si es la base de datos de un cliente, optimizar el contenido para localStorage
+        if (key && key.indexOf('fitnessAppData_') === 0 && !key.endsWith('_backup') && clientId && !isTrainer) {
+            try {
+                const data = JSON.parse(value);
+                if (data && data.clients) {
+                    // 1. Conservar solo el cliente logueado
+                    data.clients = data.clients.filter(c => c.id === clientId);
+                    
+                    // 2. Conseguir IDs de dietas y rutinas asociadas a este cliente
+                    const assignedRoutineIds = new Set();
+                    const assignedDietIds = new Set();
+                    if (data.clients[0]) {
+                        const cli = data.clients[0];
+                        if (cli.routineId) assignedRoutineIds.add(cli.routineId);
+                        if (cli.routineIds) cli.routineIds.forEach(id => assignedRoutineIds.add(id));
+                        if (cli.assignedDiet) assignedDietIds.add(cli.assignedDiet);
+                        if (cli.assignedDiets) cli.assignedDiets.forEach(id => assignedDietIds.add(id));
+                    }
+                    
+                    // 3. Filtrar rutinas y dietas
+                    if (data.routines) {
+                        data.routines = data.routines.filter(r => assignedRoutineIds.has(r.id));
+                    }
+                    if (data.diets) {
+                        data.diets = data.diets.filter(d => assignedDietIds.has(d.id));
+                    }
+                    
+                    // 4. Filtrar entrenamientos y logs
+                    if (data.trainingBlocks) {
+                        data.trainingBlocks = data.trainingBlocks.filter(b => b.clientId === clientId);
+                    }
+                    if (data.trainingLogs) {
+                        data.trainingLogs = data.trainingLogs.filter(l => l.clientId === clientId);
+                    }
+                    if (data.feedbacks) {
+                        data.feedbacks = data.feedbacks.filter(f => f.clientId === clientId);
+                    }
+                    if (data.appointments) {
+                        data.appointments = data.appointments.filter(a => a.clientId === clientId);
+                    }
+
+                    valueToStoreInLocal = JSON.stringify(data);
+                }
+            } catch(e) {
+                console.error("Error optimizando datos del cliente para localStorage:", e);
+            }
+        }
+
+        // Guardar original (completo) en sessionStorage
         if (key && (key.indexOf('fitnessAppData_') === 0 || key === 'clientId' || key === 'activeTrainerId')) {
             try { sessionStorage.setItem(key, value); } catch(e) {}
         }
+        
+        // Guardar optimizado/original en localStorage
+        try { originalSetItem.call(localStorage, key, valueToStoreInLocal); } catch(e) {}
     };
     
     // Espejar datos iniciales si ya existen en localStorage pero no en sessionStorage
@@ -346,7 +401,7 @@ const syncClientWithLatestFeedback = (client, feedbacks) => {
 const getData = () => {
   const sKey = getStorageKey();
   // Leer de localStorage; si no hay datos (cuota llena en iOS WebView), usar sessionStorage como fallback
-  const raw = localStorage.getItem(sKey) || sessionStorage.getItem(sKey);
+  const raw = sessionStorage.getItem(sKey) || localStorage.getItem(sKey);
   
     
 
