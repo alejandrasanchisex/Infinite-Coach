@@ -7,7 +7,7 @@
     <script>
         // Force PWA cache bust / reload
         (function() {
-            const CURRENT_VERSION = '578';
+            const CURRENT_VERSION = '579';
             window.APP_VERSION = CURRENT_VERSION;
             const savedVersion = localStorage.getItem('app_version');
             if (savedVersion !== CURRENT_VERSION) {
@@ -330,7 +330,7 @@
 
         <p class="footer">¿No tienes código?<br>Contacta con tu entrenador personal.</p>
         <p class="footer" style="margin-top: 15px; border-top: 1px solid rgba(255,255,255,0.05); padding-top: 15px;">
-            <a href="trainer-login.html?v=578" style="color: var(--gold-light); text-decoration: none; font-size: 0.8rem; font-weight: 600;">Acceso Entrenadores 🔐</a>
+            <a href="trainer-login.html?v=579" style="color: var(--gold-light); text-decoration: none; font-size: 0.8rem; font-weight: 600;">Acceso Entrenadores 🔐</a>
         </p>
     </div>
 </div>
@@ -339,10 +339,10 @@
 
 <!-- ── Scripts ──────────────────────────────────────────────────── -->
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="js/supabase-service.js?v=578"></script>
-<script src="js/config.js?v=578"></script>
-<script src="js/data-models.js?v=578"></script>
-<script src="js/utils.js?v=578"></script>
+<script src="js/supabase-service.js?v=579"></script>
+<script src="js/config.js?v=579"></script>
+<script src="js/data-models.js?v=579"></script>
+<script src="js/utils.js?v=579"></script>
 <script>
 
 // ── Auto-Redirección (Mantener sesión activa) ─────────────────────
@@ -350,7 +350,7 @@
     var storedClientId = localStorage.getItem('clientId') || sessionStorage.getItem('clientId');
     var params = new URLSearchParams(window.location.search);
     if (storedClientId && params.get('logout') !== 'true' && params.get('reauth') !== 'true') {
-        window.location.replace('client-dashboard.html?v=578');
+        window.location.replace('client-dashboard.html?v=579');
     }
 })();
 
@@ -427,31 +427,13 @@ document.getElementById('accessCode').addEventListener('keydown', function(e) {
 })();
 
 // ── Cloud sync on load (background) ─────────────────────────────
-var syncDone = false;
+var syncDone = true;
 var syncReady = (function() {
     return new Promise(function(resolve) {
-        if (!window.SupabaseService) { syncDone = true; resolve(); return; }
-        window.SupabaseService.init();
-        window.syncFromCloud().then(function() {
-            syncDone = true;
-            resolve();
-            // Apply brand theme after sync
-            try {
-                if (BrandConfig.isConfigured()) {
-                    BrandConfig.applyTheme();
-                    var brand = BrandConfig.get();
-                    if (brand && brand.name) document.getElementById('brandName').textContent = brand.name;
-                    if (brand && brand.logo) {
-                        document.getElementById('brandLogoContainer').innerHTML =
-                            '<img src="' + brand.logo + '" alt="' + (brand.name||'') + '">';
-                    }
-                }
-            } catch(e) {}
-        }).catch(function(err) {
-            console.error('[Login] Sync error:', err);
-            syncDone = true;
-            resolve();
-        });
+        if (window.SupabaseService) {
+            window.SupabaseService.init();
+        }
+        resolve();
     });
 })();
 
@@ -627,7 +609,7 @@ async function doLogin() {
     }
 }
 </script>
-<script src="js/custom-recipes.js?v=578"></script>
-<script src="js/pwa-install.js?v=578"></script>
+<script src="js/custom-recipes.js?v=579"></script>
+<script src="js/pwa-install.js?v=579"></script>
 </body>
 </html>
