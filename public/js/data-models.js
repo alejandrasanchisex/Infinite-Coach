@@ -210,7 +210,8 @@ const updateActiveTrainerId = (newId) => {
         targetId = 't-w0iybl7qb';
     }
     window.activeTrainerId = targetId;
-    localStorage.setItem('activeTrainerId', targetId);
+    try { localStorage.setItem('activeTrainerId', targetId); } catch(e) {}
+    try { sessionStorage.setItem('activeTrainerId', targetId); } catch(e) {}
     console.log("Storage Key actualizada para:", targetId);
 };
 window.updateActiveTrainerId = updateActiveTrainerId;
@@ -332,7 +333,7 @@ const getData = () => {
   if (!raw) {
     const activeId = window.activeTrainerId || localStorage.getItem('activeTrainerId') || 'default';
     if (activeId !== 'default') {
-      localStorage.setItem('isNewInstall_' + activeId, 'true');
+      try { localStorage.setItem('isNewInstall_' + activeId, 'true'); } catch(e) {}
       console.log(`🆕 Nueva instalación o caché limpia detectada para el entrenador ${activeId}. Registrando bandera 'isNewInstall'.`);
     }
     return defaults;
@@ -410,7 +411,7 @@ const getData = () => {
                 if (strId.includes('-rec-') || strId.startsWith('sys-br-') || strId.startsWith('sys-lun-') || strId.startsWith('sys-snack-') || strId.startsWith('prof-rec-')) return false;
                 return false; // Desocultar cualquier otra cosa dudosa
             });
-            localStorage.setItem('v310_unhide_recipes_done', 'true');
+            try { localStorage.setItem('v310_unhide_recipes_done', 'true'); } catch(e) {}
             try { localStorage.setItem(sKey, JSON.stringify(data)); } catch(e){}
             console.log('Restauradas recetas ocultas a activas.');
         }
@@ -439,7 +440,7 @@ const getData = () => {
                 });
             }
         });
-        localStorage.setItem('v316_seed_foods_done_v4', 'true');
+        try { localStorage.setItem('v316_seed_foods_done_v4', 'true'); } catch(e) {}
         try { localStorage.setItem(sKey, JSON.stringify(data)); } catch(e){}
     }
 
@@ -463,13 +464,13 @@ const getData = () => {
             });
             if (data.foods.length !== initialLen) {
                 console.log(`🧹 Eliminados ${initialLen - data.foods.length} alimentos duplicados u obsoletos.`);
-                localStorage.setItem('v316_clean_duplicates_done_v5', 'true');
+                try { localStorage.setItem('v316_clean_duplicates_done_v5', 'true'); } catch(e) {}
                 try { localStorage.setItem(sKey, JSON.stringify(data)); } catch(e){}
             } else {
-                localStorage.setItem('v316_clean_duplicates_done_v5', 'true');
+                try { localStorage.setItem('v316_clean_duplicates_done_v5', 'true'); } catch(e) {}
             }
         } else {
-            localStorage.setItem('v316_clean_duplicates_done_v5', 'true');
+            try { localStorage.setItem('v316_clean_duplicates_done_v5', 'true'); } catch(e) {}
         }
     }
 
@@ -551,7 +552,7 @@ const getData = () => {
         if (modified) {
             try { localStorage.setItem(sKey, JSON.stringify(data)); } catch(e){}
         }
-        localStorage.setItem('v316_fix_food_types_and_diets_v4', 'true');
+        try { localStorage.setItem('v316_fix_food_types_and_diets_v4', 'true'); } catch(e) {}
     }
 
     // 🔥 PURGA DE RECETAS NO OFICIALES (Blindaje 145)

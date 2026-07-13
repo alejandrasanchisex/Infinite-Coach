@@ -3,6 +3,18 @@
   "framework": "nextjs",
   "cleanUrls": true,
   "trailingSlash": false,
+  "redirects": [
+    {
+      "source": "/client-login",
+      "destination": "/acceso",
+      "permanent": false
+    },
+    {
+      "source": "/client-login.html",
+      "destination": "/acceso",
+      "permanent": false
+    }
+  ],
   "headers": [
     {
       "source": "/sw.js",
