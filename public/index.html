@@ -47,7 +47,7 @@
                         const activeTrainerId = localStorage.getItem('activeTrainerId') || 'default';
                         window.location.replace('trainer-dashboard.html?t=' + activeTrainerId);
                     } else if (localStorage.getItem('clientId')) {
-                        window.location.replace('client-dashboard.html?' + params.toString());
+                        window.location.replace('dashboard.html?' + params.toString());
                     } else if (window.location.hostname.includes('infinitecoach.es')) {
                         window.location.replace('acceso.html?' + params.toString());
                     } else {

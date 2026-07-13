@@ -6924,7 +6924,7 @@
                 const separator = priceId.includes('?') ? '&' : '?';
                 simulatedUrl = `${priceId}${separator}client_id=${clientId}`;
             } else {
-                simulatedUrl = `https://checkout.stripe.com/pay/${priceId}?client_id=${clientId}&success_url=${window.location.origin}/client-dashboard.html?payment=success`;
+                simulatedUrl = `https://checkout.stripe.com/pay/${priceId}?client_id=${clientId}&success_url=${window.location.origin}/dashboard.html?payment=success`;
             }
             
             if (resultDiv) resultDiv.style.display = 'block';

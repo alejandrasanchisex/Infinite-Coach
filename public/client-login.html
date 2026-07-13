@@ -365,7 +365,7 @@
     var storedClientId = localStorage.getItem('clientId') || sessionStorage.getItem('clientId');
     var params = new URLSearchParams(window.location.search);
     if (storedClientId && params.get('logout') !== 'true' && params.get('reauth') !== 'true') {
-        window.location.replace('client-dashboard.html?v=585');
+        window.location.replace('dashboard.html?v=585');
     }
 })();
 
@@ -619,7 +619,7 @@ async function doLogin() {
             content.textContent = '✓';
             btn.style.background = 'linear-gradient(110deg,#22c55e,#4ade80)';
             setTimeout(function(){ 
-                window.location.replace('client-dashboard.html?t=' + encodeURIComponent(foundTrainerId) + '&cid=' + encodeURIComponent(foundClient.id)); 
+                window.location.replace('dashboard.html?t=' + encodeURIComponent(foundTrainerId) + '&cid=' + encodeURIComponent(foundClient.id)); 
             }, 400);
         } else {
             showMsg('Código de acceso incorrecto. Por favor, verifícalo.');

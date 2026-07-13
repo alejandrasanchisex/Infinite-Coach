@@ -4,16 +4,24 @@
   "cleanUrls": true,
   "trailingSlash": false,
   "redirects": [
-    {
-      "source": "/client-login",
-      "destination": "/acceso",
-      "permanent": false
-    },
-    {
-      "source": "/client-login.html",
-      "destination": "/acceso",
-      "permanent": false
-    }
+    { "source": "/client-login", "destination": "/acceso", "permanent": false },
+    { "source": "/client-login.html", "destination": "/acceso", "permanent": false },
+    { "source": "/client-dashboard", "destination": "/dashboard", "permanent": false },
+    { "source": "/client-dashboard.html", "destination": "/dashboard", "permanent": false },
+    { "source": "/client-diet", "destination": "/diet", "permanent": false },
+    { "source": "/client-diet.html", "destination": "/diet", "permanent": false },
+    { "source": "/client-routine", "destination": "/routine", "permanent": false },
+    { "source": "/client-routine.html", "destination": "/routine", "permanent": false },
+    { "source": "/client-habits", "destination": "/habits", "permanent": false },
+    { "source": "/client-habits.html", "destination": "/habits", "permanent": false },
+    { "source": "/client-evolution", "destination": "/evolution", "permanent": false },
+    { "source": "/client-evolution.html", "destination": "/evolution", "permanent": false },
+    { "source": "/client-feedback", "destination": "/feedback", "permanent": false },
+    { "source": "/client-feedback.html", "destination": "/feedback", "permanent": false },
+    { "source": "/client-profile", "destination": "/profile", "permanent": false },
+    { "source": "/client-profile.html", "destination": "/profile", "permanent": false },
+    { "source": "/client-library", "destination": "/library", "permanent": false },
+    { "source": "/client-library.html", "destination": "/library", "permanent": false }
   ],
   "headers": [
     {

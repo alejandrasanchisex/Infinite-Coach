@@ -5,8 +5,8 @@ const SUPABASE_KEY = "sb_publishable_ffxbK3z-Am1wVmqV5Szs_w_zOv8RLWQ";
 const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
 
 async function findActive() {
-    const clientId = '0db0ca7a-c413-44cb-b99e-dfd9790383cb';
-    console.log(`Searching for trainer who owns client ${clientId}...`);
+    const accessCode = 'AIQV4CI1';
+    console.log(`Searching for trainer who owns client with access code ${accessCode}...`);
     
     const { data: profiles, error } = await supabase.from('trainer_profiles').select('*');
     if (error) {
@@ -17,9 +17,11 @@ async function findActive() {
     for (const profile of profiles) {
         const fullData = profile.full_data || {};
         const clients = fullData.clients || [];
-        const found = clients.some(c => c.id === clientId);
+        const found = clients.find(c => (c.accessCode || '').toUpperCase() === accessCode);
         if (found) {
             console.log(`🎉 Found! Trainer is ${profile.trainer_id} (${profile.email || 'No email'}).`);
+            console.log(`- Client ID is: ${found.id}`);
+            console.log(`- Client Name is: ${found.name || 'No name'}`);
             console.log(`- Clients Count: ${clients.length}`);
             console.log(`- Media Count: ${(fullData.media || []).length}`);
             console.log(`- MuscleGroupsConfig exist: ${!!fullData.muscleGroupsConfig}`);
