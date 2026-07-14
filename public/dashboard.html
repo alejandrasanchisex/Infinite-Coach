@@ -20,7 +20,7 @@
         })();
         // Force PWA cache bust / reload
         (function() {
-            const CURRENT_VERSION = '599';
+            const CURRENT_VERSION = '596';
             window.APP_VERSION = CURRENT_VERSION;
             const savedVersion = localStorage.getItem('app_version');
             if (savedVersion !== CURRENT_VERSION) {
@@ -66,9 +66,9 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="styles/theme.css?v=599">
-    <link rel="stylesheet" href="styles/components.css?v=599">
-    <link rel="stylesheet" href="styles/mobile.css?v=599">
+    <link rel="stylesheet" href="styles/theme.css?v=596">
+    <link rel="stylesheet" href="styles/components.css?v=596">
+    <link rel="stylesheet" href="styles/mobile.css?v=596">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <script>
@@ -139,10 +139,10 @@
                     <span id="brandName">Infinite Coach</span>
                 </div>
                 <ul class="nav-links" id="navLinks">
-                    <li><a href="dashboard.html?v=599" class="nav-link active">Inicio</a></li>
-                    <li><a href="profile.html?v=599" class="nav-link">Ficha Técnica</a></li>
+                    <li><a href="dashboard.html?v=596" class="nav-link active">Inicio</a></li>
+                    <li><a href="profile.html?v=596" class="nav-link">Ficha Técnica</a></li>
 
-                    <li><a href="acceso.html?v=599" class="nav-link">Salir</a></li>
+                    <li><a href="acceso.html?v=596" class="nav-link">Salir</a></li>
                 </ul>
                 <button class="menu-toggle" onclick="toggleMenu()" style="margin-left: auto;">☰</button>
             </nav>
@@ -238,19 +238,19 @@
             </style>
             
             <div style="text-align: center; color: rgba(255,255,255,0.15); font-size: 0.75rem; margin: 30px 0 10px; font-weight: 500;">
-                Versión de la App: v599
+                Versión de la App: v596
             </div>
         </div>
     </main>
 
     <!-- Supabase SDK & Service -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="js/supabase-service.js?v=599"></script>
+    <script src="js/supabase-service.js?v=596"></script>
 
-    <script src="js/config.js?v=599"></script>
-    <script src="js/data-models.js?v=599"></script>
-    <script src="js/utils.js?v=599"></script>
-    <script src="js/custom-exercises.js?v=599"></script>
+    <script src="js/config.js?v=596"></script>
+    <script src="js/data-models.js?v=596"></script>
+    <script src="js/utils.js?v=596"></script>
+    <script src="js/custom-exercises.js?v=596"></script>
     <script>
         // CLIENT INITIALIZATION
         const dashboardUrlParams = new URLSearchParams(window.location.search);
@@ -1231,7 +1231,7 @@
     </style>
 
 
-    <script src="js/custom-recipes.js?v=599"></script>
-    <script src="js/pwa-install.js?v=599"></script>
+    <script src="js/custom-recipes.js?v=596"></script>
+    <script src="js/pwa-install.js?v=596"></script>
 </body>
 </html>
