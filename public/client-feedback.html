@@ -20,11 +20,18 @@
         })();
         // Force PWA cache bust / reload
         (function() {
-            const CURRENT_VERSION = '597';
+            const CURRENT_VERSION = '598';
             window.APP_VERSION = CURRENT_VERSION;
             const savedVersion = localStorage.getItem('app_version');
             if (savedVersion !== CURRENT_VERSION) {
-                localStorage.clear();
+                // Clear cache only, preserve critical session and config keys
+                const preserved = ['app_version', 'saasFitnessPlatform', 'activeTrainerId', 'clientId', '_trainerAuthed', '_trainerEmail', '_rememberedTrainerEmail', '_rememberedTrainerKey', '_isSubTrainer', '_subTrainerId', '_subTrainerName', '_subTrainerEmail'];
+                const keysToRemove = [];
+                for (let i = 0; i < localStorage.length; i++) {
+                    const key = localStorage.key(i);
+                    if (key && !preserved.includes(key)) keysToRemove.push(key);
+                }
+                keysToRemove.forEach(k => { try { localStorage.removeItem(k); } catch(e) {} });
                 localStorage.setItem('app_version', CURRENT_VERSION);
                 if ('serviceWorker' in navigator) {
                     navigator.serviceWorker.getRegistrations().then(function(regs) {
@@ -66,9 +73,9 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="styles/theme.css?v=597">
-    <link rel="stylesheet" href="styles/components.css?v=597">
-    <link rel="stylesheet" href="styles/mobile.css?v=597">
+    <link rel="stylesheet" href="styles/theme.css?v=598">
+    <link rel="stylesheet" href="styles/components.css?v=598">
+    <link rel="stylesheet" href="styles/mobile.css?v=598">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <script>
@@ -190,10 +197,10 @@
                     <span id="brandName">Infinite Coach</span>
                 </div>
                 <ul class="nav-links" id="navLinks">
-                    <li><a href="dashboard.html?v=597" class="nav-link">Inicio</a></li>
-                    <li><a href="profile.html?v=597" class="nav-link">Ficha Técnica</a></li>
+                    <li><a href="dashboard.html?v=598" class="nav-link">Inicio</a></li>
+                    <li><a href="profile.html?v=598" class="nav-link">Ficha Técnica</a></li>
 
-                    <li><a href="acceso.html?v=597" class="nav-link">Salir</a></li>
+                    <li><a href="acceso.html?v=598" class="nav-link">Salir</a></li>
                 </ul>
                 <button class="menu-toggle" onclick="toggleMenu()" style="margin-left: auto;">☰</button>
             </nav>
@@ -369,11 +376,11 @@
 
     <!-- Supabase SDK & Service -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="js/supabase-service.js?v=597"></script>
+    <script src="js/supabase-service.js?v=598"></script>
 
-    <script src="js/data-models.js?v=597"></script>
-    <script src="js/cloud-storage.js?v=597"></script>
-    <script src="js/utils.js?v=597"></script>
+    <script src="js/data-models.js?v=598"></script>
+    <script src="js/cloud-storage.js?v=598"></script>
+    <script src="js/utils.js?v=598"></script>
     <script>
         const clientId = sessionStorage.getItem('clientId') || localStorage.getItem('clientId');
         if (!clientId) {
@@ -870,6 +877,6 @@
         `;
         document.head.appendChild(style);
     </script>
-    <script src="js/custom-recipes.js?v=597"></script></body>
+    <script src="js/custom-recipes.js?v=598"></script></body>
 
 </html>
