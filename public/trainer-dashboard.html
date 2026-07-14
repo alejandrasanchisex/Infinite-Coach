@@ -18,7 +18,7 @@
         })();
         // Force PWA cache bust / reload
         (function() {
-            const CURRENT_VERSION = '609';
+            const CURRENT_VERSION = '610';
             window.APP_VERSION = CURRENT_VERSION;
             const savedVersion = localStorage.getItem('app_version');
             if (savedVersion !== CURRENT_VERSION) {
@@ -66,8 +66,8 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="styles/theme.css?v=609">
-    <link rel="stylesheet" href="styles/components.css?v=609">
+    <link rel="stylesheet" href="styles/theme.css?v=610">
+    <link rel="stylesheet" href="styles/components.css?v=610">
 </head>
 
 <body>
@@ -96,14 +96,14 @@
                     </div>
                     <button class="menu-toggle" onclick="toggleMenu()">☰</button>
                     <ul class="nav-links" id="navLinks">
-                        <li><a href="trainer-dashboard.html?v=609" class="nav-link active">Dashboard</a></li>
-                        <li><a href="trainer-clients.html?v=609" class="nav-link">Clientes</a></li>
-                        <li><a href="trainer-routines.html?v=609" class="nav-link">Rutinas</a></li>
-                        <li><a href="trainer-diets.html?v=609" class="nav-link">Dietas</a></li>
-                        <li><a href="trainer-feedbacks.html?v=609" class="nav-link">Revisiones</a></li>
-                        <li><a href="trainer-media.html?v=609" class="nav-link">Biblioteca</a></li>
-                        <li><a href="trainer-appointments.html?v=609" class="nav-link">Agenda</a></li>
-                        <li><a href="trainer-settings.html?v=609" class="nav-link">Configuración</a></li>
+                        <li><a href="trainer-dashboard.html?v=610" class="nav-link active">Dashboard</a></li>
+                        <li><a href="trainer-clients.html?v=610" class="nav-link">Clientes</a></li>
+                        <li><a href="trainer-routines.html?v=610" class="nav-link">Rutinas</a></li>
+                        <li><a href="trainer-diets.html?v=610" class="nav-link">Dietas</a></li>
+                        <li><a href="trainer-feedbacks.html?v=610" class="nav-link">Revisiones</a></li>
+                        <li><a href="trainer-media.html?v=610" class="nav-link">Biblioteca</a></li>
+                        <li><a href="trainer-appointments.html?v=610" class="nav-link">Agenda</a></li>
+                        <li><a href="trainer-settings.html?v=610" class="nav-link">Configuración</a></li>
                         <li><a href="#" onclick="if(typeof AUTH !== 'undefined') { AUTH.signOut() } else { window.location.reload() }; return false;" class="nav-link" style="color:var(--error-color)">🚪 Salir</a></li>
                     </ul>
                 </nav>
@@ -290,34 +290,6 @@
                 </div>
 
             </div>
-
-            <!-- Panel de Diagnóstico Opcional (Colapsado por defecto) -->
-            <div style="margin-top: 2rem; border-top: 1px solid rgba(255,255,255,0.05); padding-top: 1rem;">
-                <details style="background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.05); border-radius: 12px; padding: 1rem;">
-                    <summary style="cursor: pointer; color: var(--text-muted); font-size: 0.85rem; font-weight: 500; user-select: none;">
-                        🔍 Panel de Soporte y Diagnóstico
-                    </summary>
-                    <div style="margin-top: 1rem; font-family: monospace; font-size: 0.8rem; line-height: 1.6; color: var(--text-muted);">
-                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem;">
-                            <div>
-                                <strong style="color: white;">📍 Host:</strong> <span id="debugHost">-</span><br>
-                                <strong style="color: white;">👤 ID Entrenador:</strong> <span id="debugTrainerId">-</span><br>
-                                <strong style="color: white;">📧 Email Sesión:</strong> <span id="debugTrainerEmail">-</span>
-                            </div>
-                            <div>
-                                <strong style="color: white;">🔑 Autenticado:</strong> <span id="debugAuthed">-</span><br>
-                                <strong style="color: white;">📦 Clientes Locales:</strong> <span id="debugLocalClientsCount">-</span><br>
-                                <strong style="color: white;">📦 Clientes Nube:</strong> <span id="debugCloudClientsCount">-</span>
-                            </div>
-                        </div>
-                        <div style="margin-top: 1rem; display: flex; gap: 0.5rem; flex-wrap: wrap;">
-                            <button class="btn btn-sm" onclick="runDebugSelfCheck()" style="padding: 0.4rem 0.8rem; font-size: 0.75rem;">📋 Realizar Autochequeo</button>
-                            <button class="btn btn-sm" onclick="forceFullCloudRestore()" style="padding: 0.4rem 0.8rem; font-size: 0.75rem; background: var(--primary-color); color: var(--secondary-color);">🔄 Forzar Restauración Total de Nube</button>
-                        </div>
-                        <div id="debugStatusOutput" style="margin-top: 1rem; padding: 0.8rem; background: rgba(0,0,0,0.2); border-radius: 8px; border: 1px solid rgba(255,255,255,0.05); display: none;"></div>
-                    </div>
-                </details>
-            </div>
         </main>
 
     </div>
@@ -332,14 +304,14 @@
 
     <!-- Supabase SDK & Service -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="js/supabase-service.js?v=609"></script>
+    <script src="js/supabase-service.js?v=610"></script>
 
     <!-- UI Scripts -->
-    <script src="js/config.js?v=609"></script>
-    <script src="js/auth.js?v=609"></script>
-    <script src="js/sheets.js?v=609"></script>
-    <script src="js/data-models.js?v=609"></script>
-    <script src="js/utils.js?v=609"></script>
+    <script src="js/config.js?v=610"></script>
+    <script src="js/auth.js?v=610"></script>
+    <script src="js/sheets.js?v=610"></script>
+    <script src="js/data-models.js?v=610"></script>
+    <script src="js/utils.js?v=610"></script>
     <script>
         // Branding is handled via onGoogleAuthSuccess() and global listeners
 
@@ -1579,133 +1551,6 @@
             }
         }
 
-        async function runDebugSelfCheck() {
-            const out = document.getElementById('debugStatusOutput');
-            out.style.display = 'block';
-            out.innerHTML = '⏳ Analizando...';
-            
-            try {
-                const activeId = localStorage.getItem('activeTrainerId') || window.activeTrainerId || 'default';
-                const email = localStorage.getItem('_trainerEmail') || 'No definido';
-                const authed = (localStorage.getItem('_trainerAuthed') === '1' || sessionStorage.getItem('_trainerAuthed') === '1') ? 'Sí' : 'No';
-                const clients = typeof Clients !== 'undefined' ? Clients.getAll() : [];
-                
-                let cloudStatus = 'No verificado';
-                let cloudClients = 0;
-                
-                if (window.SupabaseService) {
-                    window.SupabaseService.init();
-                    const cloudData = await window.SupabaseService.getTrainerData(activeId);
-                    if (cloudData) {
-                        cloudStatus = 'Datos leídos con éxito ✅';
-                        cloudClients = cloudData.clients ? cloudData.clients.length : 0;
-                    } else {
-                        cloudStatus = 'Perfil vacío o no encontrado en la nube ⚠️';
-                    }
-                } else {
-                    cloudStatus = 'SupabaseService no está cargado';
-                }
-                
-                document.getElementById('debugHost').textContent = window.location.hostname;
-                document.getElementById('debugTrainerId').textContent = activeId;
-                document.getElementById('debugTrainerEmail').textContent = email;
-                document.getElementById('debugAuthed').textContent = authed;
-                document.getElementById('debugLocalClientsCount').textContent = clients.length;
-                document.getElementById('debugCloudClientsCount').textContent = cloudClients;
-                
-                out.innerHTML = `
-                    <span style="color: #3fb950; font-weight: bold;">Autochequeo Completado:</span><br>
-                    - Estado Nube: ${cloudStatus}<br>
-                    - Clientes en Local: ${clients.length}<br>
-                    - Clientes en Nube: ${cloudClients}<br>
-                    - Claves en localStorage: [${Object.keys(localStorage).filter(k => k.includes('trainer') || k.includes('active') || k.includes('clientId')).join(', ')}]<br>
-                    - Claves en sessionStorage: [${Object.keys(sessionStorage).filter(k => k.includes('trainer') || k.includes('active') || k.includes('clientId')).join(', ')}]
-                `;
-            } catch (err) {
-                out.innerHTML = `<span style="color: #ff7b72;">Error durante autochequeo: ${err.message}</span>`;
-            }
-        }
-        
-        async function forceFullCloudRestore() {
-            if (!confirm('¿Seguro que deseas forzar la restauración total desde la nube? Se sobreescribirá la caché local actual.')) return;
-            
-            const out = document.getElementById('debugStatusOutput');
-            out.style.display = 'block';
-            out.innerHTML = '⏳ Descargando datos completos desde Supabase...';
-            
-            try {
-                const activeId = localStorage.getItem('activeTrainerId') || window.activeTrainerId || 'default';
-                if (activeId === 'default') {
-                    throw new Error('No hay ID de entrenador activo. Por favor, inicia sesión de nuevo.');
-                }
-                
-                if (!window.SupabaseService) {
-                    throw new Error('Servicio de base de datos no disponible.');
-                }
-                
-                window.SupabaseService.init();
-                const cloudData = await window.SupabaseService.getTrainerData(activeId);
-                
-                if (!cloudData) {
-                    throw new Error('No se encontraron datos de este entrenador en la base de datos de la nube.');
-                }
-                
-                // --- Limpieza preventiva de otras claves de entrenadores ---
-                try {
-                    const keysToRemove = [];
-                    for (let i = 0; i < localStorage.length; i++) {
-                        const k = localStorage.key(i);
-                        if (k) {
-                            if (k.startsWith('fitnessAppData_') && !k.includes(activeId)) {
-                                keysToRemove.push(k);
-                            }
-                            if (k.startsWith('lastSyncTimestamp_') && !k.includes(activeId)) {
-                                keysToRemove.push(k);
-                            }
-                            if (k.endsWith('_backup') && !k.includes(activeId)) {
-                                keysToRemove.push(k);
-                            }
-                        }
-                    }
-                    console.log(`🧹 [Restore] Limpiando de forma preventiva ${keysToRemove.length} claves antiguas.`);
-                    keysToRemove.forEach(k => localStorage.removeItem(k));
-                } catch(cleanErr) {
-                    console.warn("Error en limpieza preventiva:", cleanErr);
-                }
-
-                const sKey = `fitnessAppData_${activeId}`;
-                
-                // Intentar guardar con gestión de error de cuota detallado
-                try {
-                    localStorage.setItem(sKey, JSON.stringify(cloudData));
-                    sessionStorage.setItem(sKey, JSON.stringify(cloudData));
-                    localStorage.setItem('lastSyncTimestamp_' + activeId, new Date().toISOString());
-                } catch(writeErr) {
-                    if (writeErr.name === 'QuotaExceededError' || writeErr.message.includes('quota') || writeErr.message.includes('limit')) {
-                        // Intentar limpiar todo lo que no sea crítico
-                        try {
-                            localStorage.clear();
-                            // Restaurar claves mínimas críticas de sesión para que no se desloguee
-                            localStorage.setItem('_trainerAuthed', '1');
-                            localStorage.setItem('activeTrainerId', activeId);
-                            localStorage.setItem(sKey, JSON.stringify(cloudData));
-                            sessionStorage.setItem(sKey, JSON.stringify(cloudData));
-                            localStorage.setItem('lastSyncTimestamp_' + activeId, new Date().toISOString());
-                        } catch (hardCleanErr) {
-                            throw new Error("Límite de almacenamiento del navegador excedido por completo. Por favor, borra el historial y datos del sitio web en los Ajustes de tu móvil.");
-                        }
-                    } else {
-                        throw writeErr;
-                    }
-                }
-                
-                out.innerHTML = '<span style="color: #3fb950; font-weight: bold;">¡Restauración exitosa! Recargando panel...</span>';
-                setTimeout(() => window.location.reload(), 1500);
-            } catch (err) {
-                out.innerHTML = `<span style="color: #ff7b72; font-weight: bold;">Error al restaurar:</span> ${err.message}`;
-            }
-        }
-
         async function syncAndRefreshDashboard(btn) {
             if (btn) { btn.disabled = true; btn.textContent = '⏳ Sincronizando...'; }
             try {
@@ -1723,6 +1568,6 @@
             }
         }
     </script>
-    <script src="js/custom-recipes.js?v=609"></script></body>
+    <script src="js/custom-recipes.js?v=610"></script></body>
 
 </html>
