@@ -1414,7 +1414,8 @@ const doSyncFromCloud = async () => {
                 if (window.SupabaseService.client) {
                     const { data: profiles, error: scanError } = await window.SupabaseService.client
                         .from('trainer_profiles')
-                        .select('trainer_id, clients:full_data->clients');
+                        .select('trainer_id, clients:full_data->clients')
+                        .contains('full_data', { clients: [{ id: clientId }] });
                     
                     if (!scanError && profiles) {
                         let correctTid = null;
