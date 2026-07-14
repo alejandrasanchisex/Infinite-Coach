@@ -128,7 +128,7 @@ const SupabaseService = {
             }
             // 🛡️ CORTAFUEGOS MULTI-INQUILINO (CATASTRÓFICO):
             // Si el que guarda es un cliente, verificar que el clientId que realiza la operación realmente exista en el array de clients del trainerId al que intenta guardar
-            const isTrainer = typeof localStorage !== 'undefined' && localStorage.getItem('_trainerAuthed') === '1';
+            const isTrainer = ((typeof localStorage !== 'undefined' && localStorage.getItem('_trainerAuthed') === '1') || (typeof sessionStorage !== 'undefined' && sessionStorage.getItem('_trainerAuthed') === '1'));
             const clientId = typeof localStorage !== 'undefined' ? (localStorage.getItem('clientId') || sessionStorage.getItem('clientId')) : null;
             
             if (!isTrainer && clientId) {

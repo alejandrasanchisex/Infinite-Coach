@@ -11,7 +11,7 @@
     localStorage.setItem = function(key, value) {
         let valueToStoreInLocal = value;
         const clientId = typeof localStorage !== 'undefined' ? (localStorage.getItem('clientId') || sessionStorage.getItem('clientId')) : null;
-        const isTrainer = typeof localStorage !== 'undefined' && localStorage.getItem('_trainerAuthed') === '1';
+        const isTrainer = ((typeof localStorage !== 'undefined' && localStorage.getItem('_trainerAuthed') === '1') || (typeof sessionStorage !== 'undefined' && sessionStorage.getItem('_trainerAuthed') === '1'));
 
         // Si es la base de datos de un cliente, optimizar el contenido para localStorage
         if (key && key.indexOf('fitnessAppData_') === 0 && !key.endsWith('_backup') && clientId && !isTrainer) {
@@ -97,7 +97,7 @@
 
 const DB_VERSION = '1.0.1';
 let activeTrainerId = (function() {
-    const isTrainer = typeof localStorage !== 'undefined' && localStorage.getItem('_trainerAuthed') === '1';
+    const isTrainer = ((typeof localStorage !== 'undefined' && localStorage.getItem('_trainerAuthed') === '1') || (typeof sessionStorage !== 'undefined' && sessionStorage.getItem('_trainerAuthed') === '1'));
     const isClientPage = typeof window !== 'undefined' && 
         window.location && 
         window.location.pathname && 
@@ -830,7 +830,7 @@ const getData = () => {
 window.getData = getData;
 
 const stripDatabaseForClient = (data, clientId) => {
-    const isTrainer = typeof localStorage !== 'undefined' && localStorage.getItem('_trainerAuthed') === '1';
+    const isTrainer = ((typeof localStorage !== 'undefined' && localStorage.getItem('_trainerAuthed') === '1') || (typeof sessionStorage !== 'undefined' && sessionStorage.getItem('_trainerAuthed') === '1'));
     const isClientPage = typeof window !== 'undefined' && 
         window.location && 
         window.location.pathname && 
@@ -1267,7 +1267,7 @@ const saveData = (data) => {
   }
 
   const localPrevModified = prevData ? prevData.lastModified : null;
-  const isTrainer = typeof localStorage !== 'undefined' && localStorage.getItem('_trainerAuthed') === '1';
+  const isTrainer = ((typeof localStorage !== 'undefined' && localStorage.getItem('_trainerAuthed') === '1') || (typeof sessionStorage !== 'undefined' && sessionStorage.getItem('_trainerAuthed') === '1'));
   
   // Merge page changes with the current local storage state (to preserve other tabs' edits)
   let mergedWithLocal = data;
@@ -1400,7 +1400,7 @@ const doSyncFromCloud = async () => {
         
         // 🛡️ FILTRO DE SEGURIDAD MULTI-INQUILINO: Impedir cruce de datos de cliente
         const clientId = typeof localStorage !== 'undefined' ? (localStorage.getItem('clientId') || sessionStorage.getItem('clientId')) : null;
-        const isTrainer = typeof localStorage !== 'undefined' && localStorage.getItem('_trainerAuthed') === '1';
+        const isTrainer = ((typeof localStorage !== 'undefined' && localStorage.getItem('_trainerAuthed') === '1') || (typeof sessionStorage !== 'undefined' && sessionStorage.getItem('_trainerAuthed') === '1'));
         
         try {
             let cloudData = await window.SupabaseService.getTrainerData(currentId);
@@ -1571,7 +1571,7 @@ const doSyncFromCloud = async () => {
                 const localTime = localData.lastModified ? new Date(localData.lastModified).getTime() : 0;
                 const cloudTime = cloudData.lastModified ? new Date(cloudData.lastModified).getTime() : 0;
                 
-                const isTrainer = typeof localStorage !== 'undefined' && localStorage.getItem('_trainerAuthed') === '1';
+                const isTrainer = ((typeof localStorage !== 'undefined' && localStorage.getItem('_trainerAuthed') === '1') || (typeof sessionStorage !== 'undefined' && sessionStorage.getItem('_trainerAuthed') === '1'));
                 
                 // Categorizar colecciones según autoría
                 const trainerCollections = ['routines', 'diets', 'foods', 'media', 'trainingBlocks', 'supplementationTemplates', 'invoices', 'library']; // clients se maneja aparte
