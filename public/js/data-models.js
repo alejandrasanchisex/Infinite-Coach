@@ -258,6 +258,7 @@ if (!activeTrainerId || activeTrainerId === 'default' || activeTrainerId === 'ad
 try { localStorage.setItem('activeTrainerId', activeTrainerId); } catch(e) {}
 window.activeTrainerId = activeTrainerId;
 const getStorageKey = () => `fitnessAppData_${window.activeTrainerId || 'default'}`;
+const safeGetDatabaseRaw = () => safeGetSessionStorage(getStorageKey()) || safeGetLocalStorage(getStorageKey());
 
 // 🧹 MOCK DATA CLEANUP FOR ASTEAM (PREVENT SPILLOVER RE-UPLOAD)
 (function() {
@@ -1298,7 +1299,7 @@ const saveData = (data) => {
   );
   
   // Comprobar si hay datos reales en el local storage que no debemos perder
-  const currentRaw = safeGetLocalStorage(getStorageKey());
+  const currentRaw = safeGetDatabaseRaw();
   let prevData = null;
   if (currentRaw) {
     try { prevData = JSON.parse(currentRaw); } catch(e) {}
@@ -1351,7 +1352,7 @@ const saveData = (data) => {
             enqueue(async () => {
           const clearLocalDeletedIds = () => {
               try {
-                  const currentLocal = JSON.parse(safeGetLocalStorage(getStorageKey()) || '{}');
+                  const currentLocal = JSON.parse(safeGetDatabaseRaw() || '{}');
                   if (currentLocal.deletedIds && currentLocal.deletedIds.length > 0) {
                       currentLocal.deletedIds = [];
                       localStorage.setItem(getStorageKey(), JSON.stringify(currentLocal));
@@ -1399,14 +1400,14 @@ const saveData = (data) => {
                           console.log("🔄 Se detectaron cambios externos más nuevos en la nube. Fusionando antes de subir...");
                           
                           // Temporarily restore local lastModified to localPrevModified for syncFromCloud comparison
-                          const tempSaved = JSON.parse(safeGetLocalStorage(getStorageKey()) || '{}');
+                          const tempSaved = JSON.parse(safeGetDatabaseRaw() || '{}');
                           tempSaved.lastModified = localPrevModified;
                           localStorage.setItem(getStorageKey(), JSON.stringify(tempSaved));
  
                           const freshData = await doSyncFromCloud();
                           if (freshData) {
                               // Obtenemos los datos recién fusionados en local storage
-                              const mergedLocal = JSON.parse(safeGetLocalStorage(getStorageKey()) || '{}');
+                              const mergedLocal = JSON.parse(safeGetDatabaseRaw() || '{}');
                               
                               // Aplicamos de forma segura los cambios locales sobre los datos fusionados de la nube
                               const finalData = mergeLocalEdits(mergedWithLocal, mergedLocal, prevData, isTrainer);
@@ -1508,7 +1509,7 @@ const doSyncFromCloud = async () => {
         }
         
         // Obtener datos locales actuales
-        const localRaw = safeGetLocalStorage(getStorageKey());
+        const localRaw = safeGetDatabaseRaw();
         let localData = null;
         if (localRaw) {
             try { localData = JSON.parse(localRaw); } catch(e){}
@@ -5618,13 +5619,13 @@ console.log("🏁 v311 BLINDAJE TOTAL: Sistema Cargado con protección máxima d
         isSyncing = true;
         try {
             console.log("🔄 [AutoSync] Iniciando sincronización automática en segundo plano...");
-            const prevDataStr = safeGetLocalStorage(getStorageKey());
+            const prevDataStr = safeGetDatabaseRaw();
             
             const freshData = await window.syncFromCloud();
             lastSyncTime = Date.now();
 
             if (freshData) {
-                const freshDataStr = safeGetLocalStorage(getStorageKey());
+                const freshDataStr = safeGetDatabaseRaw();
                 let actualChange = false;
                 
                 if (prevDataStr !== freshDataStr) {

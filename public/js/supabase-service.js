@@ -321,7 +321,7 @@ const SupabaseService = {
                             // Actualizar local storage en caliente para evitar bucles de carga
                             if (typeof localStorage !== 'undefined') {
                                 const sKey = `fitnessAppData_${trainerId}`;
-                                const localRaw = safeGetLocalStorage(sKey);
+                                const localRaw = safeGetSessionStorage(sKey) || safeGetLocalStorage(sKey);
                                 if (localRaw) {
                                     try {
                                         const localData = JSON.parse(localRaw);
