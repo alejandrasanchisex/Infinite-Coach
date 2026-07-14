@@ -18,7 +18,7 @@
         })();
         // Force PWA cache bust / reload
         (function() {
-            const CURRENT_VERSION = '601';
+            const CURRENT_VERSION = '602';
             window.APP_VERSION = CURRENT_VERSION;
             const savedVersion = localStorage.getItem('app_version');
             if (savedVersion !== CURRENT_VERSION) {
@@ -66,8 +66,8 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="styles/theme.css?v=601">
-    <link rel="stylesheet" href="styles/components.css?v=601">
+    <link rel="stylesheet" href="styles/theme.css?v=602">
+    <link rel="stylesheet" href="styles/components.css?v=602">
     <style>
         .sub-container {
             min-height: 100vh;
@@ -195,8 +195,8 @@
     </div>
 
     <!-- Scripts -->
-    <script src="js/data-models.js?v=601"></script>
-    <script src="js/utils.js?v=601"></script>
+    <script src="js/data-models.js?v=602"></script>
+    <script src="js/utils.js?v=602"></script>
     <script>
         const PLATFORM_KEY = 'saasFitnessPlatform';
         let currentTrainer = null;
@@ -248,6 +248,6 @@
             window.location.href = 'trainer-dashboard.html';
         }
     </script>
-    <script src="js/custom-recipes.js?v=601"></script></body>
+    <script src="js/custom-recipes.js?v=602"></script></body>
 
 </html>

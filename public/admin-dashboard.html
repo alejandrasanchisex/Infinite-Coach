@@ -18,7 +18,7 @@
         })();
         // Force PWA cache bust / reload
         (function() {
-            const CURRENT_VERSION = '601';
+            const CURRENT_VERSION = '602';
             window.APP_VERSION = CURRENT_VERSION;
             const savedVersion = localStorage.getItem('app_version');
             if (savedVersion !== CURRENT_VERSION) {
@@ -66,8 +66,8 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="styles/theme.css?v=601">
-    <link rel="stylesheet" href="styles/components.css?v=601">
+    <link rel="stylesheet" href="styles/theme.css?v=602">
+    <link rel="stylesheet" href="styles/components.css?v=602">
     <style>
         :root {
             --admin-primary: #8B5CF6; /* Purple for Master Admin */
@@ -616,9 +616,9 @@
 
     <!-- Supabase SDK & Service -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="js/supabase-service.js?v=601"></script>
+    <script src="js/supabase-service.js?v=602"></script>
 
-    <script src="js/utils.js?v=601"></script>
+    <script src="js/utils.js?v=602"></script>
 
     <script>
         // MASTER STATE CONTROL
@@ -1049,8 +1049,9 @@
                     const stripeLink = planObj ? planObj.stripeLink : '';
                     const accessTypeStr = t.accessType === 'multiple' ? 'Acceso Múltiple' : 'Acceso Único';
                     const accessTypeColor = t.accessType === 'multiple' ? '#F59E0B' : '#10B981';
+                    const isTrainerActive = t.status === 'active';
                     return `
-                    <tr data-app="${t.appId || 'infinite-coach'}" data-status="${t.status || 'active'}">
+                    <tr data-app="${t.appId || 'infinite-coach'}" data-status="${isTrainerActive ? 'active' : 'expired'}">
                         <td style="padding: 15px; border-bottom: 1px solid rgba(255,255,255,0.03);">
                             <div style="font-weight: 700; display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
                                 ${t.name}
@@ -1065,7 +1066,7 @@
                             <div class="text-xs opacity-50">${t.planPrice}€/mes</div>
                         </td>
                         <td style="padding: 15px; border-bottom: 1px solid rgba(255,255,255,0.03);">
-                            <span class="badge-sub ${t.status === 'active' ? 'badge-active' : 'badge-expired'}">${t.status === 'active' ? '● ACTIVA' : '✖ EXPIRADA'}</span>
+                            <span class="badge-sub ${isTrainerActive ? 'badge-active' : 'badge-expired'}">${isTrainerActive ? '● ACTIVA' : '✖ EXPIRADA'}</span>
                         </td>
                         <td style="padding: 15px; border-bottom: 1px solid rgba(255,255,255,0.03); font-size: 0.8rem; opacity: 0.8;">${t.lastPaymentDate}</td>
                         <td style="padding: 15px; border-bottom: 1px solid rgba(255,255,255,0.03); font-size: 0.85rem; font-weight: 700; color: #8B5CF6;">${t.expiryDate}</td>
@@ -1080,6 +1081,7 @@
                     </tr>
                 `}).join('');
             }
+            window.filterTrainers();
         };
 
         window.renderPlans = () => {
@@ -1597,5 +1599,5 @@
             });
         });
     </script>
-    <script src="js/custom-recipes.js?v=601"></script></body>
+    <script src="js/custom-recipes.js?v=602"></script></body>
 </html>
