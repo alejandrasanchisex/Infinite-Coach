@@ -17,18 +17,11 @@
         })();
         // Force PWA cache bust / reload
         (function() {
-            const CURRENT_VERSION = '598';
+            const CURRENT_VERSION = '599';
             window.APP_VERSION = CURRENT_VERSION;
             const savedVersion = localStorage.getItem('app_version');
             if (savedVersion !== CURRENT_VERSION) {
-                // Clear cache only, preserve critical session and config keys
-                const preserved = ['app_version', 'saasFitnessPlatform', 'activeTrainerId', 'clientId', '_trainerAuthed', '_trainerEmail', '_rememberedTrainerEmail', '_rememberedTrainerKey', '_isSubTrainer', '_subTrainerId', '_subTrainerName', '_subTrainerEmail'];
-                const keysToRemove = [];
-                for (let i = 0; i < localStorage.length; i++) {
-                    const key = localStorage.key(i);
-                    if (key && !preserved.includes(key)) keysToRemove.push(key);
-                }
-                keysToRemove.forEach(k => { try { localStorage.removeItem(k); } catch(e) {} });
+                localStorage.setItem('app_version', CURRENT_VERSION);
                 localStorage.setItem('app_version', CURRENT_VERSION);
                 if ('serviceWorker' in navigator) {
                     navigator.serviceWorker.getRegistrations().then(function(regs) {
@@ -72,8 +65,8 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="styles/theme.css?v=598">
-    <link rel="stylesheet" href="styles/components.css?v=598">
+    <link rel="stylesheet" href="styles/theme.css?v=599">
+    <link rel="stylesheet" href="styles/components.css?v=599">
     <style>
         body {
             background-color: #050510;
@@ -232,8 +225,8 @@
 
     <!-- Scripts -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="js/supabase-service.js?v=598"></script>
-    <script src="js/utils.js?v=598"></script>
+    <script src="js/supabase-service.js?v=599"></script>
+    <script src="js/utils.js?v=599"></script>
 
     <script>
         document.getElementById('adminForm').addEventListener('submit', async (e) => {
@@ -294,5 +287,5 @@
             window.BrandConfig.applyTheme();
         }
     </script>
-    <script src="js/custom-recipes.js?v=598"></script></body>
+    <script src="js/custom-recipes.js?v=599"></script></body>
 </html>
