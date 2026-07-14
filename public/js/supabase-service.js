@@ -1,3 +1,22 @@
+
+// 🛡️ HELPERS DE ALMACENAMIENTO SEGUROS A PRUEBA DE CUOTA, COOKIES BLOQUEADAS Y EXCEPCIONES
+function safeGetLocalStorage(key) {
+    try {
+        if (typeof localStorage !== 'undefined' && localStorage) {
+            return localStorage.getItem(key);
+        }
+    } catch(e) {}
+    return null;
+}
+function safeGetSessionStorage(key) {
+    try {
+        if (typeof sessionStorage !== 'undefined' && sessionStorage) {
+            return sessionStorage.getItem(key);
+        }
+    } catch(e) {}
+    return null;
+}
+
 /**
  * SUPABASE SERVICE (Vanilla JS)
  * Gestión de base de datos y almacenamiento en la nube profesional.
@@ -128,8 +147,8 @@ const SupabaseService = {
             }
             // 🛡️ CORTAFUEGOS MULTI-INQUILINO (CATASTRÓFICO):
             // Si el que guarda es un cliente, verificar que el clientId que realiza la operación realmente exista en el array de clients del trainerId al que intenta guardar
-            const isTrainer = ((typeof localStorage !== 'undefined' && localStorage.getItem('_trainerAuthed') === '1') || (typeof sessionStorage !== 'undefined' && sessionStorage.getItem('_trainerAuthed') === '1'));
-            const clientId = typeof localStorage !== 'undefined' ? (localStorage.getItem('clientId') || sessionStorage.getItem('clientId')) : null;
+            const isTrainer = (safeGetLocalStorage('_trainerAuthed') === '1' || safeGetSessionStorage('_trainerAuthed') === '1');
+            const clientId = (safeGetLocalStorage('clientId') || safeGetSessionStorage('clientId'));
             
             if (!isTrainer && clientId) {
                 try {

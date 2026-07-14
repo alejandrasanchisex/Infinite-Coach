@@ -1,3 +1,22 @@
+
+// 🛡️ HELPERS DE ALMACENAMIENTO SEGUROS A PRUEBA DE CUOTA, COOKIES BLOQUEADAS Y EXCEPCIONES
+function safeGetLocalStorage(key) {
+    try {
+        if (typeof localStorage !== 'undefined' && localStorage) {
+            return localStorage.getItem(key);
+        }
+    } catch(e) {}
+    return null;
+}
+function safeGetSessionStorage(key) {
+    try {
+        if (typeof sessionStorage !== 'undefined' && sessionStorage) {
+            return sessionStorage.getItem(key);
+        }
+    } catch(e) {}
+    return null;
+}
+
 // ============================================
 // DATA MODELS & STORAGE MANAGEMENT - v311 BLINDAJE TOTAL
 // ============================================
@@ -10,8 +29,8 @@
     const originalSetItem = localStorage.setItem;
     localStorage.setItem = function(key, value) {
         let valueToStoreInLocal = value;
-        const clientId = typeof localStorage !== 'undefined' ? (localStorage.getItem('clientId') || sessionStorage.getItem('clientId')) : null;
-        const isTrainer = ((typeof localStorage !== 'undefined' && localStorage.getItem('_trainerAuthed') === '1') || (typeof sessionStorage !== 'undefined' && sessionStorage.getItem('_trainerAuthed') === '1'));
+        const clientId = (safeGetLocalStorage('clientId') || safeGetSessionStorage('clientId'));
+        const isTrainer = (safeGetLocalStorage('_trainerAuthed') === '1' || safeGetSessionStorage('_trainerAuthed') === '1');
 
         // Si es la base de datos de un cliente, optimizar el contenido para localStorage
         if (key && key.indexOf('fitnessAppData_') === 0 && !key.endsWith('_backup') && clientId && !isTrainer) {
@@ -71,7 +90,7 @@
             originalSetItem.call(localStorage, key, valueToStoreInLocal);
         } catch(e) {
             console.warn("Storage write failed. Attempting to clear space and retry...", e);
-            const activeId = localStorage.getItem('activeTrainerId') || sessionStorage.getItem('activeTrainerId') || 'default';
+            const activeId = safeGetLocalStorage('activeTrainerId') || safeGetSessionStorage('activeTrainerId') || 'default';
             if (activeId && activeId !== 'default') {
                 try {
                     const keysToRemove = [];
@@ -128,7 +147,7 @@
 
 const DB_VERSION = '1.0.1';
 let activeTrainerId = (function() {
-    const isTrainer = ((typeof localStorage !== 'undefined' && localStorage.getItem('_trainerAuthed') === '1') || (typeof sessionStorage !== 'undefined' && sessionStorage.getItem('_trainerAuthed') === '1'));
+    const isTrainer = (safeGetLocalStorage('_trainerAuthed') === '1' || safeGetSessionStorage('_trainerAuthed') === '1');
     const isClientPage = typeof window !== 'undefined' && 
         window.location && 
         window.location.pathname && 
@@ -159,13 +178,13 @@ let activeTrainerId = (function() {
     }
     
     // Leer activeTrainerId: localStorage primero, sessionStorage como fallback (iOS WebView con cuota llena)
-    let storedTrainerId = localStorage.getItem('activeTrainerId') || sessionStorage.getItem('activeTrainerId');
+    let storedTrainerId = safeGetLocalStorage('activeTrainerId') || safeGetSessionStorage('activeTrainerId');
     if (storedTrainerId) {
         storedTrainerId = storedTrainerId.trim();
     }
     
     // 2. Si el cliente está logueado, buscar su base de datos correspondiente (para restaurar contexto en PWA)
-    let clientId = localStorage.getItem('clientId') || sessionStorage.getItem('clientId');
+    let clientId = safeGetLocalStorage('clientId') || safeGetSessionStorage('clientId');
     if (clientId) {
         // Buscar en localStorage
     for (let i = 0; i < localStorage.length; i++) {
@@ -861,7 +880,7 @@ const getData = () => {
 window.getData = getData;
 
 const stripDatabaseForClient = (data, clientId) => {
-    const isTrainer = ((typeof localStorage !== 'undefined' && localStorage.getItem('_trainerAuthed') === '1') || (typeof sessionStorage !== 'undefined' && sessionStorage.getItem('_trainerAuthed') === '1'));
+    const isTrainer = (safeGetLocalStorage('_trainerAuthed') === '1' || safeGetSessionStorage('_trainerAuthed') === '1');
     const isClientPage = typeof window !== 'undefined' && 
         window.location && 
         window.location.pathname && 
@@ -1298,7 +1317,7 @@ const saveData = (data) => {
   }
 
   const localPrevModified = prevData ? prevData.lastModified : null;
-  const isTrainer = ((typeof localStorage !== 'undefined' && localStorage.getItem('_trainerAuthed') === '1') || (typeof sessionStorage !== 'undefined' && sessionStorage.getItem('_trainerAuthed') === '1'));
+  const isTrainer = (safeGetLocalStorage('_trainerAuthed') === '1' || safeGetSessionStorage('_trainerAuthed') === '1');
   
   // Merge page changes with the current local storage state (to preserve other tabs' edits)
   let mergedWithLocal = data;
@@ -1430,8 +1449,8 @@ const doSyncFromCloud = async () => {
         if (currentId === 'default' || !window.SupabaseService) return null;
         
         // 🛡️ FILTRO DE SEGURIDAD MULTI-INQUILINO: Impedir cruce de datos de cliente
-        const clientId = typeof localStorage !== 'undefined' ? (localStorage.getItem('clientId') || sessionStorage.getItem('clientId')) : null;
-        const isTrainer = ((typeof localStorage !== 'undefined' && localStorage.getItem('_trainerAuthed') === '1') || (typeof sessionStorage !== 'undefined' && sessionStorage.getItem('_trainerAuthed') === '1'));
+        const clientId = (safeGetLocalStorage('clientId') || safeGetSessionStorage('clientId'));
+        const isTrainer = (safeGetLocalStorage('_trainerAuthed') === '1' || safeGetSessionStorage('_trainerAuthed') === '1');
         
         try {
             let cloudData = await window.SupabaseService.getTrainerData(currentId);
@@ -1602,7 +1621,7 @@ const doSyncFromCloud = async () => {
                 const localTime = localData.lastModified ? new Date(localData.lastModified).getTime() : 0;
                 const cloudTime = cloudData.lastModified ? new Date(cloudData.lastModified).getTime() : 0;
                 
-                const isTrainer = ((typeof localStorage !== 'undefined' && localStorage.getItem('_trainerAuthed') === '1') || (typeof sessionStorage !== 'undefined' && sessionStorage.getItem('_trainerAuthed') === '1'));
+                const isTrainer = (safeGetLocalStorage('_trainerAuthed') === '1' || safeGetSessionStorage('_trainerAuthed') === '1');
                 
                 // Categorizar colecciones según autoría
                 const trainerCollections = ['routines', 'diets', 'foods', 'media', 'trainingBlocks', 'supplementationTemplates', 'invoices', 'library']; // clients se maneja aparte
