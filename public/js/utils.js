@@ -413,10 +413,10 @@ const formatPhoneForWhatsApp = (phone) => {
 
 // Generate WhatsApp Link
 const generateWhatsAppLink = (phone, message) => {
-    // Si el número está vacío, es inválido o es el valor de prueba/por defecto, usar el número oficial de ASTeam (615760538)
+    // Si el número está vacío, es inválido o es el valor de prueba/por defecto, usar el número oficial de ASTeam (615760638)
     let targetPhone = phone;
     if (!targetPhone || targetPhone.replace(/\s/g, '').includes('000000000') || targetPhone.length < 5) {
-        targetPhone = '615760538';
+        targetPhone = '615760638';
     }
     const cleanedPhone = formatPhoneForWhatsApp(targetPhone);
     return `https://wa.me/${cleanedPhone}?text=${encodeURIComponent(message)}`;
