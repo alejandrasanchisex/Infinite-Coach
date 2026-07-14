@@ -18,7 +18,7 @@
         })();
         // Force PWA cache bust / reload
         (function() {
-            const CURRENT_VERSION = '608';
+            const CURRENT_VERSION = '609';
             window.APP_VERSION = CURRENT_VERSION;
             const savedVersion = localStorage.getItem('app_version');
             if (savedVersion !== CURRENT_VERSION) {
@@ -66,8 +66,8 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="styles/theme.css?v=608">
-    <link rel="stylesheet" href="styles/components.css?v=608">
+    <link rel="stylesheet" href="styles/theme.css?v=609">
+    <link rel="stylesheet" href="styles/components.css?v=609">
 </head>
 
 <body>
@@ -96,14 +96,14 @@
                     </div>
                     <button class="menu-toggle" onclick="toggleMenu()">☰</button>
                     <ul class="nav-links" id="navLinks">
-                        <li><a href="trainer-dashboard.html?v=608" class="nav-link active">Dashboard</a></li>
-                        <li><a href="trainer-clients.html?v=608" class="nav-link">Clientes</a></li>
-                        <li><a href="trainer-routines.html?v=608" class="nav-link">Rutinas</a></li>
-                        <li><a href="trainer-diets.html?v=608" class="nav-link">Dietas</a></li>
-                        <li><a href="trainer-feedbacks.html?v=608" class="nav-link">Revisiones</a></li>
-                        <li><a href="trainer-media.html?v=608" class="nav-link">Biblioteca</a></li>
-                        <li><a href="trainer-appointments.html?v=608" class="nav-link">Agenda</a></li>
-                        <li><a href="trainer-settings.html?v=608" class="nav-link">Configuración</a></li>
+                        <li><a href="trainer-dashboard.html?v=609" class="nav-link active">Dashboard</a></li>
+                        <li><a href="trainer-clients.html?v=609" class="nav-link">Clientes</a></li>
+                        <li><a href="trainer-routines.html?v=609" class="nav-link">Rutinas</a></li>
+                        <li><a href="trainer-diets.html?v=609" class="nav-link">Dietas</a></li>
+                        <li><a href="trainer-feedbacks.html?v=609" class="nav-link">Revisiones</a></li>
+                        <li><a href="trainer-media.html?v=609" class="nav-link">Biblioteca</a></li>
+                        <li><a href="trainer-appointments.html?v=609" class="nav-link">Agenda</a></li>
+                        <li><a href="trainer-settings.html?v=609" class="nav-link">Configuración</a></li>
                         <li><a href="#" onclick="if(typeof AUTH !== 'undefined') { AUTH.signOut() } else { window.location.reload() }; return false;" class="nav-link" style="color:var(--error-color)">🚪 Salir</a></li>
                     </ul>
                 </nav>
@@ -332,14 +332,14 @@
 
     <!-- Supabase SDK & Service -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="js/supabase-service.js?v=608"></script>
+    <script src="js/supabase-service.js?v=609"></script>
 
     <!-- UI Scripts -->
-    <script src="js/config.js?v=608"></script>
-    <script src="js/auth.js?v=608"></script>
-    <script src="js/sheets.js?v=608"></script>
-    <script src="js/data-models.js?v=608"></script>
-    <script src="js/utils.js?v=608"></script>
+    <script src="js/config.js?v=609"></script>
+    <script src="js/auth.js?v=609"></script>
+    <script src="js/sheets.js?v=609"></script>
+    <script src="js/data-models.js?v=609"></script>
+    <script src="js/utils.js?v=609"></script>
     <script>
         // Branding is handled via onGoogleAuthSuccess() and global listeners
 
@@ -1650,10 +1650,54 @@
                     throw new Error('No se encontraron datos de este entrenador en la base de datos de la nube.');
                 }
                 
+                // --- Limpieza preventiva de otras claves de entrenadores ---
+                try {
+                    const keysToRemove = [];
+                    for (let i = 0; i < localStorage.length; i++) {
+                        const k = localStorage.key(i);
+                        if (k) {
+                            if (k.startsWith('fitnessAppData_') && !k.includes(activeId)) {
+                                keysToRemove.push(k);
+                            }
+                            if (k.startsWith('lastSyncTimestamp_') && !k.includes(activeId)) {
+                                keysToRemove.push(k);
+                            }
+                            if (k.endsWith('_backup') && !k.includes(activeId)) {
+                                keysToRemove.push(k);
+                            }
+                        }
+                    }
+                    console.log(`🧹 [Restore] Limpiando de forma preventiva ${keysToRemove.length} claves antiguas.`);
+                    keysToRemove.forEach(k => localStorage.removeItem(k));
+                } catch(cleanErr) {
+                    console.warn("Error en limpieza preventiva:", cleanErr);
+                }
+
                 const sKey = `fitnessAppData_${activeId}`;
-                localStorage.setItem(sKey, JSON.stringify(cloudData));
-                sessionStorage.setItem(sKey, JSON.stringify(cloudData));
-                localStorage.setItem('lastSyncTimestamp_' + activeId, new Date().toISOString());
+                
+                // Intentar guardar con gestión de error de cuota detallado
+                try {
+                    localStorage.setItem(sKey, JSON.stringify(cloudData));
+                    sessionStorage.setItem(sKey, JSON.stringify(cloudData));
+                    localStorage.setItem('lastSyncTimestamp_' + activeId, new Date().toISOString());
+                } catch(writeErr) {
+                    if (writeErr.name === 'QuotaExceededError' || writeErr.message.includes('quota') || writeErr.message.includes('limit')) {
+                        // Intentar limpiar todo lo que no sea crítico
+                        try {
+                            localStorage.clear();
+                            // Restaurar claves mínimas críticas de sesión para que no se desloguee
+                            localStorage.setItem('_trainerAuthed', '1');
+                            localStorage.setItem('activeTrainerId', activeId);
+                            localStorage.setItem(sKey, JSON.stringify(cloudData));
+                            sessionStorage.setItem(sKey, JSON.stringify(cloudData));
+                            localStorage.setItem('lastSyncTimestamp_' + activeId, new Date().toISOString());
+                        } catch (hardCleanErr) {
+                            throw new Error("Límite de almacenamiento del navegador excedido por completo. Por favor, borra el historial y datos del sitio web en los Ajustes de tu móvil.");
+                        }
+                    } else {
+                        throw writeErr;
+                    }
+                }
                 
                 out.innerHTML = '<span style="color: #3fb950; font-weight: bold;">¡Restauración exitosa! Recargando panel...</span>';
                 setTimeout(() => window.location.reload(), 1500);
@@ -1679,6 +1723,6 @@
             }
         }
     </script>
-    <script src="js/custom-recipes.js?v=608"></script></body>
+    <script src="js/custom-recipes.js?v=609"></script></body>
 
 </html>

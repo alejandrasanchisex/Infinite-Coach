@@ -67,7 +67,38 @@
         }
         
         // Guardar optimizado/original en localStorage
-        try { originalSetItem.call(localStorage, key, valueToStoreInLocal); } catch(e) {}
+        try {
+            originalSetItem.call(localStorage, key, valueToStoreInLocal);
+        } catch(e) {
+            console.warn("Storage write failed. Attempting to clear space and retry...", e);
+            const activeId = localStorage.getItem('activeTrainerId') || sessionStorage.getItem('activeTrainerId') || 'default';
+            if (activeId && activeId !== 'default') {
+                try {
+                    const keysToRemove = [];
+                    for (let i = 0; i < localStorage.length; i++) {
+                        const k = localStorage.key(i);
+                        if (k) {
+                            if (k.startsWith('fitnessAppData_') && !k.includes(activeId)) {
+                                keysToRemove.push(k);
+                            }
+                            if (k.startsWith('lastSyncTimestamp_') && !k.includes(activeId)) {
+                                keysToRemove.push(k);
+                            }
+                            if (k.endsWith('_backup') && !k.includes(activeId)) {
+                                keysToRemove.push(k);
+                            }
+                        }
+                    }
+                    keysToRemove.forEach(k => localStorage.removeItem(k));
+                    
+                    // Intento 2
+                    originalSetItem.call(localStorage, key, valueToStoreInLocal);
+                    console.log("Retry successful after cleaning storage space!");
+                } catch(retryErr) {
+                    console.error("Retry failed too:", retryErr);
+                }
+            }
+        }
     };
 
     // 2. Interceptar lecturas (priorizar sessionStorage sobre localStorage para evitar datos recortados)
