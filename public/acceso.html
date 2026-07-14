@@ -20,7 +20,7 @@
         })();
         // Force PWA cache bust / reload
         (function() {
-            const CURRENT_VERSION = '617';
+            const CURRENT_VERSION = '618';
             window.APP_VERSION = CURRENT_VERSION;
             const savedVersion = localStorage.getItem('app_version');
             if (savedVersion !== CURRENT_VERSION) {
@@ -345,7 +345,7 @@
 
         <p class="footer">¿No tienes código?<br>Contacta con tu entrenador personal.</p>
         <p class="footer" style="margin-top: 15px; border-top: 1px solid rgba(255,255,255,0.05); padding-top: 15px;">
-            <a href="trainer-login.html?v=617" style="color: var(--gold-light); text-decoration: none; font-size: 0.8rem; font-weight: 600;">Acceso Entrenadores 🔐</a>
+            <a href="trainer-login.html?v=618" style="color: var(--gold-light); text-decoration: none; font-size: 0.8rem; font-weight: 600;">Acceso Entrenadores 🔐</a>
         </p>
         <p id="app-version-display" style="text-align: center; font-size: 0.65rem; color: var(--muted); margin-top: 10px; opacity: 0.7;"></p>
     </div>
@@ -355,10 +355,10 @@
 
 <!-- ── Scripts ──────────────────────────────────────────────────── -->
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="js/supabase-service.js?v=617"></script>
-<script src="js/config.js?v=617"></script>
-<script src="js/data-models.js?v=617"></script>
-<script src="js/utils.js?v=617"></script>
+<script src="js/supabase-service.js?v=618"></script>
+<script src="js/config.js?v=618"></script>
+<script src="js/data-models.js?v=618"></script>
+<script src="js/utils.js?v=618"></script>
 <script>
 
 // ── Auto-Redirección (Mantener sesión activa) ─────────────────────
@@ -366,7 +366,7 @@
     var storedClientId = localStorage.getItem('clientId') || sessionStorage.getItem('clientId');
     var params = new URLSearchParams(window.location.search);
     if (storedClientId && params.get('logout') !== 'true' && params.get('reauth') !== 'true') {
-        window.location.replace('dashboard.html?v=617');
+        window.location.replace('dashboard.html?v=618');
     }
 })();
 
@@ -596,6 +596,24 @@ async function doLogin() {
             }
         }
         if (foundClient) {
+            // Limpiar bases de datos de sesiones anteriores para evitar contaminación de caché
+            try {
+                for (var i = localStorage.length - 1; i >= 0; i--) {
+                    var key = localStorage.key(i);
+                    if (key && key.indexOf('fitnessAppData_') === 0) {
+                        localStorage.removeItem(key);
+                    }
+                }
+            } catch(e) {}
+            try {
+                for (var i = sessionStorage.length - 1; i >= 0; i--) {
+                    var key = sessionStorage.key(i);
+                    if (key && key.indexOf('fitnessAppData_') === 0) {
+                        sessionStorage.removeItem(key);
+                    }
+                }
+            } catch(e) {}
+
             // Actualizar activeTrainerId al del coach del cliente
             // Siempre guardar en sessionStorage como garantía (localStorage puede estar lleno en iOS WebView)
             try { localStorage.setItem('activeTrainerId', foundTrainerId); } catch(e) {}
@@ -659,7 +677,7 @@ try {
     document.getElementById('app-version-display').textContent = 'Versión: v' + (window.APP_VERSION || 'desconocida');
 } catch(e) {}
 </script>
-<script src="js/custom-recipes.js?v=617"></script>
-<script src="js/pwa-install.js?v=617"></script>
+<script src="js/custom-recipes.js?v=618"></script>
+<script src="js/pwa-install.js?v=618"></script>
 </body>
 </html>
