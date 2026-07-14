@@ -2662,7 +2662,7 @@ window.SYSTEM_RECIPES = [
     "type": "image",
     "category": "recipe",
     "title": "Tostada de Requesón y Nueces",
-    "url": "https://bieeydhacavxymoosasx.supabase.co/storage/v1/object/public/Media/1778609603768_Tostada_de_requeson_y_nueces.png",
+    "url": "https://bieeydhacavxymoosasx.supabase.co/storage/v1/object/public/Media/1778609604768_Tostada_de_requeson_y_nueces.png",
     "ingredients": "Pan integral, requesón, nueces",
     "description": ""
   },
@@ -5077,7 +5077,7 @@ const BrandConfig = {
             logo: 'https://bieeydhacavxymoosasx.supabase.co/storage/v1/object/public/Media/1779724548154_Gemini_Generated_Image_vse84nvse84nvse8.png',
             configured: true,
             colors: { primary: '#fdbfec', secondary: '#1a1a2e', accent: '#ff6b6b' },
-            whatsapp: '615760338',
+            whatsapp: '615760438',
             fiscalData: { invoiceSeries: 'FAST' + new Date().getFullYear() }
         };
     } else if (isToledo) {
