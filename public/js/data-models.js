@@ -125,7 +125,7 @@ function safeGetSessionStorage(key) {
     localStorage.getItem = function(key) {
         if (key && key.indexOf('fitnessAppData_') === 0 && !key.endsWith('_backup')) {
             try {
-                const sessionVal = sessionStorage.getItem(key);
+                const sessionVal = safeGetSessionStorage(key);
                 if (sessionVal) return sessionVal;
             } catch(e) {}
         }
@@ -137,8 +137,8 @@ function safeGetSessionStorage(key) {
         for (let i = 0; i < localStorage.length; i++) {
             const key = localStorage.key(i);
             if (key && (key.indexOf('fitnessAppData_') === 0 || key === 'clientId' || key === 'activeTrainerId')) {
-                if (!sessionStorage.getItem(key)) {
-                    sessionStorage.setItem(key, localStorage.getItem(key));
+                if (!safeGetSessionStorage(key)) {
+                    sessionStorage.setItem(key, safeGetLocalStorage(key));
                 }
             }
         }
@@ -190,7 +190,7 @@ let activeTrainerId = (function() {
     for (let i = 0; i < localStorage.length; i++) {
         const key = localStorage.key(i);
         if (key && key.startsWith('fitnessAppData_') && !key.endsWith('_backup')) {
-            const raw = localStorage.getItem(key);
+            const raw = safeGetLocalStorage(key);
             if (raw) {
                 try {
                     const parsed = JSON.parse(raw);
@@ -209,7 +209,7 @@ let activeTrainerId = (function() {
     for (let i = 0; i < sessionStorage.length; i++) {
         const key = sessionStorage.key(i);
         if (key && key.startsWith('fitnessAppData_') && !key.endsWith('_backup')) {
-            const raw = sessionStorage.getItem(key);
+            const raw = safeGetSessionStorage(key);
             if (raw) {
                 try {
                     const parsed = JSON.parse(raw);
@@ -237,7 +237,7 @@ let activeTrainerId = (function() {
     }
     
     // 5. Mapeos de correos de entrenadores (si es el panel de coach)
-    const trainerEmail = localStorage.getItem('_trainerEmail') || '';
+    const trainerEmail = safeGetLocalStorage('_trainerEmail') || '';
     if (trainerEmail) {
         const emailLower = trainerEmail.toLowerCase().trim();
         if (emailLower === 'ingenia@ingeniaia.es') return 't-zum04ds2n';
@@ -263,7 +263,7 @@ const getStorageKey = () => `fitnessAppData_${window.activeTrainerId || 'default
 (function() {
     try {
         const sKey = 'fitnessAppData_t-w0iybl7qb';
-        const raw = localStorage.getItem(sKey);
+        const raw = safeGetLocalStorage(sKey);
         if (raw) {
             const data = JSON.parse(raw);
             
@@ -289,7 +289,7 @@ const getStorageKey = () => `fitnessAppData_${window.activeTrainerId || 'default
 (function() {
     try {
         const sKey = 'fitnessAppData_t-vdyrwk7dt';
-        const raw = localStorage.getItem(sKey);
+        const raw = safeGetLocalStorage(sKey);
         if (raw) {
             const data = JSON.parse(raw);
             const invoices = data.invoices || [];
@@ -318,7 +318,7 @@ const getStorageKey = () => `fitnessAppData_${window.activeTrainerId || 'default
 (function() {
     try {
         const sKey = 'fitnessAppData_t-kghykurxf';
-        const raw = localStorage.getItem(sKey);
+        const raw = safeGetLocalStorage(sKey);
         if (raw) {
             const data = JSON.parse(raw);
             const targetDuplicateIds = ["abf7b31d-35bb-4f87-b293-21b0d3c516f1", "acdf83d0-3415-4f7e-87db-83aaff5198c2"];
@@ -342,7 +342,7 @@ const getStorageKey = () => `fitnessAppData_${window.activeTrainerId || 'default
                 
                 // Also purge backup key
                 const backupKey = sKey + '_backup';
-                const backupRaw = localStorage.getItem(backupKey);
+                const backupRaw = safeGetLocalStorage(backupKey);
                 if (backupRaw) {
                     try {
                         const backupData = JSON.parse(backupRaw);
@@ -479,7 +479,7 @@ const syncClientWithLatestFeedback = (client, feedbacks) => {
 const getData = () => {
   const sKey = getStorageKey();
   // Leer de localStorage; si no hay datos (cuota llena en iOS WebView), usar sessionStorage como fallback
-  const raw = sessionStorage.getItem(sKey) || localStorage.getItem(sKey);
+  const raw = safeGetSessionStorage(sKey) || safeGetLocalStorage(sKey);
   
     
 
@@ -489,7 +489,7 @@ const getData = () => {
     supplementationTemplates: [], feedbacks: [], appointments: [], invoices: [], trainingLogs: [], habits: [], trainingBlocks: [], deletedIds: [], teamMembers: []
   };
   if (!raw) {
-    const activeId = window.activeTrainerId || localStorage.getItem('activeTrainerId') || 'default';
+    const activeId = window.activeTrainerId || safeGetLocalStorage('activeTrainerId') || 'default';
     if (activeId !== 'default') {
       try { localStorage.setItem('isNewInstall_' + activeId, 'true'); } catch(e) {}
       console.log(`🆕 Nueva instalación o caché limpia detectada para el entrenador ${activeId}. Registrando bandera 'isNewInstall'.`);
@@ -533,7 +533,7 @@ const getData = () => {
     }
 
     // 🛡️ SHIELD FOR DUPLICATE ALEJANDRA SANCHIS CLIENTS (JULIAN t-kghykurxf)
-    if (data.clients && (window.activeTrainerId === 't-kghykurxf' || localStorage.getItem('activeTrainerId') === 't-kghykurxf')) {
+    if (data.clients && (window.activeTrainerId === 't-kghykurxf' || safeGetLocalStorage('activeTrainerId') === 't-kghykurxf')) {
         const targetDuplicateIds = ["abf7b31d-35bb-4f87-b293-21b0d3c516f1", "acdf83d0-3415-4f7e-87db-83aaff5198c2"];
         const hasDuplicates = data.clients.some(c => targetDuplicateIds.includes(c.id));
         if (hasDuplicates) {
@@ -550,7 +550,7 @@ const getData = () => {
 
     // 🛡️ SHIELD FOR OTHER TRAINERS FISCAL DATA
     if (data.brand && data.brand.fiscalData && data.brand.fiscalData.address === 'alejandra.asteam@gmail.com') {
-        const activeId = window.activeTrainerId || localStorage.getItem('activeTrainerId') || '';
+        const activeId = window.activeTrainerId || safeGetLocalStorage('activeTrainerId') || '';
         if (activeId !== 't-w0iybl7qb' && activeId !== 'alejandra_asteam_gmail_com') {
             data.brand.fiscalData.address = '';
             console.log("🛡️ [Shield] Cleared other trainer's fiscal address from alejandra.asteam@gmail.com.");
@@ -559,7 +559,7 @@ const getData = () => {
     }
 
     // 🔥 MIGRACIÓN ÚNICA: Restaurar recetas ocultas a activas
-    if (!localStorage.getItem('v310_unhide_recipes_done')) {
+    if (!safeGetLocalStorage('v310_unhide_recipes_done')) {
         if (data.hidden_system_media) {
             data.hidden_system_media = data.hidden_system_media.filter(id => {
                 const strId = String(id);
@@ -576,7 +576,7 @@ const getData = () => {
     }
 
     // 🔥 MIGRACIÓN: Poblar "Mis Alimentos" con ingredientes maestros
-    if (!localStorage.getItem('v316_seed_foods_done_v4')) {
+    if (!safeGetLocalStorage('v316_seed_foods_done_v4')) {
         if (!data.foods) data.foods = [];
         const initialFoodsSeed = [];
 
@@ -603,7 +603,7 @@ const getData = () => {
     }
 
     // 🔥 MIGRACIÓN: Eliminar alimentos anteriores/duplicados obsoletos
-    if (!localStorage.getItem('v316_clean_duplicates_done_v5')) {
+    if (!safeGetLocalStorage('v316_clean_duplicates_done_v5')) {
         if (data.foods && Array.isArray(data.foods)) {
             const obsoleteNames = [
                 'mejillones',
@@ -633,7 +633,7 @@ const getData = () => {
     }
 
     // 🔥 MIGRACIÓN: Corregir tipo de alimentos y cantidades en dietas que se guardaron erróneamente como unidades
-    if (!localStorage.getItem('v316_fix_food_types_and_diets_v4')) {
+    if (!safeGetLocalStorage('v316_fix_food_types_and_diets_v4')) {
         let modified = false;
         const knownUnitKeywords = [
             'plátano', 'banana', 'manzana', 'pera', 'naranja', 'melocotón', 'durazno',
@@ -848,7 +848,7 @@ const getData = () => {
             localStorage.setItem(sKey, JSON.stringify(data));
             // Sincronizar inmediatamente si existe SupabaseService
             if (window.SupabaseService) {
-                const currentId = window.activeTrainerId || localStorage.getItem('activeTrainerId') || 'default';
+                const currentId = window.activeTrainerId || safeGetLocalStorage('activeTrainerId') || 'default';
                 if (currentId !== 'default') {
                     window.SupabaseService.saveTrainerData(currentId, data)
                         .then(() => console.log("🔥 [MIGRACIÓN v93] Sincronización exitosa con Supabase."))
@@ -1230,7 +1230,7 @@ ${item.date}`.replace('\n', ''); // Safe compile
                             finalItems.push(localItem);
                         } else {
                             // Check if it's a new local item created after the last sync
-                            const currentId = window.activeTrainerId || localStorage.getItem('activeTrainerId') || 'default';
+                            const currentId = window.activeTrainerId || safeGetLocalStorage('activeTrainerId') || 'default';
                             const lastSyncTime = getLastSyncTime(currentId);
                             const itemCreatedAt = localItem.createdAt ? new Date(localItem.createdAt).getTime() : 0;
                             const isNewLocal = itemCreatedAt >= lastSyncTime || lastSyncTime === 0 || itemCreatedAt === 0;
@@ -1257,7 +1257,7 @@ ${item.date}`.replace('\n', ''); // Safe compile
         }
     });
     // Merge non-array config fields
-    const currentId = window.activeTrainerId || localStorage.getItem('activeTrainerId') || 'default';
+    const currentId = window.activeTrainerId || safeGetLocalStorage('activeTrainerId') || 'default';
     const configFields = ['brand', 'trainerSettings', 'paymentSettings', 'fiscalData', 'teamMembers'];
     configFields.forEach(field => {
         if (localNew[field] !== undefined) {
@@ -1298,7 +1298,7 @@ const saveData = (data) => {
   );
   
   // Comprobar si hay datos reales en el local storage que no debemos perder
-  const currentRaw = localStorage.getItem(getStorageKey());
+  const currentRaw = safeGetLocalStorage(getStorageKey());
   let prevData = null;
   if (currentRaw) {
     try { prevData = JSON.parse(currentRaw); } catch(e) {}
@@ -1346,12 +1346,12 @@ const saveData = (data) => {
 
   localStorage.setItem(getStorageKey(), JSON.stringify(mergedWithLocal));
   if (window.SupabaseService) {
-    const currentId = window.activeTrainerId || localStorage.getItem('activeTrainerId') || 'default';
+    const currentId = window.activeTrainerId || safeGetLocalStorage('activeTrainerId') || 'default';
     if (currentId !== 'default') {
             enqueue(async () => {
           const clearLocalDeletedIds = () => {
               try {
-                  const currentLocal = JSON.parse(localStorage.getItem(getStorageKey()) || '{}');
+                  const currentLocal = JSON.parse(safeGetLocalStorage(getStorageKey()) || '{}');
                   if (currentLocal.deletedIds && currentLocal.deletedIds.length > 0) {
                       currentLocal.deletedIds = [];
                       localStorage.setItem(getStorageKey(), JSON.stringify(currentLocal));
@@ -1368,7 +1368,7 @@ const saveData = (data) => {
                   // 🛡️ BLINDAJE DE RESET: Si la nube tiene un reset pendiente que el local no ha procesado, descartar el guardado
                   if (cloudData.__reset_version) {
                       const localResetKey = `_resetVersion_${currentId}`;
-                      const localResetVersion = localStorage.getItem(localResetKey);
+                      const localResetVersion = safeGetLocalStorage(localResetKey);
                       if (String(localResetVersion) !== String(cloudData.__reset_version)) {
                           console.log(`🧹 [RESET BLOCK] Bloqueando guardado local: la nube tiene reset v${cloudData.__reset_version} no procesado. Adoptando datos de la nube...`);
                           localStorage.setItem(localResetKey, String(cloudData.__reset_version));
@@ -1399,14 +1399,14 @@ const saveData = (data) => {
                           console.log("🔄 Se detectaron cambios externos más nuevos en la nube. Fusionando antes de subir...");
                           
                           // Temporarily restore local lastModified to localPrevModified for syncFromCloud comparison
-                          const tempSaved = JSON.parse(localStorage.getItem(getStorageKey()) || '{}');
+                          const tempSaved = JSON.parse(safeGetLocalStorage(getStorageKey()) || '{}');
                           tempSaved.lastModified = localPrevModified;
                           localStorage.setItem(getStorageKey(), JSON.stringify(tempSaved));
  
                           const freshData = await doSyncFromCloud();
                           if (freshData) {
                               // Obtenemos los datos recién fusionados en local storage
-                              const mergedLocal = JSON.parse(localStorage.getItem(getStorageKey()) || '{}');
+                              const mergedLocal = JSON.parse(safeGetLocalStorage(getStorageKey()) || '{}');
                               
                               // Aplicamos de forma segura los cambios locales sobre los datos fusionados de la nube
                               const finalData = mergeLocalEdits(mergedWithLocal, mergedLocal, prevData, isTrainer);
@@ -1435,7 +1435,7 @@ window.saveData = saveData;
 const getLastSyncTime = (trainerId) => {
     if (typeof localStorage === 'undefined') return 0;
     const key = 'lastSyncTimestamp_' + trainerId;
-    const val = localStorage.getItem(key);
+    const val = safeGetLocalStorage(key);
     return val ? new Date(val).getTime() : 0;
 };
 const setLastSyncTime = (trainerId) => {
@@ -1445,7 +1445,7 @@ const setLastSyncTime = (trainerId) => {
 };
 
 const doSyncFromCloud = async () => {
-        let currentId = window.activeTrainerId || localStorage.getItem('activeTrainerId') || 'default';
+        let currentId = window.activeTrainerId || safeGetLocalStorage('activeTrainerId') || 'default';
         if (currentId === 'default' || !window.SupabaseService) return null;
         
         // 🛡️ FILTRO DE SEGURIDAD MULTI-INQUILINO: Impedir cruce de datos de cliente
@@ -1508,7 +1508,7 @@ const doSyncFromCloud = async () => {
         }
         
         // Obtener datos locales actuales
-        const localRaw = localStorage.getItem(getStorageKey());
+        const localRaw = safeGetLocalStorage(getStorageKey());
         let localData = null;
         if (localRaw) {
             try { localData = JSON.parse(localRaw); } catch(e){}
@@ -1542,7 +1542,7 @@ const doSyncFromCloud = async () => {
             // 🛡️ BLINDAJE DE RESET: Si la nube tiene __reset_version, descartar caché local y adoptar nube directamente
             if (cloudData.__reset_version) {
                 const localResetKey = `_resetVersion_${currentId}`;
-                const localResetVersion = localStorage.getItem(localResetKey);
+                const localResetVersion = safeGetLocalStorage(localResetKey);
                 if (String(localResetVersion) !== String(cloudData.__reset_version)) {
                     console.log(`🧹 [RESET] Detectado reset de datos (v${cloudData.__reset_version}). Descartando caché local y adoptando datos de la nube...`);
                     localStorage.setItem(localResetKey, String(cloudData.__reset_version));
@@ -1585,11 +1585,11 @@ const doSyncFromCloud = async () => {
 
                 const isLocalFreshlyInitialized = !localHasClients && !localHasRoutines && !localHasDiets && !localHasBlocks;
                 const cloudHasTrainerData = cloudHasClients || cloudHasRoutines || cloudHasDiets || cloudHasBlocks;
-                const isNewInstall = localStorage.getItem('isNewInstall_' + currentId) === 'true';
+                const isNewInstall = safeGetLocalStorage('isNewInstall_' + currentId) === 'true';
 
                 // 🛡️ BLINDAJE: Sólo tratar como "nueva instalación" si además NO hay un backup local válido
                 const backupKey = getStorageKey() + '_backup';
-                const localBackupRaw = localStorage.getItem(backupKey);
+                const localBackupRaw = safeGetLocalStorage(backupKey);
                 let localBackupHasData = false;
                 if (localBackupRaw) {
                     try {
@@ -2016,7 +2016,7 @@ ${item.date}`.replace('\n', ''); // Safe compile
                 setLastSyncTime(currentId); // Update last sync time
                 
                 // 💾 Conservar el backup local intacto. Solo guardar si no existía uno previo para no pisar las ediciones locales del entrenador.
-                const hasExistingBackup = !!localStorage.getItem(getStorageKey() + '_backup');
+                const hasExistingBackup = !!safeGetLocalStorage(getStorageKey() + '_backup');
                 if (!hasExistingBackup) {
                     const mergedHasRealData = (
                         (mergedData.clients && mergedData.clients.length > 0) ||
@@ -3707,8 +3707,8 @@ const Clients = {
     let clients = data.clients || [];
     
     // Filtro global para sub-entrenadores
-    if (localStorage.getItem('_isSubTrainer') === 'true') {
-      const subTrainerId = localStorage.getItem('_subTrainerId');
+    if (safeGetLocalStorage('_isSubTrainer') === 'true') {
+      const subTrainerId = safeGetLocalStorage('_subTrainerId');
       clients = clients.filter(c => c.assignedTrainerId === subTrainerId);
     }
 
@@ -3747,7 +3747,7 @@ const Clients = {
     for (let i = 0; i < localStorage.length; i++) {
         const key = localStorage.key(i);
         if (key && key.startsWith('fitnessAppData_') && !key.endsWith('_backup')) {
-            const raw = localStorage.getItem(key);
+            const raw = safeGetLocalStorage(key);
             if (raw) {
                 try {
                     const parsed = JSON.parse(raw);
@@ -4338,8 +4338,8 @@ const Feedbacks = {
     feedbacks = feedbacks.filter(f => clientIds.has(String(f.clientId)));
     
     // Filtro global para sub-entrenadores
-    if (localStorage.getItem('_isSubTrainer') === 'true') {
-      const subTrainerId = localStorage.getItem('_subTrainerId');
+    if (safeGetLocalStorage('_isSubTrainer') === 'true') {
+      const subTrainerId = safeGetLocalStorage('_subTrainerId');
       const assignedClientIds = new Set((data.clients || [])
         .filter(c => c.assignedTrainerId === subTrainerId)
         .map(c => String(c.id)));
@@ -4416,8 +4416,8 @@ const Appointments = {
     appointments = appointments.filter(a => clientIds.has(String(a.clientId)));
     
     // Filtro global para sub-entrenadores
-    if (localStorage.getItem('_isSubTrainer') === 'true') {
-      const subTrainerId = localStorage.getItem('_subTrainerId');
+    if (safeGetLocalStorage('_isSubTrainer') === 'true') {
+      const subTrainerId = safeGetLocalStorage('_subTrainerId');
       const assignedClientIds = new Set((data.clients || [])
         .filter(c => c.assignedTrainerId === subTrainerId)
         .map(c => String(c.id)));
@@ -5088,8 +5088,8 @@ const BrandConfig = {
     let isJulian = false;
     let isBrian = false;
     if (typeof window !== 'undefined') {
-        const activeId = window.activeTrainerId || localStorage.getItem('activeTrainerId') || '';
-        const trainerEmail = localStorage.getItem('_trainerEmail') || '';
+        const activeId = window.activeTrainerId || safeGetLocalStorage('activeTrainerId') || '';
+        const trainerEmail = safeGetLocalStorage('_trainerEmail') || '';
         if (activeId.includes('t-w0iybl7qb') || 
             activeId.includes('t-zum04ds2n') || 
             activeId.includes('alejandra_asteam_gmail_com') ||
@@ -5371,7 +5371,7 @@ const BrandConfig = {
       if (isTrainerPage) {
           isLight = brand.colors.themeMode === 'light';
       } else {
-          const clientTheme = isClientPage ? (localStorage.getItem('clientThemeMode') || 'default') : 'default';
+          const clientTheme = isClientPage ? (safeGetLocalStorage('clientThemeMode') || 'default') : 'default';
           if (clientTheme === 'light') {
               isLight = true;
           } else if (clientTheme === 'dark') {
@@ -5516,7 +5516,7 @@ const BrandConfig = {
         try {
             let manifestLink = document.querySelector('link[rel="manifest"]');
             if (manifestLink) {
-                const activeId = window.activeTrainerId || localStorage.getItem('activeTrainerId') || 'default';
+                const activeId = window.activeTrainerId || safeGetLocalStorage('activeTrainerId') || 'default';
                 manifestLink.href = 'manifest.json?t=' + encodeURIComponent(activeId);
             }
         } catch (e) {
@@ -5547,14 +5547,14 @@ console.log("🏁 v311 BLINDAJE TOTAL: Sistema Cargado con protección máxima d
 // ============================================
 (async () => {
     try {
-        const currentId = window.activeTrainerId || localStorage.getItem('activeTrainerId') || 'default';
+        const currentId = window.activeTrainerId || safeGetLocalStorage('activeTrainerId') || 'default';
         if (currentId === 'default') return;
         
         const mainKey = getStorageKey();
         const backupKey = mainKey + '_backup';
         
-        const mainRaw = localStorage.getItem(mainKey);
-        const backupRaw = localStorage.getItem(backupKey);
+        const mainRaw = safeGetLocalStorage(mainKey);
+        const backupRaw = safeGetLocalStorage(backupKey);
         
         if (!backupRaw) return;
         
@@ -5600,19 +5600,19 @@ console.log("🏁 v311 BLINDAJE TOTAL: Sistema Cargado con protección máxima d
         // Prevent syncing too frequently (debounce to max once every 10 seconds)
         if (Date.now() - lastSyncTime < 10000) return;
         
-        const currentId = window.activeTrainerId || localStorage.getItem('activeTrainerId') || 'default';
+        const currentId = window.activeTrainerId || safeGetLocalStorage('activeTrainerId') || 'default';
         if (currentId === 'default' || !window.SupabaseService || !window.syncFromCloud) return;
 
         isSyncing = true;
         try {
             console.log("🔄 [AutoSync] Iniciando sincronización automática en segundo plano...");
-            const prevDataStr = localStorage.getItem(getStorageKey());
+            const prevDataStr = safeGetLocalStorage(getStorageKey());
             
             const freshData = await window.syncFromCloud();
             lastSyncTime = Date.now();
 
             if (freshData) {
-                const freshDataStr = localStorage.getItem(getStorageKey());
+                const freshDataStr = safeGetLocalStorage(getStorageKey());
                 let actualChange = false;
                 
                 if (prevDataStr !== freshDataStr) {
@@ -5690,7 +5690,7 @@ console.log("🏁 v311 BLINDAJE TOTAL: Sistema Cargado con protección máxima d
     document.addEventListener('visibilitychange', () => {
         if (document.visibilityState === 'visible') {
             if (window.APP_VERSION) {
-                const savedVersion = localStorage.getItem('app_version');
+                const savedVersion = safeGetLocalStorage('app_version');
                 if (savedVersion && savedVersion !== window.APP_VERSION) {
                     console.log("🔄 [AutoSync] Nueva versión detectada en localStorage (" + savedVersion + " vs " + window.APP_VERSION + "). Recargando pestaña...");
                     window.location.reload(true);
@@ -5704,7 +5704,7 @@ console.log("🏁 v311 BLINDAJE TOTAL: Sistema Cargado con protección máxima d
 
     window.addEventListener('focus', () => {
         if (window.APP_VERSION) {
-            const savedVersion = localStorage.getItem('app_version');
+            const savedVersion = safeGetLocalStorage('app_version');
             if (savedVersion && savedVersion !== window.APP_VERSION) {
                 console.log("🔄 [AutoSync] Nueva versión detectada en focus (" + savedVersion + " vs " + window.APP_VERSION + "). Recargando pestaña...");
                 window.location.reload(true);
