@@ -21,7 +21,7 @@
 
   // Force PWA cache bust / reload
         (function() {
-            const CURRENT_VERSION = '612';
+            const CURRENT_VERSION = '613';
             window.APP_VERSION = CURRENT_VERSION;
             const savedVersion = localStorage.getItem('app_version');
             if (savedVersion !== CURRENT_VERSION) {
@@ -67,9 +67,9 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="styles/theme.css?v=612">
-  <link rel="stylesheet" href="styles/components.css?v=612">
-  <link rel="stylesheet" href="styles/mobile.css?v=612">
+  <link rel="stylesheet" href="styles/theme.css?v=613">
+  <link rel="stylesheet" href="styles/components.css?v=613">
+  <link rel="stylesheet" href="styles/mobile.css?v=613">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <script>
@@ -181,10 +181,10 @@
           <span id="brandName">Infinite Coach</span>
         </div>
         <ul class="nav-links" id="navLinks">
-          <li><a href="dashboard.html?v=612" class="nav-link">Inicio</a></li>
-          <li><a href="profile.html?v=612" class="nav-link">Ficha Técnica</a></li>
+          <li><a href="dashboard.html?v=613" class="nav-link">Inicio</a></li>
+          <li><a href="profile.html?v=613" class="nav-link">Ficha Técnica</a></li>
 
-          <li><a href="acceso.html?v=612" class="nav-link">Salir</a></li>
+          <li><a href="acceso.html?v=613" class="nav-link">Salir</a></li>
         </ul>
         <button class="menu-toggle" onclick="toggleMenu()" style="margin-left: auto;">☰</button>
       </nav>
@@ -251,12 +251,12 @@
 
   <!-- Supabase SDK & Service -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script src="js/supabase-service.js?v=612"></script>
+  <script src="js/supabase-service.js?v=613"></script>
 
-  <script src="js/config.js?v=612"></script>
-  <script src="js/data-models.js?v=612"></script>
-  <script src="js/custom-exercises.js?v=612"></script>
-  <script src="js/utils.js?v=612"></script>
+  <script src="js/config.js?v=613"></script>
+  <script src="js/data-models.js?v=613"></script>
+  <script src="js/custom-exercises.js?v=613"></script>
+  <script src="js/utils.js?v=613"></script>
   <script>
     // --- RESOLUCIÓN DE TRAINER ID (FALLBACK SEGURO) ---
     (function() {
@@ -610,7 +610,7 @@
 
             tabsContainer.innerHTML = days.map((day, index) => {
                const fallbackBlockWeekId = isBlockBased && publishedBlock ? `block_${publishedBlock.id}_week_${currentWeekIdx}` : null;
-               const isCompleted = logsToUse.some(l => (l.routineId === routine.id || l.routineId === currentLogicId || (fallbackBlockWeekId && l.routineId === fallbackBlockWeekId)) && l.dayNumber === day && l.completed && (!isBlockBased || !publishedBlock || l.blockId === publishedBlock.id));
+               const isCompleted = logsToUse.some(l => (l.routineId === routine.id || l.routineId === currentLogicId || (fallbackBlockWeekId && l.routineId === fallbackBlockWeekId)) && l.dayNumber === day && l.completed && (!isBlockBased || !publishedBlock || l.blockId === publishedBlock.id) && (!isBlockBased || l.weekIndex === undefined || l.weekIndex === null || l.weekIndex === currentWeekIdx));
                const dayEx = routine.days ? (routine.days[day-1]?.exercises || []) : (routine.exercises || []).filter(e=>e.day===day);
                const hasEx = dayEx.length > 0;
 
@@ -718,7 +718,8 @@
           return (l.routineId === routine.id || l.routineId === currentRoutineId || (fallbackBlockWeekId && l.routineId === fallbackBlockWeekId)) && 
                  l.dayNumber === dayNumber && 
                  l.completed &&
-                 (!isBlockBased || !publishedBlock || l.blockId === publishedBlock.id);
+                 (!isBlockBased || !publishedBlock || l.blockId === publishedBlock.id) &&
+                 (!isBlockBased || l.weekIndex === undefined || l.weekIndex === null || l.weekIndex === currentWeekIdx);
       });
       if (completedLog) sessionCompleted = true;
 
@@ -956,6 +957,7 @@
           clientId: client.id,
           routineId: currentRoutineId,
           dayNumber: currentDayNumber,
+          weekIndex: isBlockBased ? currentWeekIdx : null,
           comment: commentVal,
           exercises: dayExercises.map((ex, exIdx) => {
             const numSets = Array.isArray(ex.sets) ? ex.sets.length : (parseInt(ex.sets) || 1);
@@ -1009,6 +1011,7 @@
         clientId: client.id,
         routineId: currentRoutineId,
         dayNumber: dayNumber,
+        weekIndex: isBlockBased ? currentWeekIdx : null,
         comment: commentVal,
         exercises: dayExercises.map((ex, exIdx) => {
           const numSets = Array.isArray(ex.sets) ? ex.sets.length : (parseInt(ex.sets) || 1);
@@ -1241,6 +1244,6 @@
     // Trigger App Initialization
     initializeApp();
   </script>
-    <script src="js/custom-recipes.js?v=612"></script></body>
+    <script src="js/custom-recipes.js?v=613"></script></body>
 
 </html>

@@ -4550,7 +4550,7 @@ const TrainingLogs = {
     return (data.trainingLogs || []).filter(l => l.clientId == clientId && l.completed !== false);
   },
 
-  getDraft: (clientId, routineId, dayNumber) => {
+  getDraft: (clientId, routineId, dayNumber, weekIndex = null) => {
     const data = getData();
     const activeBlock = (data.trainingBlocks || []).find(b => b.clientId == clientId && b.status === 'active');
     return (data.trainingLogs || []).find(l => 
@@ -4558,7 +4558,8 @@ const TrainingLogs = {
         l.routineId === routineId && 
         l.dayNumber === dayNumber && 
         l.completed === false &&
-        (!activeBlock || l.blockId === activeBlock.id)
+        (!activeBlock || l.blockId === activeBlock.id) &&
+        (weekIndex === null || l.weekIndex === undefined || l.weekIndex === null || l.weekIndex === weekIndex)
     );
   },
 
@@ -4569,19 +4570,23 @@ const TrainingLogs = {
     // Find active block for this client
     const activeBlock = (data.trainingBlocks || []).find(b => b.clientId == logData.clientId && b.status === 'active');
 
-    // Find if a draft already exists for this client, routine, and day
+    const weekIdx = logData.weekIndex !== undefined ? logData.weekIndex : null;
+
+    // Find if a draft already exists for this client, routine, day, and week
     let draft = data.trainingLogs.find(l => 
         l.clientId == logData.clientId && 
         l.routineId === logData.routineId && 
         l.dayNumber === logData.dayNumber && 
         l.completed === false &&
-        (!activeBlock || l.blockId === activeBlock.id)
+        (!activeBlock || l.blockId === activeBlock.id) &&
+        (weekIdx === null || l.weekIndex === undefined || l.weekIndex === null || l.weekIndex === weekIdx)
     );
 
     if (draft) {
         // Update existing draft
         draft.exercises = logData.exercises || [];
         draft.comment = logData.comment || '';
+        draft.weekIndex = weekIdx;
         draft.lastModified = new Date().toISOString();
     } else {
         // Create new draft
@@ -4590,6 +4595,7 @@ const TrainingLogs = {
             clientId: logData.clientId,
             routineId: logData.routineId,
             dayNumber: logData.dayNumber,
+            weekIndex: weekIdx,
             blockId: activeBlock ? activeBlock.id : null,
             date: logData.date || new Date().toISOString(),
             exercises: logData.exercises || [],
@@ -4610,6 +4616,7 @@ const TrainingLogs = {
     if (!data.trainingLogs) data.trainingLogs = [];
 
     const activeBlock = (data.trainingBlocks || []).find(b => b.clientId == logData.clientId && b.status === 'active');
+    const weekIdx = logData.weekIndex !== undefined ? logData.weekIndex : null;
 
     // Find and update the existing draft if it exists
     let existingLog = data.trainingLogs.find(l => 
@@ -4617,13 +4624,15 @@ const TrainingLogs = {
         l.routineId === logData.routineId && 
         l.dayNumber === logData.dayNumber && 
         l.completed === false &&
-        (!activeBlock || l.blockId === activeBlock.id)
+        (!activeBlock || l.blockId === activeBlock.id) &&
+        (weekIdx === null || l.weekIndex === undefined || l.weekIndex === null || l.weekIndex === weekIdx)
     );
 
     if (existingLog) {
         existingLog.exercises = logData.exercises || [];
         existingLog.comment = logData.comment || '';
         existingLog.completed = true;
+        existingLog.weekIndex = weekIdx;
         existingLog.date = new Date().toISOString();
         existingLog.lastModified = new Date().toISOString();
         if (activeBlock) existingLog.blockId = activeBlock.id;
@@ -4634,12 +4643,14 @@ const TrainingLogs = {
             l.routineId === logData.routineId && 
             l.dayNumber === logData.dayNumber && 
             l.completed === true &&
-            (!activeBlock || l.blockId === activeBlock.id)
+            (!activeBlock || l.blockId === activeBlock.id) &&
+            (weekIdx === null || l.weekIndex === undefined || l.weekIndex === null || l.weekIndex === weekIdx)
         );
         if (duplicateCompleted) {
             console.warn("Duplicate completed log submission detected. Updating instead of duplicating.");
             duplicateCompleted.exercises = logData.exercises || [];
             duplicateCompleted.comment = logData.comment || '';
+            duplicateCompleted.weekIndex = weekIdx;
             duplicateCompleted.lastModified = new Date().toISOString();
             existingLog = duplicateCompleted;
         } else {
@@ -4648,6 +4659,7 @@ const TrainingLogs = {
               clientId: logData.clientId,
               routineId: logData.routineId,
               dayNumber: logData.dayNumber,
+              weekIndex: weekIdx,
               blockId: activeBlock ? activeBlock.id : null,
               date: logData.date || new Date().toISOString(),
               exercises: logData.exercises || [],
