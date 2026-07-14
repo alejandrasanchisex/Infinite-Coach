@@ -712,12 +712,13 @@
       // Determine a unique identifier since weeks might not have an explicit ID
       const currentRoutineId = routine.id || (isBlockBased ? `block_${publishedBlock.id}_week_${currentWeekIdx}` : 'standalone');
 
-      completedLog = userLogs.find(l => 
-          (l.routineId === routine.id || l.routineId === currentRoutineId) && 
-          l.dayNumber === dayNumber && 
-          l.completed &&
-          (!isBlockBased || !publishedBlock || l.blockId === publishedBlock.id)
-      );
+      completedLog = userLogs.find(l => {
+          const fallbackBlockWeekId = isBlockBased && publishedBlock ? `block_${publishedBlock.id}_week_${currentWeekIdx}` : null;
+          return (l.routineId === routine.id || l.routineId === currentRoutineId || (fallbackBlockWeekId && l.routineId === fallbackBlockWeekId)) && 
+                 l.dayNumber === dayNumber && 
+                 l.completed &&
+                 (!isBlockBased || !publishedBlock || l.blockId === publishedBlock.id);
+      });
       if (completedLog) sessionCompleted = true;
 
       // If not completed, try to load any autosaved draft
