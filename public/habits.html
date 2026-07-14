@@ -20,7 +20,7 @@
         })();
         // Force PWA cache bust / reload
         (function() {
-            const CURRENT_VERSION = '614';
+            const CURRENT_VERSION = '616';
             window.APP_VERSION = CURRENT_VERSION;
             const savedVersion = localStorage.getItem('app_version');
             if (savedVersion !== CURRENT_VERSION) {
@@ -66,9 +66,9 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="styles/theme.css?v=614">
-    <link rel="stylesheet" href="styles/components.css?v=614">
-    <link rel="stylesheet" href="styles/mobile.css?v=614">
+    <link rel="stylesheet" href="styles/theme.css?v=616">
+    <link rel="stylesheet" href="styles/components.css?v=616">
+    <link rel="stylesheet" href="styles/mobile.css?v=616">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <script>
@@ -256,10 +256,10 @@
                     <span id="brandName">Infinite Coach</span>
                 </div>
                 <ul class="nav-links" id="navLinks">
-                    <li><a href="dashboard.html?v=614" class="nav-link">Inicio</a></li>
-                    <li><a href="profile.html?v=614" class="nav-link">Ficha Técnica</a></li>
+                    <li><a href="dashboard.html?v=616" class="nav-link">Inicio</a></li>
+                    <li><a href="profile.html?v=616" class="nav-link">Ficha Técnica</a></li>
 
-                    <li><a href="acceso.html?v=614" class="nav-link">Salir</a></li>
+                    <li><a href="acceso.html?v=616" class="nav-link">Salir</a></li>
                 </ul>
                 <button class="menu-toggle" onclick="toggleMenu()" style="margin-left: auto;">☰</button>
             </nav>
@@ -270,7 +270,7 @@
     <main class="main-content">
         <div class="container">
             <div class="flex-between align-center mb-lg">
-                <a href="dashboard.html?v=614" class="btn btn-sm btn-secondary" style="border-radius: 50px; padding: 8px 15px;">
+                <a href="dashboard.html?v=616" class="btn btn-sm btn-secondary" style="border-radius: 50px; padding: 8px 15px;">
                     ← Volver
                 </a>
                 <h1 style="margin: 0; font-size: 1.5rem;">Hábitos Diarios</h1>
@@ -366,15 +366,15 @@
 
     <!-- Supabase SDK & Service -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="js/supabase-service.js?v=614"></script>
+    <script src="js/supabase-service.js?v=616"></script>
 
-    <script src="js/config.js?v=614"></script>
-    <script src="js/data-models.js?v=614"></script>
-    <script src="js/utils.js?v=614"></script>
+    <script src="js/config.js?v=616"></script>
+    <script src="js/data-models.js?v=616"></script>
+    <script src="js/utils.js?v=616"></script>
     <script>
         const params = new URLSearchParams(window.location.search);
         const urlClientId = params.get('c') || params.get('client');
-        const urlTrainerId = params.get('t') || params.get('trainer');
+        let urlTrainerId = params.get('t') || params.get('trainer');
         if (urlClientId) {
             localStorage.setItem('clientId', urlClientId);
             sessionStorage.setItem('clientId', urlClientId);
@@ -471,62 +471,76 @@
 
         document.addEventListener('DOMContentLoaded', async () => {
             if (!clientId) return;
-            // Sincronizar con la nube (Supabase es ahora el primario)
-            if (window.SupabaseService) {
-                window.SupabaseService.init();
-                await window.syncFromCloud();
-            } else if (window.FirebaseService) {
-                await window.FirebaseService.init();
-                await window.syncFromCloud();
-            }
 
-            const client = Clients.getById(clientId);
-            if (!client) {
-                const activeId = localStorage.getItem('activeTrainerId') || 'default';
-                window.location.replace('acceso.html?reauth=true&t=' + activeId);
-                return;
-            }
-
-            // Theme
-            BrandConfig.applyTheme();
-            const brand = BrandConfig.get();
-            if (brand) {
-                const bNameEl = document.getElementById('brandName');
-                if (bNameEl) bNameEl.textContent = brand.name || 'Infinite Coach';
-                const bLogoEl = document.getElementById('brandLogo');
-                if (bLogoEl && brand.logo) {
-                    bLogoEl.src = brand.logo;
-                    bLogoEl.style.display = 'block';
+            // 1. Cargar datos locales inmediatamente para que el cliente no vea una pantalla en blanco
+            const renderLocalUI = () => {
+                const client = Clients.getById(clientId);
+                if (!client) {
+                    const activeId = localStorage.getItem('activeTrainerId') || 'default';
+                    window.location.replace('acceso.html?reauth=true&t=' + activeId);
+                    return false;
                 }
-            }
 
-            // Redireccionar al Dashboard si está inactivo o tiene pagos pendientes (Opción 3)
-            const isInactive = client.status === 'inactive';
-            const isUnpaid = client.paymentStatus !== 'paid' || client.status === 'unpaid';
-            if (isInactive || isUnpaid) {
-                window.location.replace('dashboard.html');
-                return;
-            }
+                // Theme
+                BrandConfig.applyTheme();
+                const brand = BrandConfig.get();
+                if (brand) {
+                    const bNameEl = document.getElementById('brandName');
+                    if (bNameEl) bNameEl.textContent = brand.name || 'Infinite Coach';
+                    const bLogoEl = document.getElementById('brandLogo');
+                    if (bLogoEl && brand.logo) {
+                        bLogoEl.src = brand.logo;
+                        bLogoEl.style.display = 'block';
+                    }
+                }
 
-            if (brand && brand.clientSettings && brand.clientSettings.showHabits === false) {
-                window.location.replace('dashboard.html');
-                return;
-            }
+                // Redireccionar al Dashboard si está inactivo o tiene pagos pendientes (Opción 3)
+                const isInactive = client.status === 'inactive';
+                const isUnpaid = client.paymentStatus !== 'paid' || client.status === 'unpaid';
+                if (isInactive || isUnpaid) {
+                    window.location.replace('dashboard.html');
+                    return false;
+                }
 
-            if (brand && brand.clientSettings && brand.clientSettings.showWeightHabit === false) {
-                const cardWeight = document.getElementById('card-weight');
-                if (cardWeight) cardWeight.style.display = 'none';
-                const filterWeight = document.getElementById('f-weight');
-                if (filterWeight) filterWeight.style.display = 'none';
-            }
+                if (brand && brand.clientSettings && brand.clientSettings.showHabits === false) {
+                    window.location.replace('dashboard.html');
+                    return false;
+                }
 
-            // Date Display
-            try {
-                updateDateLabel(selectedDate);
-                renderDaySelector();
-            } catch(e) { console.warn('Error setting habits date label:', e); }
+                if (brand && brand.clientSettings && brand.clientSettings.showWeightHabit === false) {
+                    const cardWeight = document.getElementById('card-weight');
+                    if (cardWeight) cardWeight.style.display = 'none';
+                    const filterWeight = document.getElementById('f-weight');
+                    if (filterWeight) filterWeight.style.display = 'none';
+                }
 
-            loadHabits(selectedDate);
+                // Date Display
+                try {
+                    updateDateLabel(selectedDate);
+                    renderDaySelector();
+                } catch(e) { console.warn('Error setting habits date label:', e); }
+
+                loadHabits(selectedDate);
+                return true;
+            };
+
+            const uiSuccess = renderLocalUI();
+            if (uiSuccess === false) return;
+
+            // 2. Sincronizar en segundo plano sin bloquear el renderizado inicial
+            setTimeout(async () => {
+                try {
+                    if (window.SupabaseService) {
+                        window.SupabaseService.init();
+                        const freshData = await window.syncFromCloud();
+                        if (freshData) {
+                            renderLocalUI();
+                        }
+                    }
+                } catch(e) {
+                    console.warn("Background sync error:", e);
+                }
+            }, 100);
         });
 
         function loadHabits(dateStr = selectedDate) {
@@ -797,5 +811,5 @@
 
 
     </script>
-    <script src="js/custom-recipes.js?v=614"></script></body>
+    <script src="js/custom-recipes.js?v=616"></script></body>
 </html>

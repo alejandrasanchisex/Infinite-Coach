@@ -3127,7 +3127,7 @@ window.SYSTEM_RECIPES = [
     "type": "image",
     "category": "recipe",
     "title": "Ternera con Patatas ",
-    "url": "https://bieeydhacavxymoosasx.supabase.co/storage/v1/object/public/Media/1778661481685_Ternera_con_Patatas.png",
+    "url": "https://bieeydhacavxymoosasx.supabase.co/storage/v1/object/public/Media/1778661581685_Ternera_con_Patatas.png",
     "ingredients": "Tiras de ternera magra, patatas, salsa ligera de hierbas",
     "description": ""
   },
