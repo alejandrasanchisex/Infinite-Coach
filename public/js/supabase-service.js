@@ -27,11 +27,15 @@ const SUPABASE_KEY = "sb_publishable_ffxbK3z-Am1wVmqV5Szs_w_zOv8RLWQ";
 
 const delay = ms => new Promise(resolve => setTimeout(resolve, ms));
 
-async function retryOp(operation, maxAttempts = 3, initialDelay = 1000) {
+async function retryOp(operation, maxAttempts = 3, initialDelay = 1000, timeoutMs = 6000) {
     let lastError = null;
     for (let attempt = 1; attempt <= maxAttempts; attempt++) {
         try {
-            return await operation();
+            const promiseCall = operation();
+            const timeoutPromise = new Promise((_, reject) => 
+                setTimeout(() => reject(new Error("Timeout de red (Supabase no responde)")), timeoutMs)
+            );
+            return await Promise.race([promiseCall, timeoutPromise]);
         } catch (err) {
             lastError = err;
             console.warn(`[Supabase Retry] Attempt ${attempt}/${maxAttempts} failed:`, err.message || err);
