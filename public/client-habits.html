@@ -20,7 +20,7 @@
         })();
         // Force PWA cache bust / reload
         (function() {
-            const CURRENT_VERSION = '624';
+            const CURRENT_VERSION = '625';
             window.APP_VERSION = CURRENT_VERSION;
             const savedVersion = localStorage.getItem('app_version');
             if (savedVersion !== CURRENT_VERSION) {
@@ -66,9 +66,9 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="styles/theme.css?v=624">
-    <link rel="stylesheet" href="styles/components.css?v=624">
-    <link rel="stylesheet" href="styles/mobile.css?v=624">
+    <link rel="stylesheet" href="styles/theme.css?v=625">
+    <link rel="stylesheet" href="styles/components.css?v=625">
+    <link rel="stylesheet" href="styles/mobile.css?v=625">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <script>
@@ -256,10 +256,10 @@
                     <span id="brandName">Infinite Coach</span>
                 </div>
                 <ul class="nav-links" id="navLinks">
-                    <li><a href="dashboard.html?v=624" class="nav-link">Inicio</a></li>
-                    <li><a href="profile.html?v=624" class="nav-link">Ficha Técnica</a></li>
+                    <li><a href="dashboard.html?v=625" class="nav-link">Inicio</a></li>
+                    <li><a href="profile.html?v=625" class="nav-link">Ficha Técnica</a></li>
 
-                    <li><a href="acceso.html?v=624" class="nav-link">Salir</a></li>
+                    <li><a href="acceso.html?v=625" class="nav-link">Salir</a></li>
                 </ul>
                 <button class="menu-toggle" onclick="toggleMenu()" style="margin-left: auto;">☰</button>
             </nav>
@@ -270,7 +270,7 @@
     <main class="main-content">
         <div class="container">
             <div class="flex-between align-center mb-lg">
-                <a href="dashboard.html?v=624" class="btn btn-sm btn-secondary" style="border-radius: 50px; padding: 8px 15px;">
+                <a href="dashboard.html?v=625" class="btn btn-sm btn-secondary" style="border-radius: 50px; padding: 8px 15px;">
                     ← Volver
                 </a>
                 <h1 style="margin: 0; font-size: 1.5rem;">Hábitos Diarios</h1>
@@ -366,11 +366,11 @@
 
     <!-- Supabase SDK & Service -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="js/supabase-service.js?v=624"></script>
+    <script src="js/supabase-service.js?v=625"></script>
 
-    <script src="js/config.js?v=624"></script>
-    <script src="js/data-models.js?v=624"></script>
-    <script src="js/utils.js?v=624"></script>
+    <script src="js/config.js?v=625"></script>
+    <script src="js/data-models.js?v=625"></script>
+    <script src="js/utils.js?v=625"></script>
     <script>
         const params = new URLSearchParams(window.location.search);
         const urlClientId = params.get('c') || params.get('client');
@@ -767,7 +767,7 @@
                         <label class="text-xs text-muted uppercase block mb-md">Cantidad actual</label>
                         <div style="display: flex; align-items: center; justify-content: center; gap: 20px;">
                             <button class="btn btn-outline" style="width: 50px; height: 50px; font-size: 1.5rem; border-radius: 50%; padding:0;" onclick="window.adjustHabitValue(-${step})">-</button>
-                            <input type="number" id="habitInput" class="form-input text-center" style="font-size: 2rem; width: 140px; background: transparent; border: none; font-weight: 800; color: var(--primary-color);" value="${current}" step="${step}">
+                            <input type="text" inputmode="decimal" id="habitInput" class="form-input text-center" style="font-size: 2rem; width: 140px; background: transparent; border: none; font-weight: 800; color: var(--primary-color);" value="${current}">
                             <button class="btn btn-outline" style="width: 50px; height: 50px; font-size: 1.5rem; border-radius: 50%; padding:0;" onclick="window.adjustHabitValue(${step})">+</button>
                         </div>
                         <div class="text-muted mt-sm">${unit}</div>
@@ -778,7 +778,7 @@
 
             window.adjustHabitValue = (val) => {
                 const input = document.getElementById('habitInput');
-                let cur = parseFloat(input.value) || 0;
+                let cur = parseFloat(input.value.replace(',', '.')) || 0;
                 input.value = Math.max(0, cur + val);
             };
 
@@ -789,7 +789,8 @@
         }
 
         window.saveHabit = async function(type) {
-            const val = parseFloat(document.getElementById('habitInput').value) || 0;
+            const rawVal = document.getElementById('habitInput').value || '';
+            const val = parseFloat(rawVal.replace(',', '.')) || 0;
             const h = Habits.getByDate(clientId, selectedDate) || { water: 0, steps: 0, sleep: 0, weight: 0 };
             h[type] = val;
             Habits.save(clientId, h, selectedDate);
@@ -800,5 +801,5 @@
 
 
     </script>
-    <script src="js/custom-recipes.js?v=624"></script></body>
+    <script src="js/custom-recipes.js?v=625"></script></body>
 </html>
