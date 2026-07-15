@@ -1259,6 +1259,13 @@ const mergeLocalEdits = (localNew, cloudMerged, localPrev, isTrainer) => {
                     if (cloudItem) finalItems.push(cloudItem);
                     return;
                 }
+                    // Client collections logic for clients: trainingLogs and habits are client-owned, always keep local if it exists
+                if (!isTrainer && (col === 'trainingLogs' || col === 'habits')) {
+                    if (localItem) {
+                        finalItems.push(localItem);
+                        return;
+                    }
+                }
                 
                 if (localItem && cloudItem) {
                     const localChanged = !prevItem || JSON.stringify(localItem) !== JSON.stringify(prevItem);
