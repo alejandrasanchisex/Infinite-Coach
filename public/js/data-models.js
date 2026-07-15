@@ -1398,7 +1398,6 @@ const saveData = (data) => {
     if (currentId !== 'default') {
             isLocalUploadInProgress = true;
             enqueue(async () => {
-                try {
           const clearLocalDeletedIds = () => {
               try {
                   const currentLocal = JSON.parse(safeGetDatabaseRaw() || '{}');
@@ -1505,6 +1504,7 @@ const saveData = (data) => {
               
               await window.SupabaseService.saveTrainerData(currentId, activeLocalFinal);
               clearLocalDeletedIds();
+              isLocalUploadInProgress = false;
           } catch (e) {
               console.warn('Supabase DB Sync Error (Safe Merge failed, fallback directly):', e);
               let activeLocalFallback = mergedWithLocal;
@@ -1513,11 +1513,10 @@ const saveData = (data) => {
                   if (rawNow) activeLocalFallback = JSON.parse(rawNow);
               } catch(e){}
               await window.SupabaseService.saveTrainerData(currentId, activeLocalFallback).then(clearLocalDeletedIds).catch(() => {});
-          } finally {
               isLocalUploadInProgress = false;
           }
-       });
-     }
+      });
+    }
   }
 };
 window.saveData = saveData;
