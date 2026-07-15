@@ -1559,11 +1559,26 @@ const doSyncFromCloud = async () => {
                 }
             }
 
-            // Garantizar que todos los arrays existen en la nube
             const collections = ['clients', 'routines', 'diets', 'foods', 'media', 'feedbacks', 'appointments', 'invoices', 'trainingBlocks', 'trainingLogs', 'habits', 'supplementationTemplates', 'library'];
             collections.forEach(col => {
                 if (!cloudData[col]) cloudData[col] = [];
             });
+
+            // 🛡️ AUTORECUPERACIÓN DE BASE DE DATOS DE ENTRENADOR RECORTADA
+            // Si somos Entrenador, y el local tiene 1 o menos clientes pero la nube tiene más de 1 cliente,
+            // significa que el local está recortado por haber entrado antes en modo cliente.
+            // Adoptamos los datos de la nube directamente.
+            if (isTrainer && localData) {
+                const localClientsCount = localData.clients ? localData.clients.length : 0;
+                const cloudClientsCount = cloudData.clients ? cloudData.clients.length : 0;
+                if (localClientsCount <= 1 && cloudClientsCount > 1) {
+                    console.warn("🚨 [AUTORECUPERACIÓN] Base de datos de entrenador local recortada detectada. Adoptando base de datos completa de la nube...");
+                    localStorage.setItem(getStorageKey(), JSON.stringify(cloudData));
+                    try { sessionStorage.setItem(getStorageKey(), JSON.stringify(cloudData)); } catch(e) {}
+                    setLastSyncTime(currentId);
+                    return cloudData;
+                }
+            }
 
             if (localData) {
                 // Garantizar que todos los arrays existen localmente
