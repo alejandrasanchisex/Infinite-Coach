@@ -17,7 +17,7 @@
         })();
         // Force PWA cache bust / reload
         (function() {
-            const CURRENT_VERSION = '642';
+            const CURRENT_VERSION = '643';
             window.APP_VERSION = CURRENT_VERSION;
             const savedVersion = localStorage.getItem('app_version');
             if (savedVersion && savedVersion !== CURRENT_VERSION) {
@@ -71,8 +71,8 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="styles/theme.css?v=642">
-    <link rel="stylesheet" href="styles/components.css?v=642">
+    <link rel="stylesheet" href="styles/theme.css?v=643">
+    <link rel="stylesheet" href="styles/components.css?v=643">
     <style>
         body {
             background-color: #0B0B1A;
@@ -232,15 +232,15 @@
                 ¿No tienes una licencia? <br> Contacta con <a href="https://ingeniaia.es" style="color: rgba(255,255,255,0.5); text-decoration: underline;">Ingenia</a>.
             </p>
             <p style="font-size: 0.8rem; font-weight: 600;">
-                <a href="acceso.html?v=642" style="color: var(--primary-color); text-decoration: none;">Acceso Clientes 📲</a>
+                <a href="acceso.html?v=643" style="color: var(--primary-color); text-decoration: none;">Acceso Clientes 📲</a>
             </p>
         </div>
     </div>
 
     <!-- Supabase SDK & Service -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" defer></script>
-    <script src="js/supabase-service.js?v=642" defer></script>
-    <script src="js/utils.js?v=642" defer></script>
+    <script src="js/supabase-service.js?v=643" defer></script>
+    <script src="js/utils.js?v=643" defer></script>
 
     <script>
         const PLATFORM_KEY = 'saasFitnessPlatform';
@@ -448,6 +448,13 @@
             // Limpiar cualquier sesión previa de Admin para evitar mezclas
             sessionStorage.removeItem('_isMasterAdmin');
 
+            const withTimeout = (promise, ms = 4500) => {
+                return Promise.race([
+                    promise,
+                    new Promise((_, reject) => setTimeout(() => reject(new Error("Timeout de red (Supabase)")), ms))
+                ]);
+            };
+
             try {
                 let platformData = null;
 
@@ -455,7 +462,7 @@
                 if (window.SupabaseService) {
                     try {
                         window.SupabaseService.init();
-                        platformData = await window.SupabaseService.getGlobalConfig();
+                        platformData = await withTimeout(window.SupabaseService.getGlobalConfig(), 4500);
                         if (platformData) console.log("Auth: Datos cargados desde Supabase ✅");
                     } catch (errDb) {
                         console.warn("No se pudo conectar a Supabase para la config global:", errDb);
@@ -531,7 +538,7 @@
                     if (window.SupabaseService) {
                         try {
                             window.SupabaseService.init();
-                            const trainerData = await window.SupabaseService.getTrainerData(trainer.id);
+                            const trainerData = await withTimeout(window.SupabaseService.getTrainerData(trainer.id), 4500);
                             if (trainerData) {
                                 localStorage.setItem('fitnessAppData_' + trainer.id, JSON.stringify(trainerData));
                                 console.log("Auth: Datos del entrenador descargados y guardados en localStorage ✅");
@@ -562,9 +569,12 @@
                         let allProfiles = [];
                         if (window.SupabaseService) {
                             window.SupabaseService.init();
-                            const { data, error } = await window.SupabaseService.client
-                                .from('trainer_profiles')
-                                .select('trainer_id, teamMembers:full_data->teamMembers');
+                            const { data, error } = await withTimeout(
+                                window.SupabaseService.client
+                                    .from('trainer_profiles')
+                                    .select('trainer_id, teamMembers:full_data->teamMembers'),
+                                4500
+                            );
                             if (!error && data) {
                                 allProfiles = data;
                             }
@@ -664,5 +674,5 @@
             }
         });
     </script>
-    <script src="js/custom-recipes.js?v=642"></script></body>
+    <script src="js/custom-recipes.js?v=643"></script></body>
 </html>
