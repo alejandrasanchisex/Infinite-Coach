@@ -484,17 +484,17 @@
                     // Limpiar bases de datos de sesiones anteriores para evitar contaminación de caché
                     try {
                         for (var i = localStorage.length - 1; i >= 0; i--) {
-                            var key = localStorage.key(i);
-                            if (key && key.indexOf('fitnessAppData_') === 0) {
-                                localStorage.removeItem(key);
+                            var storageKey = localStorage.key(i);
+                            if (storageKey && storageKey.indexOf('fitnessAppData_') === 0) {
+                                localStorage.removeItem(storageKey);
                             }
                         }
                     } catch(e) {}
                     try {
                         for (var i = sessionStorage.length - 1; i >= 0; i--) {
-                            var key = sessionStorage.key(i);
-                            if (key && key.indexOf('fitnessAppData_') === 0) {
-                                sessionStorage.removeItem(key);
+                            var storageKey = sessionStorage.key(i);
+                            if (storageKey && storageKey.indexOf('fitnessAppData_') === 0) {
+                                sessionStorage.removeItem(storageKey);
                             }
                         }
                     } catch(e) {}
