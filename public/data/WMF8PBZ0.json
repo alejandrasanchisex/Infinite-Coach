@@ -7051,15 +7051,15 @@
       "paymentStatus": "paid",
       "technicalData": {
         "age": 26,
-        "arm": 27.5,
-        "leg": 53,
-        "chest": 87,
-        "glute": 96.5,
+        "arm": 27.2,
+        "leg": 52.8,
+        "chest": 86.5,
+        "glute": 96,
         "goals": "Pérdida de grasa y tonificación muscular general.",
         "notes": "Entrena por la tarde. Gran motivación y buena adherencia.",
-        "waist": 70.2,
+        "waist": 69.8,
         "height": 165,
-        "weight": 62,
+        "weight": 61.5,
         "bodyFat": 21.5,
         "injuries": "Ninguna",
         "allergies": "Sin alergias alimentarias",
@@ -7190,6 +7190,7 @@
       "supplementationUrlVisible": false
     }
   ],
+  "library": [],
   "version": "1.0.1",
   "invoices": [],
   "routines": [],
@@ -8045,6 +8046,7 @@
     }
   ],
   "deletedIds": [],
+  "teamMembers": [],
   "appointments": [
     {
       "id": "d665156f-5b1a-4cdd-8163-f6639195252f",

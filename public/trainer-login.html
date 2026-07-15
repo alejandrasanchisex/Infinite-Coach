@@ -17,7 +17,7 @@
         })();
         // Force PWA cache bust / reload
         (function() {
-            const CURRENT_VERSION = '653';
+            const CURRENT_VERSION = '654';
             window.APP_VERSION = CURRENT_VERSION;
             const savedVersion = localStorage.getItem('app_version');
             if (savedVersion && savedVersion !== CURRENT_VERSION) {
@@ -71,8 +71,8 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="styles/theme.css?v=653">
-    <link rel="stylesheet" href="styles/components.css?v=653">
+    <link rel="stylesheet" href="styles/theme.css?v=654">
+    <link rel="stylesheet" href="styles/components.css?v=654">
     <style>
         body {
             background-color: #0B0B1A;
@@ -232,15 +232,15 @@
                 ¿No tienes una licencia? <br> Contacta con <a href="https://ingeniaia.es" style="color: rgba(255,255,255,0.5); text-decoration: underline;">Ingenia</a>.
             </p>
             <p style="font-size: 0.8rem; font-weight: 600;">
-                <a href="acceso.html?v=653" style="color: var(--primary-color); text-decoration: none;">Acceso Clientes 📲</a>
+                <a href="acceso.html?v=654" style="color: var(--primary-color); text-decoration: none;">Acceso Clientes 📲</a>
             </p>
         </div>
     </div>
 
     <!-- Supabase SDK & Service -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" defer></script>
-    <script src="js/supabase-service.js?v=653" defer></script>
-    <script src="js/utils.js?v=653" defer></script>
+    <script src="js/supabase-service.js?v=654" defer></script>
+    <script src="js/utils.js?v=654" defer></script>
 
     <script>
         const PLATFORM_KEY = 'saasFitnessPlatform';
@@ -306,6 +306,49 @@
             const key = document.getElementById('licenseKey').value.trim().toUpperCase();
             const submitBtn = document.getElementById('submitBtn');
             const statusMsg = document.getElementById('statusMsg');
+
+            // Interceptación de palabra clave de restauración de backup local de emergencia
+            if (key === 'RESTORE_LOCAL_BACKUP' || key === 'RESTORE') {
+                const trainerId = 't-w0iybl7qb'; // Alejandra / ASTeam por defecto
+                const backupRaw = localStorage.getItem('fitnessAppData_' + trainerId + '_backup');
+                if (backupRaw) {
+                    try {
+                        const data = JSON.parse(backupRaw);
+                        if (data && (data.clients || data.routines)) {
+                            submitBtn.disabled = true;
+                            statusMsg.style.color = '#10B981';
+                            statusMsg.textContent = '¡Copia local de ASTeam encontrada! Restaurando...';
+
+                            localStorage.setItem('fitnessAppData_' + trainerId, backupRaw);
+                            localStorage.setItem('activeTrainerId', trainerId);
+                            localStorage.setItem('_trainerEmail', email || 'alejandra.asteam@gmail.com');
+                            sessionStorage.setItem('_trainerAuthed', '1');
+                            localStorage.setItem('_trainerAuthed', '1');
+
+                            // Intentar subir a Supabase de inmediato
+                            if (window.SupabaseService) {
+                                window.SupabaseService.init();
+                                try {
+                                    await window.SupabaseService.saveTrainerData(trainerId, data);
+                                    statusMsg.textContent = '¡Copia local subida a Supabase con éxito! Redirigiendo...';
+                                } catch (errCloud) {
+                                    console.warn("Could not save restored local backup to cloud:", errCloud);
+                                }
+                            }
+
+                            setTimeout(() => {
+                                window.location.href = 'trainer-dashboard.html?t=' + trainerId + '&v=654';
+                            }, 2000);
+                            return;
+                        }
+                    } catch (errParse) {
+                        console.error("Error parsing restore backup:", errParse);
+                    }
+                }
+                statusMsg.style.color = '#EF4444';
+                statusMsg.textContent = '❌ No se encontró ningún backup local de ASTeam en este dispositivo.';
+                return;
+            }
 
             // Modo Demo Intercept
             const isDemoHost = (window.location.hostname === 'coachdemo.infinitecoach.es' || new URLSearchParams(window.location.search).get('mode') === 'demo') &&
@@ -675,5 +718,5 @@
             }
         });
     </script>
-    <script src="js/custom-recipes.js?v=653"></script></body>
+    <script src="js/custom-recipes.js?v=654"></script></body>
 </html>
