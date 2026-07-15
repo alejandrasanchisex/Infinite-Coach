@@ -17,7 +17,7 @@
         })();
         // Force PWA cache bust / reload
         (function() {
-            const CURRENT_VERSION = '654';
+            const CURRENT_VERSION = '655';
             window.APP_VERSION = CURRENT_VERSION;
             const savedVersion = localStorage.getItem('app_version');
             if (savedVersion && savedVersion !== CURRENT_VERSION) {
@@ -71,8 +71,8 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="styles/theme.css?v=654">
-    <link rel="stylesheet" href="styles/components.css?v=654">
+    <link rel="stylesheet" href="styles/theme.css?v=655">
+    <link rel="stylesheet" href="styles/components.css?v=655">
     <style>
         body {
             background-color: #0B0B1A;
@@ -232,15 +232,15 @@
                 ¿No tienes una licencia? <br> Contacta con <a href="https://ingeniaia.es" style="color: rgba(255,255,255,0.5); text-decoration: underline;">Ingenia</a>.
             </p>
             <p style="font-size: 0.8rem; font-weight: 600;">
-                <a href="acceso.html?v=654" style="color: var(--primary-color); text-decoration: none;">Acceso Clientes 📲</a>
+                <a href="acceso.html?v=655" style="color: var(--primary-color); text-decoration: none;">Acceso Clientes 📲</a>
             </p>
         </div>
     </div>
 
     <!-- Supabase SDK & Service -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" defer></script>
-    <script src="js/supabase-service.js?v=654" defer></script>
-    <script src="js/utils.js?v=654" defer></script>
+    <script src="js/supabase-service.js?v=655" defer></script>
+    <script src="js/utils.js?v=655" defer></script>
 
     <script>
         const PLATFORM_KEY = 'saasFitnessPlatform';
@@ -337,7 +337,7 @@
                             }
 
                             setTimeout(() => {
-                                window.location.href = 'trainer-dashboard.html?t=' + trainerId + '&v=654';
+                                window.location.href = 'trainer-dashboard.html?t=' + trainerId + '&v=655';
                             }, 2000);
                             return;
                         }
@@ -718,5 +718,5 @@
             }
         });
     </script>
-    <script src="js/custom-recipes.js?v=654"></script></body>
+    <script src="js/custom-recipes.js?v=655"></script></body>
 </html>
