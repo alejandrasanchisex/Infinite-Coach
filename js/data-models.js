@@ -2202,8 +2202,24 @@ const doSyncFromCloud = async () => {
             }
             return localData;
         }
-    } catch (e) { console.error("Sync Error:", e); }
-    return null;
+    } catch (e) {
+        console.error("Sync Error, trying static trainer database fallback:", e);
+        try {
+            // Intentar descargar la base de datos estática del entrenador
+            const resp = await fetch(`/data/${currentId}.json`);
+            if (resp.ok) {
+                const staticData = await resp.json();
+                if (staticData && (staticData.clients || staticData.routines)) {
+                    saveDatabaseRaw(JSON.stringify(staticData));
+                    console.log(`✅ Base de datos estática de contingencia recuperada para el entrenador: ${currentId}`);
+                    return staticData;
+                }
+            }
+        } catch(errStatic) {
+            console.warn("Trainer static database fallback also failed:", errStatic);
+        }
+    }
+    return localData || null;
 };
 
 window.syncFromCloud = () => {
