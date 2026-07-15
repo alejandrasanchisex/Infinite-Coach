@@ -119,40 +119,15 @@ const SupabaseService = {
     async saveTrainerData(trainerId, fullData) {
         if (!this.client) this.init();
         try {
-            // 🛡️ RESET BLINDAJE GLOBAL: Bloquear escrituras de sesiones obsoletas que intentan pisar un reset limpio
-            if (trainerId && trainerId !== 'default') {
-                try {
-                    const fetchResetProfile = async () => {
-                        const { data, error } = await this.client
-                            .from('trainer_profiles')
-                            .select('reset_version:full_data->__reset_version')
-                            .eq('trainer_id', trainerId)
-                            .single();
-                        if (error && error.code !== 'PGRST116') throw error;
-                        return data;
-                    };
-                    const cloudProfile = await retryOp(fetchResetProfile, 3, 1000);
-                    
-                    if (cloudProfile && cloudProfile.reset_version) {
-                        const cloudReset = cloudProfile.reset_version;
-                        const localReset = fullData ? fullData.__reset_version : null;
-                        if (String(localReset) !== String(cloudReset)) {
-                            console.error(`🚨 [RESET DB SHIELD] GUARDADO BLOQUEADO: La nube tiene un reset v${cloudReset} y el cliente intentó guardar v${localReset}. Descartando guardado para evitar restaurar datos borrados.`);
-                            return false; 
-                        }
-                    }
-                } catch (errResetCheck) {
-                    console.warn("[RESET DB SHIELD] Error en la verificación de reset, continuando...", errResetCheck);
-                }
-            }
-            // 🛡️ CORTAFUEGOS MULTI-INQUILINO (CATASTRÓFICO):
-            // Si el que guarda es un cliente, verificar que el clientId que realiza la operación realmente exista en el array de clients del trainerId al que intenta guardar
             const isTrainer = (safeGetLocalStorage('_trainerAuthed') === '1' || safeGetSessionStorage('_trainerAuthed') === '1');
             const clientId = (safeGetLocalStorage('clientId') || safeGetSessionStorage('clientId'));
-            
-            if (!isTrainer && clientId) {
+
+            let cloudData = null;
+
+            // 1. Unificar las lecturas de la nube (reset check, clients check, brand check) en una sola consulta
+            if (trainerId && trainerId !== 'default') {
                 try {
-                    const fetchFullProfile = async () => {
+                    const fetchProfile = async () => {
                         const { data, error } = await this.client
                             .from('trainer_profiles')
                             .select('full_data')
@@ -161,59 +136,62 @@ const SupabaseService = {
                         if (error && error.code !== 'PGRST116') throw error;
                         return data ? data.full_data : null;
                     };
-                    const cloudData = await retryOp(fetchFullProfile, 3, 1000);
-                    
-                    if (!cloudData || !cloudData.clients) {
-                        console.error("🚨 [CORTAFUEGOS SUPABASE] ABORTANDO GUARDADO: No se pudieron obtener los datos válidos del entrenador de la nube. Cancelando operación del cliente para proteger datos.");
-                        return false;
-                    }
-                    
-                    console.log("🛡️ [Fusión Cliente Cortafuegos] Fusionando cambios del cliente en el perfil completo del entrenador...");
-                        
-                        // 1. Clonar cloudData
-                        const merged = { ...cloudData };
-                        
-                        // 2. Reemplazar a este cliente en la lista
-                        if (merged.clients && fullData.clients) {
-                            const localClient = fullData.clients.find(c => c.id === clientId);
-                            if (localClient) {
-                                merged.clients = merged.clients.map(c => c.id === clientId ? localClient : c);
-                            }
-                        }
-                        
-                        // 3. Reemplazar colecciones específicas del cliente
-                        const clientSpecificCols = ['feedbacks', 'appointments', 'trainingLogs', 'habits'];
-                        clientSpecificCols.forEach(col => {
-                            if (fullData[col]) {
-                                // Eliminar los registros antiguos de este cliente en cloudData
-                                const otherClientsItems = (merged[col] || []).filter(item => item.clientId !== clientId);
-                                // Obtener los nuevos registros de este cliente
-                                const localClientItems = fullData[col].filter(item => item.clientId === clientId);
-                                // Unir
-                                merged[col] = [...otherClientsItems, ...localClientItems];
-                            }
-                        });
-                        
-                        // Reemplazar fullData con merged
-                        fullData = merged;
-                } catch (errMergeCloud) {
-                    console.error("Error fusionando datos del cliente con la nube:", errMergeCloud);
+                    cloudData = await retryOp(fetchProfile, 3, 1000);
+                } catch (errFetch) {
+                    console.warn("[saveTrainerData] Error pre-cargando perfil de la nube:", errFetch);
+                }
+            }
+
+            // 2. Ejecutar Reset Check con la información cargada
+            if (cloudData && cloudData.__reset_version) {
+                const cloudReset = cloudData.__reset_version;
+                const localReset = fullData ? fullData.__reset_version : null;
+                if (String(localReset) !== String(cloudReset)) {
+                    console.error(`🚨 [RESET DB SHIELD] GUARDADO BLOQUEADO: La nube tiene un reset v${cloudReset} y el cliente intentó guardar v${localReset}. Descartando guardado.`);
+                    return false; 
+                }
+            }
+
+            // 3. Ejecutar Cortafuegos Multi-inquilino de Cliente
+            if (!isTrainer && clientId) {
+                if (!cloudData || !cloudData.clients) {
+                    console.error("🚨 [CORTAFUEGOS SUPABASE] ABORTANDO GUARDADO: No se pudieron obtener los datos válidos del entrenador de la nube.");
                     return false;
                 }
+                
+                console.log("🛡️ [Fusión Cliente Cortafuegos] Fusionando cambios del cliente en el perfil completo del entrenador...");
+                const merged = { ...cloudData };
+                
+                if (merged.clients && fullData.clients) {
+                    const localClient = fullData.clients.find(c => c.id === clientId);
+                    if (localClient) {
+                        merged.clients = merged.clients.map(c => c.id === clientId ? localClient : c);
+                    }
+                }
+                
+                const clientSpecificCols = ['feedbacks', 'appointments', 'trainingLogs', 'habits'];
+                clientSpecificCols.forEach(col => {
+                    if (fullData[col]) {
+                        const otherClientsItems = (merged[col] || []).filter(item => item.clientId !== clientId);
+                        const localClientItems = fullData[col].filter(item => item.clientId === clientId);
+                        merged[col] = [...otherClientsItems, ...localClientItems];
+                    }
+                });
+                
+                fullData = merged;
 
-                const clientsList = (fullData && fullData.clients) || [];
+                const clientsList = fullData.clients || [];
                 const clientExists = clientsList.some(c => c.id === clientId);
                 if (!clientExists) {
-                    console.error(`🚨 [CORTAFUEGOS SUPABASE] INTENTO DE ACCESO NO AUTORIZADO BLOQUEADO: El cliente ${clientId} intentó guardar datos en el perfil del entrenador ${trainerId}, al cual no pertenece.`);
+                    console.error(`🚨 [CORTAFUEGOS SUPABASE] INTENTO DE ACCESO NO AUTORIZADO BLOQUEADO: El cliente ${clientId} no pertenece a ${trainerId}.`);
                     return false;
                 }
             }
-            // 🛡️ CORTAFUEGOS ASTEAM: Evitar contaminación con datos de prueba
+
+            // 4. Cortafuegos ASTEAM
             if (trainerId === 't-w0iybl7qb' && fullData) {
                 console.log("🛡️ [ASTEAM CORTAFUEGOS] Aplicando sanitización estricta...");
-                
                 if (fullData.clients) {
-                    // 🛡️ ENFORCE FEES FOR ASTEAM CLIENTS (AMALIA AND FERNANDO)
                     fullData.clients.forEach(c => {
                         if (c.id === '20f2e6c2-2699-4ccc-a982-1e9fb141b9bb' || c.id === '0db0ea7a-c413-44cb-b99e-dfd9790383eb') {
                             const fee = parseFloat(c.monthlyFee);
@@ -223,8 +201,6 @@ const SupabaseService = {
                         }
                     });
                 }
-                
-                // Filtrar revisiones de prueba específicamente (conservando las reales)
                 if (fullData.feedbacks) {
                     fullData.feedbacks = fullData.feedbacks.filter(f => !String(f.id).startsWith('fb-demo'));
                 }
@@ -233,7 +209,7 @@ const SupabaseService = {
                 }
             }
 
-            // 🛡️ BLINDAJE SUPABASE: Nunca guardar datos vacíos que destruirían datos reales en la nube
+            // 5. Blindaje de datos vacíos
             const dataIsEmpty = (
                 (!fullData.clients || fullData.clients.length === 0) &&
                 (!fullData.routines || fullData.routines.length === 0) &&
@@ -241,44 +217,32 @@ const SupabaseService = {
             );
             
             if (dataIsEmpty) {
-                // Verificar si la nube tiene datos reales antes de sobrescribir
-                try {
-                    const { data: cloudProfile } = await this.client
-                        .from('trainer_profiles')
-                        .select('clients:full_data->clients, routines:full_data->routines, trainingBlocks:full_data->trainingBlocks')
-                        .eq('trainer_id', trainerId)
-                        .single();
-                    
-                    if (cloudProfile) {
-                        const cloudHasData = (
-                            (cloudProfile.clients && cloudProfile.clients.length > 0) ||
-                            (cloudProfile.routines && cloudProfile.routines.length > 0) ||
-                            (cloudProfile.trainingBlocks && cloudProfile.trainingBlocks.length > 0)
-                        );
-                        if (cloudHasData) {
-                            console.error('🚨 [BLINDAJE SUPABASE] BLOQUEADO: Intento de sobrescribir datos reales en la nube con datos vacíos. Operación cancelada para proteger los datos.');
-                            return false;
-                        }
+                if (cloudData) {
+                    const cloudHasData = (
+                        (cloudData.clients && cloudData.clients.length > 0) ||
+                        (cloudData.routines && cloudData.routines.length > 0) ||
+                        (cloudData.trainingBlocks && cloudData.trainingBlocks.length > 0)
+                    );
+                    if (cloudHasData) {
+                        console.error('🚨 [BLINDAJE SUPABASE] BLOQUEADO: Intento de sobrescribir datos reales en la nube con datos vacíos.');
+                        return false;
                     }
-                } catch (cloudCheckErr) {
-                    // Si no podemos verificar, mejor no guardar datos vacíos
-                    console.warn('[BLINDAJE SUPABASE] No se pudo verificar la nube. Guardado de datos vacíos cancelado por precaución.', cloudCheckErr);
+                } else {
                     return false;
                 }
             }
 
-            // --- DETECTAR Y PREVENIR DUPLICADOS DE CLIENTES MULTI-INQUILINO ---
-            if (fullData && fullData.clients && fullData.clients.length > 0 && trainerId !== 'default') {
+            // 6. Colisiones de accesos (Solo para entrenadores al crear o editar clientes en lote)
+            if (isTrainer && fullData && fullData.clients && fullData.clients.length > 0 && trainerId !== 'default') {
                 try {
-                    // Fetch all other trainer profiles from Supabase to check for collisions
                     const { data: otherProfiles, error: fetchErr } = await this.client
                         .from('trainer_profiles')
                         .select('trainer_id, clients:full_data->clients')
                         .neq('trainer_id', trainerId);
 
                     if (!fetchErr && otherProfiles) {
-                        const otherClientIds = new Map(); // id -> trainer_id
-                        const otherAccessCodes = new Map(); // accessCode -> trainer_id
+                        const otherClientIds = new Map();
+                        const otherAccessCodes = new Map();
 
                         otherProfiles.forEach(p => {
                             const clients = p.clients || [];
@@ -295,30 +259,20 @@ const SupabaseService = {
 
                         fullData.clients = fullData.clients.filter(c => {
                             const cleanCode = (c.accessCode || '').trim().toUpperCase();
-
-                            // Check ID collision
                             if (c.id && otherClientIds.has(c.id)) {
-                                const ownerTrainer = otherClientIds.get(c.id);
-                                console.error(`🚨 [SEGURIDAD MULTI-INQUILINO] Conflicto de Cliente detectado. El cliente "${c.name}" (ID: ${c.id}) ya pertenece al entrenador "${ownerTrainer}". Se eliminará del perfil actual ("${trainerId}").`);
+                                console.error(`🚨 [SEGURIDAD MULTI-INQUILINO] Conflicto de ID de cliente.`);
                                 hasConflict = true;
                                 return false;
                             }
-
-                            // Check Access Code collision
                             if (cleanCode && otherAccessCodes.has(cleanCode)) {
-                                const ownerTrainer = otherAccessCodes.get(cleanCode);
-                                console.error(`🚨 [SEGURIDAD MULTI-INQUILINO] Conflicto de Código de Acceso detectado. El cliente "${c.name}" (Código: ${cleanCode}) tiene un código asignado al entrenador "${ownerTrainer}". Se eliminará del perfil actual ("${trainerId}").`);
+                                console.error(`🚨 [SEGURIDAD MULTI-INQUILINO] Conflicto de Código de Acceso.`);
                                 hasConflict = true;
                                 return false;
                             }
-
                             return true;
                         });
 
                         if (hasConflict) {
-                            console.warn(`⚠️ Se filtraron ${initialCount - fullData.clients.length} clientes duplicados para evitar contaminación cruzada.`);
-                            
-                            // Actualizar local storage en caliente para evitar bucles de carga
                             if (typeof localStorage !== 'undefined') {
                                 const sKey = `fitnessAppData_${trainerId}`;
                                 const localRaw = safeGetSessionStorage(sKey) || safeGetLocalStorage(sKey);
@@ -328,42 +282,22 @@ const SupabaseService = {
                                         localData.clients = fullData.clients;
                                         localData.lastModified = new Date().toISOString();
                                         localStorage.setItem(sKey, JSON.stringify(localData));
-                                        console.log(`✅ LocalStorage de ${trainerId} corregido y limpiado.`);
-                                    } catch(e) {
-                                        console.warn("No se pudo actualizar el localStorage con los clientes limpios:", e);
-                                    }
+                                    } catch(e) {}
                                 }
                             }
                         }
                     }
                 } catch (errCheck) {
-                    console.warn('[SEGURIDAD MULTI-INQUILINO] Error verificando colisiones cruzadas, continuando guardado normal por seguridad:', errCheck);
+                    console.warn('[SEGURIDAD MULTI-INQUILINO] Error verificando colisiones:', errCheck);
                 }
             }
 
-            // Si el que guarda es un cliente, preservar la configuración de marca del entrenador de la nube
-            if (!isTrainer && trainerId !== 'default') {
-                try {
-                    const fetchBrandProfile = async () => {
-                        const { data, error } = await this.client
-                            .from('trainer_profiles')
-                            .select('brand:full_data->brand')
-                            .eq('trainer_id', trainerId)
-                            .single();
-                        if (error && error.code !== 'PGRST116') throw error;
-                        return data;
-                    };
-                    const cloudProfile = await retryOp(fetchBrandProfile, 3, 1000);
-                    
-                    if (cloudProfile && cloudProfile.brand) {
-                        console.log("💾 Sincronización de Cliente: Preservando configuración de marca de la nube.");
-                        fullData.brand = cloudProfile.brand;
-                    }
-                } catch (errFetch) {
-                    console.warn("No se pudo pre-cargar la marca de la nube para fusionar:", errFetch);
-                }
+            // 7. Preservar marca si es cliente
+            if (!isTrainer && cloudData && cloudData.brand) {
+                fullData.brand = cloudData.brand;
             }
 
+            // 8. Upsert final
             const runUpsert = async () => {
                 const { error } = await this.client
                     .from('trainer_profiles')
@@ -383,7 +317,7 @@ const SupabaseService = {
             console.error("Error guardando en Supabase DB despues de reintentos:", error);
             return false;
         }
-    },
+    }
 
     /**
      * Gestión del Panel Maestro (SaaS Global Config)
