@@ -238,7 +238,7 @@
             </style>
             
             <div style="text-align: center; color: rgba(255,255,255,0.15); font-size: 0.75rem; margin: 30px 0 10px; font-weight: 500;">
-                Versión de la App: v617
+                Versión de la App: v<span class="app-version-label">619</span>
             </div>
         </div>
     </main>
@@ -253,6 +253,11 @@
     <script src="js/custom-exercises.js?v=619"></script>
     <script>
         // CLIENT INITIALIZATION
+        try {
+            if (typeof CURRENT_VERSION !== 'undefined') {
+                document.querySelectorAll('.app-version-label').forEach(el => el.textContent = CURRENT_VERSION);
+            }
+        } catch(e) {}
         const dashboardUrlParams = new URLSearchParams(window.location.search);
 
         // 'cid' = clientId pasado en URL desde login (fiable aunque storage esté vacío en iOS WebView)
