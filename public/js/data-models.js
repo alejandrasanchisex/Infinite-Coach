@@ -278,6 +278,20 @@ const safeGetDatabaseRaw = () => {
             if (localClients <= 1 && sessionClients > 1) {
                 return sessionRaw;
             }
+        } else {
+            // 🛡️ BLINDAJE DE CLIENTE: Si la base de datos de sesión no contiene el perfil del cliente
+            // pero la local sí lo contiene, ignoramos timestamps y leemos la local para evitar bucles.
+            const clientId = safeGetLocalStorage('clientId') || safeGetSessionStorage('clientId');
+            if (clientId) {
+                const sessionHasClient = sessionData.clients && sessionData.clients.some(c => String(c.id) === String(clientId));
+                const localHasClient = localData.clients && localData.clients.some(c => String(c.id) === String(clientId));
+                if (!sessionHasClient && localHasClient) {
+                    return localRaw;
+                }
+                if (!localHasClient && sessionHasClient) {
+                    return sessionRaw;
+                }
+            }
         }
 
         const sessionTime = sessionData.lastModified ? new Date(sessionData.lastModified).getTime() : 0;
@@ -287,6 +301,11 @@ const safeGetDatabaseRaw = () => {
     } catch(e) {
         return sessionRaw || localRaw;
     }
+};
+
+const saveDatabaseRaw = (dataStr) => {
+    try { localStorage.setItem(getStorageKey(), dataStr); } catch(e) {}
+    try { sessionStorage.setItem(getStorageKey(), dataStr); } catch(e) {}
 };
 
 // 🧹 MOCK DATA CLEANUP FOR ASTEAM (PREVENT SPILLOVER RE-UPLOAD)
@@ -1374,7 +1393,7 @@ const saveData = (data) => {
     }
   } catch(e) {}
 
-  localStorage.setItem(getStorageKey(), JSON.stringify(mergedWithLocal));
+  saveDatabaseRaw(JSON.stringify(mergedWithLocal));
   if (window.SupabaseService) {
     const currentId = window.activeTrainerId || safeGetLocalStorage('activeTrainerId') || 'default';
     if (currentId !== 'default') {
@@ -1384,7 +1403,7 @@ const saveData = (data) => {
                   const currentLocal = JSON.parse(safeGetDatabaseRaw() || '{}');
                   if (currentLocal.deletedIds && currentLocal.deletedIds.length > 0) {
                       currentLocal.deletedIds = [];
-                      localStorage.setItem(getStorageKey(), JSON.stringify(currentLocal));
+                      saveDatabaseRaw(JSON.stringify(currentLocal));
                       console.log("🧹 [saveData] List of deletedIds cleared after successful upload.");
                   }
               } catch (errClear) {
@@ -1402,7 +1421,7 @@ const saveData = (data) => {
                       if (String(localResetVersion) !== String(cloudData.__reset_version)) {
                           console.log(`🧹 [RESET BLOCK] Bloqueando guardado local: la nube tiene reset v${cloudData.__reset_version} no procesado. Adoptando datos de la nube...`);
                           localStorage.setItem(localResetKey, String(cloudData.__reset_version));
-                          localStorage.setItem(getStorageKey(), JSON.stringify(cloudData));
+                          saveDatabaseRaw(JSON.stringify(cloudData));
                           localStorage.removeItem(getStorageKey() + '_backup');
                           if (typeof window !== 'undefined' && window.location) {
                               console.log("🔄 [RESET] Recargando página para aplicar el reset de datos...");
@@ -1417,7 +1436,7 @@ const saveData = (data) => {
                       const finalData = mergeLocalEdits(mergedWithLocal, cloudData, prevData, isTrainer);
                       finalData.lastModified = new Date().toISOString();
                       
-                      localStorage.setItem(getStorageKey(), JSON.stringify(finalData));
+                      saveDatabaseRaw(JSON.stringify(finalData));
                       await window.SupabaseService.saveTrainerData(currentId, finalData);
                       clearLocalDeletedIds();
                       return;
@@ -1431,7 +1450,7 @@ const saveData = (data) => {
                           // Temporarily restore local lastModified to localPrevModified for syncFromCloud comparison
                           const tempSaved = JSON.parse(safeGetDatabaseRaw() || '{}');
                           tempSaved.lastModified = localPrevModified;
-                          localStorage.setItem(getStorageKey(), JSON.stringify(tempSaved));
+                          saveDatabaseRaw(JSON.stringify(tempSaved));
  
                           const freshData = await doSyncFromCloud();
                           if (freshData) {
@@ -1442,7 +1461,7 @@ const saveData = (data) => {
                               const finalData = mergeLocalEdits(mergedWithLocal, mergedLocal, prevData, isTrainer);
                               finalData.lastModified = new Date().toISOString();
                               
-                              localStorage.setItem(getStorageKey(), JSON.stringify(finalData));
+                              saveDatabaseRaw(JSON.stringify(finalData));
                               await window.SupabaseService.saveTrainerData(currentId, finalData);
                               clearLocalDeletedIds();
                               return;
@@ -1562,7 +1581,7 @@ const doSyncFromCloud = async () => {
                 } catch(e) {
                     console.error("Error subiendo datos locales para restaurar:", e);
                 }
-                localStorage.setItem(getStorageKey(), JSON.stringify(localData));
+                saveDatabaseRaw(JSON.stringify(localData));
                 setLastSyncTime(currentId);
                 return localData;
             }
@@ -1576,7 +1595,7 @@ const doSyncFromCloud = async () => {
                 if (String(localResetVersion) !== String(cloudData.__reset_version)) {
                     console.log(`🧹 [RESET] Detectado reset de datos (v${cloudData.__reset_version}). Descartando caché local y adoptando datos de la nube...`);
                     localStorage.setItem(localResetKey, String(cloudData.__reset_version));
-                    localStorage.setItem(getStorageKey(), JSON.stringify(cloudData));
+                    saveDatabaseRaw(JSON.stringify(cloudData));
                     // Limpiar backups también
                     localStorage.removeItem(getStorageKey() + '_backup');
                     setLastSyncTime(currentId);
@@ -1602,8 +1621,7 @@ const doSyncFromCloud = async () => {
                 const cloudClientsCount = cloudData.clients ? cloudData.clients.length : 0;
                 if (localClientsCount <= 1 && cloudClientsCount > 1) {
                     console.warn("🚨 [AUTORECUPERACIÓN] Base de datos de entrenador local recortada detectada. Adoptando base de datos completa de la nube...");
-                    localStorage.setItem(getStorageKey(), JSON.stringify(cloudData));
-                    try { sessionStorage.setItem(getStorageKey(), JSON.stringify(cloudData)); } catch(e) {}
+                    saveDatabaseRaw(JSON.stringify(cloudData));
                     setLastSyncTime(currentId);
                     return cloudData;
                 }
@@ -1651,14 +1669,14 @@ const doSyncFromCloud = async () => {
                     localStorage.removeItem('_trainerBrand');
                     localStorage.removeItem(`brand_settings_${currentId}`);
                     localStorage.removeItem('brand_settings');
-                    localStorage.setItem(getStorageKey(), JSON.stringify(cloudData));
+                    saveDatabaseRaw(JSON.stringify(cloudData));
                     setLastSyncTime(currentId); // Update last sync time
                     return cloudData;
                 } else if ((isNewInstall || isLocalFreshlyInitialized) && cloudHasTrainerData && localBackupHasData) {
                     // Hay backup local válido - restaurarlo en vez de tratar como nueva instalación
                     console.log("🔄 [BLINDAJE] Se detectó backup local válido. Restaurando desde backup antes de fusionar...");
                     localData = JSON.parse(localBackupRaw);
-                    localStorage.setItem(getStorageKey(), localBackupRaw);
+                    saveDatabaseRaw(localBackupRaw);
                     localStorage.removeItem('isNewInstall_' + currentId);
                 }
 
@@ -2057,7 +2075,7 @@ ${item.date}`.replace('\n', ''); // Safe compile
                 }
 
                 mergedData.deletedIds = [];
-                localStorage.setItem(getStorageKey(), JSON.stringify(mergedData));
+                saveDatabaseRaw(JSON.stringify(mergedData));
                 setLastSyncTime(currentId); // Update last sync time
                 
                 // 💾 Conservar el backup local intacto. Solo guardar si no existía uno previo para no pisar las ediciones locales del entrenador.
@@ -2080,7 +2098,7 @@ ${item.date}`.replace('\n', ''); // Safe compile
             localStorage.removeItem('_trainerBrand');
             localStorage.removeItem(`brand_settings_${currentId}`);
             localStorage.removeItem('brand_settings');
-            localStorage.setItem(getStorageKey(), JSON.stringify(cloudData));
+            saveDatabaseRaw(JSON.stringify(cloudData));
             setLastSyncTime(currentId); // Update last sync time
             return cloudData;
         } else if (localData) {
