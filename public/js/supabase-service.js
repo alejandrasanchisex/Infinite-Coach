@@ -401,7 +401,7 @@ const SupabaseService = {
             return urlData.publicUrl;
         } catch (error) {
             console.error("❌ Error crítico subiendo a Supabase Storage:", error);
-            return null;
+            throw error;
         }
     }
 };

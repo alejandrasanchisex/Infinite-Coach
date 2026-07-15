@@ -38,15 +38,13 @@ const CloudStorage = {
                     console.log("Subida a Supabase exitosa ✅:", publicUrl);
                     return publicUrl;
                 }
+                throw new Error("El servicio de almacenamiento no devolvió una URL válida.");
             }
-
-            console.error("No se ha podido subir el archivo: SupabaseService no disponible.");
-            return null;
-
+            throw new Error("SupabaseService no está disponible.");
         } catch (err) {
             console.error('CloudStorage Upload Error:', err);
             if (typeof showToast === 'function') showToast('Error crítico al subir a Supabase', 'error');
-            return null;
+            throw err;
         }
     }
 };
