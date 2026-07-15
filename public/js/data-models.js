@@ -258,7 +258,36 @@ if (!activeTrainerId || activeTrainerId === 'default' || activeTrainerId === 'ad
 try { localStorage.setItem('activeTrainerId', activeTrainerId); } catch(e) {}
 window.activeTrainerId = activeTrainerId;
 const getStorageKey = () => `fitnessAppData_${window.activeTrainerId || 'default'}`;
-const safeGetDatabaseRaw = () => safeGetSessionStorage(getStorageKey()) || safeGetLocalStorage(getStorageKey());
+const safeGetDatabaseRaw = () => {
+    const sessionRaw = safeGetSessionStorage(getStorageKey());
+    const localRaw = safeGetLocalStorage(getStorageKey());
+    if (!sessionRaw) return localRaw;
+    if (!localRaw) return sessionRaw;
+
+    try {
+        const sessionData = JSON.parse(sessionRaw);
+        const localData = JSON.parse(localRaw);
+        
+        const isTrainer = (safeGetLocalStorage('_trainerAuthed') === '1' || safeGetSessionStorage('_trainerAuthed') === '1');
+        if (isTrainer) {
+            const sessionClients = (sessionData.clients || []).length;
+            const localClients = (localData.clients || []).length;
+            if (sessionClients <= 1 && localClients > 1) {
+                return localRaw;
+            }
+            if (localClients <= 1 && sessionClients > 1) {
+                return sessionRaw;
+            }
+        }
+
+        const sessionTime = sessionData.lastModified ? new Date(sessionData.lastModified).getTime() : 0;
+        const localTime = localData.lastModified ? new Date(localData.lastModified).getTime() : 0;
+        
+        return sessionTime >= localTime ? sessionRaw : localRaw;
+    } catch(e) {
+        return sessionRaw || localRaw;
+    }
+};
 
 // 🧹 MOCK DATA CLEANUP FOR ASTEAM (PREVENT SPILLOVER RE-UPLOAD)
 (function() {
