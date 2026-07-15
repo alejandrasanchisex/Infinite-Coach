@@ -1,0 +1,477 @@
+{
+  "brand": {
+    "logo": "https://bieeydhacavxymoosasx.supabase.co/storage/v1/object/public/Media/1781711106755_toledo_the_bull.png",
+    "name": "Toledo The Bull",
+    "colors": {
+      "accent": "#E50914",
+      "primary": "#ffffff",
+      "secondary": "#111111",
+      "themeMode": "dark"
+    },
+    "whatsapp": "615760338",
+    "configured": true,
+    "primaryColor": "#E50914",
+    "clientSettings": {
+      "showMacros": true,
+      "showCalories": true,
+      "showExerciseVideos": true
+    }
+  },
+  "clients": [
+    {
+      "id": "968525f6-b4f0-4862-85e2-0380eed6f215",
+      "name": "Alejandra Sanchis",
+      "email": "alejandrasanchisex@gmail.com",
+      "phone": "+34 600 000 000",
+      "gender": "female",
+      "status": "active",
+      "reviewDay": "Lunes",
+      "monthlyFee": 65,
+      "subscriptionAmount": 65,
+      "subscriptionType": "Mensual",
+      "paymentStatus": "paid",
+      "accessCode": "BULL-AS",
+      "createdAt": "2026-07-15T15:14:46.370Z",
+      "assignedDiet": "d-alejandra-recomp-toledo",
+      "assignedDiets": [
+        "d-alejandra-recomp-toledo"
+      ],
+      "assignedRoutine": "r-alejandra-fuerza-toledo",
+      "assignedRoutines": [
+        "r-alejandra-fuerza-toledo"
+      ],
+      "supplementation": "<p><strong>Creatina Monohidrato:</strong> 5g diarios en el desayuno con agua o zumo.</p><p><strong>Proteína de Suero (Whey Protein):</strong> 30g después del entrenamiento o como merienda.</p><p><strong>Omega 3:</strong> 1 cápsula con la cena para salud cardiovascular y antiinflamación.</p><p><strong>Multivitamínico:</strong> 1 cápsula en el desayuno.</p>",
+      "supplementationPublished": true,
+      "supplementationUrl": "",
+      "supplementationUrlVisible": true,
+      "technicalData": {
+        "age": 26,
+        "height": 165,
+        "weight": 62.5,
+        "goals": "Pérdida de grasa, tonificación y aumento de masa muscular en tren inferior (glúteos y piernas).",
+        "notes": "Entrena 4 días a la semana. Prefiere recetas sencillas y rápidas. Suplementa con creatina.",
+        "injuries": "Ninguna.",
+        "allergies": "Sin intolerancias alimentarias registradas.",
+        "skinfoldsEnabled": false
+      },
+      "weightHistory": [
+        {
+          "date": "2026-06-15T08:00:00.000Z",
+          "weight": 64.2,
+          "arm": 30,
+          "leg": 55,
+          "glute": 95,
+          "waist": 73,
+          "isFeedback": false
+        },
+        {
+          "date": "2026-06-22T08:00:00.000Z",
+          "weight": 63.8,
+          "arm": 30,
+          "leg": 54.5,
+          "glute": 94,
+          "waist": 72,
+          "isFeedback": false
+        },
+        {
+          "date": "2026-06-29T08:00:00.000Z",
+          "weight": 63.3,
+          "arm": 29.5,
+          "leg": 54,
+          "glute": 93,
+          "waist": 71.5,
+          "isFeedback": false
+        },
+        {
+          "date": "2026-07-06T08:00:00.000Z",
+          "weight": 62.9,
+          "arm": 29.2,
+          "leg": 53.5,
+          "glute": 92.5,
+          "waist": 70.8,
+          "isFeedback": false
+        },
+        {
+          "date": "2026-07-13T08:00:00.000Z",
+          "weight": 62.5,
+          "arm": 29,
+          "leg": 53,
+          "glute": 92,
+          "waist": 70,
+          "isFeedback": false
+        }
+      ]
+    }
+  ],
+  "diets": [
+    {
+      "id": "d-alejandra-recomp-toledo",
+      "name": "Dieta Recomposición Corporal - Alejandra",
+      "description": "Planes con macros balanceados, alta en proteínas para tonificación y saciedad.",
+      "calories": 1635,
+      "macros": {
+        "protein": 135,
+        "carbs": 150,
+        "fat": 55
+      },
+      "mealsCount": 4,
+      "isTemplate": false,
+      "createdAt": "2026-07-15T15:14:46.370Z",
+      "weeklyPlan": [],
+      "meals": [
+        {
+          "id": "meal_toledo_1",
+          "name": "Desayuno: Tortilla Francesa y Tostada",
+          "description": "",
+          "optionPhotos": {
+            "1": "img/tortilla_francesa_queso_fresco_1781257604552.png"
+          },
+          "optionIngredients": {
+            "1": "Bate los 2 huevos medianos. Añade una pizca de sal. En una sartén caliente con 10g de aceite de oliva, vierte los huevos y dobla a la mitad cuando cuajen. Acompaña con una rebanada de pan de molde integral tostada."
+          },
+          "foods": [
+            {
+              "name": "Huevo entero",
+              "quantity": "2 uds",
+              "option": 1,
+              "protein": 13,
+              "carbs": 1,
+              "fat": 10,
+              "calories": 145
+            },
+            {
+              "name": "Pan de molde integral",
+              "quantity": "1 rebanada (30g)",
+              "option": 1,
+              "protein": 3,
+              "carbs": 15,
+              "fat": 1,
+              "calories": 80
+            },
+            {
+              "name": "Aceite de oliva virgen extra",
+              "quantity": "10g",
+              "option": 1,
+              "protein": 0,
+              "carbs": 0,
+              "fat": 10,
+              "calories": 90
+            }
+          ]
+        },
+        {
+          "id": "meal_toledo_2",
+          "name": "Comida: Pollo con Arroz y Brócoli",
+          "description": "",
+          "optionPhotos": {
+            "1": "img/ternera_arroz_pina_1781258723089.png"
+          },
+          "optionIngredients": {
+            "1": "Sazona la pechuga de pollo con especias y cocínala a la plancha. Hierve el arroz jazmín. Prepara el brócoli al vapor o salteado al gusto."
+          },
+          "foods": [
+            {
+              "name": "Pechuga de pollo",
+              "quantity": "150g peso crudo",
+              "option": 1,
+              "protein": 35,
+              "carbs": 0,
+              "fat": 2,
+              "calories": 160
+            },
+            {
+              "name": "Arroz jazmín / integral",
+              "quantity": "50g peso crudo",
+              "option": 1,
+              "protein": 4,
+              "carbs": 40,
+              "fat": 0.5,
+              "calories": 180
+            },
+            {
+              "name": "Brócoli",
+              "quantity": "150g",
+              "option": 1,
+              "protein": 3,
+              "carbs": 4,
+              "fat": 0,
+              "calories": 30
+            }
+          ]
+        },
+        {
+          "id": "meal_toledo_3",
+          "name": "Merienda: Yogur con Plátano y Cacahuete",
+          "description": "",
+          "optionPhotos": {},
+          "optionIngredients": {
+            "1": "Vierte el yogur proteico natural en un bol, corta el plátano en rodajas y añade una cucharadita de crema de cacahuete natural."
+          },
+          "foods": [
+            {
+              "name": "Yogur proteico natural (0% grasa)",
+              "quantity": "200g",
+              "option": 1,
+              "protein": 20,
+              "carbs": 8,
+              "fat": 0,
+              "calories": 110
+            },
+            {
+              "name": "Crema de cacahuete natural",
+              "quantity": "15g",
+              "option": 1,
+              "protein": 4,
+              "carbs": 2,
+              "fat": 9,
+              "calories": 95
+            },
+            {
+              "name": "Plátano",
+              "quantity": "1 mediano (100g)",
+              "option": 1,
+              "protein": 1.2,
+              "carbs": 22,
+              "fat": 0.3,
+              "calories": 90
+            }
+          ]
+        },
+        {
+          "id": "meal_toledo_4",
+          "name": "Cena: Salmón con Ensalada y Aguacate",
+          "description": "",
+          "optionPhotos": {},
+          "optionIngredients": {
+            "1": "Cocina el filete de salmón a la plancha. Sirve con una base de espinacas, tomates cherry y aguacate."
+          },
+          "foods": [
+            {
+              "name": "Salmón fresco",
+              "quantity": "150g",
+              "option": 1,
+              "protein": 30,
+              "carbs": 0,
+              "fat": 18,
+              "calories": 280
+            },
+            {
+              "name": "Aguacate",
+              "quantity": "50g",
+              "option": 1,
+              "protein": 1,
+              "carbs": 4,
+              "fat": 7.5,
+              "calories": 80
+            },
+            {
+              "name": "Espinacas frescas y tomates cherry",
+              "quantity": "al gusto",
+              "option": 1,
+              "protein": 1,
+              "carbs": 2,
+              "fat": 0,
+              "calories": 15
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "routines": [
+    {
+      "id": "r-alejandra-fuerza-toledo",
+      "name": "Rutina Fuerza 3 Días - Alejandra",
+      "description": "Enfoque en progresión de cargas en multiarticulares, priorizando piernas y glúteos.",
+      "isTemplate": false,
+      "createdAt": "2026-07-15T15:14:46.370Z",
+      "days": [
+        {
+          "name": "Día 1: Tren Inferior (Pierna/Glúteo)",
+          "exercises": [
+            {
+              "name": "Hip Thrust (Barra)",
+              "sets": "4",
+              "reps": "8-10",
+              "intensity": "RIR 2",
+              "notes": "Mantén 1 segundo de contracción arriba. Aprieta glúteos."
+            },
+            {
+              "name": "Sentadilla Goblet",
+              "sets": "3",
+              "reps": "10-12",
+              "intensity": "RIR 2",
+              "notes": "Mantén el torso erguido. Rompe el paralelo de forma segura."
+            },
+            {
+              "name": "Peso Muerto Rumano con Mancuernas",
+              "sets": "3",
+              "reps": "10",
+              "intensity": "RIR 2",
+              "notes": "Lleva la cadera hacia atrás. Siente el estiramiento en isquios."
+            }
+          ]
+        },
+        {
+          "name": "Día 2: Tren Superior + Abdomen",
+          "exercises": [
+            {
+              "name": "Press Inclinado (Mancuernas)",
+              "sets": "3",
+              "reps": "10-12",
+              "intensity": "RIR 2",
+              "notes": "Controla la bajada en 2 segundos. Empuja con fuerza."
+            },
+            {
+              "name": "Remo con Mancuerna (1 mano)",
+              "sets": "3",
+              "reps": "10",
+              "intensity": "RIR 2",
+              "notes": "Lleva el codo hacia la cadera. Evita rotar el torso."
+            },
+            {
+              "name": "Elevaciones Laterales (Mancuernas)",
+              "sets": "4",
+              "reps": "12-15",
+              "intensity": "RIR 1",
+              "notes": "Movimiento controlado. No te balancees."
+            },
+            {
+              "name": "Plancha Abdominal",
+              "sets": "3",
+              "reps": "45s",
+              "intensity": "RPE 8",
+              "notes": "Mantén el core bien compacto y la pelvis en retroversión."
+            }
+          ]
+        },
+        {
+          "name": "Día 3: Tren Inferior (Enfoque Glúteo/Aductores)",
+          "exercises": [
+            {
+              "name": "Hip Thrust (Barra)",
+              "sets": "3",
+              "reps": "10-12",
+              "intensity": "RIR 2",
+              "notes": "Concéntrate en empujar con los talones."
+            },
+            {
+              "name": "Sentadilla Búlgara con Mancuernas",
+              "sets": "3",
+              "reps": "10 (por pierna)",
+              "intensity": "RIR 2",
+              "notes": "Mantén el torso ligeramente inclinado hacia adelante para activar más glúteo."
+            },
+            {
+              "name": "Patada de Glúteo en Polea",
+              "sets": "3",
+              "reps": "12",
+              "intensity": "RIR 1",
+              "notes": "Patada controlada hacia atrás y ligeramente hacia afuera."
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "trainingBlocks": [
+    {
+      "id": "b-alejandra-toledo",
+      "clientId": "968525f6-b4f0-4862-85e2-0380eed6f215",
+      "name": "Bloque 1: Fuerza y Recomposición",
+      "startDate": "2026-06-15",
+      "endDate": "2026-07-26",
+      "weeksCount": 6,
+      "currentWeekIdx": 4,
+      "active": true,
+      "weeks": [
+        {
+          "index": 0,
+          "days": [
+            {
+              "logged": true
+            },
+            {
+              "logged": true
+            },
+            {
+              "logged": true
+            }
+          ]
+        },
+        {
+          "index": 1,
+          "days": [
+            {
+              "logged": true
+            },
+            {
+              "logged": true
+            },
+            {
+              "logged": true
+            }
+          ]
+        },
+        {
+          "index": 2,
+          "days": [
+            {
+              "logged": true
+            },
+            {
+              "logged": true
+            },
+            {
+              "logged": true
+            }
+          ]
+        },
+        {
+          "index": 3,
+          "days": [
+            {
+              "logged": true
+            },
+            {
+              "logged": true
+            },
+            {
+              "logged": true
+            }
+          ]
+        },
+        {
+          "index": 4,
+          "days": [
+            {
+              "logged": false
+            },
+            {
+              "logged": false
+            },
+            {
+              "logged": false
+            }
+          ]
+        },
+        {
+          "index": 5,
+          "days": [
+            {
+              "logged": false
+            },
+            {
+              "logged": false
+            },
+            {
+              "logged": false
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "feedbacks": [],
+  "habits": []
+}
