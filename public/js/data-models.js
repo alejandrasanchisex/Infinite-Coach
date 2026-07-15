@@ -1792,6 +1792,16 @@ const doSyncFromCloud = async () => {
                     localStorage.removeItem('isNewInstall_' + currentId);
                 }
 
+                // 🛡️ FILTRO DE CRUCE DE BASES DE DATOS (TOLEDO VS LUCY)
+                if (currentId === 't-8umeizyns' && cloudData && cloudData.brand && cloudData.brand.name && cloudData.brand.name.toLowerCase().includes('lucy')) {
+                    console.error("🚨 [BLINDAJE CRÍTICO] Detectada base de datos cruzada de Lucy en Toledo. Abortando sync para no pisar local.");
+                    return localData;
+                }
+                if (currentId === 't-udve3b1u3' && cloudData && cloudData.brand && cloudData.brand.name && (cloudData.brand.name.toLowerCase().includes('bull') || cloudData.brand.name.toLowerCase().includes('toledo'))) {
+                    console.error("🚨 [BLINDAJE CRÍTICO] Detectada base de datos cruzada de Toledo en Lucy. Abortando sync.");
+                    return localData;
+                }
+
                 // 2. FUSIÓN INTELIGENTE BIDIRECCIONAL POR ROL (ENTRENADOR VS CLIENTE) Y TIMESTAMP
                 const localTime = localData.lastModified ? new Date(localData.lastModified).getTime() : 0;
                 const cloudTime = cloudData.lastModified ? new Date(cloudData.lastModified).getTime() : 0;
