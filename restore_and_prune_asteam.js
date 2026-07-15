@@ -106,7 +106,7 @@ const desiClient = {
     reviewDay: "1",
     startDate: "2026-07-15T09:47:04Z",
     updatedAt: "2026-07-15T09:47:04Z",
-    accessCode: "MSQOICTN",
+    accessCode: "L50ZQINS",
     monthlyFee: 65,
     assignedDiet: null,
     profilePhoto: null,
