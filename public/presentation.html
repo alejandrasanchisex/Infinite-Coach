@@ -17,10 +17,16 @@
         })();
         // Force PWA cache bust / reload
         (function() {
-            const CURRENT_VERSION = '641';
+            const CURRENT_VERSION = '642';
             window.APP_VERSION = CURRENT_VERSION;
             const savedVersion = localStorage.getItem('app_version');
-            if (savedVersion && parseInt(savedVersion) > parseInt(CURRENT_VERSION)) {
+            if (savedVersion && savedVersion !== CURRENT_VERSION) {
+                localStorage.setItem('app_version', CURRENT_VERSION);
+                if ('caches' in window) {
+                    caches.keys().then(keys => {
+                        keys.forEach(k => caches.delete(k));
+                    });
+                }
                 if ('serviceWorker' in navigator) {
                     navigator.serviceWorker.getRegistrations().then(function(regs) {
                         for (let r of regs) r.unregister();

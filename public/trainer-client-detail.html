@@ -18,10 +18,16 @@
         })();
         // Force PWA cache bust / reload
         (function() {
-            const CURRENT_VERSION = '641';
+            const CURRENT_VERSION = '642';
             window.APP_VERSION = CURRENT_VERSION;
             const savedVersion = localStorage.getItem('app_version');
-            if (savedVersion && parseInt(savedVersion) > parseInt(CURRENT_VERSION)) {
+            if (savedVersion && savedVersion !== CURRENT_VERSION) {
+                localStorage.setItem('app_version', CURRENT_VERSION);
+                if ('caches' in window) {
+                    caches.keys().then(keys => {
+                        keys.forEach(k => caches.delete(k));
+                    });
+                }
                 if ('serviceWorker' in navigator) {
                     navigator.serviceWorker.getRegistrations().then(function(regs) {
                         for (let r of regs) r.unregister();
@@ -66,8 +72,8 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="styles/theme.css?v=641">
-    <link rel="stylesheet" href="styles/components.css?v=641">
+    <link rel="stylesheet" href="styles/theme.css?v=642">
+    <link rel="stylesheet" href="styles/components.css?v=642">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <style>
         /* Bulletproof sizing override for routine editor and xl modals */
@@ -334,14 +340,14 @@
                     </div>
                     <button class="menu-toggle" onclick="toggleMenu()">☰</button>
                     <ul class="nav-links" id="navLinks">
-                        <li><a href="trainer-dashboard.html?v=641" class="nav-link">Dashboard</a></li>
-                        <li><a href="trainer-clients.html?v=641" class="nav-link active">Clientes</a></li>
-                        <li><a href="trainer-routines.html?v=641" class="nav-link">Rutinas</a></li>
-                        <li><a href="trainer-diets.html?v=641" class="nav-link">Dietas</a></li>
-                        <li><a href="trainer-feedbacks.html?v=641" class="nav-link">Revisiones</a></li>
-                        <li><a href="trainer-media.html?v=641" class="nav-link">Biblioteca</a></li>
-                        <li><a href="trainer-appointments.html?v=641" class="nav-link">Agenda</a></li>
-                        <li><a href="trainer-settings.html?v=641" class="nav-link">Configuración</a></li>
+                        <li><a href="trainer-dashboard.html?v=642" class="nav-link">Dashboard</a></li>
+                        <li><a href="trainer-clients.html?v=642" class="nav-link active">Clientes</a></li>
+                        <li><a href="trainer-routines.html?v=642" class="nav-link">Rutinas</a></li>
+                        <li><a href="trainer-diets.html?v=642" class="nav-link">Dietas</a></li>
+                        <li><a href="trainer-feedbacks.html?v=642" class="nav-link">Revisiones</a></li>
+                        <li><a href="trainer-media.html?v=642" class="nav-link">Biblioteca</a></li>
+                        <li><a href="trainer-appointments.html?v=642" class="nav-link">Agenda</a></li>
+                        <li><a href="trainer-settings.html?v=642" class="nav-link">Configuración</a></li>
                         <li><a href="#" onclick="if(typeof AUTH !== 'undefined') { AUTH.signOut() } else { window.location.reload() }; return false;" class="nav-link" style="color:var(--error-color)">🚪 Salir</a></li>
                     </ul>
                 </nav>
@@ -969,7 +975,7 @@
                                     </div>
                                     <div class="card-body">
                                         <div id="stripeNotConfigured" style="display: none;">
-                                            <p class="text-xs text-muted mb-md">Configura tus claves de Stripe en los <a href="trainer-settings.html?v=641" style="color: var(--primary-color);">Ajustes</a> para habilitar cobros automáticos.</p>
+                                            <p class="text-xs text-muted mb-md">Configura tus claves de Stripe en los <a href="trainer-settings.html?v=642" style="color: var(--primary-color);">Ajustes</a> para habilitar cobros automáticos.</p>
                                         </div>
                                         <div id="stripeActiveConfig">
                                             <p class="text-xs text-muted mb-md">Genera un enlace de pago recurrente para este cliente usando tus planes configurados.</p>
@@ -1020,19 +1026,19 @@
 
     <!-- Supabase SDK & Service -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="js/supabase-service.js?v=641"></script>
+    <script src="js/supabase-service.js?v=642"></script>
 
-    <script src="js/config.js?v=641"></script>
-    <script src="js/auth.js?v=641"></script>
-    <script src="js/sheets.js?v=641"></script>
-    <script src="js/data-models.js?v=641"></script>
-    <script src="js/utils.js?v=641"></script>
-    <script src="js/custom-recipes.js?v=641"></script>
-    <script src="js/custom-exercises.js?v=641"></script>
-    <script src="js/diet-editor-v3.js?v=641"></script>
+    <script src="js/config.js?v=642"></script>
+    <script src="js/auth.js?v=642"></script>
+    <script src="js/sheets.js?v=642"></script>
+    <script src="js/data-models.js?v=642"></script>
+    <script src="js/utils.js?v=642"></script>
+    <script src="js/custom-recipes.js?v=642"></script>
+    <script src="js/custom-exercises.js?v=642"></script>
+    <script src="js/diet-editor-v3.js?v=642"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.29/jspdf.plugin.autotable.min.js"></script>
-    <script src="js/export-utils.js?v=641"></script>
+    <script src="js/export-utils.js?v=642"></script>
     <script>
         const pageUrlParams = new URLSearchParams(window.location.search);
         const clientId = pageUrlParams.get('id');
@@ -5272,7 +5278,7 @@
                         <div style="max-width: 800px; margin: 0 auto; border: 1px solid #eee; padding: 30px; border-radius: 8px;">
                             ${content}
                         </div>
-                        <script src="js/custom-recipes.js?v=641"><\/script></body>
+                        <script src="js/custom-recipes.js?v=642"><\/script></body>
                 </html>
             `);
             printWindow.document.close();
@@ -7050,6 +7056,6 @@
             }
         });
     </script>
-    <script src="js/custom-recipes.js?v=641"></script></body>
+    <script src="js/custom-recipes.js?v=642"></script></body>
 
 </html>
