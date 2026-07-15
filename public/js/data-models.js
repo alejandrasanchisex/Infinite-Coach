@@ -1282,15 +1282,8 @@ const mergeLocalEdits = (localNew, cloudMerged, localPrev, isTrainer) => {
                             localItem.updatedAt = new Date().toISOString();
                             finalItems.push(localItem);
                         } else {
-                            // Check if it's a new local item created after the last sync
-                            const currentId = window.activeTrainerId || safeGetLocalStorage('activeTrainerId') || 'default';
-                            const lastSyncTime = getLastSyncTime(currentId);
-                            const itemCreatedAt = localItem.createdAt ? new Date(localItem.createdAt).getTime() : 0;
-                            const isNewLocal = itemCreatedAt >= lastSyncTime || lastSyncTime === 0 || itemCreatedAt === 0;
-                            
-                            if (isNewLocal) {
-                                finalItems.push(localItem);
-                            }
+                            // 🛡️ BLINDAJE ANTIPÉRDIDA: Conservamos el elemento local
+                            finalItems.push(localItem);
                         }
                     } else {
                         if (!localItem.updatedAt) {
@@ -1881,14 +1874,9 @@ const doSyncFromCloud = async () => {
                                     mergedItems.push(cloudItem);
                                 }
                             } else if (localItem) {
-                                const lastSyncTime = getLastSyncTime(currentId);
-                                const itemCreatedAt = localItem.createdAt ? new Date(localItem.createdAt).getTime() : 0;
-                                const isNewLocal = itemCreatedAt >= lastSyncTime || lastSyncTime === 0 || itemCreatedAt === 0;
-                                if (isNewLocal) {
-                                    mergedItems.push(localItem);
-                                } else {
-                                    dataChanged = true;
-                                }
+                                // 🛡️ BLINDAJE ANTIPÉRDIDA: Si el elemento existe localmente pero no en la nube,
+                                // lo conservamos siempre para evitar que se borre si la sincronización previa falló.
+                                mergedItems.push(localItem);
                             } else if (cloudItem) {
                                 const isExplicitlyDeleted = localData.deletedIds && localData.deletedIds.includes(cloudItem.id);
                                 if (!isExplicitlyDeleted) {
@@ -1954,14 +1942,8 @@ const doSyncFromCloud = async () => {
                                     mergedItems.push(cloudItem);
                                 }
                             } else if (localItem) {
-                                const lastSyncTime = getLastSyncTime(currentId);
-                                const itemCreatedAt = localItem.createdAt ? new Date(localItem.createdAt).getTime() : 0;
-                                const isNewLocal = itemCreatedAt >= lastSyncTime || lastSyncTime === 0 || itemCreatedAt === 0;
-                                if (isNewLocal) {
-                                    mergedItems.push(localItem);
-                                } else {
-                                    dataChanged = true;
-                                }
+                                // 🛡️ BLINDAJE ANTIPÉRDIDA: Conservamos el elemento local
+                                mergedItems.push(localItem);
                             } else if (cloudItem) {
                                 const isExplicitlyDeleted = localData.deletedIds && localData.deletedIds.includes(cloudItem.id);
                                 if (!isExplicitlyDeleted) {
@@ -2009,27 +1991,19 @@ const doSyncFromCloud = async () => {
                         } else if (localItem) {
                             // Solo existe localmente
                             if (isTrainer) {
-                                // Si es Entrenador y fue creado localmente más recientemente que el último sync en la nube: conservarlo
                                 if (trainerCollections.includes(col)) {
-                                    const lastSyncTime = getLastSyncTime(currentId);
-                                    const itemCreatedAt = localItem.createdAt ? new Date(localItem.createdAt).getTime() : 0;
-                                    const isNewLocal = itemCreatedAt >= lastSyncTime || lastSyncTime === 0 || itemCreatedAt === 0;
-
-                                    if (localTime > cloudTime || isNewLocal) {
-                                        mergedItems.push(localItem);
-                                        dataChanged = true;
-                                    }
+                                    mergedItems.push(localItem);
+                                    dataChanged = true;
                                 } else {
-                                    // Si es del cliente, la nube manda (si no está en nube, el cliente lo borró)
+                                    // Si es del cliente, la nube manda
                                     dataChanged = true;
                                 }
                             } else {
-                                // Si es Cliente y fue creado localmente (como sus logs, hábitos, feedbacks): conservarlo
                                 if (clientCollections.includes(col)) {
                                     mergedItems.push(localItem);
                                     dataChanged = true;
                                 } else {
-                                    // Si es del Entrenador (como rutinas, bloques, etc.), la nube manda (si no está en nube, el coach lo borró)
+                                    // Si es del Entrenador, la nube manda
                                     dataChanged = true;
                                 }
                             }
