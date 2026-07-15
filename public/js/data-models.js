@@ -1101,8 +1101,8 @@ const mergeLocalEdits = (localNew, cloudMerged, localPrev, isTrainer) => {
                 const isExplicitlyDeleted = localNew.deletedIds && localNew.deletedIds.includes(id);
                 if (isExplicitlyDeleted) return;
                 
-                // If we are on client-detail for client A, never apply local edits for client B (only for client-side to prevent leaks)
-                if (!isTrainer && activeClientId && id !== activeClientId) {
+                // If we are on client-detail for client A, never apply local edits for client B (only for trainer-side to prevent leaks)
+                if (isTrainer && activeClientId && id !== activeClientId) {
                     if (cloudClient) finalClients.push(cloudClient);
                     return;
                 }
@@ -1217,9 +1217,9 @@ const mergeLocalEdits = (localNew, cloudMerged, localPrev, isTrainer) => {
                 const isExplicitlyDeleted = localNew.deletedIds && localNew.deletedIds.includes(id);
                 if (isExplicitlyDeleted) return;
                 
-                // If we are on client-detail for client A, never apply local edits for items belonging to client B (only for client-side)
+                // If we are on client-detail for client A, never apply local edits for items belonging to client B (only for trainer-side)
                 const itemClientId = localItem?.clientId || cloudItem?.clientId || prevItem?.clientId;
-                if (!isTrainer && activeClientId && itemClientId && itemClientId !== activeClientId) {
+                if (isTrainer && activeClientId && itemClientId && itemClientId !== activeClientId) {
                     if (cloudItem) finalItems.push(cloudItem);
                     return;
                 }
