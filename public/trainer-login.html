@@ -17,7 +17,7 @@
         })();
         // Force PWA cache bust / reload
         (function() {
-            const CURRENT_VERSION = '636';
+            const CURRENT_VERSION = '637';
             window.APP_VERSION = CURRENT_VERSION;
             const savedVersion = localStorage.getItem('app_version');
             if (savedVersion && parseInt(savedVersion) > parseInt(CURRENT_VERSION)) {
@@ -65,8 +65,8 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="styles/theme.css?v=626">
-    <link rel="stylesheet" href="styles/components.css?v=626">
+    <link rel="stylesheet" href="styles/theme.css?v=637">
+    <link rel="stylesheet" href="styles/components.css?v=637">
     <style>
         body {
             background-color: #0B0B1A;
@@ -226,15 +226,15 @@
                 ¿No tienes una licencia? <br> Contacta con <a href="https://ingeniaia.es" style="color: rgba(255,255,255,0.5); text-decoration: underline;">Ingenia</a>.
             </p>
             <p style="font-size: 0.8rem; font-weight: 600;">
-                <a href="acceso.html?v=626" style="color: var(--primary-color); text-decoration: none;">Acceso Clientes 📲</a>
+                <a href="acceso.html?v=637" style="color: var(--primary-color); text-decoration: none;">Acceso Clientes 📲</a>
             </p>
         </div>
     </div>
 
     <!-- Supabase SDK & Service -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" defer></script>
-    <script src="js/supabase-service.js?v=635" defer></script>
-    <script src="js/utils.js?v=626" defer></script>
+    <script src="js/supabase-service.js?v=637" defer></script>
+    <script src="js/utils.js?v=637" defer></script>
 
     <script>
         const PLATFORM_KEY = 'saasFitnessPlatform';
@@ -447,9 +447,13 @@
 
                 // 1. Prioridad: Supabase
                 if (window.SupabaseService) {
-                    window.SupabaseService.init();
-                    platformData = await window.SupabaseService.getGlobalConfig();
-                    if (platformData) console.log("Auth: Datos cargados desde Supabase ✅");
+                    try {
+                        window.SupabaseService.init();
+                        platformData = await window.SupabaseService.getGlobalConfig();
+                        if (platformData) console.log("Auth: Datos cargados desde Supabase ✅");
+                    } catch (errDb) {
+                        console.warn("No se pudo conectar a Supabase para la config global:", errDb);
+                    }
                 }
 
                 // 2. Fallback: Firebase (Legacy)
@@ -654,5 +658,5 @@
             }
         });
     </script>
-    <script src="js/custom-recipes.js?v=626"></script></body>
+    <script src="js/custom-recipes.js?v=637"></script></body>
 </html>
