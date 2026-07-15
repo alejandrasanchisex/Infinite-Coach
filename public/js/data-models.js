@@ -1409,6 +1409,17 @@ const saveData = (data) => {
           };
 
           try {
+              // 1. Obtener la base de datos local actual (fresca) para no pisar cambios nuevos
+              let currentLocalData = mergedWithLocal;
+              try {
+                  const currentRaw = safeGetDatabaseRaw();
+                  if (currentRaw) {
+                      currentLocalData = JSON.parse(currentRaw);
+                  }
+              } catch (errJson) {
+                  console.warn("Error parsing current local data in sync queue, falling back to mergedWithLocal:", errJson);
+              }
+
               const cloudData = await window.SupabaseService.getTrainerData(currentId);
               if (cloudData) {
                   // 🛡️ BLINDAJE DE RESET: Si la nube tiene un reset pendiente que el local no ha procesado, descartar el guardado
@@ -1430,7 +1441,15 @@ const saveData = (data) => {
                   if (!isTrainer) {
                       // 🛡️ SECURITY BLOCK: Clients must ALWAYS merge their client-specific edits with cloud config to prevent overwriting brand/settings
                       console.log("🔒 [Client Save] Fusionando siempre con la nube para proteger la configuración del entrenador...");
-                      const finalData = mergeLocalEdits(mergedWithLocal, cloudData, prevData, isTrainer);
+                      
+                      // Volver a leer la base de datos local actual para tener cualquier cambio concurrente
+                      let activeLocal = currentLocalData;
+                      try {
+                          const rawNow = safeGetDatabaseRaw();
+                          if (rawNow) activeLocal = JSON.parse(rawNow);
+                      } catch(e){}
+
+                      const finalData = mergeLocalEdits(activeLocal, cloudData, prevData, isTrainer);
                       finalData.lastModified = new Date().toISOString();
                       
                       saveDatabaseRaw(JSON.stringify(finalData));
@@ -1454,8 +1473,15 @@ const saveData = (data) => {
                               // Obtenemos los datos recién fusionados en local storage
                               const mergedLocal = JSON.parse(safeGetDatabaseRaw() || '{}');
                               
+                              // Volver a leer local storage para tener los cambios locales concurrentes
+                              let activeLocal = currentLocalData;
+                              try {
+                                  const rawNow = safeGetDatabaseRaw();
+                                  if (rawNow) activeLocal = JSON.parse(rawNow);
+                              } catch(e){}
+
                               // Aplicamos de forma segura los cambios locales sobre los datos fusionados de la nube
-                              const finalData = mergeLocalEdits(mergedWithLocal, mergedLocal, prevData, isTrainer);
+                              const finalData = mergeLocalEdits(activeLocal, mergedLocal, prevData, isTrainer);
                               finalData.lastModified = new Date().toISOString();
                               
                               saveDatabaseRaw(JSON.stringify(finalData));
@@ -1466,11 +1492,23 @@ const saveData = (data) => {
                       }
                   }
               }
-              await window.SupabaseService.saveTrainerData(currentId, mergedWithLocal);
+              // Volver a leer antes de guardar directamente para no subir datos desactualizados
+              let activeLocalFinal = currentLocalData;
+              try {
+                  const rawNow = safeGetDatabaseRaw();
+                  if (rawNow) activeLocalFinal = JSON.parse(rawNow);
+              } catch(e){}
+              
+              await window.SupabaseService.saveTrainerData(currentId, activeLocalFinal);
               clearLocalDeletedIds();
           } catch (e) {
               console.warn('Supabase DB Sync Error (Safe Merge failed, fallback directly):', e);
-              await window.SupabaseService.saveTrainerData(currentId, mergedWithLocal).then(clearLocalDeletedIds).catch(() => {});
+              let activeLocalFallback = mergedWithLocal;
+              try {
+                  const rawNow = safeGetDatabaseRaw();
+                  if (rawNow) activeLocalFallback = JSON.parse(rawNow);
+              } catch(e){}
+              await window.SupabaseService.saveTrainerData(currentId, activeLocalFallback).then(clearLocalDeletedIds).catch(() => {});
           }
       });
     }
