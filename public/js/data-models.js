@@ -1063,20 +1063,17 @@ const mergeLocalEdits = (localNew, cloudMerged, localPrev, isTrainer) => {
         if (col === 'habits') {
             localItems.forEach(item => {
                 if (!item.id && item.clientId && item.date) {
-                    item.id = `${item.clientId}_
-${item.date}`.replace('\n', ''); // Safe compile
+                    item.id = item.clientId + '_' + item.date;
                 }
             });
             mergedItems.forEach(item => {
                 if (!item.id && item.clientId && item.date) {
-                    item.id = `${item.clientId}_
-${item.date}`.replace('\n', ''); // Safe compile
+                    item.id = item.clientId + '_' + item.date;
                 }
             });
             prevItems.forEach(item => {
                 if (!item.id && item.clientId && item.date) {
-                    item.id = `${item.clientId}_
-${item.date}`.replace('\n', ''); // Safe compile
+                    item.id = item.clientId + '_' + item.date;
                 }
             });
         }
@@ -1701,14 +1698,12 @@ const doSyncFromCloud = async () => {
                     if (col === 'habits') {
                         localItems.forEach(item => {
                             if (!item.id && item.clientId && item.date) {
-                                item.id = `${item.clientId}_
-${item.date}`.replace('\n', ''); // Safe compile
+                                item.id = item.clientId + '_' + item.date;
                             }
                         });
                         cloudItems.forEach(item => {
                             if (!item.id && item.clientId && item.date) {
-                                item.id = `${item.clientId}_
-${item.date}`.replace('\n', ''); // Safe compile
+                                item.id = item.clientId + '_' + item.date;
                             }
                         });
                     }
