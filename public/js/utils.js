@@ -2,6 +2,17 @@
 // UTILITY FUNCTIONS
 // ============================================
 
+// Force HTTPS redirect on production to prevent mixed content blocking in mobile browsers
+(function forceHttps() {
+    try {
+        if (typeof window !== 'undefined' && window.location && window.location.protocol === 'http:') {
+            if (window.location.hostname !== 'localhost' && !window.location.hostname.includes('127.0.0.1')) {
+                window.location.href = window.location.href.replace('http:', 'https:');
+            }
+        }
+    } catch(e) {}
+})();
+
 // Clean up version parameter 'v' from URL address bar immediately after load for elegant presentation
 (function cleanUrlVersion() {
     try {

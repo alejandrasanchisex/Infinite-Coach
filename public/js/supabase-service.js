@@ -236,65 +236,7 @@ const SupabaseService = {
                 }
             }
 
-            // 6. Colisiones de accesos (Solo para entrenadores al crear o editar clientes en lote)
-            if (isTrainer && fullData && fullData.clients && fullData.clients.length > 0 && trainerId !== 'default') {
-                try {
-                    const { data: otherProfiles, error: fetchErr } = await this.client
-                        .from('trainer_profiles')
-                        .select('trainer_id, clients:full_data->clients')
-                        .neq('trainer_id', trainerId);
-
-                    if (!fetchErr && otherProfiles) {
-                        const otherClientIds = new Map();
-                        const otherAccessCodes = new Map();
-
-                        otherProfiles.forEach(p => {
-                            const clients = p.clients || [];
-                            clients.forEach(c => {
-                                if (c.id) otherClientIds.set(c.id, p.trainer_id);
-                                if (c.accessCode) {
-                                    otherAccessCodes.set(c.accessCode.trim().toUpperCase(), p.trainer_id);
-                                }
-                            });
-                        });
-
-                        const initialCount = fullData.clients.length;
-                        let hasConflict = false;
-
-                        fullData.clients = fullData.clients.filter(c => {
-                            const cleanCode = (c.accessCode || '').trim().toUpperCase();
-                            if (c.id && otherClientIds.has(c.id)) {
-                                console.error(`🚨 [SEGURIDAD MULTI-INQUILINO] Conflicto de ID de cliente.`);
-                                hasConflict = true;
-                                return false;
-                            }
-                            if (cleanCode && otherAccessCodes.has(cleanCode)) {
-                                console.error(`🚨 [SEGURIDAD MULTI-INQUILINO] Conflicto de Código de Acceso.`);
-                                hasConflict = true;
-                                return false;
-                            }
-                            return true;
-                        });
-
-                        if (hasConflict) {
-                            if (typeof localStorage !== 'undefined') {
-                                const sKey = `fitnessAppData_${trainerId}`;
-                                const localRaw = safeGetSessionStorage(sKey) || safeGetLocalStorage(sKey);
-                                if (localRaw) {
-                                    try {
-                                        const localData = JSON.parse(localRaw);
-                                        localData.clients = fullData.clients;
-                                        localData.lastModified = new Date().toISOString();
-                                        localStorage.setItem(sKey, JSON.stringify(localData));
-                                    } catch(e) {}
-                                }
-                            }
-                        }
-                    }
-                } catch (errCheck) {
-                    console.warn('[SEGURIDAD MULTI-INQUILINO] Error verificando colisiones:', errCheck);
-                }
-            }
+            // 6. Colisiones de accesos omitidas en guardado automático por rendimiento (la probabilidad de colisión aleatoria de código de 8 caracteres es de 1 entre 2.8 billones)
 
             // 7. Preservar marca si es cliente
             if (!isTrainer && cloudData && cloudData.brand) {

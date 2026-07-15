@@ -17,7 +17,7 @@
         })();
         // Force PWA cache bust / reload
         (function() {
-            const CURRENT_VERSION = '635';
+            const CURRENT_VERSION = '636';
             window.APP_VERSION = CURRENT_VERSION;
             const savedVersion = localStorage.getItem('app_version');
             if (savedVersion && parseInt(savedVersion) > parseInt(CURRENT_VERSION)) {
@@ -516,6 +516,21 @@
                         }
                     } catch(e) { console.warn('Error saving remembered credentials:', e); }
 
+                    // Descargar datos del entrenador de inmediato para que la carga del dashboard sea instantánea
+                    statusMsg.textContent = 'Descargando datos de la nube...';
+                    if (window.SupabaseService) {
+                        try {
+                            window.SupabaseService.init();
+                            const trainerData = await window.SupabaseService.getTrainerData(trainer.id);
+                            if (trainerData) {
+                                localStorage.setItem('fitnessAppData_' + trainer.id, JSON.stringify(trainerData));
+                                console.log("Auth: Datos del entrenador descargados y guardados en localStorage ✅");
+                            }
+                        } catch (errDownload) {
+                            console.warn("No se pudieron descargar los datos durante el login:", errDownload);
+                        }
+                    }
+
                     setTimeout(() => {
                         const isSaaSDomain = window.location.hostname.includes('licencias.ingeniaia.es');
                         const adminEmail = (platformData.settings && platformData.settings.adminEmail) || 'ingenia@ingeniaia.es';
@@ -526,7 +541,7 @@
                         } else {
                             window.location.href = 'trainer-dashboard.html?t=' + trainer.id;
                         }
-                    }, 1000);
+                    }, 500);
                 } else {
                     // 5. Buscar en los teamMembers de todos los perfiles de entrenador
                     let foundSubTrainer = null;
@@ -609,9 +624,24 @@
                             }
                         } catch(e) { console.warn('Error saving remembered credentials:', e); }
 
+                        // Descargar datos del entrenador de inmediato para que la carga del dashboard sea instantánea
+                        statusMsg.textContent = 'Descargando datos de la nube...';
+                        if (window.SupabaseService) {
+                            try {
+                                window.SupabaseService.init();
+                                const trainerData = await window.SupabaseService.getTrainerData(parentTrainerId);
+                                if (trainerData) {
+                                    localStorage.setItem('fitnessAppData_' + parentTrainerId, JSON.stringify(trainerData));
+                                    console.log("Auth: Datos del entrenador colaborador descargados y guardados en localStorage ✅");
+                                }
+                            } catch (errDownload) {
+                                console.warn("No se pudieron descargar los datos del parent durante el login:", errDownload);
+                            }
+                        }
+
                         setTimeout(() => {
                             window.location.href = 'trainer-dashboard.html?t=' + parentTrainerId;
-                        }, 1000);
+                        }, 500);
                     } else {
                         throw new Error('Credenciales incorrectas o licencia no válida.');
                     }
