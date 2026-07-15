@@ -18,7 +18,7 @@
         })();
         // Force PWA cache bust / reload
         (function() {
-            const CURRENT_VERSION = '639';
+            const CURRENT_VERSION = '640';
             window.APP_VERSION = CURRENT_VERSION;
             const savedVersion = localStorage.getItem('app_version');
             if (savedVersion && parseInt(savedVersion) > parseInt(CURRENT_VERSION)) {
@@ -89,7 +89,7 @@
 
         // Force PWA cache bust / reload
         (function() {
-            const CURRENT_VERSION = '639';
+            const CURRENT_VERSION = '640';
             window.APP_VERSION = CURRENT_VERSION;;
             window.APP_VERSION = CURRENT_VERSION;;
             window.APP_VERSION = CURRENT_VERSION;;
@@ -125,8 +125,8 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="styles/theme.css?v=639">
-    <link rel="stylesheet" href="styles/components.css?v=639">
+    <link rel="stylesheet" href="styles/theme.css?v=640">
+    <link rel="stylesheet" href="styles/components.css?v=640">
     <style>
         .settings-section {
             margin-bottom: var(--spacing-xl);
@@ -207,14 +207,14 @@
                 </div>
                 <button class="menu-toggle" onclick="toggleMenu()">☰</button>
                 <ul class="nav-links" id="navLinks">
-                    <li><a href="trainer-dashboard.html?v=639" class="nav-link">Dashboard</a></li>
-                    <li><a href="trainer-clients.html?v=639" class="nav-link">Clientes</a></li>
-                    <li><a href="trainer-routines.html?v=639" class="nav-link">Rutinas</a></li>
-                    <li><a href="trainer-diets.html?v=639" class="nav-link">Dietas</a></li>
-                    <li><a href="trainer-feedbacks.html?v=639" class="nav-link">Revisiones</a></li>
-                    <li><a href="trainer-media.html?v=639" class="nav-link">Biblioteca</a></li>
-                    <li><a href="trainer-appointments.html?v=639" class="nav-link">Agenda</a></li>
-                    <li><a href="trainer-settings.html?v=639" class="nav-link active">Configuración</a></li>
+                    <li><a href="trainer-dashboard.html?v=640" class="nav-link">Dashboard</a></li>
+                    <li><a href="trainer-clients.html?v=640" class="nav-link">Clientes</a></li>
+                    <li><a href="trainer-routines.html?v=640" class="nav-link">Rutinas</a></li>
+                    <li><a href="trainer-diets.html?v=640" class="nav-link">Dietas</a></li>
+                    <li><a href="trainer-feedbacks.html?v=640" class="nav-link">Revisiones</a></li>
+                    <li><a href="trainer-media.html?v=640" class="nav-link">Biblioteca</a></li>
+                    <li><a href="trainer-appointments.html?v=640" class="nav-link">Agenda</a></li>
+                    <li><a href="trainer-settings.html?v=640" class="nav-link active">Configuración</a></li>
                     <li><a href="#" onclick="if(typeof AUTH !== 'undefined') { AUTH.signOut() } else { window.location.reload() }; return false;" class="nav-link" style="color:var(--error-color)">🚪 Salir</a></li>
                 </ul>
             </nav>
@@ -367,6 +367,9 @@
                                     </label>
                                     <label class="checkbox-label">
                                         <input type="checkbox" id="clientShowWeightHabit"> Mostrar Registro de Peso Diario (App)
+                                    </label>
+                                    <label class="checkbox-label">
+                                        <input type="checkbox" id="clientShowReviewScores"> Mostrar Indicadores de Energía/Sueño/etc. en Revisión (App)
                                     </label>
                                     
                                     <div id="appModulesSection" class="flex-col gap-xs">
@@ -889,16 +892,16 @@
 
     <!-- Supabase SDK & Service -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="js/supabase-service.js?v=639"></script>
+    <script src="js/supabase-service.js?v=640"></script>
 
     <!-- UI Scripts -->
-    <script src="js/config.js?v=639"></script>
-    <script src="js/auth.js?v=639"></script>
-    <script src="js/sheets.js?v=639"></script>
-    <script src="js/data-models.js?v=639"></script>
-    <script src="js/cloud-storage.js?v=639"></script>
-    <script src="js/utils.js?v=639"></script>
-    <script src="js/excel-manager.js?v=639"></script>
+    <script src="js/config.js?v=640"></script>
+    <script src="js/auth.js?v=640"></script>
+    <script src="js/sheets.js?v=640"></script>
+    <script src="js/data-models.js?v=640"></script>
+    <script src="js/cloud-storage.js?v=640"></script>
+    <script src="js/utils.js?v=640"></script>
+    <script src="js/excel-manager.js?v=640"></script>
     <script>
         // Global Variables
         let feedbackQuestions = [];
@@ -1290,6 +1293,7 @@
             if (document.getElementById('clientShowMacros')) document.getElementById('clientShowMacros').checked = clientSettings.showMacros !== false;
             if (document.getElementById('clientShowRIR')) document.getElementById('clientShowRIR').checked = clientSettings.showRIR !== false;
             if (document.getElementById('clientShowWeightHabit')) document.getElementById('clientShowWeightHabit').checked = clientSettings.showWeightHabit !== false;
+            if (document.getElementById('clientShowReviewScores')) document.getElementById('clientShowReviewScores').checked = clientSettings.showReviewScores !== false;
             
             if (document.getElementById('clientShowDiet')) document.getElementById('clientShowDiet').checked = clientSettings.showDiet !== false;
             if (document.getElementById('clientShowRoutine')) document.getElementById('clientShowRoutine').checked = clientSettings.showRoutine !== false;
@@ -1440,6 +1444,7 @@
                         showMacros: document.getElementById('clientShowMacros').checked,
                         showRIR: document.getElementById('clientShowRIR').checked,
                         showWeightHabit: document.getElementById('clientShowWeightHabit').checked,
+                        showReviewScores: document.getElementById('clientShowReviewScores').checked,
                         showDiet: document.getElementById('clientShowDiet').checked,
                         showRoutine: document.getElementById('clientShowRoutine').checked,
                         showHabits: document.getElementById('clientShowHabits').checked,
@@ -1513,6 +1518,7 @@
                         showMacros: document.getElementById('clientShowMacros').checked,
                         showRIR: document.getElementById('clientShowRIR').checked,
                         showWeightHabit: document.getElementById('clientShowWeightHabit').checked,
+                        showReviewScores: document.getElementById('clientShowReviewScores').checked,
                         showDiet: document.getElementById('clientShowDiet').checked,
                         showRoutine: document.getElementById('clientShowRoutine').checked,
                         showHabits: document.getElementById('clientShowHabits').checked,
@@ -1624,7 +1630,7 @@
                 'brandNameInput', 'adminTrainerNameInput', 'whatsappInput', 'primaryColorInput', 'secondaryColorInput', 
                 'accentColorInput', 'themeModeInput', 'bgDarkColorInput', 'bgLightColorInput', 'autoSaveDietTemplate',
                 'pdfShowCalories', 'pdfShowMacros', 'clientShowVideos', 'clientShowCalories',
-                'clientShowMacros', 'clientShowRIR', 'clientShowWeightHabit',
+                'clientShowMacros', 'clientShowRIR', 'clientShowWeightHabit', 'clientShowReviewScores',
                 'clientShowDiet', 'clientShowRoutine', 'clientShowHabits', 'clientShowEvolution', 'clientShowFeedback',
                 'clientShowLibrary', 'waGeneralChat', 'waPaymentReminder', 'waRenewalReminder', 'waReviewReception', 'waAppointmentCoordination', 'enableOnboardingToggle'
             ].includes(id)) {
@@ -1650,7 +1656,7 @@
                 'brandNameInput', 'adminTrainerNameInput', 'whatsappInput', 'primaryColorInput', 'secondaryColorInput', 
                 'accentColorInput', 'themeModeInput', 'bgDarkColorInput', 'bgLightColorInput', 'autoSaveDietTemplate',
                 'pdfShowCalories', 'pdfShowMacros', 'clientShowVideos', 'clientShowCalories',
-                'clientShowMacros', 'clientShowRIR', 'clientShowWeightHabit',
+                'clientShowMacros', 'clientShowRIR', 'clientShowWeightHabit', 'clientShowReviewScores',
                 'clientShowDiet', 'clientShowRoutine', 'clientShowHabits', 'clientShowEvolution', 'clientShowFeedback',
                 'clientShowLibrary', 'waGeneralChat', 'waPaymentReminder', 'waRenewalReminder', 'waReviewReception', 'waAppointmentCoordination', 'enableOnboardingToggle'
             ].includes(id)) {
@@ -2846,6 +2852,6 @@
             }
         };
     </script>
-    <script src="js/custom-recipes.js?v=639" defer></script></body>
+    <script src="js/custom-recipes.js?v=640" defer></script></body>
 
 </html>
