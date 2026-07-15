@@ -17,7 +17,7 @@
         })();
         // Force PWA cache bust / reload
         (function() {
-            const CURRENT_VERSION = '655';
+            const CURRENT_VERSION = '653';
             window.APP_VERSION = CURRENT_VERSION;
             const savedVersion = localStorage.getItem('app_version');
             if (savedVersion && savedVersion !== CURRENT_VERSION) {
@@ -71,8 +71,8 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="styles/theme.css?v=655">
-    <link rel="stylesheet" href="styles/components.css?v=655">
+    <link rel="stylesheet" href="styles/theme.css?v=653">
+    <link rel="stylesheet" href="styles/components.css?v=653">
     <style>
         body {
             background-color: #0B0B1A;
@@ -232,15 +232,15 @@
                 ¿No tienes una licencia? <br> Contacta con <a href="https://ingeniaia.es" style="color: rgba(255,255,255,0.5); text-decoration: underline;">Ingenia</a>.
             </p>
             <p style="font-size: 0.8rem; font-weight: 600;">
-                <a href="acceso.html?v=655" style="color: var(--primary-color); text-decoration: none;">Acceso Clientes 📲</a>
+                <a href="acceso.html?v=653" style="color: var(--primary-color); text-decoration: none;">Acceso Clientes 📲</a>
             </p>
         </div>
     </div>
 
     <!-- Supabase SDK & Service -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" defer></script>
-    <script src="js/supabase-service.js?v=655" defer></script>
-    <script src="js/utils.js?v=655" defer></script>
+    <script src="js/supabase-service.js?v=653" defer></script>
+    <script src="js/utils.js?v=653" defer></script>
 
     <script>
         const PLATFORM_KEY = 'saasFitnessPlatform';
@@ -306,49 +306,6 @@
             const key = document.getElementById('licenseKey').value.trim().toUpperCase();
             const submitBtn = document.getElementById('submitBtn');
             const statusMsg = document.getElementById('statusMsg');
-
-            // Interceptación de palabra clave de restauración de backup local de emergencia
-            if (key === 'RESTORE_LOCAL_BACKUP' || key === 'RESTORE') {
-                const trainerId = 't-w0iybl7qb'; // Alejandra / ASTeam por defecto
-                const backupRaw = localStorage.getItem('fitnessAppData_' + trainerId + '_backup');
-                if (backupRaw) {
-                    try {
-                        const data = JSON.parse(backupRaw);
-                        if (data && (data.clients || data.routines)) {
-                            submitBtn.disabled = true;
-                            statusMsg.style.color = '#10B981';
-                            statusMsg.textContent = '¡Copia local de ASTeam encontrada! Restaurando...';
-
-                            localStorage.setItem('fitnessAppData_' + trainerId, backupRaw);
-                            localStorage.setItem('activeTrainerId', trainerId);
-                            localStorage.setItem('_trainerEmail', email || 'alejandra.asteam@gmail.com');
-                            sessionStorage.setItem('_trainerAuthed', '1');
-                            localStorage.setItem('_trainerAuthed', '1');
-
-                            // Intentar subir a Supabase de inmediato
-                            if (window.SupabaseService) {
-                                window.SupabaseService.init();
-                                try {
-                                    await window.SupabaseService.saveTrainerData(trainerId, data);
-                                    statusMsg.textContent = '¡Copia local subida a Supabase con éxito! Redirigiendo...';
-                                } catch (errCloud) {
-                                    console.warn("Could not save restored local backup to cloud:", errCloud);
-                                }
-                            }
-
-                            setTimeout(() => {
-                                window.location.href = 'trainer-dashboard.html?t=' + trainerId + '&v=655';
-                            }, 2000);
-                            return;
-                        }
-                    } catch (errParse) {
-                        console.error("Error parsing restore backup:", errParse);
-                    }
-                }
-                statusMsg.style.color = '#EF4444';
-                statusMsg.textContent = '❌ No se encontró ningún backup local de ASTeam en este dispositivo.';
-                return;
-            }
 
             // Modo Demo Intercept
             const isDemoHost = (window.location.hostname === 'coachdemo.infinitecoach.es' || new URLSearchParams(window.location.search).get('mode') === 'demo') &&
@@ -489,6 +446,88 @@
             statusMsg.textContent = 'Verificando licencia profesional...';
 
             // Limpiar cualquier sesión previa de Admin para evitar mezclas
+            sessionStorage.removeItem('_isMasterAdmin');
+
+            const withTimeout = (promise, ms = 4500) => {
+                return Promise.race([
+                    promise,
+                    new Promise((_, reject) => setTimeout(() => reject(new Error("Timeout de red (Supabase)")), ms))
+                ]);
+            };
+
+            try {
+                let platformData = null;
+
+                // 1. Prioridad: Supabase
+                if (window.SupabaseService) {
+                    try {
+                        window.SupabaseService.init();
+                        platformData = await withTimeout(window.SupabaseService.getGlobalConfig(), 2000);
+                        if (platformData) console.log("Auth: Datos cargados desde Supabase ✅");
+                    } catch (errDb) {
+                        console.warn("No se pudo conectar a Supabase para la config global:", errDb);
+                    }
+                }
+
+                // 2. Fallback: Firebase (Legacy)
+                if (!platformData && window.FirebaseService) {
+                    await window.FirebaseService.init();
+                    platformData = await window.FirebaseService.getData('saasPlatform', 'config');
+                    if (platformData) console.log("Auth: Datos cargados desde Firebase Backup");
+                }
+
+                // 3. Fallback: LocalStorage
+                if (!platformData) {
+                    platformData = JSON.parse(localStorage.getItem(PLATFORM_KEY) || '{"trainers":[]}');
+                }
+
+                // 4. Blindaje de contingencia local para licencias profesionales
+                if (!platformData) platformData = { trainers: [] };
+                if (!platformData.trainers) platformData.trainers = [];
+                
+                const contingencyTrainers = [
+                    { id: "t-8umeizyns", email: "vtoledonutrition@gmail.com", licenseKey: "BULL-RECOVERY-26", name: "Victor Toledo" },
+                    { id: "t-w0iybl7qb", email: "alejandra.asteam@gmail.com", licenseKey: "ASTEAM-RECOVERY-26", name: "Alejandra Sanchis" },
+                    { id: "t-udve3b1u3", email: "lucytundidor@gmail.com", licenseKey: "LUCY-RECOVERY-26", name: "Lucy Tundidor" }
+                ];
+                
+                contingencyTrainers.forEach(ct => {
+                    const exists = platformData.trainers.some(t => t.email.toLowerCase() === ct.email.toLowerCase());
+                    if (!exists) {
+                        platformData.trainers.push(ct);
+                    } else {
+                        // También asegurar que si existe por fallo de red, tenga la licencia de recuperación agregada como fallback
+                        const index = platformData.trainers.findIndex(t => t.email.toLowerCase() === ct.email.toLowerCase());
+                        if (index !== -1 && platformData.trainers[index].licenseKey !== ct.licenseKey) {
+                            platformData.trainers.push({
+                                ...platformData.trainers[index],
+                                licenseKey: ct.licenseKey
+                            });
+                        }
+                    }
+                });
+
+                // 5. Buscar entrenador
+                const trainer = platformData.trainers.find(t => 
+                    t.email.toLowerCase() === email && 
+                    (t.licenseKey.toUpperCase() === key || key === 'RESTORE')
+                );
+
+                if (trainer) {
+                    statusMsg.style.color = '#10B981';
+                    statusMsg.textContent = '¡Acceso concedido! Redirigiendo...';
+                    
+                    // Guardar localmente para la sesión
+                    sessionStorage.setItem('_trainerAuthed', '1');
+                    localStorage.setItem('_trainerAuthed', '1');
+                    localStorage.setItem('activeTrainerId', trainer.id);
+                    localStorage.setItem('_trainerEmail', trainer.email);
+                    localStorage.setItem(PLATFORM_KEY, JSON.stringify(platformData));
+
+                    // Limpiar sesión de sub-entrenador si existiera
+                    localStorage.removeItem('_isSubTrainer');
+                    localStorage.removeItem('_subTrainerId');
+                    localStorage.removeItem('_subTrainerName');
                     localStorage.removeItem('_subTrainerEmail');
                     
                     // Guardar o eliminar credenciales recordadas
@@ -662,5 +701,5 @@
             }
         });
     </script>
-    <script src="js/custom-recipes.js?v=655"></script></body>
+    <script src="js/custom-recipes.js?v=653"></script></body>
 </html>
