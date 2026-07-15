@@ -20,7 +20,7 @@
         })();
         // Force PWA cache bust / reload
         (function() {
-            const CURRENT_VERSION = '629';
+            const CURRENT_VERSION = '630';
             window.APP_VERSION = CURRENT_VERSION;
             const savedVersion = localStorage.getItem('app_version');
             if (savedVersion && parseInt(savedVersion) > parseInt(CURRENT_VERSION)) {
@@ -122,6 +122,13 @@
                 iconUrl = 'https://bieeydhacavxymoosasx.supabase.co/storage/v1/object/public/Media/1781711106755_toledo_the_bull.png';
             }
             
+            if (tid && tid !== 'default' && tid !== 'admin') {
+                try {
+                    localStorage.setItem('activeTrainerId', tid);
+                    sessionStorage.setItem('activeTrainerId', tid);
+                    window.activeTrainerId = tid;
+                } catch(e) {}
+            }
             document.write('<meta name="apple-mobile-web-app-title" content="' + brandName + '">');
             document.write('<link rel="apple-touch-icon" href="' + iconUrl + '">');
             document.write('<link rel="manifest" href="manifest.json?t=' + tid + '">');
