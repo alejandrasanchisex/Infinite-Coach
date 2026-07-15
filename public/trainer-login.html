@@ -17,7 +17,7 @@
         })();
         // Force PWA cache bust / reload
         (function() {
-            const CURRENT_VERSION = '643';
+            const CURRENT_VERSION = '644';
             window.APP_VERSION = CURRENT_VERSION;
             const savedVersion = localStorage.getItem('app_version');
             if (savedVersion && savedVersion !== CURRENT_VERSION) {
@@ -71,8 +71,8 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="styles/theme.css?v=643">
-    <link rel="stylesheet" href="styles/components.css?v=643">
+    <link rel="stylesheet" href="styles/theme.css?v=644">
+    <link rel="stylesheet" href="styles/components.css?v=644">
     <style>
         body {
             background-color: #0B0B1A;
@@ -232,15 +232,15 @@
                 ¿No tienes una licencia? <br> Contacta con <a href="https://ingeniaia.es" style="color: rgba(255,255,255,0.5); text-decoration: underline;">Ingenia</a>.
             </p>
             <p style="font-size: 0.8rem; font-weight: 600;">
-                <a href="acceso.html?v=643" style="color: var(--primary-color); text-decoration: none;">Acceso Clientes 📲</a>
+                <a href="acceso.html?v=644" style="color: var(--primary-color); text-decoration: none;">Acceso Clientes 📲</a>
             </p>
         </div>
     </div>
 
     <!-- Supabase SDK & Service -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" defer></script>
-    <script src="js/supabase-service.js?v=643" defer></script>
-    <script src="js/utils.js?v=643" defer></script>
+    <script src="js/supabase-service.js?v=644" defer></script>
+    <script src="js/utils.js?v=644" defer></script>
 
     <script>
         const PLATFORM_KEY = 'saasFitnessPlatform';
@@ -498,24 +498,6 @@
                     localStorage.setItem('_trainerEmail', trainer.email);
                     localStorage.setItem(PLATFORM_KEY, JSON.stringify(platformData));
 
-                    // Limpiar bases de datos de sesiones anteriores para evitar contaminación de caché
-                    try {
-                        for (var i = localStorage.length - 1; i >= 0; i--) {
-                            var storageKey = localStorage.key(i);
-                            if (storageKey && storageKey.indexOf('fitnessAppData_') === 0) {
-                                localStorage.removeItem(storageKey);
-                            }
-                        }
-                    } catch(e) {}
-                    try {
-                        for (var i = sessionStorage.length - 1; i >= 0; i--) {
-                            var storageKey = sessionStorage.key(i);
-                            if (storageKey && storageKey.indexOf('fitnessAppData_') === 0) {
-                                sessionStorage.removeItem(storageKey);
-                            }
-                        }
-                    } catch(e) {}
-
                     // Limpiar sesión de sub-entrenador si existiera
                     localStorage.removeItem('_isSubTrainer');
                     localStorage.removeItem('_subTrainerId');
@@ -540,6 +522,24 @@
                             window.SupabaseService.init();
                             const trainerData = await withTimeout(window.SupabaseService.getTrainerData(trainer.id), 4500);
                             if (trainerData) {
+                                // Limpiar de forma segura bases de datos de otras sesiones anteriores para evitar contaminación
+                                try {
+                                    for (var i = localStorage.length - 1; i >= 0; i--) {
+                                        var storageKey = localStorage.key(i);
+                                        if (storageKey && storageKey.indexOf('fitnessAppData_') === 0 && storageKey !== 'fitnessAppData_' + trainer.id) {
+                                            localStorage.removeItem(storageKey);
+                                        }
+                                    }
+                                } catch(e) {}
+                                try {
+                                    for (var i = sessionStorage.length - 1; i >= 0; i--) {
+                                        var storageKey = sessionStorage.key(i);
+                                        if (storageKey && storageKey.indexOf('fitnessAppData_') === 0 && storageKey !== 'fitnessAppData_' + trainer.id) {
+                                            sessionStorage.removeItem(storageKey);
+                                        }
+                                    }
+                                } catch(e) {}
+
                                 localStorage.setItem('fitnessAppData_' + trainer.id, JSON.stringify(trainerData));
                                 console.log("Auth: Datos del entrenador descargados y guardados en localStorage ✅");
                             }
@@ -674,5 +674,5 @@
             }
         });
     </script>
-    <script src="js/custom-recipes.js?v=643"></script></body>
+    <script src="js/custom-recipes.js?v=644"></script></body>
 </html>
