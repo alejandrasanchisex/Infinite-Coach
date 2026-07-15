@@ -1,0 +1,4604 @@
+{
+  "brand": {
+    "logo": "https://bieeydhacavxymoosasx.supabase.co/storage/v1/object/public/Media/lucy_logo_cropped.png?v=2",
+    "name": "Lucy Tundidor",
+    "colors": {
+      "accent": "#a79788",
+      "bgDark": "#1e1b18",
+      "bgLight": "#faf7f5",
+      "primary": "#816e61",
+      "secondary": "#a79788",
+      "themeMode": "light"
+    },
+    "configured": true,
+    "fiscalData": {
+      "nif": "",
+      "zip": "",
+      "city": "",
+      "address": "alejandra.asteam@gmail.com",
+      "defaultIva": 21,
+      "companyName": "",
+      "invoiceSeries": "F2026"
+    },
+    "stripeSettings": {
+      "plans": [],
+      "publicKey": "",
+      "secretKey": "FIT-HLYY-26"
+    },
+    "feedbackQuestions": [
+      "¿Qué tal te ves fisicamente?",
+      "Sensaciones sobre la dieta (mucha/poca comida, ansiedad, poco apetito...)",
+      "Comida/alimento que no te haya gustado y/o quieras cambiar de la dieta actual",
+      "Comida/alimento que quieras tener en tu próxima dieta a ser posible",
+      "¿Has realizado algún salto de dieta para tener en cuenta?",
+      "¿Qué tal han ido los entrenos? Cuéntame tus sensaciones",
+      "¿Has podido entrenar los días estipulados?",
+      "¿Te recuperas correctamente de los entrenos entre sesiones?",
+      "Del 1 al 10, ¿Cuál ha sido tu implicación en los entrenamientos? (Intensidad, realización de todas las series...)"
+    ],
+    "trainerPerimeters": [
+      "Cintura",
+      "Cadera",
+      "Pecho",
+      "Brazo",
+      "Muslo"
+    ]
+  },
+  "diets": [
+    {
+      "id": "86c7085f-64e5-4d96-880a-8abadbc4fa1b",
+      "name": "Plan Nutricional 1",
+      "meals": [
+        {
+          "id": "bddd8038-9512-4264-b655-d3bfec312d84",
+          "name": "Desayuno",
+          "time": "08:30",
+          "foods": [
+            {
+              "fat": 2.1,
+              "name": "Harina de avena",
+              "carbs": 19.8,
+              "option": 1,
+              "protein": 5.1,
+              "calories": 117,
+              "quantity": "30g"
+            },
+            {
+              "fat": 0.1,
+              "name": "Plátano",
+              "carbs": 6.9,
+              "option": 1,
+              "protein": 0.3,
+              "calories": 27,
+              "quantity": "30g"
+            },
+            {
+              "fat": 11,
+              "name": "Huevos",
+              "carbs": 1.1,
+              "option": 1,
+              "protein": 13,
+              "calories": 155,
+              "quantity": "1"
+            },
+            {
+              "fat": 14.7,
+              "name": "Almendra molida",
+              "carbs": 6.6,
+              "option": 1,
+              "protein": 6.3,
+              "calories": 174,
+              "quantity": "30g"
+            },
+            {
+              "fat": 1.9,
+              "name": "Pan integral",
+              "carbs": 33.8,
+              "option": 2,
+              "protein": 6.4,
+              "calories": 180,
+              "quantity": "75g"
+            },
+            {
+              "fat": 1.1,
+              "name": "Pechuga de pavo",
+              "carbs": 0,
+              "option": 2,
+              "protein": 16.5,
+              "calories": 79,
+              "quantity": "75g"
+            },
+            {
+              "fat": 3.2,
+              "name": "Queso cottage",
+              "carbs": 2.5,
+              "option": 2,
+              "protein": 8.3,
+              "calories": 74,
+              "quantity": "75g"
+            },
+            {
+              "fat": 0.2,
+              "name": "Arándanos",
+              "carbs": 10.5,
+              "option": 2,
+              "protein": 0.5,
+              "calories": 43,
+              "quantity": "75g"
+            }
+          ],
+          "description": "Escoge una de las opciones indicadas.",
+          "optionPhotos": {
+            "1": "https://bieeydhacavxymoosasx.supabase.co/storage/v1/object/public/Media/1778609307849_Tortitas_de_avena_y_platano.png",
+            "2": "img/tostada_pavo_minimalist_v2_1778657605543.png"
+          },
+          "optionIngredients": {
+            "1": "",
+            "2": ""
+          }
+        },
+        {
+          "id": "ffd4347d-4194-4c00-8df3-d667fcd45444",
+          "name": "Porridge avena",
+          "time": "14:00",
+          "foods": [
+            {
+              "fat": 2.8,
+              "name": "Avena",
+              "carbs": 26.4,
+              "option": 1,
+              "protein": 5.2,
+              "calories": 152,
+              "quantity": "40g"
+            },
+            {
+              "fat": 1.2,
+              "name": "Proteína en polvo",
+              "carbs": 1.5,
+              "option": 1,
+              "protein": 24,
+              "calories": 114,
+              "quantity": "30g"
+            },
+            {
+              "fat": 15,
+              "name": "Crema de cacahuete",
+              "carbs": 3.6,
+              "option": 1,
+              "protein": 7.5,
+              "calories": 179,
+              "quantity": "30g"
+            },
+            {
+              "fat": 2.5,
+              "name": "Tortillas de maíz",
+              "carbs": 45,
+              "option": 2,
+              "protein": 5,
+              "calories": 220,
+              "quantity": "1"
+            },
+            {
+              "fat": 3.5,
+              "name": "Tiras de ternera",
+              "carbs": 0,
+              "option": 2,
+              "protein": 14.7,
+              "calories": 105,
+              "quantity": "70g"
+            },
+            {
+              "fat": 10.5,
+              "name": "Guacamole",
+              "carbs": 6.3,
+              "option": 2,
+              "protein": 1.4,
+              "calories": 112,
+              "quantity": "70g"
+            }
+          ],
+          "description": "Escoge una de las opciones indicadas.",
+          "optionPhotos": {
+            "1": "https://bieeydhacavxymoosasx.supabase.co/storage/v1/object/public/Media/1778607572846_Porridge_pro.png",
+            "2": "https://bieeydhacavxymoosasx.supabase.co/storage/v1/object/public/Media/1778608112078_Tacos_de_ternera.png"
+          },
+          "optionIngredients": {
+            "1": "",
+            "2": ""
+          }
+        },
+        {
+          "id": "ec091184-0999-4009-80ff-ccae947ff85b",
+          "name": "Post entreno",
+          "time": "17:30",
+          "foods": [
+            {
+              "fat": 0.5,
+              "name": "Corn flakes",
+              "carbs": 42,
+              "option": 1,
+              "protein": 3.5,
+              "calories": 185,
+              "quantity": "50g"
+            },
+            {
+              "fat": 17.5,
+              "name": "Crema de cacahuete",
+              "carbs": 4.2,
+              "option": 1,
+              "protein": 8.8,
+              "calories": 208,
+              "quantity": "35g"
+            },
+            {
+              "fat": 0.1,
+              "name": "Frutos rojos",
+              "carbs": 3.5,
+              "option": 1,
+              "protein": 0.3,
+              "calories": 16,
+              "quantity": "35g"
+            }
+          ],
+          "description": "Escoge una de las opciones indicadas.",
+          "optionPhotos": {
+            "1": "img/cornflakes_minimalist_v2_1778657645509.png"
+          },
+          "optionIngredients": {
+            "1": ""
+          }
+        },
+        {
+          "id": "a43fa8f8-c85e-471f-ab88-a9fffe616182",
+          "name": "Cena",
+          "time": "21:30",
+          "foods": [
+            {
+              "fat": 0.7,
+              "name": "Merluza",
+              "carbs": 0,
+              "option": 1,
+              "protein": 15.3,
+              "calories": 70,
+              "quantity": "90g"
+            },
+            {
+              "fat": 0.2,
+              "name": "Patatas panadera",
+              "carbs": 34,
+              "option": 1,
+              "protein": 4,
+              "calories": 154,
+              "quantity": "200g"
+            },
+            {
+              "fat": 13.5,
+              "name": "Aguacate",
+              "carbs": 8.1,
+              "option": 1,
+              "protein": 1.8,
+              "calories": 144,
+              "quantity": "90g"
+            },
+            {
+              "fat": 5,
+              "name": "Huevo Entero",
+              "carbs": 0.5,
+              "option": 1,
+              "protein": 6.5,
+              "calories": 75,
+              "quantity": "1"
+            },
+            {
+              "fat": 0.2,
+              "name": "Verdura",
+              "carbs": 3.6,
+              "option": 1,
+              "protein": 1.4,
+              "calories": 23,
+              "quantity": "90g"
+            },
+            {
+              "fat": 2.5,
+              "name": "Pan integral",
+              "carbs": 45,
+              "option": 2,
+              "protein": 8.5,
+              "calories": 240,
+              "quantity": "100g"
+            },
+            {
+              "fat": 0.8,
+              "name": "Atún al natural",
+              "carbs": 0,
+              "option": 2,
+              "protein": 19.5,
+              "calories": 87,
+              "quantity": "75g"
+            },
+            {
+              "fat": 11.3,
+              "name": "Mayonesa ligera o aguacate",
+              "carbs": 6.8,
+              "option": 2,
+              "protein": 1.5,
+              "calories": 120,
+              "quantity": "75g"
+            }
+          ],
+          "description": "Escoge una de las opciones indicadas.",
+          "optionPhotos": {
+            "1": "img/merluza_patatas_huevo.png",
+            "2": "https://bieeydhacavxymoosasx.supabase.co/storage/v1/object/public/Media/1778607983228_Sandwich_de_atun.png"
+          },
+          "optionIngredients": {
+            "1": "",
+            "2": ""
+          }
+        }
+      ],
+      "notes": "Mantener buena hidratación (~2.5L de agua al día). Pesos indicados en crudo. Se permite edulcorar y sazonar moderadamente.",
+      "macros": {
+        "fat": 84.6,
+        "carbs": 161.8,
+        "protein": 103
+      },
+      "calories": 1793,
+      "clientId": "33aa6d43-f41b-4701-bba1-e14b79ae7589",
+      "createdAt": "2026-06-01T10:32:47.995Z",
+      "published": true,
+      "targetFat": 55,
+      "isTemplate": false,
+      "targetCarbs": 160,
+      "targetProtein": 120,
+      "targetCalories": 1615
+    }
+  ],
+  "foods": [
+    {
+      "id": "seed_food_quesitos_light__1_ud_",
+      "fat": 2,
+      "name": "Quesitos Light",
+      "type": "unit",
+      "carbs": 1,
+      "protein": 2.5,
+      "calories": 35,
+      "createdAt": "2026-06-21T10:34:28.203Z"
+    },
+    {
+      "id": "seed_food_huevo_entero__1_ud_l_",
+      "fat": 5,
+      "name": "Huevo Entero",
+      "type": "unit",
+      "carbs": 0.5,
+      "protein": 6.5,
+      "calories": 75,
+      "createdAt": "2026-06-21T10:34:37.069Z"
+    }
+  ],
+  "media": [
+    {
+      "id": "sys-ex-press-de-banca-plano-(barra)",
+      "url": "https://www.youtube.com/watch?v=tuwHzzPrzOM",
+      "type": "video",
+      "title": "Press de Banca Plano (Barra)",
+      "category": "exercise",
+      "isSystem": true,
+      "createdAt": "2026-05-27T17:17:48.081Z",
+      "muscleGroup": "Pectorales"
+    },
+    {
+      "id": "sys-ex-press-inclinado-(barra)",
+      "url": "https://www.youtube.com/watch?v=SrqOu55lr6A",
+      "type": "video",
+      "title": "Press Inclinado (Barra)",
+      "category": "exercise",
+      "isSystem": true,
+      "createdAt": "2026-05-27T17:17:48.081Z",
+      "muscleGroup": "Pectorales"
+    },
+    {
+      "id": "sys-ex-press-declinado-(barra)",
+      "url": "https://www.youtube.com/watch?v=LfyQbuJshYw",
+      "type": "video",
+      "title": "Press Declinado (Barra)",
+      "category": "exercise",
+      "isSystem": true,
+      "createdAt": "2026-05-27T17:17:48.081Z",
+      "muscleGroup": "Pectorales"
+    },
+    {
+      "id": "sys-ex-press-plano-(mancuernas)",
+      "url": "https://www.youtube.com/watch?v=8679p9qL-wY",
+      "type": "video",
+      "title": "Press Plano (Mancuernas)",
+      "category": "exercise",
+      "isSystem": true,
+      "createdAt": "2026-05-27T17:17:48.081Z",
+      "muscleGroup": "Pectorales"
+    },
+    {
+      "id": "sys-ex-press-inclinado-(mancuernas)",
+      "url": "https://www.youtube.com/watch?v=8iPEnn-ltC8",
+      "type": "video",
+      "title": "Press Inclinado (Mancuernas)",
+      "category": "exercise",
+      "isSystem": true,
+      "createdAt": "2026-05-27T17:17:48.081Z",
+      "muscleGroup": "Pectorales"
+    },
+    {
+      "id": "sys-ex-aperturas-planas-(mancuernas)",
+      "url": "https://www.youtube.com/watch?v=eGjt4lk6g34",
+      "type": "video",
+      "title": "Aperturas Planas (Mancuernas)",
+      "category": "exercise",
+      "isSystem": true,
+      "createdAt": "2026-05-27T17:17:48.081Z",
+      "muscleGroup": "Pectorales"
+    },
+    {
+      "id": "sys-ex-aperturas-en-peck-deck",
+      "url": "https://www.youtube.com/watch?v=6id882M_39E",
+      "type": "video",
+      "title": "Aperturas en Peck Deck",
+      "category": "exercise",
+      "isSystem": true,
+      "createdAt": "2026-05-27T17:17:48.081Z",
+      "muscleGroup": "Pectorales"
+    },
+    {
+      "id": "sys-ex-cruce-de-poleas-altas",
+      "url": "https://www.youtube.com/watch?v=taI4XpqatW0",
+      "type": "video",
+      "title": "Cruce de Poleas Altas",
+      "category": "exercise",
+      "isSystem": true,
+      "createdAt": "2026-05-27T17:17:48.081Z",
+      "muscleGroup": "Pectorales"
+    },
+    {
+      "id": "sys-ex-cruce-de-poleas-bajas",
+      "url": "https://www.youtube.com/watch?v=Mofp6LqWf1A",
+      "type": "video",
+      "title": "Cruce de Poleas Bajas",
+      "category": "exercise",
+      "isSystem": true,
+      "createdAt": "2026-05-27T17:17:48.081Z",
+      "muscleGroup": "Pectorales"
+    },
+    {
+      "id": "sys-ex-flexiones-(push-ups)",
+      "url": "https://www.youtube.com/watch?v=IODxDxX7oi4",
+      "type": "video",
+      "title": "Flexiones (Push Ups)",
+      "category": "exercise",
+      "isSystem": true,
+      "createdAt": "2026-05-27T17:17:48.081Z",
+      "muscleGroup": "Pectorales"
+    },
+    {
+      "id": "sys-ex-fondos-en-paralelas-(pecho)",
+      "url": "https://www.youtube.com/watch?v=2z8JmcrW-As",
+      "type": "video",
+      "title": "Fondos en Paralelas (Pecho)",
+      "category": "exercise",
+      "isSystem": true,
+      "createdAt": "2026-05-27T17:17:48.081Z",
+      "muscleGroup": "Pectorales"
+    },
+    {
+      "id": "sys-ex-press-en-máquina-convergente",
+      "url": "https://www.youtube.com/watch?v=xZ9Mms94k8o",
+      "type": "video",
+      "title": "Press en Máquina Convergente",
+      "category": "exercise",
+      "isSystem": true,
+      "createdAt": "2026-05-27T17:17:48.081Z",
+      "muscleGroup": "Pectorales"
+    },
+    {
+      "id": "sys-ex-pullover-con-mancuerna",
+      "url": "https://www.youtube.com/watch?v=FK4rj9Ps0uM",
+      "type": "video",
+      "title": "Pullover con Mancuerna",
+      "category": "exercise",
+      "isSystem": true,
+      "createdAt": "2026-05-27T17:17:48.081Z",
+      "muscleGroup": "Pectorales"
+    },
+    {
+      "id": "sys-ex-press-con-mancuernas-en-suelo-(floor-press)",
+      "url": "https://www.youtube.com/watch?v=uGRB89V4WiU",
+      "type": "video",
+      "title": "Press con Mancuernas en Suelo (Floor Press)",
+      "category": "exercise",
+      "isSystem": true,
+      "createdAt": "2026-06-09T18:52:11.236Z",
+      "muscleGroup": "Pectorales"
+    },
+    {
+      "id": "sys-ex-cruce-de-poleas-de-pie",
+      "url": "https://www.youtube.com/watch?v=taI4XpqatW0",
+      "type": "video",
+      "title": "Cruce de Poleas de pie",
+      "category": "exercise",
+      "isSystem": true,
+      "createdAt": "2026-06-09T18:52:11.236Z",
+      "muscleGroup": "Pectorales"
+    },
+    {
+      "id": "sys-ex-aperturas-inclinadas-(mancuernas)",
+      "url": "https://www.youtube.com/watch?v=Aj_t44nI8m4",
+      "type": "video",
+      "title": "Aperturas Inclinadas (Mancuernas)",
+      "category": "exercise",
+      "isSystem": true,
+      "createdAt": "2026-06-09T18:52:11.236Z",
+      "muscleGroup": "Pectorales"
+    },
+    {
+      "id": "sys-ex-press-de-banca-con-agarre-invertido",
+      "url": "https://www.youtube.com/watch?v=8679p9qL-wY",
+      "type": "video",
+      "title": "Press de Banca con Agarre Invertido",
+      "category": "exercise",
+      "isSystem": true,
+      "createdAt": "2026-06-09T18:52:11.236Z",
+      "muscleGroup": "Pectorales"
+    },
+    {
+      "id": "sys-ex-aperturas-en-polea-alta",
+      "url": "https://www.youtube.com/watch?v=taI4XpqatW0",
+      "type": "video",
+      "title": "Aperturas en Polea Alta",
+      "category": "exercise",
+      "isSystem": true,
+      "createdAt": "2026-06-09T18:52:11.236Z",
+      "muscleGroup": "Pectorales"
+    },
+    {
+      "id": "sys-ex-flexiones-con-manos-juntas-(diamond-push-ups)",
+      "url": "https://www.youtube.com/watch?v=J0DnG1_S92I",
+      "type": "video",
+      "title": "Flexiones con manos juntas (Diamond Push Ups)",
+      "category": "exercise",
+      "isSystem": true,
+      "createdAt": "2026-06-09T18:52:11.236Z",
+      "muscleGroup": "Pectorales"
+    },
+    {
+      "id": "sys-ex-press-de-pecho-en-máquina-hammer",
+      "url": "https://www.youtube.com/watch?v=xZ9Mms94k8o",
+      "type": "video",
+      "title": "Press de Pecho en Máquina Hammer",
+      "category": "exercise",
+      "isSystem": true,
+      "createdAt": "2026-06-09T18:52:11.236Z",
+      "muscleGroup": "Pectorales"
+    },
+    {
+      "id": "sys-ex-aperturas-planas-en-polea",
+      "url": "https://www.youtube.com/watch?v=eGjt4lk6g34",
+      "type": "video",
+      "title": "Aperturas Planas en Polea",
+      "category": "exercise",
+      "isSystem": true,
+      "createdAt": "2026-06-09T18:52:11.236Z",
+      "muscleGroup": "Pectorales"
+    },
+    {
+      "id": "sys-ex-press-de-banca-con-mancuernas-con-agarre-neutro",
+      "url": "https://www.youtube.com/watch?v=8iPEnn-ltC8",
+      "type": "video",
+      "title": "Press de Banca con Mancuernas con Agarre Neutro",
+      "category": "exercise",
+      "isSystem": true,
+      "createdAt": "2026-06-09T18:52:11.236Z",
+      "muscleGroup": "Pectorales"
+    },
+    {
+      "id": "sys-ex-flexiones-declinadas",
+      "url": "https://www.youtube.com/watch?v=IODxDxX7oi4",
+      "type": "video",
+      "title": "Flexiones Declinadas",
+      "category": "exercise",
+      "isSystem": true,
+      "createdAt": "2026-06-09T18:52:11.236Z",
+      "muscleGroup": "Pectorales"
+    },
+    {
+      "id": "sys-ex-dominadas-(prono)",
+      "url": "https://www.youtube.com/watch?v=eGo4IYlbE5g",
+      "type": "video",
+      "title": "Dominadas (Prono)",
+      "category": "exercise",
+      "isSystem": true,
+      "createdAt": "2026-05-27T17:17:48.081Z",
+      "muscleGroup": "Dorsales"
+    },
+    {
+      "id": "sys-ex-dominadas-(supino)",
+      "url": "https://www.youtube.com/watch?v=eGo4IYlbE5g",
+      "type": "video",
+      "title": "Dominadas (Supino)",
+      "category": "exercise",
+      "isSystem": true,
+      "createdAt": "2026-05-27T17:17:48.081Z",
+      "muscleGroup": "Dorsales"
+    },
+    {
+      "id": "sys-ex-jalón-al-pecho-(ancho)",
+      "url": "https://www.youtube.com/watch?v=CAwf7n6Luuc",
+      "type": "video",
+      "title": "Jalón al Pecho (Ancho)",
+      "category": "exercise",
+      "isSystem": true,
+      "createdAt": "2026-05-27T17:17:48.081Z",
+      "muscleGroup": "Dorsales"
+    },
+    {
+      "id": "sys-ex-jalón-al-pecho-(estrecho)",
+      "url": "https://www.youtube.com/watch?v=G86L6_W8y-w",
+      "type": "video",
+      "title": "Jalón al Pecho (Estrecho)",
+      "category": "exercise",
+      "isSystem": true,
+      "createdAt": "2026-05-27T17:17:48.081Z",
+      "muscleGroup": "Dorsales"
+    },
+    {
+      "id": "sys-ex-remo-con-barra-(90º)",
+      "url": "https://www.youtube.com/watch?v=RQU8wL6G_HI",
+      "type": "video",
+      "title": "Remo con Barra (90º)",
+      "category": "exercise",
+      "isSystem": true,
+      "createdAt": "2026-05-27T17:17:48.081Z",
+      "muscleGroup": "Dorsales"
+    },
+    {
+      "id": "sys-ex-remo-con-mancuerna-(1-mano)",
+      "url": "https://www.youtube.com/watch?v=dFzUjzuW_2M",
+      "type": "video",
+      "title": "Remo con Mancuerna (1 mano)",
+      "category": "exercise",
+      "isSystem": true,
+      "createdAt": "2026-05-27T17:17:48.081Z",
+      "muscleGroup": "Dorsales"
+    },
+    {
+      "id": "sys-ex-remo-en-polea-baja-(gironda)",
+      "url": "https://www.youtube.com/watch?v=GZbfZ033f74",
+      "type": "video",
+      "title": "Remo en Polea Baja (Gironda)",
+      "category": "exercise",
+      "isSystem": true,
+      "createdAt": "2026-05-27T17:17:48.081Z",
+      "muscleGroup": "Dorsales"
+    },
+    {
+      "id": "sys-ex-peso-muerto-convencional",
+      "url": "https://www.youtube.com/watch?v=ytGaGIn3SjE",
+      "type": "video",
+      "title": "Peso Muerto Convencional",
+      "category": "exercise",
+      "isSystem": true,
+      "createdAt": "2026-05-27T17:17:48.081Z",
+      "muscleGroup": "Dorsales"
+    },
+    {
+      "id": "sys-ex-remo-en-punta-(t-bar)",
+      "url": "https://www.youtube.com/watch?v=j3Igk5nyZE4",
+      "type": "video",
+      "title": "Remo en Punta (T-Bar)",
+      "category": "exercise",
+      "isSystem": true,
+      "createdAt": "2026-05-27T17:17:48.081Z",
+      "muscleGroup": "Dorsales"
+    },
+    {
+      "id": "sys-ex-pull-over-en-polea-alta",
+      "url": "https://www.youtube.com/watch?v=P_m8_z_Lh-I",
+      "type": "video",
+      "title": "Pull-over en Polea Alta",
+      "category": "exercise",
+      "isSystem": true,
+      "createdAt": "2026-05-27T17:17:48.081Z",
+      "muscleGroup": "Dorsales"
+    },
+    {
+      "id": "sys-ex-hiperextensiones",
+      "url": "https://www.youtube.com/watch?v=ph3pddpKzzw",
+      "type": "video",
+      "title": "Hiperextensiones",
+      "category": "exercise",
+      "isSystem": true,
+      "createdAt": "2026-05-27T17:17:48.081Z",
+      "muscleGroup": "Dorsales"
+    },
+    {
+      "id": "sys-ex-jalón-con-brazos-rectos",
+      "url": "https://www.youtube.com/watch?v=AJO_R0E-zB8",
+      "type": "video",
+      "title": "Jalón con Brazos Rectos",
+      "category": "exercise",
+      "isSystem": true,
+      "createdAt": "2026-05-27T17:17:48.081Z",
+      "muscleGroup": "Dorsales"
+    },
+    {
+      "id": "sys-ex-remo-con-soporte-en-pecho",
+      "url": "https://www.youtube.com/watch?v=roS6vXG3o1w",
+      "type": "video",
+      "title": "Remo con Soporte en Pecho",
+      "category": "exercise",
+      "isSystem": true,
+      "createdAt": "2026-05-27T17:17:48.081Z",
+      "muscleGroup": "Dorsales"
+    },
+    {
+      "id": "sys-ex-remo-con-barra-con-agarre-supino",
+      "url": "https://www.youtube.com/watch?v=RQU8wL6G_HI",
+      "type": "video",
+      "title": "Remo con Barra con Agarre Supino",
+      "category": "exercise",
+      "isSystem": true,
+      "createdAt": "2026-06-09T18:52:11.236Z",
+      "muscleGroup": "Dorsales"
+    },
+    {
+      "id": "sys-ex-remo-con-barra-t-con-soporte",
+      "url": "https://www.youtube.com/watch?v=j3Igk5nyZE4",
+      "type": "video",
+      "title": "Remo con Barra T con Soporte",
+      "category": "exercise",
+      "isSystem": true,
+      "createdAt": "2026-06-09T18:52:11.236Z",
+      "muscleGroup": "Dorsales"
+    },
+    {
+      "id": "sys-ex-remo-en-polea-alta-con-agarre-neutro",
+      "url": "https://www.youtube.com/watch?v=GZbfZ033f74",
+      "type": "video",
+      "title": "Remo en Polea Alta con Agarre Neutro",
+      "category": "exercise",
+      "isSystem": true,
+      "createdAt": "2026-06-09T18:52:11.236Z",
+      "muscleGroup": "Dorsales"
+    },
+    {
+      "id": "sys-ex-remo-con-mancuerna-apoyado-en-banco-inclinado",
+      "url": "https://www.youtube.com/watch?v=roS6vXG3o1w",
+      "type": "video",
+      "title": "Remo con Mancuerna apoyado en Banco Inclinado",
+      "category": "exercise",
+      "isSystem": true,
+      "createdAt": "2026-06-09T18:52:11.236Z",
+      "muscleGroup": "Dorsales"
+    },
+    {
+      "id": "sys-ex-pull-down-unilateral-en-polea",
+      "url": "https://www.youtube.com/watch?v=P_m8_z_Lh-I",
+      "type": "video",
+      "title": "Pull-down unilateral en Polea",
+      "category": "exercise",
+      "isSystem": true,
+      "createdAt": "2026-06-09T18:52:11.236Z",
+      "muscleGroup": "Dorsales"
+    },
+    {
+      "id": "sys-ex-remo-pendlay",
+      "url": "https://www.youtube.com/watch?v=h4nOCa7HQHQ",
+      "type": "video",
+      "title": "Remo Pendlay",
+      "category": "exercise",
+      "isSystem": true,
+      "createdAt": "2026-06-09T18:52:11.236Z",
+      "muscleGroup": "Dorsales"
+    },
+    {
+      "id": "sys-ex-jalón-al-pecho-con-barra-en-v",
+      "url": "https://www.youtube.com/watch?v=G86L6_W8y-w",
+      "type": "video",
+      "title": "Jalón al Pecho con barra en V",
+      "category": "exercise",
+      "isSystem": true,
+      "createdAt": "2026-06-09T18:52:11.236Z",
+      "muscleGroup": "Dorsales"
+    },
+    {
+      "id": "sys-ex-remo-unilateral-en-máquina-convergente",
+      "url": "https://www.youtube.com/watch?v=roS6vXG3o1w",
+      "type": "video",
+      "title": "Remo unilateral en máquina convergente",
+      "category": "exercise",
+      "isSystem": true,
+      "createdAt": "2026-06-09T18:52:11.236Z",
+      "muscleGroup": "Dorsales"
+    },
+    {
+      "id": "sys-ex-jalón-al-pecho-unilateral",
+      "url": "https://www.youtube.com/watch?v=CAwf7n6Luuc",
+      "type": "video",
+      "title": "Jalón al Pecho Unilateral",
+      "category": "exercise",
+      "isSystem": true,
+      "createdAt": "2026-06-09T18:52:11.236Z",
+      "muscleGroup": "Dorsales"
+    },
+    {
+      "id": "sys-ex-pull-over-con-barra",
+      "url": "https://www.youtube.com/watch?v=FK4rj9Ps0uM",
+      "type": "video",
+      "title": "Pull-over con Barra",
+      "category": "exercise",
+      "isSystem": true,
+      "createdAt": "2026-06-09T18:52:11.236Z",
+      "muscleGroup": "Dorsales"
+    },
+    {
+      "id": "sys-ex-peso-muerto-rumano-(lumbares)",
+      "url": "https://www.youtube.com/watch?v=JCXUYuzz9Sg",
+      "type": "video",
+      "title": "Peso Muerto Rumano (Lumbares)",
+      "category": "exercise",
+      "isSystem": true,
+      "createdAt": "2026-06-09T18:52:11.236Z",
+      "muscleGroup": "Isquiotibiales"
+    },
+    {
+      "id": "sys-ex-buenos-días-con-barra",
+      "url": "https://www.youtube.com/watch?v=48S8vR3XUaA",
+      "type": "video",
+      "title": "Buenos Días con Barra",
+      "category": "exercise",
+      "isSystem": true,
+      "createdAt": "2026-06-09T18:52:11.236Z",
+      "muscleGroup": "Lumbares"
+    },
+    {
+      "id": "sys-ex-hiperextensiones-invertidas",
+      "url": "https://www.youtube.com/watch?v=ph3pddpKzzw",
+      "type": "video",
+      "title": "Hiperextensiones invertidas",
+      "category": "exercise",
+      "isSystem": true,
+      "createdAt": "2026-06-09T18:52:11.236Z",
+      "muscleGroup": "Lumbares"
+    },
+    {
+      "id": "sys-ex-peso-muerto-con-barra-hexagonal",
+      "url": "https://www.youtube.com/watch?v=ytGaGIn3SjE",
+      "type": "video",
+      "title": "Peso Muerto con Barra Hexagonal",
+      "category": "exercise",
+      "isSystem": true,
+      "createdAt": "2026-06-09T18:52:11.236Z",
+      "muscleGroup": "Lumbares"
+    },
+    {
+      "id": "sys-ex-extensión-lumbar-en-suelo-(supermans)",
+      "url": "https://www.youtube.com/watch?v=ph3pddpKzzw",
+      "type": "video",
+      "title": "Extensión Lumbar en Suelo (Supermans)",
+      "category": "exercise",
+      "isSystem": true,
+      "createdAt": "2026-06-09T18:52:11.236Z",
+      "muscleGroup": "Lumbares"
+    },
+    {
+      "id": "sys-ex-bird-dog-(perro-de-caza)",
+      "url": "https://www.youtube.com/watch?v=4XLEnwUr1gk",
+      "type": "video",
+      "title": "Bird Dog (Perro de caza)",
+      "category": "exercise",
+      "isSystem": true,
+      "createdAt": "2026-06-09T18:52:11.236Z",
+      "muscleGroup": "Lumbares"
+    },
+    {
+      "id": "sys-ex-puente-lumbar-isométrico",
+      "url": "https://www.youtube.com/watch?v=j6iT33H99e0",
+      "type": "video",
+      "title": "Puente Lumbar Isométrico",
+      "category": "exercise",
+      "isSystem": true,
+      "createdAt": "2026-06-09T18:52:11.236Z",
+      "muscleGroup": "Lumbares"
+    },
+    {
+      "id": "sys-ex-peso-muerto-sumo",
+      "url": "https://www.youtube.com/watch?v=ytGaGIn3SjE",
+      "type": "video",
+      "title": "Peso Muerto Sumo",
+      "category": "exercise",
+      "isSystem": true,
+      "createdAt": "2026-06-09T18:52:11.236Z",
+      "muscleGroup": "Lumbares"
+    },
+    {
+      "id": "sys-ex-cat-cow-(gato-camello)",
+      "url": "https://www.youtube.com/watch?v=TvxNkmjdhMM",
+      "type": "video",
+      "title": "Cat-Cow (Gato-Camello)",
+      "category": "exercise",
+      "isSystem": true,
+      "createdAt": "2026-06-09T18:52:11.236Z",
+      "muscleGroup": "Lumbares"
+    },
+    {
+      "id": "sys-ex-plancha-lumbar-/-inversa",
+      "url": "https://www.youtube.com/watch?v=TvxNkmjdhMM",
+      "type": "video",
+      "title": "Plancha Lumbar / Inversa",
+      "category": "exercise",
+      "isSystem": true,
+      "createdAt": "2026-06-09T18:52:11.236Z",
+      "muscleGroup": "Lumbares"
+    },
+    {
+      "id": "sys-ex-press-militar-(barra)",
+      "url": "https://www.youtube.com/watch?v=2yjwxtZ_Vkg",
+      "type": "video",
+      "title": "Press Militar (Barra)",
+      "category": "exercise",
+      "isSystem": true,
+      "createdAt": "2026-05-27T17:17:48.081Z",
+      "muscleGroup": "Hombros"
+    },
+    {
+      "id": "sys-ex-press-militar-(mancuernas)",
+      "url": "https://www.youtube.com/watch?v=hzV0is76j5I",
+      "type": "video",
+      "title": "Press Militar (Mancuernas)",
+      "category": "exercise",
+      "isSystem": true,
+      "createdAt": "2026-05-27T17:17:48.081Z",
+      "muscleGroup": "Hombros"
+    },
+    {
+      "id": "sys-ex-press-arnold",
+      "url": "https://www.youtube.com/watch?v=6mcHe6Pvefc",
+      "type": "video",
+      "title": "Press Arnold",
+      "category": "exercise",
+      "isSystem": true,
+      "createdAt": "2026-05-27T17:17:48.081Z",
+      "muscleGroup": "Hombros"
+    },
+    {
+      "id": "sys-ex-elevaciones-laterales-(mancuernas)",
+      "url": "https://www.youtube.com/watch?v=3VcKaXpzqRo",
+      "type": "video",
+      "title": "Elevaciones Laterales (Mancuernas)",
+      "category": "exercise",
+      "isSystem": true,
+      "createdAt": "2026-05-27T17:17:48.081Z",
+      "muscleGroup": "Hombros"
+    },
+    {
+      "id": "sys-ex-elevaciones-laterales-(polea)",
+      "url": "https://www.youtube.com/watch?v=PPrzBWZDOhA",
+      "type": "video",
+      "title": "Elevaciones Laterales (Polea)",
+      "category": "exercise",
+      "isSystem": true,
+      "createdAt": "2026-05-27T17:17:48.081Z",
+      "muscleGroup": "Hombros"
+    },
+    {
+      "id": "sys-ex-elevaciones-frontales-(mancuernas)",
+      "url": "https://www.youtube.com/watch?v=gzXoI26vT_o",
+      "type": "video",
+      "title": "Elevaciones Frontales (Mancuernas)",
+      "category": "exercise",
+      "isSystem": true,
+      "createdAt": "2026-05-27T17:17:48.081Z",
+      "muscleGroup": "Hombros"
+    },
+    {
+      "id": "sys-ex-pájaros-(mancuernas)",
+      "url": "https://www.youtube.com/watch?v=6yMdhi2DVao",
+      "type": "video",
+      "title": "Pájaros (Mancuernas)",
+      "category": "exercise",
+      "isSystem": true,
+      "createdAt": "2026-05-27T17:17:48.081Z",
+      "muscleGroup": "Hombros"
+    },
+    {
+      "id": "sys-ex-pájaros-(polea)",
+      "url": "https://www.youtube.com/watch?v=H530fW3KWfk",
+      "type": "video",
+      "title": "Pájaros (Polea)",
+      "category": "exercise",
+      "isSystem": true,
+      "createdAt": "2026-05-27T17:17:48.081Z",
+      "muscleGroup": "Hombros"
+    },
+    {
+      "id": "sys-ex-facepulls",
+      "url": "https://www.youtube.com/watch?v=V8dZ3on_D_Y",
+      "type": "video",
+      "title": "Facepulls",
+      "category": "exercise",
+      "isSystem": true,
+      "createdAt": "2026-05-27T17:17:48.081Z",
+      "muscleGroup": "Hombros"
+    },
+    {
+      "id": "sys-ex-encogimientos-de-hombros",
+      "url": "https://www.youtube.com/watch?v=g6qbq4u19OY",
+      "type": "video",
+      "title": "Encogimientos de Hombros",
+      "category": "exercise",
+      "isSystem": true,
+      "createdAt": "2026-05-27T17:17:48.081Z",
+      "muscleGroup": "Hombros"
+    },
+    {
+      "id": "sys-ex-remo-al-mentón-(barra-ez)",
+      "url": "https://www.youtube.com/watch?v=um3VVz_SIsg",
+      "type": "video",
+      "title": "Remo al Mentón (Barra EZ)",
+      "category": "exercise",
+      "isSystem": true,
+      "createdAt": "2026-05-27T17:17:48.081Z",
+      "muscleGroup": "Hombros"
+    },
+    {
+      "id": "sys-ex-pájaros-en-peck-deck-invertido",
+      "url": "https://www.youtube.com/watch?v=5yWTVfXNntc",
+      "type": "video",
+      "title": "Pájaros en Peck Deck Invertido",
+      "category": "exercise",
+      "isSystem": true,
+      "createdAt": "2026-05-27T17:17:48.081Z",
+      "muscleGroup": "Hombros"
+    },
+    {
+      "id": "sys-ex-press-militar-con-mancuernas-sentado",
+      "url": "https://www.youtube.com/watch?v=hzV0is76j5I",
+      "type": "video",
+      "title": "Press Militar con Mancuernas Sentado",
+      "category": "exercise",
+      "isSystem": true,
+      "createdAt": "2026-06-09T18:52:11.236Z",
+      "muscleGroup": "Hombros"
+    },
+    {
+      "id": "sys-ex-elevaciones-laterales-inclinadas-(mancuerna)",
+      "url": "https://www.youtube.com/watch?v=3VcKaXpzqRo",
+      "type": "video",
+      "title": "Elevaciones Laterales Inclinadas (Mancuerna)",
+      "category": "exercise",
+      "isSystem": true,
+      "createdAt": "2026-06-09T18:52:11.236Z",
+      "muscleGroup": "Hombros"
+    },
+    {
+      "id": "sys-ex-elevaciones-frontales-con-disco",
+      "url": "https://www.youtube.com/watch?v=gzXoI26vT_o",
+      "type": "video",
+      "title": "Elevaciones Frontales con Disco",
+      "category": "exercise",
+      "isSystem": true,
+      "createdAt": "2026-06-09T18:52:11.236Z",
+      "muscleGroup": "Hombros"
+    },
+    {
+      "id": "sys-ex-pájaros-sentado",
+      "url": "https://www.youtube.com/watch?v=6yMdhi2DVao",
+      "type": "video",
+      "title": "Pájaros Sentado",
+      "category": "exercise",
+      "isSystem": true,
+      "createdAt": "2026-06-09T18:52:11.236Z",
+      "muscleGroup": "Hombros"
+    },
+    {
+      "id": "sys-ex-press-de-hombros-en-máquina-smith",
+      "url": "https://www.youtube.com/watch?v=2yjwxtZ_Vkg",
+      "type": "video",
+      "title": "Press de Hombros en Máquina Smith",
+      "category": "exercise",
+      "isSystem": true,
+      "createdAt": "2026-06-09T18:52:11.236Z",
+      "muscleGroup": "Hombros"
+    },
+    {
+      "id": "sys-ex-elevaciones-laterales-unilaterales-en-polea",
+      "url": "https://www.youtube.com/watch?v=PPrzBWZDOhA",
+      "type": "video",
+      "title": "Elevaciones Laterales Unilaterales en Polea",
+      "category": "exercise",
+      "isSystem": true,
+      "createdAt": "2026-06-09T18:52:11.236Z",
+      "muscleGroup": "Hombros"
+    },
+    {
+      "id": "sys-ex-face-pull-en-polea-alta",
+      "url": "https://www.youtube.com/watch?v=V8dZ3on_D_Y",
+      "type": "video",
+      "title": "Face Pull en Polea Alta",
+      "category": "exercise",
+      "isSystem": true,
+      "createdAt": "2026-06-09T18:52:11.236Z",
+      "muscleGroup": "Hombros"
+    },
+    {
+      "id": "sys-ex-elevaciones-laterales-en-máquina",
+      "url": "https://www.youtube.com/watch?v=3VcKaXpzqRo",
+      "type": "video",
+      "title": "Elevaciones Laterales en Máquina",
+      "category": "exercise",
+      "isSystem": true,
+      "createdAt": "2026-06-09T18:52:11.236Z",
+      "muscleGroup": "Hombros"
+    },
+    {
+      "id": "sys-ex-press-militar-arrodillado-con-mancuerna",
+      "url": "https://www.youtube.com/watch?v=hzV0is76j5I",
+      "type": "video",
+      "title": "Press militar arrodillado con mancuerna",
+      "category": "exercise",
+      "isSystem": true,
+      "createdAt": "2026-06-09T18:52:11.236Z",
+      "muscleGroup": "Hombros"
+    },
+    {
+      "id": "sys-ex-elevaciones-frontales-con-polea",
+      "url": "https://www.youtube.com/watch?v=gzXoI26vT_o",
+      "type": "video",
+      "title": "Elevaciones Frontales con Polea",
+      "category": "exercise",
+      "isSystem": true,
+      "createdAt": "2026-06-09T18:52:11.236Z",
+      "muscleGroup": "Hombros"
+    },
+    {
+      "id": "sys-ex-sentadilla-libre-(barra)",
+      "url": "https://www.youtube.com/watch?v=SW_C1A-SHMA",
+      "type": "video",
+      "title": "Sentadilla Libre (Barra)",
+      "category": "exercise",
+      "isSystem": true,
+      "createdAt": "2026-05-27T17:17:48.081Z",
+      "muscleGroup": "Cuadriceps"
+    },
+    {
+      "id": "sys-ex-prensa-de-piernas-45º",
+      "url": "https://www.youtube.com/watch?v=yZ800I4r_0g",
+      "type": "video",
+      "title": "Prensa de Piernas 45º",
+      "category": "exercise",
+      "isSystem": true,
+      "createdAt": "2026-05-27T17:17:48.081Z",
+      "muscleGroup": "Cuadriceps"
+    },
+    {
+      "id": "sys-ex-extensiones-de-cuádriceps",
+      "url": "https://www.youtube.com/watch?v=YyvSfVLYd80",
+      "type": "video",
+      "title": "Extensiones de Cuádriceps",
+      "category": "exercise",
+      "isSystem": true,
+      "createdAt": "2026-05-27T17:17:48.081Z",
+      "muscleGroup": "Cuadriceps"
+    },
+    {
+      "id": "sys-ex-zancadas-caminando-(lunges)",
+      "url": "https://www.youtube.com/watch?v=D7KaRcUTQeE",
+      "type": "video",
+      "title": "Zancadas Caminando (Lunges)",
+      "category": "exercise",
+      "isSystem": true,
+      "createdAt": "2026-05-27T17:17:48.081Z",
+      "muscleGroup": "Cuadriceps"
+    },
+    {
+      "id": "sys-ex-sentadilla-búlgara-(foco-cuádriceps)",
+      "url": "https://www.youtube.com/watch?v=2C-uNgKwPLE",
+      "type": "video",
+      "title": "Sentadilla Búlgara (Foco Cuádriceps)",
+      "category": "exercise",
+      "isSystem": true,
+      "createdAt": "2026-05-27T17:17:48.081Z",
+      "muscleGroup": "Cuadriceps"
+    },
+    {
+      "id": "sys-ex-sentadilla-hack",
+      "url": "https://www.youtube.com/watch?v=EdSndmB-A7c",
+      "type": "video",
+      "title": "Sentadilla Hack",
+      "category": "exercise",
+      "isSystem": true,
+      "createdAt": "2026-05-27T17:17:48.081Z",
+      "muscleGroup": "Cuadriceps"
+    },
+    {
+      "id": "sys-ex-sentadilla-goblet",
+      "url": "https://www.youtube.com/watch?v=MeIiGibT6X0",
+      "type": "video",
+      "title": "Sentadilla Goblet",
+      "category": "exercise",
+      "isSystem": true,
+      "createdAt": "2026-05-27T17:17:48.081Z",
+      "muscleGroup": "Cuadriceps"
+    },
+    {
+      "id": "sys-ex-sentadilla-frontal-con-barra",
+      "url": "https://www.youtube.com/watch?v=SW_C1A-SHMA",
+      "type": "video",
+      "title": "Sentadilla Frontal con Barra",
+      "category": "exercise",
+      "isSystem": true,
+      "createdAt": "2026-06-09T18:52:11.236Z",
+      "muscleGroup": "Cuadriceps"
+    },
+    {
+      "id": "sys-ex-zancadas-con-mancuernas",
+      "url": "https://www.youtube.com/watch?v=D7KaRcUTQeE",
+      "type": "video",
+      "title": "Zancadas con Mancuernas",
+      "category": "exercise",
+      "isSystem": true,
+      "createdAt": "2026-06-09T18:52:11.236Z",
+      "muscleGroup": "Cuadriceps"
+    },
+    {
+      "id": "sys-ex-sentadilla-sissy",
+      "url": "https://www.youtube.com/watch?v=YyvSfVLYd80",
+      "type": "video",
+      "title": "Sentadilla Sissy",
+      "category": "exercise",
+      "isSystem": true,
+      "createdAt": "2026-06-09T18:52:11.236Z",
+      "muscleGroup": "Cuadriceps"
+    },
+    {
+      "id": "sys-ex-extensión-de-cuádriceps-unilateral",
+      "url": "https://www.youtube.com/watch?v=YyvSfVLYd80",
+      "type": "video",
+      "title": "Extensión de Cuádriceps unilateral",
+      "category": "exercise",
+      "isSystem": true,
+      "createdAt": "2026-06-09T18:52:11.236Z",
+      "muscleGroup": "Cuadriceps"
+    },
+    {
+      "id": "sys-ex-step-ups-con-mancuernas",
+      "url": "https://www.youtube.com/watch?v=9_C8p9pNc6U",
+      "type": "video",
+      "title": "Step Ups con Mancuernas",
+      "category": "exercise",
+      "isSystem": true,
+      "createdAt": "2026-06-09T18:52:11.236Z",
+      "muscleGroup": "Cuadriceps"
+    },
+    {
+      "id": "sys-ex-prensa-de-piernas-a-una-pierna",
+      "url": "https://www.youtube.com/watch?v=yZ800I4r_0g",
+      "type": "video",
+      "title": "Prensa de Piernas a una pierna",
+      "category": "exercise",
+      "isSystem": true,
+      "createdAt": "2026-06-09T18:52:11.236Z",
+      "muscleGroup": "Cuadriceps"
+    },
+    {
+      "id": "sys-ex-sentadilla-búlgara-con-mancuernas",
+      "url": "https://www.youtube.com/watch?v=2C-uNgKwPLE",
+      "type": "video",
+      "title": "Sentadilla Búlgara con Mancuernas",
+      "category": "exercise",
+      "isSystem": true,
+      "createdAt": "2026-06-09T18:52:11.236Z",
+      "muscleGroup": "Cuadriceps"
+    },
+    {
+      "id": "sys-ex-sentadilla-en-máquina-smith",
+      "url": "https://www.youtube.com/watch?v=SW_C1A-SHMA",
+      "type": "video",
+      "title": "Sentadilla en Máquina Smith",
+      "category": "exercise",
+      "isSystem": true,
+      "createdAt": "2026-06-09T18:52:11.236Z",
+      "muscleGroup": "Cuadriceps"
+    },
+    {
+      "id": "sys-ex-zancadas-invertidas",
+      "url": "https://www.youtube.com/watch?v=D7KaRcUTQeE",
+      "type": "video",
+      "title": "Zancadas invertidas",
+      "category": "exercise",
+      "isSystem": true,
+      "createdAt": "2026-06-09T18:52:11.236Z",
+      "muscleGroup": "Cuadriceps"
+    },
+    {
+      "id": "sys-ex-sentadilla-isométrica-apoyada-en-pared",
+      "url": "https://www.youtube.com/watch?v=SW_C1A-SHMA",
+      "type": "video",
+      "title": "Sentadilla isométrica apoyada en pared",
+      "category": "exercise",
+      "isSystem": true,
+      "createdAt": "2026-06-09T18:52:11.236Z",
+      "muscleGroup": "Cuadriceps"
+    },
+    {
+      "id": "sys-ex-curl-femoral-tumbado",
+      "url": "https://www.youtube.com/watch?v=1Tq3QdAUUoI",
+      "type": "video",
+      "title": "Curl Femoral Tumbado",
+      "category": "exercise",
+      "isSystem": true,
+      "createdAt": "2026-05-27T17:17:48.081Z",
+      "muscleGroup": "Isquiotibiales"
+    },
+    {
+      "id": "sys-ex-curl-femoral-sentado",
+      "url": "https://www.youtube.com/watch?v=F488k66OZuE",
+      "type": "video",
+      "title": "Curl Femoral Sentado",
+      "category": "exercise",
+      "isSystem": true,
+      "createdAt": "2026-05-27T17:17:48.081Z",
+      "muscleGroup": "Isquiotibiales"
+    },
+    {
+      "id": "sys-ex-peso-muerto-rumano-(isquios)",
+      "url": "https://www.youtube.com/watch?v=JCXUYuzz9Sg",
+      "type": "video",
+      "title": "Peso Muerto Rumano (Isquios)",
+      "category": "exercise",
+      "isSystem": true,
+      "createdAt": "2026-05-27T17:17:48.081Z",
+      "muscleGroup": "Isquiotibiales"
+    },
+    {
+      "id": "sys-ex-peso-muerto-rumano-con-mancuernas",
+      "url": "https://www.youtube.com/watch?v=JCXUYuzz9Sg",
+      "type": "video",
+      "title": "Peso Muerto Rumano con Mancuernas",
+      "category": "exercise",
+      "isSystem": true,
+      "createdAt": "2026-06-09T18:52:11.236Z",
+      "muscleGroup": "Isquiotibiales"
+    },
+    {
+      "id": "sys-ex-curl-femoral-de-pie-en-máquina",
+      "url": "https://www.youtube.com/watch?v=F488k66OZuE",
+      "type": "video",
+      "title": "Curl Femoral de Pie en Máquina",
+      "category": "exercise",
+      "isSystem": true,
+      "createdAt": "2026-06-09T18:52:11.236Z",
+      "muscleGroup": "Isquiotibiales"
+    },
+    {
+      "id": "sys-ex-curl-femoral-con-fitball",
+      "url": "https://www.youtube.com/watch?v=1Tq3QdAUUoI",
+      "type": "video",
+      "title": "Curl Femoral con Fitball",
+      "category": "exercise",
+      "isSystem": true,
+      "createdAt": "2026-06-09T18:52:11.236Z",
+      "muscleGroup": "Isquiotibiales"
+    },
+    {
+      "id": "sys-ex-peso-muerto-rumano-unilateral",
+      "url": "https://www.youtube.com/watch?v=JCXUYuzz9Sg",
+      "type": "video",
+      "title": "Peso Muerto Rumano Unilateral",
+      "category": "exercise",
+      "isSystem": true,
+      "createdAt": "2026-06-09T18:52:11.236Z",
+      "muscleGroup": "Isquiotibiales"
+    },
+    {
+      "id": "sys-ex-buenos-días-con-mancuernas",
+      "url": "https://www.youtube.com/watch?v=JCXUYuzz9Sg",
+      "type": "video",
+      "title": "Buenos Días con Mancuernas",
+      "category": "exercise",
+      "isSystem": true,
+      "createdAt": "2026-06-09T18:52:11.236Z",
+      "muscleGroup": "Isquiotibiales"
+    },
+    {
+      "id": "sys-ex-curl-femoral-con-mancuerna-entre-pies",
+      "url": "https://www.youtube.com/watch?v=1Tq3QdAUUoI",
+      "type": "video",
+      "title": "Curl Femoral con Mancuerna entre pies",
+      "category": "exercise",
+      "isSystem": true,
+      "createdAt": "2026-06-09T18:52:11.236Z",
+      "muscleGroup": "Isquiotibiales"
+    },
+    {
+      "id": "sys-ex-glute-ham-raise-(ghr)",
+      "url": "https://www.youtube.com/watch?v=F488k66OZuE",
+      "type": "video",
+      "title": "Glute-Ham Raise (GHR)",
+      "category": "exercise",
+      "isSystem": true,
+      "createdAt": "2026-06-09T18:52:11.236Z",
+      "muscleGroup": "Isquiotibiales"
+    },
+    {
+      "id": "sys-ex-curl-de-piernas-sentado-unilateral",
+      "url": "https://www.youtube.com/watch?v=F488k66OZuE",
+      "type": "video",
+      "title": "Curl de Piernas Sentado Unilateral",
+      "category": "exercise",
+      "isSystem": true,
+      "createdAt": "2026-06-09T18:52:11.236Z",
+      "muscleGroup": "Isquiotibiales"
+    },
+    {
+      "id": "sys-ex-curl-femoral-en-polea",
+      "url": "https://www.youtube.com/watch?v=1Tq3QdAUUoI",
+      "type": "video",
+      "title": "Curl Femoral en Polea",
+      "category": "exercise",
+      "isSystem": true,
+      "createdAt": "2026-06-09T18:52:11.236Z",
+      "muscleGroup": "Isquiotibiales"
+    },
+    {
+      "id": "sys-ex-peso-muerto-rumano-con-barra-hexagonal",
+      "url": "https://www.youtube.com/watch?v=JCXUYuzz9Sg",
+      "type": "video",
+      "title": "Peso Muerto Rumano con barra hexagonal",
+      "category": "exercise",
+      "isSystem": true,
+      "createdAt": "2026-06-09T18:52:11.236Z",
+      "muscleGroup": "Isquiotibiales"
+    },
+    {
+      "id": "sys-ex-elevación-de-gemelos-(de-pie)",
+      "url": "https://www.youtube.com/watch?v=gwLzBJYoWlI",
+      "type": "video",
+      "title": "Elevación de Gemelos (De pie)",
+      "category": "exercise",
+      "isSystem": true,
+      "createdAt": "2026-05-27T17:17:48.081Z",
+      "muscleGroup": "Gemelos"
+    },
+    {
+      "id": "sys-ex-elevación-de-gemelos-(sentado)",
+      "url": "https://www.youtube.com/watch?v=JbyjN7BW3ic",
+      "type": "video",
+      "title": "Elevación de Gemelos (Sentado)",
+      "category": "exercise",
+      "isSystem": true,
+      "createdAt": "2026-05-27T17:17:48.081Z",
+      "muscleGroup": "Gemelos"
+    },
+    {
+      "id": "sys-ex-elevación-de-gemelos-en-prensa",
+      "url": "https://www.youtube.com/watch?v=gwLzBJYoWlI",
+      "type": "video",
+      "title": "Elevación de Gemelos en Prensa",
+      "category": "exercise",
+      "isSystem": true,
+      "createdAt": "2026-06-09T18:52:11.236Z",
+      "muscleGroup": "Gemelos"
+    },
+    {
+      "id": "sys-ex-elevación-de-gemelos-tipo-burro-(donkey-raises)",
+      "url": "https://www.youtube.com/watch?v=JbyjN7BW3ic",
+      "type": "video",
+      "title": "Elevación de Gemelos tipo Burro (Donkey Raises)",
+      "category": "exercise",
+      "isSystem": true,
+      "createdAt": "2026-06-09T18:52:11.236Z",
+      "muscleGroup": "Gemelos"
+    },
+    {
+      "id": "sys-ex-elevación-de-gemelos-unilateral",
+      "url": "https://www.youtube.com/watch?v=gwLzBJYoWlI",
+      "type": "video",
+      "title": "Elevación de Gemelos Unilateral",
+      "category": "exercise",
+      "isSystem": true,
+      "createdAt": "2026-06-09T18:52:11.236Z",
+      "muscleGroup": "Gemelos"
+    },
+    {
+      "id": "sys-ex-elevación-de-gemelos-en-sentadilla-hack",
+      "url": "https://www.youtube.com/watch?v=gwLzBJYoWlI",
+      "type": "video",
+      "title": "Elevación de Gemelos en Sentadilla Hack",
+      "category": "exercise",
+      "isSystem": true,
+      "createdAt": "2026-06-09T18:52:11.236Z",
+      "muscleGroup": "Gemelos"
+    },
+    {
+      "id": "sys-ex-elevación-de-gemelos-en-suelo-sin-peso",
+      "url": "https://www.youtube.com/watch?v=gwLzBJYoWlI",
+      "type": "video",
+      "title": "Elevación de Gemelos en Suelo sin peso",
+      "category": "exercise",
+      "isSystem": true,
+      "createdAt": "2026-06-09T18:52:11.236Z",
+      "muscleGroup": "Gemelos"
+    },
+    {
+      "id": "sys-ex-paseo-del-granjero-de-puntillas",
+      "url": "https://www.youtube.com/watch?v=dFzUjzuW_2M",
+      "type": "video",
+      "title": "Paseo del granjero de puntillas",
+      "category": "exercise",
+      "isSystem": true,
+      "createdAt": "2026-06-09T18:52:11.236Z",
+      "muscleGroup": "Gemelos"
+    },
+    {
+      "id": "sys-ex-elevación-de-gemelos-sentado-con-mancuerna",
+      "url": "https://www.youtube.com/watch?v=JbyjN7BW3ic",
+      "type": "video",
+      "title": "Elevación de Gemelos sentado con Mancuerna",
+      "category": "exercise",
+      "isSystem": true,
+      "createdAt": "2026-06-09T18:52:11.236Z",
+      "muscleGroup": "Gemelos"
+    },
+    {
+      "id": "sys-ex-elevación-de-gemelos-con-barra-de-pie",
+      "url": "https://www.youtube.com/watch?v=gwLzBJYoWlI",
+      "type": "video",
+      "title": "Elevación de Gemelos con Barra de pie",
+      "category": "exercise",
+      "isSystem": true,
+      "createdAt": "2026-06-09T18:52:11.236Z",
+      "muscleGroup": "Gemelos"
+    },
+    {
+      "id": "sys-ex-elevación-de-gemelos-con-tensor-elástico",
+      "url": "https://www.youtube.com/watch?v=gwLzBJYoWlI",
+      "type": "video",
+      "title": "Elevación de Gemelos con tensor elástico",
+      "category": "exercise",
+      "isSystem": true,
+      "createdAt": "2026-06-09T18:52:11.236Z",
+      "muscleGroup": "Gemelos"
+    },
+    {
+      "id": "sys-ex-saltos-a-la-comba-de-puntillas",
+      "url": "https://www.youtube.com/watch?v=JbyjN7BW3ic",
+      "type": "video",
+      "title": "Saltos a la comba de puntillas",
+      "category": "exercise",
+      "isSystem": true,
+      "createdAt": "2026-06-09T18:52:11.236Z",
+      "muscleGroup": "Gemelos"
+    },
+    {
+      "id": "sys-ex-hip-thrust-(barra)",
+      "url": "https://www.youtube.com/watch?v=SEDZFull6pQ",
+      "type": "video",
+      "title": "Hip Thrust (Barra)",
+      "category": "exercise",
+      "isSystem": true,
+      "createdAt": "2026-05-27T17:17:48.081Z",
+      "muscleGroup": "Glúteos"
+    },
+    {
+      "id": "sys-ex-puente-de-glúteo-(barra)",
+      "url": "https://www.youtube.com/watch?v=j6iT33H99e0",
+      "type": "video",
+      "title": "Puente de Glúteo (Barra)",
+      "category": "exercise",
+      "isSystem": true,
+      "createdAt": "2026-05-27T17:17:48.081Z",
+      "muscleGroup": "Glúteos"
+    },
+    {
+      "id": "sys-ex-patada-de-glúteo-en-polea",
+      "url": "https://www.youtube.com/watch?v=N_p2U_62jG8",
+      "type": "video",
+      "title": "Patada de Glúteo en Polea",
+      "category": "exercise",
+      "isSystem": true,
+      "createdAt": "2026-05-27T17:17:48.081Z",
+      "muscleGroup": "Glúteos"
+    },
+    {
+      "id": "sys-ex-abducciones-en-máquina",
+      "url": "https://www.youtube.com/watch?v=NpZp824T3lE",
+      "type": "video",
+      "title": "Abducciones en Máquina",
+      "category": "exercise",
+      "isSystem": true,
+      "createdAt": "2026-05-27T17:17:48.081Z",
+      "muscleGroup": "Glúteos"
+    },
+    {
+      "id": "sys-ex-zancada-búlgara-(foco-glúteo)",
+      "url": "https://www.youtube.com/watch?v=2C-uNgKwPLE",
+      "type": "video",
+      "title": "Zancada Búlgara (Foco Glúteo)",
+      "category": "exercise",
+      "isSystem": true,
+      "createdAt": "2026-05-27T17:17:48.081Z",
+      "muscleGroup": "Glúteos"
+    },
+    {
+      "id": "sys-ex-step-up-(cajón-alto)",
+      "url": "https://www.youtube.com/watch?v=9_C8p9pNc6U",
+      "type": "video",
+      "title": "Step Up (Cajón Alto)",
+      "category": "exercise",
+      "isSystem": true,
+      "createdAt": "2026-05-27T17:17:48.081Z",
+      "muscleGroup": "Glúteos"
+    },
+    {
+      "id": "sys-ex-abducciones-en-polea",
+      "url": "https://www.youtube.com/watch?v=NpZp824F3lE",
+      "type": "video",
+      "title": "Abducciones en Polea",
+      "category": "exercise",
+      "isSystem": true,
+      "createdAt": "2026-05-27T17:17:48.081Z",
+      "muscleGroup": "Glúteos"
+    },
+    {
+      "id": "sys-ex-hip-thrust-con-mancuerna",
+      "url": "https://www.youtube.com/watch?v=SEDZFull6pQ",
+      "type": "video",
+      "title": "Hip Thrust con Mancuerna",
+      "category": "exercise",
+      "isSystem": true,
+      "createdAt": "2026-06-09T18:52:11.236Z",
+      "muscleGroup": "Glúteos"
+    },
+    {
+      "id": "sys-ex-patadas-de-glúteo-en-suelo-(quadruped-hip-extension)",
+      "url": "https://www.youtube.com/watch?v=N_p2U_62jG8",
+      "type": "video",
+      "title": "Patadas de Glúteo en Suelo (Quadruped Hip Extension)",
+      "category": "exercise",
+      "isSystem": true,
+      "createdAt": "2026-06-09T18:52:11.236Z",
+      "muscleGroup": "Glúteos"
+    },
+    {
+      "id": "sys-ex-puentes-de-glúteo-unilaterales",
+      "url": "https://www.youtube.com/watch?v=j6iT33H99e0",
+      "type": "video",
+      "title": "Puentes de Glúteo Unilaterales",
+      "category": "exercise",
+      "isSystem": true,
+      "createdAt": "2026-06-09T18:52:11.236Z",
+      "muscleGroup": "Glúteos"
+    },
+    {
+      "id": "sys-ex-frog-pumps-(puente-de-glúteo-rana)",
+      "url": "https://www.youtube.com/watch?v=j6iT33H99e0",
+      "type": "video",
+      "title": "Frog Pumps (Puente de Glúteo Rana)",
+      "category": "exercise",
+      "isSystem": true,
+      "createdAt": "2026-06-09T18:52:11.236Z",
+      "muscleGroup": "Glúteos"
+    },
+    {
+      "id": "sys-ex-zancadas-cruzadas-(curtsy-lunges)",
+      "url": "https://www.youtube.com/watch?v=2C-uNgKwPLE",
+      "type": "video",
+      "title": "Zancadas cruzadas (Curtsy Lunges)",
+      "category": "exercise",
+      "isSystem": true,
+      "createdAt": "2026-06-09T18:52:11.236Z",
+      "muscleGroup": "Glúteos"
+    },
+    {
+      "id": "sys-ex-extensión-de-cadera-en-banco-inclinado",
+      "url": "https://www.youtube.com/watch?v=NpZp824T3lE",
+      "type": "video",
+      "title": "Extensión de cadera en banco inclinado",
+      "category": "exercise",
+      "isSystem": true,
+      "createdAt": "2026-06-09T18:52:11.236Z",
+      "muscleGroup": "Glúteos"
+    },
+    {
+      "id": "sys-ex-caminata-lateral-con-banda-elástica-(monster-walk)",
+      "url": "https://www.youtube.com/watch?v=NpZp824T3lE",
+      "type": "video",
+      "title": "Caminata lateral con banda elástica (Monster Walk)",
+      "category": "exercise",
+      "isSystem": true,
+      "createdAt": "2026-06-09T18:52:11.236Z",
+      "muscleGroup": "Glúteos"
+    },
+    {
+      "id": "sys-ex-peso-muerto-rumano-enfocado-en-glúteos",
+      "url": "https://www.youtube.com/watch?v=SEDZFull6pQ",
+      "type": "video",
+      "title": "Peso muerto rumano enfocado en glúteos",
+      "category": "exercise",
+      "isSystem": true,
+      "createdAt": "2026-06-09T18:52:11.236Z",
+      "muscleGroup": "Isquiotibiales"
+    },
+    {
+      "id": "sys-ex-sentadilla-sumo-con-mancuerna",
+      "url": "https://www.youtube.com/watch?v=9_C8p9pNc6U",
+      "type": "video",
+      "title": "Sentadilla Sumo con Mancuerna",
+      "category": "exercise",
+      "isSystem": true,
+      "createdAt": "2026-06-09T18:52:11.236Z",
+      "muscleGroup": "Glúteos"
+    },
+    {
+      "id": "sys-ex-abducciones-de-cadera-tumbado-(clamshells)",
+      "url": "https://www.youtube.com/watch?v=NpZp824T3lE",
+      "type": "video",
+      "title": "Abducciones de cadera tumbado (Clamshells)",
+      "category": "exercise",
+      "isSystem": true,
+      "createdAt": "2026-06-09T18:52:11.236Z",
+      "muscleGroup": "Glúteos"
+    },
+    {
+      "id": "sys-ex-curl-con-barra-z",
+      "url": "https://www.youtube.com/watch?v=LY1V6p-XvJk",
+      "type": "video",
+      "title": "Curl con Barra Z",
+      "category": "exercise",
+      "isSystem": true,
+      "createdAt": "2026-05-27T17:17:48.081Z",
+      "muscleGroup": "Biceps"
+    },
+    {
+      "id": "sys-ex-curl-martillo",
+      "url": "https://www.youtube.com/watch?v=zC3nLlEvin4",
+      "type": "video",
+      "title": "Curl Martillo",
+      "category": "exercise",
+      "isSystem": true,
+      "createdAt": "2026-05-27T17:17:48.081Z",
+      "muscleGroup": "Biceps"
+    },
+    {
+      "id": "sys-ex-curl-predicador-(scott)",
+      "url": "https://www.youtube.com/watch?v=fIWP-FRFNU0",
+      "type": "video",
+      "title": "Curl Predicador (Scott)",
+      "category": "exercise",
+      "isSystem": true,
+      "createdAt": "2026-05-27T17:17:48.081Z",
+      "muscleGroup": "Biceps"
+    },
+    {
+      "id": "sys-ex-curl-alterno-(mancuernas)",
+      "url": "https://www.youtube.com/watch?v=sAq_ocpRh_I",
+      "type": "video",
+      "title": "Curl Alterno (Mancuernas)",
+      "category": "exercise",
+      "isSystem": true,
+      "createdAt": "2026-05-27T17:17:48.081Z",
+      "muscleGroup": "Biceps"
+    },
+    {
+      "id": "sys-ex-curl-concentrado",
+      "url": "https://www.youtube.com/watch?v=v0ZStv9fU8k",
+      "type": "video",
+      "title": "Curl Concentrado",
+      "category": "exercise",
+      "isSystem": true,
+      "createdAt": "2026-05-27T17:17:48.082Z",
+      "muscleGroup": "Biceps"
+    },
+    {
+      "id": "sys-ex-curl-en-polea-baja",
+      "url": "https://www.youtube.com/watch?v=AsAVbgh8Syg",
+      "type": "video",
+      "title": "Curl en Polea Baja",
+      "category": "exercise",
+      "isSystem": true,
+      "createdAt": "2026-05-27T17:17:48.082Z",
+      "muscleGroup": "Biceps"
+    },
+    {
+      "id": "sys-ex-curl-de-bíceps-en-banco-inclinado",
+      "url": "https://www.youtube.com/watch?v=sAq_ocpRh_I",
+      "type": "video",
+      "title": "Curl de Bíceps en Banco Inclinado",
+      "category": "exercise",
+      "isSystem": true,
+      "createdAt": "2026-06-09T18:52:11.236Z",
+      "muscleGroup": "Biceps"
+    },
+    {
+      "id": "sys-ex-curl-spider-(araña)-en-banco",
+      "url": "https://www.youtube.com/watch?v=fIWP-FRFNU0",
+      "type": "video",
+      "title": "Curl Spider (Araña) en Banco",
+      "category": "exercise",
+      "isSystem": true,
+      "createdAt": "2026-06-09T18:52:11.236Z",
+      "muscleGroup": "Biceps"
+    },
+    {
+      "id": "sys-ex-curl-de-bíceps-zottman",
+      "url": "https://www.youtube.com/watch?v=LY1V6p-XvJk",
+      "type": "video",
+      "title": "Curl de Bíceps Zottman",
+      "category": "exercise",
+      "isSystem": true,
+      "createdAt": "2026-06-09T18:52:11.236Z",
+      "muscleGroup": "Biceps"
+    },
+    {
+      "id": "sys-ex-curl-concentrado-apoyado-en-muslo",
+      "url": "https://www.youtube.com/watch?v=v0ZStv9fU8k",
+      "type": "video",
+      "title": "Curl Concentrado apoyado en Muslo",
+      "category": "exercise",
+      "isSystem": true,
+      "createdAt": "2026-06-09T18:52:11.236Z",
+      "muscleGroup": "Biceps"
+    },
+    {
+      "id": "sys-ex-curl-de-bíceps-con-barra-recta",
+      "url": "https://www.youtube.com/watch?v=AsAVbgh8Syg",
+      "type": "video",
+      "title": "Curl de Bíceps con Barra Recta",
+      "category": "exercise",
+      "isSystem": true,
+      "createdAt": "2026-06-09T18:52:11.236Z",
+      "muscleGroup": "Biceps"
+    },
+    {
+      "id": "sys-ex-curl-de-bíceps-en-polea-con-cuerda",
+      "url": "https://www.youtube.com/watch?v=AsAVbgh8Syg",
+      "type": "video",
+      "title": "Curl de Bíceps en Polea con Cuerda",
+      "category": "exercise",
+      "isSystem": true,
+      "createdAt": "2026-06-09T18:52:11.236Z",
+      "muscleGroup": "Biceps"
+    },
+    {
+      "id": "sys-ex-curl-martillo-con-polea",
+      "url": "https://www.youtube.com/watch?v=zC3nLlEvin4",
+      "type": "video",
+      "title": "Curl Martillo con Polea",
+      "category": "exercise",
+      "isSystem": true,
+      "createdAt": "2026-06-09T18:52:11.236Z",
+      "muscleGroup": "Biceps"
+    },
+    {
+      "id": "sys-ex-curl-predicador-con-mancuerna",
+      "url": "https://www.youtube.com/watch?v=fIWP-FRFNU0",
+      "type": "video",
+      "title": "Curl Predicador con Mancuerna",
+      "category": "exercise",
+      "isSystem": true,
+      "createdAt": "2026-06-09T18:52:11.236Z",
+      "muscleGroup": "Biceps"
+    },
+    {
+      "id": "sys-ex-curl-de-bíceps-unilateral-apoyado-en-rodilla",
+      "url": "https://www.youtube.com/watch?v=v0ZStv9fU8k",
+      "type": "video",
+      "title": "Curl de Bíceps Unilateral apoyado en rodilla",
+      "category": "exercise",
+      "isSystem": true,
+      "createdAt": "2026-06-09T18:52:11.236Z",
+      "muscleGroup": "Biceps"
+    },
+    {
+      "id": "sys-ex-curl-de-bíceps-en-pronación-(invertido)",
+      "url": "https://www.youtube.com/watch?v=LY1V6p-XvJk",
+      "type": "video",
+      "title": "Curl de Bíceps en Pronación (Invertido)",
+      "category": "exercise",
+      "isSystem": true,
+      "createdAt": "2026-06-09T18:52:11.236Z",
+      "muscleGroup": "Biceps"
+    },
+    {
+      "id": "sys-ex-press-francés",
+      "url": "https://www.youtube.com/watch?v=1u1_NreL7mU",
+      "type": "video",
+      "title": "Press Francés",
+      "category": "exercise",
+      "isSystem": true,
+      "createdAt": "2026-05-27T17:17:48.082Z",
+      "muscleGroup": "Triceps"
+    },
+    {
+      "id": "sys-ex-extensiones-en-polea-alta",
+      "url": "https://www.youtube.com/watch?v=2-LAMcpzHLU",
+      "type": "video",
+      "title": "Extensiones en Polea Alta",
+      "category": "exercise",
+      "isSystem": true,
+      "createdAt": "2026-05-27T17:17:48.082Z",
+      "muscleGroup": "Triceps"
+    },
+    {
+      "id": "sys-ex-patada-de-tríceps-(polea)",
+      "url": "https://www.youtube.com/watch?v=6SS6K3lAwZ8",
+      "type": "video",
+      "title": "Patada de Tríceps (Polea)",
+      "category": "exercise",
+      "isSystem": true,
+      "createdAt": "2026-05-27T17:17:48.082Z",
+      "muscleGroup": "Triceps"
+    },
+    {
+      "id": "sys-ex-press-de-banca-estrecho",
+      "url": "https://www.youtube.com/watch?v=wX-EPr_x4_A",
+      "type": "video",
+      "title": "Press de Banca Estrecho",
+      "category": "exercise",
+      "isSystem": true,
+      "createdAt": "2026-05-27T17:17:48.082Z",
+      "muscleGroup": "Triceps"
+    },
+    {
+      "id": "sys-ex-extensiones-tras-nuca",
+      "url": "https://www.youtube.com/watch?v=6XhS6_q1Vtc",
+      "type": "video",
+      "title": "Extensiones tras nuca",
+      "category": "exercise",
+      "isSystem": true,
+      "createdAt": "2026-05-27T17:17:48.082Z",
+      "muscleGroup": "Triceps"
+    },
+    {
+      "id": "sys-ex-patada-de-tríceps-con-mancuerna",
+      "url": "https://www.youtube.com/watch?v=6SS6K3lAwZ8",
+      "type": "video",
+      "title": "Patada de Tríceps con Mancuerna",
+      "category": "exercise",
+      "isSystem": true,
+      "createdAt": "2026-06-09T18:52:11.236Z",
+      "muscleGroup": "Triceps"
+    },
+    {
+      "id": "sys-ex-fondos-entre-bancos-(tríceps)",
+      "url": "https://www.youtube.com/watch?v=2z8JmcrW-As",
+      "type": "video",
+      "title": "Fondos entre Bancos (Tríceps)",
+      "category": "exercise",
+      "isSystem": true,
+      "createdAt": "2026-06-09T18:52:11.236Z",
+      "muscleGroup": "Triceps"
+    },
+    {
+      "id": "sys-ex-press-francés-con-mancuernas",
+      "url": "https://www.youtube.com/watch?v=1u1_NreL7mU",
+      "type": "video",
+      "title": "Press Francés con Mancuernas",
+      "category": "exercise",
+      "isSystem": true,
+      "createdAt": "2026-06-09T18:52:11.236Z",
+      "muscleGroup": "Triceps"
+    },
+    {
+      "id": "sys-ex-extensión-de-tríceps-por-encima-de-la-cabeza-en-polea",
+      "url": "https://www.youtube.com/watch?v=6XhS6_q1Vtc",
+      "type": "video",
+      "title": "Extensión de Tríceps por encima de la cabeza en Polea",
+      "category": "exercise",
+      "isSystem": true,
+      "createdAt": "2026-06-09T18:52:11.236Z",
+      "muscleGroup": "Triceps"
+    },
+    {
+      "id": "sys-ex-fondos-en-máquina-para-tríceps",
+      "url": "https://www.youtube.com/watch?v=2z8JmcrW-As",
+      "type": "video",
+      "title": "Fondos en Máquina para Tríceps",
+      "category": "exercise",
+      "isSystem": true,
+      "createdAt": "2026-06-09T18:52:11.236Z",
+      "muscleGroup": "Triceps"
+    },
+    {
+      "id": "sys-ex-rompecráneos-(skull-crushers)-con-barra-ez",
+      "url": "https://www.youtube.com/watch?v=1u1_NreL7mU",
+      "type": "video",
+      "title": "Rompecráneos (Skull Crushers) con barra EZ",
+      "category": "exercise",
+      "isSystem": true,
+      "createdAt": "2026-06-09T18:52:11.236Z",
+      "muscleGroup": "Triceps"
+    },
+    {
+      "id": "sys-ex-extensión-de-tríceps-unilateral-en-polea",
+      "url": "https://www.youtube.com/watch?v=2-LAMcpzHLU",
+      "type": "video",
+      "title": "Extensión de Tríceps unilateral en Polea",
+      "category": "exercise",
+      "isSystem": true,
+      "createdAt": "2026-06-09T18:52:11.236Z",
+      "muscleGroup": "Triceps"
+    },
+    {
+      "id": "sys-ex-flexiones-de-diamante-en-banco",
+      "url": "https://www.youtube.com/watch?v=wX-EPr_x4_A",
+      "type": "video",
+      "title": "Flexiones de diamante en banco",
+      "category": "exercise",
+      "isSystem": true,
+      "createdAt": "2026-06-09T18:52:11.236Z",
+      "muscleGroup": "Triceps"
+    },
+    {
+      "id": "sys-ex-extensión-de-tríceps-con-mancuerna-a-dos-manos",
+      "url": "https://www.youtube.com/watch?v=6XhS6_q1Vtc",
+      "type": "video",
+      "title": "Extensión de Tríceps con mancuerna a dos manos",
+      "category": "exercise",
+      "isSystem": true,
+      "createdAt": "2026-06-09T18:52:11.236Z",
+      "muscleGroup": "Triceps"
+    },
+    {
+      "id": "sys-ex-extensiones-de-tríceps-con-cuerda-invertida",
+      "url": "https://www.youtube.com/watch?v=2-LAMcpzHLU",
+      "type": "video",
+      "title": "Extensiones de Tríceps con Cuerda invertida",
+      "category": "exercise",
+      "isSystem": true,
+      "createdAt": "2026-06-09T18:52:11.236Z",
+      "muscleGroup": "Triceps"
+    },
+    {
+      "id": "sys-ex-curl-de-muñeca-en-pronación-con-barra",
+      "url": "https://www.youtube.com/watch?v=LY1V6p-XvJk",
+      "type": "video",
+      "title": "Curl de Muñeca en Pronación con Barra",
+      "category": "exercise",
+      "isSystem": true,
+      "createdAt": "2026-06-09T18:52:11.236Z",
+      "muscleGroup": "Antebrazo"
+    },
+    {
+      "id": "sys-ex-curl-de-muñeca-en-supinación-con-barra",
+      "url": "https://www.youtube.com/watch?v=LY1V6p-XvJk",
+      "type": "video",
+      "title": "Curl de Muñeca en Supinación con Barra",
+      "category": "exercise",
+      "isSystem": true,
+      "createdAt": "2026-06-09T18:52:11.236Z",
+      "muscleGroup": "Antebrazo"
+    },
+    {
+      "id": "sys-ex-paseo-del-granjero-(farmer's-walk)",
+      "url": "https://www.youtube.com/watch?v=dFzUjzuW_2M",
+      "type": "video",
+      "title": "Paseo del Granjero (Farmer's Walk)",
+      "category": "exercise",
+      "isSystem": true,
+      "createdAt": "2026-06-09T18:52:11.236Z",
+      "muscleGroup": "Antebrazo"
+    },
+    {
+      "id": "sys-ex-curl-invertido-con-barra-z-(foco-antebrazo)",
+      "url": "https://www.youtube.com/watch?v=LY1V6p-XvJk",
+      "type": "video",
+      "title": "Curl Invertido con barra Z (Foco Antebrazo)",
+      "category": "exercise",
+      "isSystem": true,
+      "createdAt": "2026-06-09T18:52:11.236Z",
+      "muscleGroup": "Antebrazo"
+    },
+    {
+      "id": "sys-ex-rotaciones-de-muñeca-con-mancuerna",
+      "url": "https://www.youtube.com/watch?v=v0ZStv9fU8k",
+      "type": "video",
+      "title": "Rotaciones de muñeca con Mancuerna",
+      "category": "exercise",
+      "isSystem": true,
+      "createdAt": "2026-06-09T18:52:11.236Z",
+      "muscleGroup": "Antebrazo"
+    },
+    {
+      "id": "sys-ex-cuelgue-pasivo-en-barra-(dead-hang)",
+      "url": "https://www.youtube.com/watch?v=eGo4IYlbE5g",
+      "type": "video",
+      "title": "Cuelgue Pasivo en Barra (Dead Hang)",
+      "category": "exercise",
+      "isSystem": true,
+      "createdAt": "2026-06-09T18:52:11.236Z",
+      "muscleGroup": "Antebrazo"
+    },
+    {
+      "id": "sys-ex-curl-martillo-con-mancuernas-(foco-braquiorradial)",
+      "url": "https://www.youtube.com/watch?v=zC3nLlEvin4",
+      "type": "video",
+      "title": "Curl Martillo con Mancuernas (Foco Braquiorradial)",
+      "category": "exercise",
+      "isSystem": true,
+      "createdAt": "2026-06-09T18:52:11.236Z",
+      "muscleGroup": "Antebrazo"
+    },
+    {
+      "id": "sys-ex-enrollamiento-de-cuerda-con-peso-(wrist-roller)",
+      "url": "https://www.youtube.com/watch?v=LY1V6p-XvJk",
+      "type": "video",
+      "title": "Enrollamiento de cuerda con peso (Wrist Roller)",
+      "category": "exercise",
+      "isSystem": true,
+      "createdAt": "2026-06-09T18:52:11.236Z",
+      "muscleGroup": "Antebrazo"
+    },
+    {
+      "id": "sys-ex-curl-de-muñeca-con-mancuerna-detrás-de-la-espalda",
+      "url": "https://www.youtube.com/watch?v=LY1V6p-XvJk",
+      "type": "video",
+      "title": "Curl de Muñeca con Mancuerna detrás de la espalda",
+      "category": "exercise",
+      "isSystem": true,
+      "createdAt": "2026-06-09T18:52:11.236Z",
+      "muscleGroup": "Antebrazo"
+    },
+    {
+      "id": "sys-ex-pinza-manual-(hand-gripper)",
+      "url": "https://www.youtube.com/watch?v=zC3nLlEvin4",
+      "type": "video",
+      "title": "Pinza manual (Hand Gripper)",
+      "category": "exercise",
+      "isSystem": true,
+      "createdAt": "2026-06-09T18:52:11.236Z",
+      "muscleGroup": "Antebrazo"
+    },
+    {
+      "id": "sys-ex-plancha-abdominal",
+      "url": "https://www.youtube.com/watch?v=TvxNkmjdhMM",
+      "type": "video",
+      "title": "Plancha Abdominal",
+      "category": "exercise",
+      "isSystem": true,
+      "createdAt": "2026-05-27T17:17:48.082Z",
+      "muscleGroup": "Abdominales"
+    },
+    {
+      "id": "sys-ex-crunch-en-polea-alta",
+      "url": "https://www.youtube.com/watch?v=S08E3B6xLMc",
+      "type": "video",
+      "title": "Crunch en Polea Alta",
+      "category": "exercise",
+      "isSystem": true,
+      "createdAt": "2026-05-27T17:17:48.082Z",
+      "muscleGroup": "Abdominales"
+    },
+    {
+      "id": "sys-ex-elevación-de-piernas-(colgado)",
+      "url": "https://www.youtube.com/watch?v=hd_FpXy97r0",
+      "type": "video",
+      "title": "Elevación de Piernas (Colgado)",
+      "category": "exercise",
+      "isSystem": true,
+      "createdAt": "2026-05-27T17:17:48.082Z",
+      "muscleGroup": "Abdominales"
+    },
+    {
+      "id": "sys-ex-rueda-abdominal-(ab-wheel)",
+      "url": "https://www.youtube.com/watch?v=H7m_L0XF9vI",
+      "type": "video",
+      "title": "Rueda Abdominal (Ab Wheel)",
+      "category": "exercise",
+      "isSystem": true,
+      "createdAt": "2026-05-27T17:17:48.082Z",
+      "muscleGroup": "Abdominales"
+    },
+    {
+      "id": "sys-ex-dead-bug",
+      "url": "https://www.youtube.com/watch?v=4XLEnwUr1gk",
+      "type": "video",
+      "title": "Dead Bug",
+      "category": "exercise",
+      "isSystem": true,
+      "createdAt": "2026-05-27T17:17:48.082Z",
+      "muscleGroup": "Abdominales"
+    },
+    {
+      "id": "sys-ex-crunch-abdominal-en-suelo",
+      "url": "https://www.youtube.com/watch?v=S08E3B6xLMc",
+      "type": "video",
+      "title": "Crunch Abdominal en Suelo",
+      "category": "exercise",
+      "isSystem": true,
+      "createdAt": "2026-06-09T18:52:11.236Z",
+      "muscleGroup": "Abdominales"
+    },
+    {
+      "id": "sys-ex-elevación-de-piernas-tumbado-(leg-raises)",
+      "url": "https://www.youtube.com/watch?v=hd_FpXy97r0",
+      "type": "video",
+      "title": "Elevación de Piernas tumbado (Leg Raises)",
+      "category": "exercise",
+      "isSystem": true,
+      "createdAt": "2026-06-09T18:52:11.236Z",
+      "muscleGroup": "Abdominales"
+    },
+    {
+      "id": "sys-ex-giros-rusos-(russian-twists)",
+      "url": "https://www.youtube.com/watch?v=4XLEnwUr1gk",
+      "type": "video",
+      "title": "Giros Rusos (Russian Twists)",
+      "category": "exercise",
+      "isSystem": true,
+      "createdAt": "2026-06-09T18:52:11.236Z",
+      "muscleGroup": "Abdominales"
+    },
+    {
+      "id": "sys-ex-escaladores-(mountain-climbers)",
+      "url": "https://www.youtube.com/watch?v=TvxNkmjdhMM",
+      "type": "video",
+      "title": "Escaladores (Mountain Climbers)",
+      "category": "exercise",
+      "isSystem": true,
+      "createdAt": "2026-06-09T18:52:11.236Z",
+      "muscleGroup": "Abdominales"
+    },
+    {
+      "id": "sys-ex-crunch-de-bicicleta",
+      "url": "https://www.youtube.com/watch?v=S08E3B6xLMc",
+      "type": "video",
+      "title": "Crunch de Bicicleta",
+      "category": "exercise",
+      "isSystem": true,
+      "createdAt": "2026-06-09T18:52:11.236Z",
+      "muscleGroup": "Abdominales"
+    },
+    {
+      "id": "sys-ex-tijeras-abdominales-(flutter-kicks)",
+      "url": "https://www.youtube.com/watch?v=hd_FpXy97r0",
+      "type": "video",
+      "title": "Tijeras Abdominales (Flutter Kicks)",
+      "category": "exercise",
+      "isSystem": true,
+      "createdAt": "2026-06-09T18:52:11.236Z",
+      "muscleGroup": "Abdominales"
+    },
+    {
+      "id": "sys-ex-plancha-lateral-(side-plank)",
+      "url": "https://www.youtube.com/watch?v=TvxNkmjdhMM",
+      "type": "video",
+      "title": "Plancha Lateral (Side Plank)",
+      "category": "exercise",
+      "isSystem": true,
+      "createdAt": "2026-06-09T18:52:11.236Z",
+      "muscleGroup": "Abdominales"
+    },
+    {
+      "id": "sys-ex-elevación-de-pelvis-en-plancha",
+      "url": "https://www.youtube.com/watch?v=TvxNkmjdhMM",
+      "type": "video",
+      "title": "Elevación de Pelvis en Plancha",
+      "category": "exercise",
+      "isSystem": true,
+      "createdAt": "2026-06-09T18:52:11.236Z",
+      "muscleGroup": "Abdominales"
+    },
+    {
+      "id": "sys-ex-abdominales-en-v-(v-ups)",
+      "url": "https://www.youtube.com/watch?v=hd_FpXy97r0",
+      "type": "video",
+      "title": "Abdominales en V (V-Ups)",
+      "category": "exercise",
+      "isSystem": true,
+      "createdAt": "2026-06-09T18:52:11.236Z",
+      "muscleGroup": "Abdominales"
+    },
+    {
+      "id": "sys-ex-leñador-(woodchopper)-en-polea",
+      "url": "https://www.youtube.com/watch?v=H7m_L0XF9vI",
+      "type": "video",
+      "title": "Leñador (Woodchopper) en Polea",
+      "category": "exercise",
+      "isSystem": true,
+      "createdAt": "2026-06-09T18:52:11.236Z",
+      "muscleGroup": "Abdominales"
+    },
+    {
+      "id": "sys-ex-extensión-de-cuello-con-disco",
+      "url": "https://www.youtube.com/watch?v=um3VVz_SIsg",
+      "type": "video",
+      "title": "Extensión de Cuello con Disco",
+      "category": "exercise",
+      "isSystem": true,
+      "createdAt": "2026-06-09T18:52:11.236Z",
+      "muscleGroup": "Cuello"
+    },
+    {
+      "id": "sys-ex-flexión-de-cuello-con-disco",
+      "url": "https://www.youtube.com/watch?v=um3VVz_SIsg",
+      "type": "video",
+      "title": "Flexión de Cuello con Disco",
+      "category": "exercise",
+      "isSystem": true,
+      "createdAt": "2026-06-09T18:52:11.236Z",
+      "muscleGroup": "Cuello"
+    },
+    {
+      "id": "sys-ex-extensión-de-cuello-isométrica-manual",
+      "url": "https://www.youtube.com/watch?v=um3VVz_SIsg",
+      "type": "video",
+      "title": "Extensión de Cuello isométrica manual",
+      "category": "exercise",
+      "isSystem": true,
+      "createdAt": "2026-06-09T18:52:11.236Z",
+      "muscleGroup": "Cuello"
+    },
+    {
+      "id": "sys-ex-flexión-de-cuello-isométrica-manual",
+      "url": "https://www.youtube.com/watch?v=um3VVz_SIsg",
+      "type": "video",
+      "title": "Flexión de Cuello isométrica manual",
+      "category": "exercise",
+      "isSystem": true,
+      "createdAt": "2026-06-09T18:52:11.236Z",
+      "muscleGroup": "Cuello"
+    },
+    {
+      "id": "sys-ex-flexión-lateral-de-cuello-manual",
+      "url": "https://www.youtube.com/watch?v=um3VVz_SIsg",
+      "type": "video",
+      "title": "Flexión lateral de Cuello manual",
+      "category": "exercise",
+      "isSystem": true,
+      "createdAt": "2026-06-09T18:52:11.236Z",
+      "muscleGroup": "Cuello"
+    },
+    {
+      "id": "sys-ex-rotaciones-de-cuello-controladas",
+      "url": "https://www.youtube.com/watch?v=um3VVz_SIsg",
+      "type": "video",
+      "title": "Rotaciones de Cuello controladas",
+      "category": "exercise",
+      "isSystem": true,
+      "createdAt": "2026-06-09T18:52:11.236Z",
+      "muscleGroup": "Cuello"
+    },
+    {
+      "id": "sys-ex-encogimientos-con-barra-por-detrás-de-la-espalda",
+      "url": "https://www.youtube.com/watch?v=g6qbq4u19OY",
+      "type": "video",
+      "title": "Encogimientos con barra por detrás de la espalda",
+      "category": "exercise",
+      "isSystem": true,
+      "createdAt": "2026-06-09T18:52:11.236Z",
+      "muscleGroup": "Cuello"
+    },
+    {
+      "id": "sys-ex-paseo-del-granjero-pesado-(foco-trapecio/cuello)",
+      "url": "https://www.youtube.com/watch?v=dFzUjzuW_2M",
+      "type": "video",
+      "title": "Paseo del granjero pesado (Foco trapecio/cuello)",
+      "category": "exercise",
+      "isSystem": true,
+      "createdAt": "2026-06-09T18:52:11.236Z",
+      "muscleGroup": "Cuello"
+    },
+    {
+      "id": "sys-ex-encogimientos-con-mancuernas-sentados",
+      "url": "https://www.youtube.com/watch?v=g6qbq4u19OY",
+      "type": "video",
+      "title": "Encogimientos con Mancuernas sentados",
+      "category": "exercise",
+      "isSystem": true,
+      "createdAt": "2026-06-09T18:52:11.236Z",
+      "muscleGroup": "Cuello"
+    },
+    {
+      "id": "sys-ex-extensión-de-cuello-con-arnés-para-cabeza",
+      "url": "https://www.youtube.com/watch?v=um3VVz_SIsg",
+      "type": "video",
+      "title": "Extensión de cuello con arnés para cabeza",
+      "category": "exercise",
+      "isSystem": true,
+      "createdAt": "2026-06-09T18:52:11.236Z",
+      "muscleGroup": "Cuello"
+    }
+  ],
+  "habits": [],
+  "clients": [
+    {
+      "id": "33aa6d43-f41b-4701-bba1-e14b79ae7589",
+      "name": "Alejandra Sanchis",
+      "email": "alejandra.sanchis.client@gmail.com",
+      "phone": "612345678",
+      "cardio": "<ul><li>30 minutos de caminata a ritmo alegre tras cada entrenamiento.</li></ul>",
+      "gender": "female",
+      "status": "active",
+      "cardioUrl": "",
+      "feedbacks": [
+        "fb-6ea21137-7208-4acf-b04e-b29e56c91633",
+        "fb-f762d260-9542-4570-af38-012df536f263",
+        "fb-d184382c-8a70-4eca-b46a-ea108e279b3d",
+        "fb-c4ddb2f6-70b3-477d-ae1d-c893b0ff7ac5",
+        "fb-72342c81-2840-4a9f-8879-826d9819c1c1"
+      ],
+      "reviewDay": "5",
+      "startDate": "2026-06-01T10:32:47.995Z",
+      "accessCode": "NEXK6OFJ",
+      "monthlyFee": 65,
+      "assignedDiet": "86c7085f-64e5-4d96-880a-8abadbc4fa1b",
+      "profilePhoto": null,
+      "activeBlockId": "27505d18-03cc-4517-b76a-425538c36dba",
+      "assignedDiets": [
+        "86c7085f-64e5-4d96-880a-8abadbc4fa1b"
+      ],
+      "dietPublished": true,
+      "paymentExpiry": "21/07/2026",
+      "paymentStatus": "paid",
+      "technicalData": {
+        "age": 26,
+        "arm": 27.2,
+        "leg": 52.8,
+        "chest": 86.5,
+        "glute": 96,
+        "goals": "Pérdida de grasa y tonificación muscular general.",
+        "notes": "Entrena por la tarde. Gran motivación y buena adherencia.",
+        "waist": 69.8,
+        "height": 165,
+        "weight": 61.5,
+        "bodyFat": 21.5,
+        "injuries": "Ninguna",
+        "allergies": "Sin alergias alimentarias",
+        "skinfolds": {
+          "abd": 0,
+          "pec": 0,
+          "sub": 0,
+          "tri": 0,
+          "supra": 0,
+          "thigh": 0,
+          "axilla": 0
+        },
+        "targetMacros": {
+          "fat": 55,
+          "carbs": 160,
+          "protein": 120,
+          "calories": 1615
+        },
+        "skinfoldsEnabled": false
+      },
+      "weightHistory": [
+        {
+          "arm": 28,
+          "leg": 54,
+          "date": "2026-05-27T12:32:07.538Z",
+          "week": 1,
+          "chest": 88,
+          "glute": 98,
+          "waist": 72,
+          "weight": 63.5,
+          "isFeedback": true,
+          "perimeters": {
+            "Brazo": 28,
+            "Muslo": 54,
+            "Pecho": 88,
+            "Cadera": 98,
+            "Cintura": 72
+          }
+        },
+        {
+          "arm": 28,
+          "leg": 54,
+          "date": "2026-06-03T12:32:07.538Z",
+          "week": 2,
+          "chest": 88,
+          "glute": 97.5,
+          "waist": 71.5,
+          "weight": 63,
+          "isFeedback": true,
+          "perimeters": {
+            "Brazo": 28,
+            "Muslo": 54,
+            "Pecho": 88,
+            "Cadera": 97.5,
+            "Cintura": 71.5
+          }
+        },
+        {
+          "arm": 27.8,
+          "leg": 53.5,
+          "date": "2026-06-10T12:32:07.538Z",
+          "week": 3,
+          "chest": 87.5,
+          "glute": 97,
+          "waist": 70.8,
+          "weight": 62.4,
+          "isFeedback": true,
+          "perimeters": {
+            "Brazo": 27.8,
+            "Muslo": 53.5,
+            "Pecho": 87.5,
+            "Cadera": 97,
+            "Cintura": 70.8
+          }
+        },
+        {
+          "arm": 27.5,
+          "leg": 53,
+          "date": "2026-06-17T12:32:07.538Z",
+          "week": 4,
+          "chest": 87,
+          "glute": 96.5,
+          "waist": 70.2,
+          "weight": 62,
+          "isFeedback": true,
+          "perimeters": {
+            "Brazo": 27.5,
+            "Muslo": 53,
+            "Pecho": 87,
+            "Cadera": 96.5,
+            "Cintura": 70.2
+          }
+        },
+        {
+          "arm": 27.2,
+          "leg": 52.8,
+          "date": "2026-06-21T11:20:53.903Z",
+          "week": 5,
+          "chest": 86.5,
+          "glute": 96,
+          "waist": 69.8,
+          "weight": 61.5,
+          "isFeedback": true,
+          "perimeters": {
+            "Brazo": 27.2,
+            "Muslo": 52.8,
+            "Pecho": 86.5,
+            "Cadera": 96,
+            "Cintura": 69.8
+          }
+        },
+        {
+          "arm": 27.2,
+          "leg": 52.8,
+          "date": "2026-06-21T12:32:07.538Z",
+          "week": 5,
+          "chest": 86.5,
+          "glute": 96,
+          "waist": 69.8,
+          "weight": 61.5,
+          "isFeedback": true,
+          "perimeters": {
+            "Brazo": 27.2,
+            "Muslo": 52.8,
+            "Pecho": 86.5,
+            "Cadera": 96,
+            "Cintura": 69.8
+          }
+        }
+      ],
+      "publishedDiets": [
+        "86c7085f-64e5-4d96-880a-8abadbc4fa1b"
+      ],
+      "assignedRoutine": "27505d18-03cc-4517-b76a-425538c36dba",
+      "cardioPublished": true,
+      "reviewFrequency": "weekly",
+      "supplementation": "<ul><li>Omega 3: 2 perlas en el desayuno</li><li>Creatina monohidrato: 3g después del entreno</li><li>Magnesio: 1 cápsula antes de ir a dormir</li></ul>",
+      "cardioUrlVisible": false,
+      "subscriptionType": "Mensual",
+      "reviewDaysOfMonth": "",
+      "specificReviewDate": "",
+      "subscriptionAmount": 65,
+      "supplementationUrl": "http://www.lifepronutrition.com/es/?codigo=SANCHIS",
+      "lastDietAssignmentDate": "2026-06-21T10:32:47.994Z",
+      "supplementationPublished": true,
+      "supplementationUrlVisible": true
+    }
+  ],
+  "version": "1.0.1",
+  "invoices": [],
+  "routines": [],
+  "debugLogs": [
+    {
+      "msg": "{\"note\":\"On page load (Google Auth Success)\",\"activeId\":\"t-udve3b1u3\",\"_trainerEmail\":\"lucyy.tundidor@gmail.com\",\"activeTrainerIdInStorage\":\"t-udve3b1u3\",\"isBrandConfigDelegated\":true}",
+      "time": "2026-06-21T10:23:16.148Z",
+      "type": "diagnostic-state"
+    },
+    {
+      "msg": "🏁 v311 BLINDAJE TOTAL: Sistema Cargado con protección máxima de datos.",
+      "time": "2026-06-21T10:23:12.927Z",
+      "type": "log"
+    },
+    {
+      "msg": "excel-manager.js: v4 loaded.",
+      "time": "2026-06-21T10:23:13.007Z",
+      "type": "log"
+    },
+    {
+      "msg": "[BrandConfig] activeId=\"t-udve3b1u3\" trainerEmail=\"lucyy.tundidor@gmail.com\" => isAlejandra=false, isToledo=false",
+      "time": "2026-06-21T10:23:13.009Z",
+      "type": "log"
+    },
+    {
+      "msg": "[BrandConfig] activeId=\"t-udve3b1u3\" trainerEmail=\"lucyy.tundidor@gmail.com\" => isAlejandra=false, isToledo=false",
+      "time": "2026-06-21T10:23:13.009Z",
+      "type": "log"
+    },
+    {
+      "msg": "[BrandConfig] activeId=\"t-udve3b1u3\" trainerEmail=\"lucyy.tundidor@gmail.com\" => isAlejandra=false, isToledo=false",
+      "time": "2026-06-21T10:23:13.010Z",
+      "type": "log"
+    },
+    {
+      "msg": "[BrandConfig] activeId=\"t-udve3b1u3\" trainerEmail=\"lucyy.tundidor@gmail.com\" => isAlejandra=false, isToledo=false",
+      "time": "2026-06-21T10:23:13.013Z",
+      "type": "log"
+    },
+    {
+      "msg": "[BrandConfig] activeId=\"t-udve3b1u3\" trainerEmail=\"lucyy.tundidor@gmail.com\" => isAlejandra=false, isToledo=false",
+      "time": "2026-06-21T10:23:13.013Z",
+      "type": "log"
+    },
+    {
+      "msg": "[BrandConfig] activeId=\"t-udve3b1u3\" trainerEmail=\"lucyy.tundidor@gmail.com\" => isAlejandra=false, isToledo=false",
+      "time": "2026-06-21T10:23:13.013Z",
+      "type": "log"
+    },
+    {
+      "msg": "[BrandConfig] activeId=\"t-udve3b1u3\" trainerEmail=\"lucyy.tundidor@gmail.com\" => isAlejandra=false, isToledo=false",
+      "time": "2026-06-21T10:23:13.013Z",
+      "type": "log"
+    },
+    {
+      "msg": "Supabase listo ✅",
+      "time": "2026-06-21T10:23:13.014Z",
+      "type": "log"
+    },
+    {
+      "msg": "[BrandConfig] activeId=\"t-udve3b1u3\" trainerEmail=\"lucyy.tundidor@gmail.com\" => isAlejandra=false, isToledo=false",
+      "time": "2026-06-21T10:23:13.631Z",
+      "type": "log"
+    },
+    {
+      "msg": "[BrandConfig] activeId=\"t-udve3b1u3\" trainerEmail=\"lucyy.tundidor@gmail.com\" => isAlejandra=false, isToledo=false",
+      "time": "2026-06-21T10:23:13.631Z",
+      "type": "log"
+    },
+    {
+      "msg": "Sesión persistente detectada -> Disparando onGoogleAuthSuccess global",
+      "time": "2026-06-21T10:23:13.813Z",
+      "type": "log"
+    },
+    {
+      "msg": "[BrandConfig] activeId=\"t-udve3b1u3\" trainerEmail=\"lucyy.tundidor@gmail.com\" => isAlejandra=false, isToledo=false",
+      "time": "2026-06-21T10:23:13.884Z",
+      "type": "log"
+    },
+    {
+      "msg": "[BrandConfig] activeId=\"t-udve3b1u3\" trainerEmail=\"lucyy.tundidor@gmail.com\" => isAlejandra=false, isToledo=false",
+      "time": "2026-06-21T10:23:13.885Z",
+      "type": "log"
+    },
+    {
+      "msg": "{\"note\":\"On page load (Google Auth Success)\",\"activeId\":\"t-udve3b1u3\",\"_trainerEmail\":\"lucyy.tundidor@gmail.com\",\"activeTrainerIdInStorage\":\"t-udve3b1u3\",\"isBrandConfigDelegated\":true}",
+      "time": "2026-06-21T10:23:16.391Z",
+      "type": "diagnostic-state"
+    },
+    {
+      "msg": "🏁 v311 BLINDAJE TOTAL: Sistema Cargado con protección máxima de datos.",
+      "time": "2026-06-21T10:23:12.927Z",
+      "type": "log"
+    },
+    {
+      "msg": "excel-manager.js: v4 loaded.",
+      "time": "2026-06-21T10:23:13.007Z",
+      "type": "log"
+    },
+    {
+      "msg": "[BrandConfig] activeId=\"t-udve3b1u3\" trainerEmail=\"lucyy.tundidor@gmail.com\" => isAlejandra=false, isToledo=false",
+      "time": "2026-06-21T10:23:13.009Z",
+      "type": "log"
+    },
+    {
+      "msg": "[BrandConfig] activeId=\"t-udve3b1u3\" trainerEmail=\"lucyy.tundidor@gmail.com\" => isAlejandra=false, isToledo=false",
+      "time": "2026-06-21T10:23:13.009Z",
+      "type": "log"
+    },
+    {
+      "msg": "[BrandConfig] activeId=\"t-udve3b1u3\" trainerEmail=\"lucyy.tundidor@gmail.com\" => isAlejandra=false, isToledo=false",
+      "time": "2026-06-21T10:23:13.010Z",
+      "type": "log"
+    },
+    {
+      "msg": "[BrandConfig] activeId=\"t-udve3b1u3\" trainerEmail=\"lucyy.tundidor@gmail.com\" => isAlejandra=false, isToledo=false",
+      "time": "2026-06-21T10:23:13.013Z",
+      "type": "log"
+    },
+    {
+      "msg": "[BrandConfig] activeId=\"t-udve3b1u3\" trainerEmail=\"lucyy.tundidor@gmail.com\" => isAlejandra=false, isToledo=false",
+      "time": "2026-06-21T10:23:13.013Z",
+      "type": "log"
+    },
+    {
+      "msg": "[BrandConfig] activeId=\"t-udve3b1u3\" trainerEmail=\"lucyy.tundidor@gmail.com\" => isAlejandra=false, isToledo=false",
+      "time": "2026-06-21T10:23:13.013Z",
+      "type": "log"
+    },
+    {
+      "msg": "[BrandConfig] activeId=\"t-udve3b1u3\" trainerEmail=\"lucyy.tundidor@gmail.com\" => isAlejandra=false, isToledo=false",
+      "time": "2026-06-21T10:23:13.013Z",
+      "type": "log"
+    },
+    {
+      "msg": "Supabase listo ✅",
+      "time": "2026-06-21T10:23:13.014Z",
+      "type": "log"
+    },
+    {
+      "msg": "[BrandConfig] activeId=\"t-udve3b1u3\" trainerEmail=\"lucyy.tundidor@gmail.com\" => isAlejandra=false, isToledo=false",
+      "time": "2026-06-21T10:23:13.631Z",
+      "type": "log"
+    },
+    {
+      "msg": "[BrandConfig] activeId=\"t-udve3b1u3\" trainerEmail=\"lucyy.tundidor@gmail.com\" => isAlejandra=false, isToledo=false",
+      "time": "2026-06-21T10:23:13.631Z",
+      "type": "log"
+    },
+    {
+      "msg": "Sesión persistente detectada -> Disparando onGoogleAuthSuccess global",
+      "time": "2026-06-21T10:23:13.813Z",
+      "type": "log"
+    },
+    {
+      "msg": "[BrandConfig] activeId=\"t-udve3b1u3\" trainerEmail=\"lucyy.tundidor@gmail.com\" => isAlejandra=false, isToledo=false",
+      "time": "2026-06-21T10:23:13.884Z",
+      "type": "log"
+    },
+    {
+      "msg": "[BrandConfig] activeId=\"t-udve3b1u3\" trainerEmail=\"lucyy.tundidor@gmail.com\" => isAlejandra=false, isToledo=false",
+      "time": "2026-06-21T10:23:13.885Z",
+      "type": "log"
+    },
+    {
+      "msg": "{\"note\":\"On page load (Google Auth Success)\",\"activeId\":\"t-udve3b1u3\",\"_trainerEmail\":\"lucyy.tundidor@gmail.com\",\"activeTrainerIdInStorage\":\"t-udve3b1u3\",\"isBrandConfigDelegated\":true}",
+      "time": "2026-06-21T10:25:00.610Z",
+      "type": "diagnostic-state"
+    },
+    {
+      "msg": "🏁 v311 BLINDAJE TOTAL: Sistema Cargado con protección máxima de datos.",
+      "time": "2026-06-21T10:24:57.189Z",
+      "type": "log"
+    },
+    {
+      "msg": "excel-manager.js: v4 loaded.",
+      "time": "2026-06-21T10:24:57.213Z",
+      "type": "log"
+    },
+    {
+      "msg": "[BrandConfig] activeId=\"t-udve3b1u3\" trainerEmail=\"lucyy.tundidor@gmail.com\" => isAlejandra=false, isToledo=false, isLucy=true",
+      "time": "2026-06-21T10:24:57.215Z",
+      "type": "log"
+    },
+    {
+      "msg": "[BrandConfig] activeId=\"t-udve3b1u3\" trainerEmail=\"lucyy.tundidor@gmail.com\" => isAlejandra=false, isToledo=false, isLucy=true",
+      "time": "2026-06-21T10:24:57.215Z",
+      "type": "log"
+    },
+    {
+      "msg": "[BrandConfig] activeId=\"t-udve3b1u3\" trainerEmail=\"lucyy.tundidor@gmail.com\" => isAlejandra=false, isToledo=false, isLucy=true",
+      "time": "2026-06-21T10:24:57.216Z",
+      "type": "log"
+    },
+    {
+      "msg": "[BrandConfig] activeId=\"t-udve3b1u3\" trainerEmail=\"lucyy.tundidor@gmail.com\" => isAlejandra=false, isToledo=false, isLucy=true",
+      "time": "2026-06-21T10:24:57.219Z",
+      "type": "log"
+    },
+    {
+      "msg": "[BrandConfig] activeId=\"t-udve3b1u3\" trainerEmail=\"lucyy.tundidor@gmail.com\" => isAlejandra=false, isToledo=false, isLucy=true",
+      "time": "2026-06-21T10:24:57.219Z",
+      "type": "log"
+    },
+    {
+      "msg": "[BrandConfig] activeId=\"t-udve3b1u3\" trainerEmail=\"lucyy.tundidor@gmail.com\" => isAlejandra=false, isToledo=false, isLucy=true",
+      "time": "2026-06-21T10:24:57.220Z",
+      "type": "log"
+    },
+    {
+      "msg": "[BrandConfig] activeId=\"t-udve3b1u3\" trainerEmail=\"lucyy.tundidor@gmail.com\" => isAlejandra=false, isToledo=false, isLucy=true",
+      "time": "2026-06-21T10:24:57.220Z",
+      "type": "log"
+    },
+    {
+      "msg": "Supabase listo ✅",
+      "time": "2026-06-21T10:24:57.221Z",
+      "type": "log"
+    },
+    {
+      "msg": "📤 Sincronizando cambios locales fusionados a la nube...",
+      "time": "2026-06-21T10:24:57.817Z",
+      "type": "log"
+    },
+    {
+      "msg": "Sesión persistente detectada -> Disparando onGoogleAuthSuccess global",
+      "time": "2026-06-21T10:24:58.033Z",
+      "type": "log"
+    },
+    {
+      "msg": "[BrandConfig] activeId=\"t-udve3b1u3\" trainerEmail=\"lucyy.tundidor@gmail.com\" => isAlejandra=false, isToledo=false, isLucy=true",
+      "time": "2026-06-21T10:24:58.102Z",
+      "type": "log"
+    },
+    {
+      "msg": "[BrandConfig] activeId=\"t-udve3b1u3\" trainerEmail=\"lucyy.tundidor@gmail.com\" => isAlejandra=false, isToledo=false, isLucy=true",
+      "time": "2026-06-21T10:24:58.103Z",
+      "type": "log"
+    },
+    {
+      "msg": "[BrandConfig] activeId=\"t-udve3b1u3\" trainerEmail=\"lucyy.tundidor@gmail.com\" => isAlejandra=false, isToledo=false, isLucy=true",
+      "time": "2026-06-21T10:24:58.232Z",
+      "type": "log"
+    },
+    {
+      "msg": "[BrandConfig] activeId=\"t-udve3b1u3\" trainerEmail=\"lucyy.tundidor@gmail.com\" => isAlejandra=false, isToledo=false, isLucy=true",
+      "time": "2026-06-21T10:24:58.232Z",
+      "type": "log"
+    },
+    {
+      "msg": "{\"note\":\"On page load (Google Auth Success)\",\"activeId\":\"t-udve3b1u3\",\"_trainerEmail\":\"lucyy.tundidor@gmail.com\",\"activeTrainerIdInStorage\":\"t-udve3b1u3\",\"isBrandConfigDelegated\":true}",
+      "time": "2026-06-21T10:25:00.736Z",
+      "type": "diagnostic-state"
+    },
+    {
+      "msg": "🏁 v311 BLINDAJE TOTAL: Sistema Cargado con protección máxima de datos.",
+      "time": "2026-06-21T10:24:57.189Z",
+      "type": "log"
+    },
+    {
+      "msg": "excel-manager.js: v4 loaded.",
+      "time": "2026-06-21T10:24:57.213Z",
+      "type": "log"
+    },
+    {
+      "msg": "[BrandConfig] activeId=\"t-udve3b1u3\" trainerEmail=\"lucyy.tundidor@gmail.com\" => isAlejandra=false, isToledo=false, isLucy=true",
+      "time": "2026-06-21T10:24:57.215Z",
+      "type": "log"
+    },
+    {
+      "msg": "[BrandConfig] activeId=\"t-udve3b1u3\" trainerEmail=\"lucyy.tundidor@gmail.com\" => isAlejandra=false, isToledo=false, isLucy=true",
+      "time": "2026-06-21T10:24:57.215Z",
+      "type": "log"
+    },
+    {
+      "msg": "[BrandConfig] activeId=\"t-udve3b1u3\" trainerEmail=\"lucyy.tundidor@gmail.com\" => isAlejandra=false, isToledo=false, isLucy=true",
+      "time": "2026-06-21T10:24:57.216Z",
+      "type": "log"
+    },
+    {
+      "msg": "[BrandConfig] activeId=\"t-udve3b1u3\" trainerEmail=\"lucyy.tundidor@gmail.com\" => isAlejandra=false, isToledo=false, isLucy=true",
+      "time": "2026-06-21T10:24:57.219Z",
+      "type": "log"
+    },
+    {
+      "msg": "[BrandConfig] activeId=\"t-udve3b1u3\" trainerEmail=\"lucyy.tundidor@gmail.com\" => isAlejandra=false, isToledo=false, isLucy=true",
+      "time": "2026-06-21T10:24:57.219Z",
+      "type": "log"
+    },
+    {
+      "msg": "[BrandConfig] activeId=\"t-udve3b1u3\" trainerEmail=\"lucyy.tundidor@gmail.com\" => isAlejandra=false, isToledo=false, isLucy=true",
+      "time": "2026-06-21T10:24:57.220Z",
+      "type": "log"
+    },
+    {
+      "msg": "[BrandConfig] activeId=\"t-udve3b1u3\" trainerEmail=\"lucyy.tundidor@gmail.com\" => isAlejandra=false, isToledo=false, isLucy=true",
+      "time": "2026-06-21T10:24:57.220Z",
+      "type": "log"
+    },
+    {
+      "msg": "Supabase listo ✅",
+      "time": "2026-06-21T10:24:57.221Z",
+      "type": "log"
+    },
+    {
+      "msg": "📤 Sincronizando cambios locales fusionados a la nube...",
+      "time": "2026-06-21T10:24:57.817Z",
+      "type": "log"
+    },
+    {
+      "msg": "Sesión persistente detectada -> Disparando onGoogleAuthSuccess global",
+      "time": "2026-06-21T10:24:58.033Z",
+      "type": "log"
+    },
+    {
+      "msg": "[BrandConfig] activeId=\"t-udve3b1u3\" trainerEmail=\"lucyy.tundidor@gmail.com\" => isAlejandra=false, isToledo=false, isLucy=true",
+      "time": "2026-06-21T10:24:58.102Z",
+      "type": "log"
+    },
+    {
+      "msg": "[BrandConfig] activeId=\"t-udve3b1u3\" trainerEmail=\"lucyy.tundidor@gmail.com\" => isAlejandra=false, isToledo=false, isLucy=true",
+      "time": "2026-06-21T10:24:58.103Z",
+      "type": "log"
+    },
+    {
+      "msg": "[BrandConfig] activeId=\"t-udve3b1u3\" trainerEmail=\"lucyy.tundidor@gmail.com\" => isAlejandra=false, isToledo=false, isLucy=true",
+      "time": "2026-06-21T10:24:58.232Z",
+      "type": "log"
+    },
+    {
+      "msg": "[BrandConfig] activeId=\"t-udve3b1u3\" trainerEmail=\"lucyy.tundidor@gmail.com\" => isAlejandra=false, isToledo=false, isLucy=true",
+      "time": "2026-06-21T10:24:58.232Z",
+      "type": "log"
+    },
+    {
+      "msg": "{\"note\":\"On page load (Google Auth Success)\",\"activeId\":\"t-udve3b1u3\",\"_trainerEmail\":\"lucyy.tundidor@gmail.com\",\"activeTrainerIdInStorage\":\"t-udve3b1u3\",\"isBrandConfigDelegated\":true}",
+      "time": "2026-06-21T10:56:52.757Z",
+      "type": "diagnostic-state"
+    },
+    {
+      "msg": "🏁 v311 BLINDAJE TOTAL: Sistema Cargado con protección máxima de datos.",
+      "time": "2026-06-21T10:56:49.311Z",
+      "type": "log"
+    },
+    {
+      "msg": "excel-manager.js: v4 loaded.",
+      "time": "2026-06-21T10:56:49.352Z",
+      "type": "log"
+    },
+    {
+      "msg": "🔥 [MIGRACIÓN v93] Cambios de grupos musculares detectados localmente. Guardando y sincronizando con Supabase...",
+      "time": "2026-06-21T10:56:49.354Z",
+      "type": "log"
+    },
+    {
+      "msg": "Supabase listo ✅",
+      "time": "2026-06-21T10:56:49.357Z",
+      "type": "log"
+    },
+    {
+      "msg": "[BrandConfig] activeId=\"t-udve3b1u3\" trainerEmail=\"lucyy.tundidor@gmail.com\" => isAlejandra=false, isToledo=false, isLucy=true",
+      "time": "2026-06-21T10:56:49.357Z",
+      "type": "log"
+    },
+    {
+      "msg": "[BrandConfig] activeId=\"t-udve3b1u3\" trainerEmail=\"lucyy.tundidor@gmail.com\" => isAlejandra=false, isToledo=false, isLucy=true",
+      "time": "2026-06-21T10:56:49.358Z",
+      "type": "log"
+    },
+    {
+      "msg": "[BrandConfig] activeId=\"t-udve3b1u3\" trainerEmail=\"lucyy.tundidor@gmail.com\" => isAlejandra=false, isToledo=false, isLucy=true",
+      "time": "2026-06-21T10:56:49.359Z",
+      "type": "log"
+    },
+    {
+      "msg": "[BrandConfig] activeId=\"t-udve3b1u3\" trainerEmail=\"lucyy.tundidor@gmail.com\" => isAlejandra=false, isToledo=false, isLucy=true",
+      "time": "2026-06-21T10:56:49.364Z",
+      "type": "log"
+    },
+    {
+      "msg": "[BrandConfig] activeId=\"t-udve3b1u3\" trainerEmail=\"lucyy.tundidor@gmail.com\" => isAlejandra=false, isToledo=false, isLucy=true",
+      "time": "2026-06-21T10:56:49.365Z",
+      "type": "log"
+    },
+    {
+      "msg": "[BrandConfig] activeId=\"t-udve3b1u3\" trainerEmail=\"lucyy.tundidor@gmail.com\" => isAlejandra=false, isToledo=false, isLucy=true",
+      "time": "2026-06-21T10:56:49.365Z",
+      "type": "log"
+    },
+    {
+      "msg": "[BrandConfig] activeId=\"t-udve3b1u3\" trainerEmail=\"lucyy.tundidor@gmail.com\" => isAlejandra=false, isToledo=false, isLucy=true",
+      "time": "2026-06-21T10:56:49.366Z",
+      "type": "log"
+    },
+    {
+      "msg": "Sesión persistente detectada -> Disparando onGoogleAuthSuccess global",
+      "time": "2026-06-21T10:56:50.164Z",
+      "type": "log"
+    },
+    {
+      "msg": "🔥 [MIGRACIÓN v93] Cambios de grupos musculares detectados localmente. Guardando y sincronizando con Supabase...",
+      "time": "2026-06-21T10:56:50.181Z",
+      "type": "log"
+    },
+    {
+      "msg": "[BrandConfig] activeId=\"t-udve3b1u3\" trainerEmail=\"lucyy.tundidor@gmail.com\" => isAlejandra=false, isToledo=false, isLucy=true",
+      "time": "2026-06-21T10:56:50.182Z",
+      "type": "log"
+    },
+    {
+      "msg": "[BrandConfig] activeId=\"t-udve3b1u3\" trainerEmail=\"lucyy.tundidor@gmail.com\" => isAlejandra=false, isToledo=false, isLucy=true",
+      "time": "2026-06-21T10:56:50.183Z",
+      "type": "log"
+    },
+    {
+      "msg": "🔥 [MIGRACIÓN v93] Sincronización exitosa con Supabase.",
+      "time": "2026-06-21T10:56:50.221Z",
+      "type": "log"
+    },
+    {
+      "msg": "🔥 [MIGRACIÓN v93] Cambios de grupos musculares detectados localmente. Guardando y sincronizando con Supabase...",
+      "time": "2026-06-21T10:56:50.250Z",
+      "type": "log"
+    },
+    {
+      "msg": "[BrandConfig] activeId=\"t-udve3b1u3\" trainerEmail=\"lucyy.tundidor@gmail.com\" => isAlejandra=false, isToledo=false, isLucy=true",
+      "time": "2026-06-21T10:56:50.250Z",
+      "type": "log"
+    },
+    {
+      "msg": "[BrandConfig] activeId=\"t-udve3b1u3\" trainerEmail=\"lucyy.tundidor@gmail.com\" => isAlejandra=false, isToledo=false, isLucy=true",
+      "time": "2026-06-21T10:56:50.251Z",
+      "type": "log"
+    },
+    {
+      "msg": "🔥 [MIGRACIÓN v93] Sincronización exitosa con Supabase.",
+      "time": "2026-06-21T10:56:50.742Z",
+      "type": "log"
+    },
+    {
+      "msg": "🔥 [MIGRACIÓN v93] Sincronización exitosa con Supabase.",
+      "time": "2026-06-21T10:56:50.907Z",
+      "type": "log"
+    },
+    {
+      "msg": "{\"note\":\"On page load (Google Auth Success)\",\"activeId\":\"t-udve3b1u3\",\"_trainerEmail\":\"lucyy.tundidor@gmail.com\",\"activeTrainerIdInStorage\":\"t-udve3b1u3\",\"isBrandConfigDelegated\":true}",
+      "time": "2026-06-21T11:25:15.697Z",
+      "type": "diagnostic-state"
+    },
+    {
+      "msg": "🏁 v311 BLINDAJE TOTAL: Sistema Cargado con protección máxima de datos.",
+      "time": "2026-06-21T11:25:12.395Z",
+      "type": "log"
+    },
+    {
+      "msg": "excel-manager.js: v4 loaded.",
+      "time": "2026-06-21T11:25:12.527Z",
+      "type": "log"
+    },
+    {
+      "msg": "[BrandConfig] activeId=\"t-udve3b1u3\" trainerEmail=\"lucyy.tundidor@gmail.com\" => isAlejandra=false, isToledo=false, isLucy=true",
+      "time": "2026-06-21T11:25:12.529Z",
+      "type": "log"
+    },
+    {
+      "msg": "[BrandConfig] activeId=\"t-udve3b1u3\" trainerEmail=\"lucyy.tundidor@gmail.com\" => isAlejandra=false, isToledo=false, isLucy=true",
+      "time": "2026-06-21T11:25:12.530Z",
+      "type": "log"
+    },
+    {
+      "msg": "[BrandConfig] activeId=\"t-udve3b1u3\" trainerEmail=\"lucyy.tundidor@gmail.com\" => isAlejandra=false, isToledo=false, isLucy=true",
+      "time": "2026-06-21T11:25:12.531Z",
+      "type": "log"
+    },
+    {
+      "msg": "[BrandConfig] activeId=\"t-udve3b1u3\" trainerEmail=\"lucyy.tundidor@gmail.com\" => isAlejandra=false, isToledo=false, isLucy=true",
+      "time": "2026-06-21T11:25:12.536Z",
+      "type": "log"
+    },
+    {
+      "msg": "[BrandConfig] activeId=\"t-udve3b1u3\" trainerEmail=\"lucyy.tundidor@gmail.com\" => isAlejandra=false, isToledo=false, isLucy=true",
+      "time": "2026-06-21T11:25:12.537Z",
+      "type": "log"
+    },
+    {
+      "msg": "[BrandConfig] activeId=\"t-udve3b1u3\" trainerEmail=\"lucyy.tundidor@gmail.com\" => isAlejandra=false, isToledo=false, isLucy=true",
+      "time": "2026-06-21T11:25:12.537Z",
+      "type": "log"
+    },
+    {
+      "msg": "[BrandConfig] activeId=\"t-udve3b1u3\" trainerEmail=\"lucyy.tundidor@gmail.com\" => isAlejandra=false, isToledo=false, isLucy=true",
+      "time": "2026-06-21T11:25:12.538Z",
+      "type": "log"
+    },
+    {
+      "msg": "Supabase listo ✅",
+      "time": "2026-06-21T11:25:12.541Z",
+      "type": "log"
+    },
+    {
+      "msg": "🔥 [MIGRACIÓN v93] Cambios de grupos musculares detectados localmente. Guardando y sincronizando con Supabase...",
+      "time": "2026-06-21T11:25:13.187Z",
+      "type": "log"
+    },
+    {
+      "msg": "[BrandConfig] activeId=\"t-udve3b1u3\" trainerEmail=\"lucyy.tundidor@gmail.com\" => isAlejandra=false, isToledo=false, isLucy=true",
+      "time": "2026-06-21T11:25:13.188Z",
+      "type": "log"
+    },
+    {
+      "msg": "[BrandConfig] activeId=\"t-udve3b1u3\" trainerEmail=\"lucyy.tundidor@gmail.com\" => isAlejandra=false, isToledo=false, isLucy=true",
+      "time": "2026-06-21T11:25:13.189Z",
+      "type": "log"
+    },
+    {
+      "msg": "Sesión persistente detectada -> Disparando onGoogleAuthSuccess global",
+      "time": "2026-06-21T11:25:13.337Z",
+      "type": "log"
+    },
+    {
+      "msg": "🔥 [MIGRACIÓN v93] Cambios de grupos musculares detectados localmente. Guardando y sincronizando con Supabase...",
+      "time": "2026-06-21T11:25:13.455Z",
+      "type": "log"
+    },
+    {
+      "msg": "[BrandConfig] activeId=\"t-udve3b1u3\" trainerEmail=\"lucyy.tundidor@gmail.com\" => isAlejandra=false, isToledo=false, isLucy=true",
+      "time": "2026-06-21T11:25:13.455Z",
+      "type": "log"
+    },
+    {
+      "msg": "[BrandConfig] activeId=\"t-udve3b1u3\" trainerEmail=\"lucyy.tundidor@gmail.com\" => isAlejandra=false, isToledo=false, isLucy=true",
+      "time": "2026-06-21T11:25:13.457Z",
+      "type": "log"
+    },
+    {
+      "msg": "🔥 [MIGRACIÓN v93] Sincronización exitosa con Supabase.",
+      "time": "2026-06-21T11:25:13.624Z",
+      "type": "log"
+    },
+    {
+      "msg": "🔥 [MIGRACIÓN v93] Sincronización exitosa con Supabase.",
+      "time": "2026-06-21T11:25:13.848Z",
+      "type": "log"
+    },
+    {
+      "msg": "{\"note\":\"On page load (Google Auth Success)\",\"activeId\":\"t-udve3b1u3\",\"_trainerEmail\":\"lucyy.tundidor@gmail.com\",\"activeTrainerIdInStorage\":\"t-udve3b1u3\",\"isBrandConfigDelegated\":true}",
+      "time": "2026-06-21T11:25:15.967Z",
+      "type": "diagnostic-state"
+    },
+    {
+      "msg": "🏁 v311 BLINDAJE TOTAL: Sistema Cargado con protección máxima de datos.",
+      "time": "2026-06-21T11:25:12.395Z",
+      "type": "log"
+    },
+    {
+      "msg": "excel-manager.js: v4 loaded.",
+      "time": "2026-06-21T11:25:12.527Z",
+      "type": "log"
+    },
+    {
+      "msg": "[BrandConfig] activeId=\"t-udve3b1u3\" trainerEmail=\"lucyy.tundidor@gmail.com\" => isAlejandra=false, isToledo=false, isLucy=true",
+      "time": "2026-06-21T11:25:12.529Z",
+      "type": "log"
+    },
+    {
+      "msg": "[BrandConfig] activeId=\"t-udve3b1u3\" trainerEmail=\"lucyy.tundidor@gmail.com\" => isAlejandra=false, isToledo=false, isLucy=true",
+      "time": "2026-06-21T11:25:12.530Z",
+      "type": "log"
+    },
+    {
+      "msg": "[BrandConfig] activeId=\"t-udve3b1u3\" trainerEmail=\"lucyy.tundidor@gmail.com\" => isAlejandra=false, isToledo=false, isLucy=true",
+      "time": "2026-06-21T11:25:12.531Z",
+      "type": "log"
+    },
+    {
+      "msg": "[BrandConfig] activeId=\"t-udve3b1u3\" trainerEmail=\"lucyy.tundidor@gmail.com\" => isAlejandra=false, isToledo=false, isLucy=true",
+      "time": "2026-06-21T11:25:12.536Z",
+      "type": "log"
+    },
+    {
+      "msg": "[BrandConfig] activeId=\"t-udve3b1u3\" trainerEmail=\"lucyy.tundidor@gmail.com\" => isAlejandra=false, isToledo=false, isLucy=true",
+      "time": "2026-06-21T11:25:12.537Z",
+      "type": "log"
+    },
+    {
+      "msg": "[BrandConfig] activeId=\"t-udve3b1u3\" trainerEmail=\"lucyy.tundidor@gmail.com\" => isAlejandra=false, isToledo=false, isLucy=true",
+      "time": "2026-06-21T11:25:12.537Z",
+      "type": "log"
+    },
+    {
+      "msg": "[BrandConfig] activeId=\"t-udve3b1u3\" trainerEmail=\"lucyy.tundidor@gmail.com\" => isAlejandra=false, isToledo=false, isLucy=true",
+      "time": "2026-06-21T11:25:12.538Z",
+      "type": "log"
+    },
+    {
+      "msg": "Supabase listo ✅",
+      "time": "2026-06-21T11:25:12.541Z",
+      "type": "log"
+    },
+    {
+      "msg": "🔥 [MIGRACIÓN v93] Cambios de grupos musculares detectados localmente. Guardando y sincronizando con Supabase...",
+      "time": "2026-06-21T11:25:13.187Z",
+      "type": "log"
+    },
+    {
+      "msg": "[BrandConfig] activeId=\"t-udve3b1u3\" trainerEmail=\"lucyy.tundidor@gmail.com\" => isAlejandra=false, isToledo=false, isLucy=true",
+      "time": "2026-06-21T11:25:13.188Z",
+      "type": "log"
+    },
+    {
+      "msg": "[BrandConfig] activeId=\"t-udve3b1u3\" trainerEmail=\"lucyy.tundidor@gmail.com\" => isAlejandra=false, isToledo=false, isLucy=true",
+      "time": "2026-06-21T11:25:13.189Z",
+      "type": "log"
+    },
+    {
+      "msg": "Sesión persistente detectada -> Disparando onGoogleAuthSuccess global",
+      "time": "2026-06-21T11:25:13.337Z",
+      "type": "log"
+    },
+    {
+      "msg": "🔥 [MIGRACIÓN v93] Cambios de grupos musculares detectados localmente. Guardando y sincronizando con Supabase...",
+      "time": "2026-06-21T11:25:13.455Z",
+      "type": "log"
+    },
+    {
+      "msg": "[BrandConfig] activeId=\"t-udve3b1u3\" trainerEmail=\"lucyy.tundidor@gmail.com\" => isAlejandra=false, isToledo=false, isLucy=true",
+      "time": "2026-06-21T11:25:13.455Z",
+      "type": "log"
+    },
+    {
+      "msg": "[BrandConfig] activeId=\"t-udve3b1u3\" trainerEmail=\"lucyy.tundidor@gmail.com\" => isAlejandra=false, isToledo=false, isLucy=true",
+      "time": "2026-06-21T11:25:13.457Z",
+      "type": "log"
+    },
+    {
+      "msg": "🔥 [MIGRACIÓN v93] Sincronización exitosa con Supabase.",
+      "time": "2026-06-21T11:25:13.624Z",
+      "type": "log"
+    },
+    {
+      "msg": "🔥 [MIGRACIÓN v93] Sincronización exitosa con Supabase.",
+      "time": "2026-06-21T11:25:13.848Z",
+      "type": "log"
+    }
+  ],
+  "feedbacks": [
+    {
+      "id": "240f5d3a-747d-4faa-8fb8-2592d2413976",
+      "date": "2026-06-21T11:20:53.903Z",
+      "week": 5,
+      "sleep": 4,
+      "energy": 5,
+      "stress": 2,
+      "weight": 61.5,
+      "answers": [
+        {
+          "answer": "Me veo súper bien, la ropa me queda mucho mejor y me noto con menos volumen abdominal!",
+          "question": "¿Qué tal te ves fisicamente?"
+        },
+        {
+          "answer": "Súper saciada, no paso nada de hambre y me encanta la tortilla de atún.",
+          "question": "Sensaciones sobre la dieta (mucha/poca comida, ansiedad, poco apetito...)"
+        },
+        {
+          "answer": "Ninguno, me gusta todo.",
+          "question": "Comida/alimento que no te haya gustado y/o quieras cambiar de la dieta actual"
+        },
+        {
+          "answer": "Quizá alguna fruta diferente si se puede.",
+          "question": "Comida/alimento que quieras tener en tu próxima dieta a ser posible"
+        },
+        {
+          "answer": "No, he sido 100% constante.",
+          "question": "¿Has realizado algún salto de dieta para tener en cuenta?"
+        },
+        {
+          "answer": "Muy bien, noto que gano fuerza semana a semana y me canso menos.",
+          "question": "¿Qué tal han ido los entrenos? Cuéntame tus sensaciones"
+        },
+        {
+          "answer": "Sí, he entrenado los 3 días.",
+          "question": "¿Has podido entrenar los días estipulados?"
+        },
+        {
+          "answer": "Sí, duermo unas 8 horas y descanso genial.",
+          "question": "¿Te recuperas correctamente de los entrenos entre sesiones?"
+        },
+        {
+          "answer": "9/10, dándolo todo en cada serie!",
+          "question": "Del 1 al 10, ¿Cuál ha sido tu implicación en los entrenamientos? (Intensidad, realización de todas las series...)"
+        }
+      ],
+      "clientId": "33aa6d43-f41b-4701-bba1-e14b79ae7589",
+      "comments": "¡Muchísimas gracias por todo el apoyo! Vamos a tope.",
+      "adherence": 5,
+      "perimeters": {
+        "Brazo": 27.2,
+        "Muslo": 52.8,
+        "Pecho": 86.5,
+        "Cadera": 96,
+        "Cintura": 69.8
+      },
+      "satisfaction": 5,
+      "trainerResponse": ""
+    },
+    {
+      "id": "fb-6ea21137-7208-4acf-b04e-b29e56c91633",
+      "date": "2026-05-27T12:32:07.538Z",
+      "week": 1,
+      "sleep": 4,
+      "energy": 4,
+      "stress": 3,
+      "weight": 63.5,
+      "answers": [
+        {
+          "answer": "Con ganas e inflamada al inicio.",
+          "question": "¿Qué tal te ves físicamente?"
+        }
+      ],
+      "clientId": "33aa6d43-f41b-4701-bba1-e14b79ae7589",
+      "comments": "Comienzo motivada.",
+      "adherence": 4,
+      "perimeters": {
+        "Brazo": 28,
+        "Muslo": 54,
+        "Pecho": 88,
+        "Cadera": 98,
+        "Cintura": 72
+      },
+      "satisfaction": 4,
+      "trainerResponse": "¡Gran inicio! Sigue así."
+    },
+    {
+      "id": "fb-f762d260-9542-4570-af38-012df536f263",
+      "date": "2026-06-03T12:32:07.538Z",
+      "week": 2,
+      "sleep": 4,
+      "energy": 5,
+      "stress": 3,
+      "weight": 63,
+      "answers": [
+        {
+          "answer": "Menos hinchada.",
+          "question": "¿Qué tal te ves físicamente?"
+        }
+      ],
+      "clientId": "33aa6d43-f41b-4701-bba1-e14b79ae7589",
+      "comments": "Me veo mejor en el espejo.",
+      "adherence": 5,
+      "perimeters": {
+        "Brazo": 28,
+        "Muslo": 54,
+        "Pecho": 88,
+        "Cadera": 97.5,
+        "Cintura": 71.5
+      },
+      "satisfaction": 5,
+      "trainerResponse": "Bajada de peso controlada. Excelente."
+    },
+    {
+      "id": "fb-d184382c-8a70-4eca-b46a-ea108e279b3d",
+      "date": "2026-06-10T12:32:07.538Z",
+      "week": 3,
+      "sleep": 4,
+      "energy": 4,
+      "stress": 2,
+      "weight": 62.4,
+      "answers": [
+        {
+          "answer": "Pantalones más sueltos.",
+          "question": "¿Qué tal te ves físicamente?"
+        }
+      ],
+      "clientId": "33aa6d43-f41b-4701-bba1-e14b79ae7589",
+      "comments": "Muy buena adherencia a los platos.",
+      "adherence": 5,
+      "perimeters": {
+        "Brazo": 27.8,
+        "Muslo": 53.5,
+        "Pecho": 87.5,
+        "Cadera": 97,
+        "Cintura": 70.8
+      },
+      "satisfaction": 5,
+      "trainerResponse": "Estupendo progreso de perímetros."
+    },
+    {
+      "id": "fb-c4ddb2f6-70b3-477d-ae1d-c893b0ff7ac5",
+      "date": "2026-06-17T12:32:07.538Z",
+      "week": 4,
+      "sleep": 4,
+      "energy": 5,
+      "stress": 2,
+      "weight": 62,
+      "answers": [
+        {
+          "answer": "Visualmente más tonificada.",
+          "question": "¿Qué tal te ves físicamente?"
+        }
+      ],
+      "clientId": "33aa6d43-f41b-4701-bba1-e14b79ae7589",
+      "comments": "Me siento más fuerte entrenando.",
+      "adherence": 5,
+      "perimeters": {
+        "Brazo": 27.5,
+        "Muslo": 53,
+        "Pecho": 87,
+        "Cadera": 96.5,
+        "Cintura": 70.2
+      },
+      "satisfaction": 5,
+      "trainerResponse": "Felicidades por la constancia."
+    },
+    {
+      "id": "fb-72342c81-2840-4a9f-8879-826d9819c1c1",
+      "date": "2026-06-21T12:32:07.538Z",
+      "week": 5,
+      "sleep": 4,
+      "energy": 5,
+      "stress": 2,
+      "weight": 61.5,
+      "answers": [
+        {
+          "answer": "Me veo súper bien, la ropa me queda mucho mejor!",
+          "question": "¿Qué tal te ves fisicamente?"
+        },
+        {
+          "answer": "Súper saciada, no paso nada de hambre.",
+          "question": "Sensaciones sobre la dieta (mucha/poca comida, ansiedad, poco apetito...)"
+        },
+        {
+          "answer": "Ninguno, me gusta todo.",
+          "question": "Comida/alimento que no te haya gustado y/o quieras cambiar de la dieta actual"
+        },
+        {
+          "answer": "Quizá alguna fruta diferente si se puede.",
+          "question": "Comida/alimento que quieras tener en tu próxima dieta a ser posible"
+        },
+        {
+          "answer": "No, he sido 100% constante.",
+          "question": "¿Has realizado algún salto de dieta para tener en cuenta?"
+        },
+        {
+          "answer": "Muy bien, noto que gano fuerza semana a semana.",
+          "question": "¿Qué tal han ido los entrenos? Cuéntame tus sensaciones"
+        },
+        {
+          "answer": "Sí, he entrenado los 3 días.",
+          "question": "¿Has podido entrenar los días estipulados?"
+        },
+        {
+          "answer": "Sí, descanso genial.",
+          "question": "¿Te recuperas correctamente de los entrenos entre sesiones?"
+        },
+        {
+          "answer": "9/10, dándolo todo en cada serie!",
+          "question": "Del 1 al 10, ¿Cuál ha sido tu implicación en los entrenamientos? (Intensidad, realización de todas las series...)"
+        }
+      ],
+      "clientId": "33aa6d43-f41b-4701-bba1-e14b79ae7589",
+      "comments": "¡Muchísimas gracias por todo el apoyo! Vamos a tope.",
+      "adherence": 5,
+      "perimeters": {
+        "Brazo": 27.2,
+        "Muslo": 52.8,
+        "Pecho": 86.5,
+        "Cadera": 96,
+        "Cintura": 69.8
+      },
+      "satisfaction": 5,
+      "trainerResponse": ""
+    }
+  ],
+  "deletedIds": [],
+  "appointments": [
+    {
+      "id": "c6706557-c38b-449c-9f80-e0dd1da8fbae",
+      "date": "2026-06-21T17:30:00.000Z",
+      "type": "call",
+      "notes": "Revisión mensual de objetivos, sensaciones y motivación.",
+      "status": "scheduled",
+      "clientId": "33aa6d43-f41b-4701-bba1-e14b79ae7589"
+    }
+  ],
+  "lastModified": "2026-06-21T12:47:59.777Z",
+  "trainingLogs": [
+    {
+      "id": "faadf2b5-1c71-499c-b6dd-c1f1694b9e86",
+      "date": "2026-05-29T12:32:07.538Z",
+      "blockId": "27505d18-03cc-4517-b76a-425538c36dba",
+      "clientId": "33aa6d43-f41b-4701-bba1-e14b79ae7589",
+      "completed": true,
+      "createdAt": "2026-05-29T12:32:07.538Z",
+      "dayNumber": 0,
+      "exercises": [
+        {
+          "name": "Curl Alterno (Mancuernas)",
+          "sets": [
+            {
+              "reps": 12,
+              "weight": 10,
+              "completed": true
+            }
+          ]
+        }
+      ],
+      "routineId": "27505d18-03cc-4517-b76a-425538c36dba",
+      "lastModified": "2026-05-29T12:32:07.538Z"
+    },
+    {
+      "id": "9d28b34f-ddbc-449d-8274-d69de2094d65",
+      "date": "2026-06-05T12:32:07.538Z",
+      "blockId": "27505d18-03cc-4517-b76a-425538c36dba",
+      "clientId": "33aa6d43-f41b-4701-bba1-e14b79ae7589",
+      "completed": true,
+      "createdAt": "2026-06-05T12:32:07.538Z",
+      "dayNumber": 0,
+      "exercises": [
+        {
+          "name": "Curl Alterno (Mancuernas)",
+          "sets": [
+            {
+              "reps": 10,
+              "weight": 12,
+              "completed": true
+            }
+          ]
+        }
+      ],
+      "routineId": "27505d18-03cc-4517-b76a-425538c36dba",
+      "lastModified": "2026-06-05T12:32:07.538Z"
+    },
+    {
+      "id": "c8ded350-9b1f-4c67-b4a6-7a1a37d8ee2b",
+      "date": "2026-06-12T12:32:07.538Z",
+      "blockId": "27505d18-03cc-4517-b76a-425538c36dba",
+      "clientId": "33aa6d43-f41b-4701-bba1-e14b79ae7589",
+      "completed": true,
+      "createdAt": "2026-06-12T12:32:07.538Z",
+      "dayNumber": 0,
+      "exercises": [
+        {
+          "name": "Curl Alterno (Mancuernas)",
+          "sets": [
+            {
+              "reps": 10,
+              "weight": 12,
+              "completed": true
+            }
+          ]
+        }
+      ],
+      "routineId": "27505d18-03cc-4517-b76a-425538c36dba",
+      "lastModified": "2026-06-12T12:32:07.538Z"
+    },
+    {
+      "id": "c9f13acc-7608-4873-8ad4-42eeb3d78081",
+      "date": "2026-06-19T12:32:07.538Z",
+      "blockId": "27505d18-03cc-4517-b76a-425538c36dba",
+      "clientId": "33aa6d43-f41b-4701-bba1-e14b79ae7589",
+      "completed": true,
+      "createdAt": "2026-06-19T12:32:07.538Z",
+      "dayNumber": 0,
+      "exercises": [
+        {
+          "name": "Curl Alterno (Mancuernas)",
+          "sets": [
+            {
+              "reps": 10,
+              "weight": 14,
+              "completed": true
+            }
+          ]
+        }
+      ],
+      "routineId": "27505d18-03cc-4517-b76a-425538c36dba",
+      "lastModified": "2026-06-19T12:32:07.538Z"
+    }
+  ],
+  "trainingBlocks": [
+    {
+      "id": "27505d18-03cc-4517-b76a-425538c36dba",
+      "goal": "Pérdida de grasa / Definición muscular",
+      "name": "Módulo Inicial Tonificación",
+      "weeks": [
+        {
+          "days": [
+            {
+              "name": "LUNES (TREN SUPERIOR)",
+              "exercises": [
+                {
+                  "name": "Press Inclinado (Mancuernas)",
+                  "reps": "10-12",
+                  "sets": "3",
+                  "notes": "Controla la bajada en 2 segundos. Empuja con fuerza.",
+                  "videoUrl": "https://www.youtube.com/watch?v=8iPEnn-ltC8",
+                  "intensity": "RPE 8"
+                },
+                {
+                  "name": "Remo con Mancuerna (1 mano)",
+                  "reps": "10",
+                  "sets": "3",
+                  "notes": "Mantén la espalda recta y lleva el codo hacia la cadera.",
+                  "videoUrl": "https://www.youtube.com/watch?v=dFzUjzuW_2M",
+                  "intensity": "RPE 8"
+                },
+                {
+                  "name": "Elevaciones Laterales (Mancuernas)",
+                  "reps": "12-15",
+                  "sets": "3",
+                  "notes": "No uses balanceo, hombros relajados abajo.",
+                  "videoUrl": "https://www.youtube.com/watch?v=3VcKaXpzqRo",
+                  "intensity": "RPE 9"
+                },
+                {
+                  "name": "Jalón al Pecho (Ancho)",
+                  "reps": "12",
+                  "sets": "3",
+                  "notes": "Saca pecho al bajar la barra hacia la clavícula.",
+                  "videoUrl": "https://www.youtube.com/watch?v=CAwf7n6Luuc",
+                  "intensity": "RPE 8"
+                },
+                {
+                  "name": "Curl Alterno (Mancuernas)",
+                  "reps": "12",
+                  "sets": "2",
+                  "notes": "Mantén codos pegados al cuerpo.",
+                  "videoUrl": "https://www.youtube.com/watch?v=sAq_ocpRh_I",
+                  "intensity": "RPE 9"
+                },
+                {
+                  "name": "Extensiones en Polea Alta",
+                  "reps": "12",
+                  "sets": "2",
+                  "notes": "Abre la cuerda al final del movimiento abajo.",
+                  "videoUrl": "https://www.youtube.com/watch?v=2-LAMcpzHLU",
+                  "intensity": "RPE 9"
+                }
+              ]
+            },
+            {
+              "name": "MIÉRCOLES (TREN INFERIOR)",
+              "exercises": [
+                {
+                  "name": "Sentadilla Goblet",
+                  "reps": "10-12",
+                  "sets": "3",
+                  "notes": "Mancuerna pegada al pecho, desciende rompiendo paralelo.",
+                  "videoUrl": "https://www.youtube.com/watch?v=MeIiGibT6X0",
+                  "intensity": "RPE 8"
+                },
+                {
+                  "name": "Prensa de Piernas 45º",
+                  "reps": "12",
+                  "sets": "3",
+                  "notes": "Coloca pies a anchura de hombros, baja controlado.",
+                  "videoUrl": "https://www.youtube.com/watch?v=yZ800I4r_0g",
+                  "intensity": "RPE 8"
+                },
+                {
+                  "name": "Peso Muerto Rumano con Mancuernas",
+                  "reps": "10",
+                  "sets": "3",
+                  "notes": "Bisagra de cadera, siente el estiramiento en femorales.",
+                  "videoUrl": "https://www.youtube.com/watch?v=JCXUYuzz9Sg",
+                  "intensity": "RPE 8"
+                },
+                {
+                  "name": "Extensiones de Cuádriceps",
+                  "reps": "15",
+                  "sets": "3",
+                  "notes": "Aguanta 1 segundo la contracción arriba.",
+                  "videoUrl": "https://www.youtube.com/watch?v=YyvSfVLYd80",
+                  "intensity": "RPE 9"
+                },
+                {
+                  "name": "Elevación de Gemelos en Prensa",
+                  "reps": "15",
+                  "sets": "3",
+                  "notes": "Rango de movimiento completo, estira abajo.",
+                  "videoUrl": "https://www.youtube.com/watch?v=gwLzBJYoWlI",
+                  "intensity": "RPE 9"
+                }
+              ]
+            },
+            {
+              "name": "VIERNES (GLÚTEOS Y CORE)",
+              "exercises": [
+                {
+                  "name": "Hip Thrust (Barra)",
+                  "reps": "10",
+                  "sets": "4",
+                  "notes": "Haz fuerza con los talones, bloquea glúteos arriba.",
+                  "videoUrl": "https://www.youtube.com/watch?v=SEDZFull6pQ",
+                  "intensity": "RPE 9"
+                },
+                {
+                  "name": "Patada de Glúteo en Polea",
+                  "reps": "12",
+                  "sets": "3",
+                  "notes": "Patada hacia atrás y ligeramente hacia fuera.",
+                  "videoUrl": "https://www.youtube.com/watch?v=N_p2U_62jG8",
+                  "intensity": "RPE 9"
+                },
+                {
+                  "name": "Sentadilla Búlgara con Mancuernas",
+                  "reps": "10",
+                  "sets": "3",
+                  "notes": "Apoya el pie trasero en banco. Foco en pierna delantera.",
+                  "videoUrl": "https://www.youtube.com/watch?v=2C-uNgKwPLE",
+                  "intensity": "RPE 8"
+                },
+                {
+                  "name": "Plancha Abdominal",
+                  "reps": "45 seg",
+                  "sets": "3",
+                  "notes": "Aprieta abdomen y glúteos, cuerpo alineado.",
+                  "videoUrl": "https://www.youtube.com/watch?v=TvxNkmjdhMM",
+                  "intensity": "RPE 8"
+                },
+                {
+                  "name": "Crunch Abdominal en Suelo",
+                  "reps": "15",
+                  "sets": "3",
+                  "notes": "Contracción lenta, expulsa el aire al subir.",
+                  "videoUrl": "https://www.youtube.com/watch?v=S08E3B6xLMc",
+                  "intensity": "RPE 8"
+                }
+              ]
+            }
+          ],
+          "name": "Semana 1",
+          "number": 1
+        }
+      ],
+      "status": "active",
+      "endDate": null,
+      "clientId": "33aa6d43-f41b-4701-bba1-e14b79ae7589",
+      "createdAt": "2026-06-01T10:32:47.995Z",
+      "published": true,
+      "startDate": "2026-06-01T10:32:47.995Z"
+    }
+  ],
+  "muscleGroupsConfig": {
+    "groups": [
+      "Pectorales",
+      "Dorsales",
+      "Lumbares",
+      "Hombros",
+      "Biceps",
+      "Triceps",
+      "Antebrazo",
+      "Abdominales",
+      "Cuadriceps",
+      "Isquiotibiales",
+      "Gemelos",
+      "Glúteos",
+      "Cuello"
+    ],
+    "exercises": {
+      "Biceps": [
+        {
+          "name": "Curl con Barra Z",
+          "videoUrl": "https://www.youtube.com/watch?v=LY1V6p-XvJk"
+        },
+        {
+          "name": "Curl Martillo",
+          "videoUrl": "https://www.youtube.com/watch?v=zC3nLlEvin4"
+        },
+        {
+          "name": "Curl Predicador (Scott)",
+          "videoUrl": "https://www.youtube.com/watch?v=fIWP-FRFNU0"
+        },
+        {
+          "name": "Curl Alterno (Mancuernas)",
+          "videoUrl": "https://www.youtube.com/watch?v=sAq_ocpRh_I"
+        },
+        {
+          "name": "Curl Concentrado",
+          "videoUrl": "https://www.youtube.com/watch?v=v0ZStv9fU8k"
+        },
+        {
+          "name": "Curl en Polea Baja",
+          "videoUrl": "https://www.youtube.com/watch?v=AsAVbgh8Syg"
+        },
+        {
+          "name": "Curl de Bíceps en Banco Inclinado",
+          "videoUrl": "https://www.youtube.com/watch?v=sAq_ocpRh_I"
+        },
+        {
+          "name": "Curl Spider (Araña) en Banco",
+          "videoUrl": "https://www.youtube.com/watch?v=fIWP-FRFNU0"
+        },
+        {
+          "name": "Curl de Bíceps Zottman",
+          "videoUrl": "https://www.youtube.com/watch?v=LY1V6p-XvJk"
+        },
+        {
+          "name": "Curl Concentrado apoyado en Muslo",
+          "videoUrl": "https://www.youtube.com/watch?v=v0ZStv9fU8k"
+        },
+        {
+          "name": "Curl de Bíceps con Barra Recta",
+          "videoUrl": "https://www.youtube.com/watch?v=AsAVbgh8Syg"
+        },
+        {
+          "name": "Curl de Bíceps en Polea con Cuerda",
+          "videoUrl": "https://www.youtube.com/watch?v=AsAVbgh8Syg"
+        },
+        {
+          "name": "Curl Martillo con Polea",
+          "videoUrl": "https://www.youtube.com/watch?v=zC3nLlEvin4"
+        },
+        {
+          "name": "Curl Predicador con Mancuerna",
+          "videoUrl": "https://www.youtube.com/watch?v=fIWP-FRFNU0"
+        },
+        {
+          "name": "Curl de Bíceps Unilateral apoyado en rodilla",
+          "videoUrl": "https://www.youtube.com/watch?v=v0ZStv9fU8k"
+        },
+        {
+          "name": "Curl de Bíceps en Pronación (Invertido)",
+          "videoUrl": "https://www.youtube.com/watch?v=LY1V6p-XvJk"
+        }
+      ],
+      "Cuello": [
+        {
+          "name": "Extensión de Cuello con Disco",
+          "videoUrl": "https://www.youtube.com/watch?v=um3VVz_SIsg"
+        },
+        {
+          "name": "Flexión de Cuello con Disco",
+          "videoUrl": "https://www.youtube.com/watch?v=um3VVz_SIsg"
+        },
+        {
+          "name": "Extensión de Cuello isométrica manual",
+          "videoUrl": "https://www.youtube.com/watch?v=um3VVz_SIsg"
+        },
+        {
+          "name": "Flexión de Cuello isométrica manual",
+          "videoUrl": "https://www.youtube.com/watch?v=um3VVz_SIsg"
+        },
+        {
+          "name": "Flexión lateral de Cuello manual",
+          "videoUrl": "https://www.youtube.com/watch?v=um3VVz_SIsg"
+        },
+        {
+          "name": "Rotaciones de Cuello controladas",
+          "videoUrl": "https://www.youtube.com/watch?v=um3VVz_SIsg"
+        },
+        {
+          "name": "Encogimientos con barra por detrás de la espalda",
+          "videoUrl": "https://www.youtube.com/watch?v=g6qbq4u19OY"
+        },
+        {
+          "name": "Paseo del granjero pesado (Foco trapecio/cuello)",
+          "videoUrl": "https://www.youtube.com/watch?v=dFzUjzuW_2M"
+        },
+        {
+          "name": "Encogimientos con Mancuernas sentados",
+          "videoUrl": "https://www.youtube.com/watch?v=g6qbq4u19OY"
+        },
+        {
+          "name": "Extensión de cuello con arnés para cabeza",
+          "videoUrl": "https://www.youtube.com/watch?v=um3VVz_SIsg"
+        }
+      ],
+      "Gemelos": [
+        {
+          "name": "Elevación de Gemelos (De pie)",
+          "videoUrl": "https://www.youtube.com/watch?v=gwLzBJYoWlI"
+        },
+        {
+          "name": "Elevación de Gemelos (Sentado)",
+          "videoUrl": "https://www.youtube.com/watch?v=JbyjN7BW3ic"
+        },
+        {
+          "name": "Elevación de Gemelos en Prensa",
+          "videoUrl": "https://www.youtube.com/watch?v=gwLzBJYoWlI"
+        },
+        {
+          "name": "Elevación de Gemelos tipo Burro (Donkey Raises)",
+          "videoUrl": "https://www.youtube.com/watch?v=JbyjN7BW3ic"
+        },
+        {
+          "name": "Elevación de Gemelos Unilateral",
+          "videoUrl": "https://www.youtube.com/watch?v=gwLzBJYoWlI"
+        },
+        {
+          "name": "Elevación de Gemelos en Sentadilla Hack",
+          "videoUrl": "https://www.youtube.com/watch?v=gwLzBJYoWlI"
+        },
+        {
+          "name": "Elevación de Gemelos en Suelo sin peso",
+          "videoUrl": "https://www.youtube.com/watch?v=gwLzBJYoWlI"
+        },
+        {
+          "name": "Paseo del granjero de puntillas",
+          "videoUrl": "https://www.youtube.com/watch?v=dFzUjzuW_2M"
+        },
+        {
+          "name": "Elevación de Gemelos sentado con Mancuerna",
+          "videoUrl": "https://www.youtube.com/watch?v=JbyjN7BW3ic"
+        },
+        {
+          "name": "Elevación de Gemelos con Barra de pie",
+          "videoUrl": "https://www.youtube.com/watch?v=gwLzBJYoWlI"
+        },
+        {
+          "name": "Elevación de Gemelos con tensor elástico",
+          "videoUrl": "https://www.youtube.com/watch?v=gwLzBJYoWlI"
+        },
+        {
+          "name": "Saltos a la comba de puntillas",
+          "videoUrl": "https://www.youtube.com/watch?v=JbyjN7BW3ic"
+        }
+      ],
+      "Hombros": [
+        {
+          "name": "Press Militar (Barra)",
+          "videoUrl": "https://www.youtube.com/watch?v=2yjwxtZ_Vkg"
+        },
+        {
+          "name": "Press Militar (Mancuernas)",
+          "videoUrl": "https://www.youtube.com/watch?v=hzV0is76j5I"
+        },
+        {
+          "name": "Press Arnold",
+          "videoUrl": "https://www.youtube.com/watch?v=6mcHe6Pvefc"
+        },
+        {
+          "name": "Elevaciones Laterales (Mancuernas)",
+          "videoUrl": "https://www.youtube.com/watch?v=3VcKaXpzqRo"
+        },
+        {
+          "name": "Elevaciones Laterales (Polea)",
+          "videoUrl": "https://www.youtube.com/watch?v=PPrzBWZDOhA"
+        },
+        {
+          "name": "Elevaciones Frontales (Mancuernas)",
+          "videoUrl": "https://www.youtube.com/watch?v=gzXoI26vT_o"
+        },
+        {
+          "name": "Pájaros (Mancuernas)",
+          "videoUrl": "https://www.youtube.com/watch?v=6yMdhi2DVao"
+        },
+        {
+          "name": "Pájaros (Polea)",
+          "videoUrl": "https://www.youtube.com/watch?v=H530fW3KWfk"
+        },
+        {
+          "name": "Facepulls",
+          "videoUrl": "https://www.youtube.com/watch?v=V8dZ3on_D_Y"
+        },
+        {
+          "name": "Encogimientos de Hombros",
+          "videoUrl": "https://www.youtube.com/watch?v=g6qbq4u19OY"
+        },
+        {
+          "name": "Remo al Mentón (Barra EZ)",
+          "videoUrl": "https://www.youtube.com/watch?v=um3VVz_SIsg"
+        },
+        {
+          "name": "Pájaros en Peck Deck Invertido",
+          "videoUrl": "https://www.youtube.com/watch?v=5yWTVfXNntc"
+        },
+        {
+          "name": "Press Militar con Mancuernas Sentado",
+          "videoUrl": "https://www.youtube.com/watch?v=hzV0is76j5I"
+        },
+        {
+          "name": "Elevaciones Laterales Inclinadas (Mancuerna)",
+          "videoUrl": "https://www.youtube.com/watch?v=3VcKaXpzqRo"
+        },
+        {
+          "name": "Elevaciones Frontales con Disco",
+          "videoUrl": "https://www.youtube.com/watch?v=gzXoI26vT_o"
+        },
+        {
+          "name": "Pájaros Sentado",
+          "videoUrl": "https://www.youtube.com/watch?v=6yMdhi2DVao"
+        },
+        {
+          "name": "Press de Hombros en Máquina Smith",
+          "videoUrl": "https://www.youtube.com/watch?v=2yjwxtZ_Vkg"
+        },
+        {
+          "name": "Elevaciones Laterales Unilaterales en Polea",
+          "videoUrl": "https://www.youtube.com/watch?v=PPrzBWZDOhA"
+        },
+        {
+          "name": "Face Pull en Polea Alta",
+          "videoUrl": "https://www.youtube.com/watch?v=V8dZ3on_D_Y"
+        },
+        {
+          "name": "Elevaciones Laterales en Máquina",
+          "videoUrl": "https://www.youtube.com/watch?v=3VcKaXpzqRo"
+        },
+        {
+          "name": "Press militar arrodillado con mancuerna",
+          "videoUrl": "https://www.youtube.com/watch?v=hzV0is76j5I"
+        },
+        {
+          "name": "Elevaciones Frontales con Polea",
+          "videoUrl": "https://www.youtube.com/watch?v=gzXoI26vT_o"
+        }
+      ],
+      "Triceps": [
+        {
+          "name": "Press Francés",
+          "videoUrl": "https://www.youtube.com/watch?v=1u1_NreL7mU"
+        },
+        {
+          "name": "Extensiones en Polea Alta",
+          "videoUrl": "https://www.youtube.com/watch?v=2-LAMcpzHLU"
+        },
+        {
+          "name": "Patada de Tríceps (Polea)",
+          "videoUrl": "https://www.youtube.com/watch?v=6SS6K3lAwZ8"
+        },
+        {
+          "name": "Press de Banca Estrecho",
+          "videoUrl": "https://www.youtube.com/watch?v=wX-EPr_x4_A"
+        },
+        {
+          "name": "Extensiones tras nuca",
+          "videoUrl": "https://www.youtube.com/watch?v=6XhS6_q1Vtc"
+        },
+        {
+          "name": "Patada de Tríceps con Mancuerna",
+          "videoUrl": "https://www.youtube.com/watch?v=6SS6K3lAwZ8"
+        },
+        {
+          "name": "Fondos entre Bancos (Tríceps)",
+          "videoUrl": "https://www.youtube.com/watch?v=2z8JmcrW-As"
+        },
+        {
+          "name": "Press Francés con Mancuernas",
+          "videoUrl": "https://www.youtube.com/watch?v=1u1_NreL7mU"
+        },
+        {
+          "name": "Extensión de Tríceps por encima de la cabeza en Polea",
+          "videoUrl": "https://www.youtube.com/watch?v=6XhS6_q1Vtc"
+        },
+        {
+          "name": "Fondos en Máquina para Tríceps",
+          "videoUrl": "https://www.youtube.com/watch?v=2z8JmcrW-As"
+        },
+        {
+          "name": "Rompecráneos (Skull Crushers) con barra EZ",
+          "videoUrl": "https://www.youtube.com/watch?v=1u1_NreL7mU"
+        },
+        {
+          "name": "Extensión de Tríceps unilateral en Polea",
+          "videoUrl": "https://www.youtube.com/watch?v=2-LAMcpzHLU"
+        },
+        {
+          "name": "Flexiones de diamante en banco",
+          "videoUrl": "https://www.youtube.com/watch?v=wX-EPr_x4_A"
+        },
+        {
+          "name": "Extensión de Tríceps con mancuerna a dos manos",
+          "videoUrl": "https://www.youtube.com/watch?v=6XhS6_q1Vtc"
+        },
+        {
+          "name": "Extensiones de Tríceps con Cuerda invertida",
+          "videoUrl": "https://www.youtube.com/watch?v=2-LAMcpzHLU"
+        }
+      ],
+      "Dorsales": [
+        {
+          "name": "Dominadas (Prono)",
+          "videoUrl": "https://www.youtube.com/watch?v=eGo4IYlbE5g"
+        },
+        {
+          "name": "Dominadas (Supino)",
+          "videoUrl": "https://www.youtube.com/watch?v=eGo4IYlbE5g"
+        },
+        {
+          "name": "Jalón al Pecho (Ancho)",
+          "videoUrl": "https://www.youtube.com/watch?v=CAwf7n6Luuc"
+        },
+        {
+          "name": "Jalón al Pecho (Estrecho)",
+          "videoUrl": "https://www.youtube.com/watch?v=G86L6_W8y-w"
+        },
+        {
+          "name": "Remo con Barra (90º)",
+          "videoUrl": "https://www.youtube.com/watch?v=RQU8wL6G_HI"
+        },
+        {
+          "name": "Remo con Mancuerna (1 mano)",
+          "videoUrl": "https://www.youtube.com/watch?v=dFzUjzuW_2M"
+        },
+        {
+          "name": "Remo en Polea Baja (Gironda)",
+          "videoUrl": "https://www.youtube.com/watch?v=GZbfZ033f74"
+        },
+        {
+          "name": "Peso Muerto Convencional",
+          "videoUrl": "https://www.youtube.com/watch?v=ytGaGIn3SjE"
+        },
+        {
+          "name": "Remo en Punta (T-Bar)",
+          "videoUrl": "https://www.youtube.com/watch?v=j3Igk5nyZE4"
+        },
+        {
+          "name": "Pull-over en Polea Alta",
+          "videoUrl": "https://www.youtube.com/watch?v=P_m8_z_Lh-I"
+        },
+        {
+          "name": "Hiperextensiones",
+          "videoUrl": "https://www.youtube.com/watch?v=ph3pddpKzzw"
+        },
+        {
+          "name": "Jalón con Brazos Rectos",
+          "videoUrl": "https://www.youtube.com/watch?v=AJO_R0E-zB8"
+        },
+        {
+          "name": "Remo con Soporte en Pecho",
+          "videoUrl": "https://www.youtube.com/watch?v=roS6vXG3o1w"
+        },
+        {
+          "name": "Remo con Barra con Agarre Supino",
+          "videoUrl": "https://www.youtube.com/watch?v=RQU8wL6G_HI"
+        },
+        {
+          "name": "Remo con Barra T con Soporte",
+          "videoUrl": "https://www.youtube.com/watch?v=j3Igk5nyZE4"
+        },
+        {
+          "name": "Remo en Polea Alta con Agarre Neutro",
+          "videoUrl": "https://www.youtube.com/watch?v=GZbfZ033f74"
+        },
+        {
+          "name": "Remo con Mancuerna apoyado en Banco Inclinado",
+          "videoUrl": "https://www.youtube.com/watch?v=roS6vXG3o1w"
+        },
+        {
+          "name": "Pull-down unilateral en Polea",
+          "videoUrl": "https://www.youtube.com/watch?v=P_m8_z_Lh-I"
+        },
+        {
+          "name": "Remo Pendlay",
+          "videoUrl": "https://www.youtube.com/watch?v=h4nOCa7HQHQ"
+        },
+        {
+          "name": "Jalón al Pecho con barra en V",
+          "videoUrl": "https://www.youtube.com/watch?v=G86L6_W8y-w"
+        },
+        {
+          "name": "Remo unilateral en máquina convergente",
+          "videoUrl": "https://www.youtube.com/watch?v=roS6vXG3o1w"
+        },
+        {
+          "name": "Jalón al Pecho Unilateral",
+          "videoUrl": "https://www.youtube.com/watch?v=CAwf7n6Luuc"
+        },
+        {
+          "name": "Pull-over con Barra",
+          "videoUrl": "https://www.youtube.com/watch?v=FK4rj9Ps0uM"
+        }
+      ],
+      "Glúteos": [
+        {
+          "name": "Hip Thrust (Barra)",
+          "videoUrl": "https://www.youtube.com/watch?v=SEDZFull6pQ"
+        },
+        {
+          "name": "Puente de Glúteo (Barra)",
+          "videoUrl": "https://www.youtube.com/watch?v=j6iT33H99e0"
+        },
+        {
+          "name": "Patada de Glúteo en Polea",
+          "videoUrl": "https://www.youtube.com/watch?v=N_p2U_62jG8"
+        },
+        {
+          "name": "Abducciones en Máquina",
+          "videoUrl": "https://www.youtube.com/watch?v=NpZp824T3lE"
+        },
+        {
+          "name": "Zancada Búlgara (Foco Glúteo)",
+          "videoUrl": "https://www.youtube.com/watch?v=2C-uNgKwPLE"
+        },
+        {
+          "name": "Step Up (Cajón Alto)",
+          "videoUrl": "https://www.youtube.com/watch?v=9_C8p9pNc6U"
+        },
+        {
+          "name": "Abducciones en Polea",
+          "videoUrl": "https://www.youtube.com/watch?v=NpZp824F3lE"
+        },
+        {
+          "name": "Hip Thrust con Mancuerna",
+          "videoUrl": "https://www.youtube.com/watch?v=SEDZFull6pQ"
+        },
+        {
+          "name": "Patadas de Glúteo en Suelo (Quadruped Hip Extension)",
+          "videoUrl": "https://www.youtube.com/watch?v=N_p2U_62jG8"
+        },
+        {
+          "name": "Puentes de Glúteo Unilaterales",
+          "videoUrl": "https://www.youtube.com/watch?v=j6iT33H99e0"
+        },
+        {
+          "name": "Frog Pumps (Puente de Glúteo Rana)",
+          "videoUrl": "https://www.youtube.com/watch?v=j6iT33H99e0"
+        },
+        {
+          "name": "Zancadas cruzadas (Curtsy Lunges)",
+          "videoUrl": "https://www.youtube.com/watch?v=2C-uNgKwPLE"
+        },
+        {
+          "name": "Extensión de cadera en banco inclinado",
+          "videoUrl": "https://www.youtube.com/watch?v=NpZp824T3lE"
+        },
+        {
+          "name": "Caminata lateral con banda elástica (Monster Walk)",
+          "videoUrl": "https://www.youtube.com/watch?v=NpZp824T3lE"
+        },
+        {
+          "name": "Sentadilla Sumo con Mancuerna",
+          "videoUrl": "https://www.youtube.com/watch?v=9_C8p9pNc6U"
+        },
+        {
+          "name": "Abducciones de cadera tumbado (Clamshells)",
+          "videoUrl": "https://www.youtube.com/watch?v=NpZp824T3lE"
+        }
+      ],
+      "Lumbares": [
+        {
+          "name": "Buenos Días con Barra",
+          "videoUrl": "https://www.youtube.com/watch?v=48S8vR3XUaA"
+        },
+        {
+          "name": "Hiperextensiones invertidas",
+          "videoUrl": "https://www.youtube.com/watch?v=ph3pddpKzzw"
+        },
+        {
+          "name": "Peso Muerto con Barra Hexagonal",
+          "videoUrl": "https://www.youtube.com/watch?v=ytGaGIn3SjE"
+        },
+        {
+          "name": "Extensión Lumbar en Suelo (Supermans)",
+          "videoUrl": "https://www.youtube.com/watch?v=ph3pddpKzzw"
+        },
+        {
+          "name": "Bird Dog (Perro de caza)",
+          "videoUrl": "https://www.youtube.com/watch?v=4XLEnwUr1gk"
+        },
+        {
+          "name": "Puente Lumbar Isométrico",
+          "videoUrl": "https://www.youtube.com/watch?v=j6iT33H99e0"
+        },
+        {
+          "name": "Peso Muerto Sumo",
+          "videoUrl": "https://www.youtube.com/watch?v=ytGaGIn3SjE"
+        },
+        {
+          "name": "Cat-Cow (Gato-Camello)",
+          "videoUrl": "https://www.youtube.com/watch?v=TvxNkmjdhMM"
+        },
+        {
+          "name": "Plancha Lumbar / Inversa",
+          "videoUrl": "https://www.youtube.com/watch?v=TvxNkmjdhMM"
+        }
+      ],
+      "Antebrazo": [
+        {
+          "name": "Curl de Muñeca en Pronación con Barra",
+          "videoUrl": "https://www.youtube.com/watch?v=LY1V6p-XvJk"
+        },
+        {
+          "name": "Curl de Muñeca en Supinación con Barra",
+          "videoUrl": "https://www.youtube.com/watch?v=LY1V6p-XvJk"
+        },
+        {
+          "name": "Paseo del Granjero (Farmer's Walk)",
+          "videoUrl": "https://www.youtube.com/watch?v=dFzUjzuW_2M"
+        },
+        {
+          "name": "Curl Invertido con barra Z (Foco Antebrazo)",
+          "videoUrl": "https://www.youtube.com/watch?v=LY1V6p-XvJk"
+        },
+        {
+          "name": "Rotaciones de muñeca con Mancuerna",
+          "videoUrl": "https://www.youtube.com/watch?v=v0ZStv9fU8k"
+        },
+        {
+          "name": "Cuelgue Pasivo en Barra (Dead Hang)",
+          "videoUrl": "https://www.youtube.com/watch?v=eGo4IYlbE5g"
+        },
+        {
+          "name": "Curl Martillo con Mancuernas (Foco Braquiorradial)",
+          "videoUrl": "https://www.youtube.com/watch?v=zC3nLlEvin4"
+        },
+        {
+          "name": "Enrollamiento de cuerda con peso (Wrist Roller)",
+          "videoUrl": "https://www.youtube.com/watch?v=LY1V6p-XvJk"
+        },
+        {
+          "name": "Curl de Muñeca con Mancuerna detrás de la espalda",
+          "videoUrl": "https://www.youtube.com/watch?v=LY1V6p-XvJk"
+        },
+        {
+          "name": "Pinza manual (Hand Gripper)",
+          "videoUrl": "https://www.youtube.com/watch?v=zC3nLlEvin4"
+        }
+      ],
+      "Cuadriceps": [
+        {
+          "name": "Sentadilla Libre (Barra)",
+          "videoUrl": "https://www.youtube.com/watch?v=SW_C1A-SHMA"
+        },
+        {
+          "name": "Prensa de Piernas 45º",
+          "videoUrl": "https://www.youtube.com/watch?v=yZ800I4r_0g"
+        },
+        {
+          "name": "Extensiones de Cuádriceps",
+          "videoUrl": "https://www.youtube.com/watch?v=YyvSfVLYd80"
+        },
+        {
+          "name": "Zancadas Caminando (Lunges)",
+          "videoUrl": "https://www.youtube.com/watch?v=D7KaRcUTQeE"
+        },
+        {
+          "name": "Sentadilla Búlgara (Foco Cuádriceps)",
+          "videoUrl": "https://www.youtube.com/watch?v=2C-uNgKwPLE"
+        },
+        {
+          "name": "Sentadilla Hack",
+          "videoUrl": "https://www.youtube.com/watch?v=EdSndmB-A7c"
+        },
+        {
+          "name": "Sentadilla Goblet",
+          "videoUrl": "https://www.youtube.com/watch?v=MeIiGibT6X0"
+        },
+        {
+          "name": "Sentadilla Frontal con Barra",
+          "videoUrl": "https://www.youtube.com/watch?v=SW_C1A-SHMA"
+        },
+        {
+          "name": "Zancadas con Mancuernas",
+          "videoUrl": "https://www.youtube.com/watch?v=D7KaRcUTQeE"
+        },
+        {
+          "name": "Sentadilla Sissy",
+          "videoUrl": "https://www.youtube.com/watch?v=YyvSfVLYd80"
+        },
+        {
+          "name": "Extensión de Cuádriceps unilateral",
+          "videoUrl": "https://www.youtube.com/watch?v=YyvSfVLYd80"
+        },
+        {
+          "name": "Step Ups con Mancuernas",
+          "videoUrl": "https://www.youtube.com/watch?v=9_C8p9pNc6U"
+        },
+        {
+          "name": "Prensa de Piernas a una pierna",
+          "videoUrl": "https://www.youtube.com/watch?v=yZ800I4r_0g"
+        },
+        {
+          "name": "Sentadilla Búlgara con Mancuernas",
+          "videoUrl": "https://www.youtube.com/watch?v=2C-uNgKwPLE"
+        },
+        {
+          "name": "Sentadilla en Máquina Smith",
+          "videoUrl": "https://www.youtube.com/watch?v=SW_C1A-SHMA"
+        },
+        {
+          "name": "Zancadas invertidas",
+          "videoUrl": "https://www.youtube.com/watch?v=D7KaRcUTQeE"
+        },
+        {
+          "name": "Sentadilla isométrica apoyada en pared",
+          "videoUrl": "https://www.youtube.com/watch?v=SW_C1A-SHMA"
+        }
+      ],
+      "Pectorales": [
+        {
+          "name": "Press de Banca Plano (Barra)",
+          "videoUrl": "https://www.youtube.com/watch?v=tuwHzzPrzOM"
+        },
+        {
+          "name": "Press Inclinado (Barra)",
+          "videoUrl": "https://www.youtube.com/watch?v=SrqOu55lr6A"
+        },
+        {
+          "name": "Press Declinado (Barra)",
+          "videoUrl": "https://www.youtube.com/watch?v=LfyQbuJshYw"
+        },
+        {
+          "name": "Press Plano (Mancuernas)",
+          "videoUrl": "https://www.youtube.com/watch?v=8679p9qL-wY"
+        },
+        {
+          "name": "Press Inclinado (Mancuernas)",
+          "videoUrl": "https://www.youtube.com/watch?v=8iPEnn-ltC8"
+        },
+        {
+          "name": "Aperturas Planas (Mancuernas)",
+          "videoUrl": "https://www.youtube.com/watch?v=eGjt4lk6g34"
+        },
+        {
+          "name": "Aperturas en Peck Deck",
+          "videoUrl": "https://www.youtube.com/watch?v=6id882M_39E"
+        },
+        {
+          "name": "Cruce de Poleas Altas",
+          "videoUrl": "https://www.youtube.com/watch?v=taI4XpqatW0"
+        },
+        {
+          "name": "Cruce de Poleas Bajas",
+          "videoUrl": "https://www.youtube.com/watch?v=Mofp6LqWf1A"
+        },
+        {
+          "name": "Flexiones (Push Ups)",
+          "videoUrl": "https://www.youtube.com/watch?v=IODxDxX7oi4"
+        },
+        {
+          "name": "Fondos en Paralelas (Pecho)",
+          "videoUrl": "https://www.youtube.com/watch?v=2z8JmcrW-As"
+        },
+        {
+          "name": "Press en Máquina Convergente",
+          "videoUrl": "https://www.youtube.com/watch?v=xZ9Mms94k8o"
+        },
+        {
+          "name": "Pullover con Mancuerna",
+          "videoUrl": "https://www.youtube.com/watch?v=FK4rj9Ps0uM"
+        },
+        {
+          "name": "Press con Mancuernas en Suelo (Floor Press)",
+          "videoUrl": "https://www.youtube.com/watch?v=uGRB89V4WiU"
+        },
+        {
+          "name": "Cruce de Poleas de pie",
+          "videoUrl": "https://www.youtube.com/watch?v=taI4XpqatW0"
+        },
+        {
+          "name": "Aperturas Inclinadas (Mancuernas)",
+          "videoUrl": "https://www.youtube.com/watch?v=Aj_t44nI8m4"
+        },
+        {
+          "name": "Press de Banca con Agarre Invertido",
+          "videoUrl": "https://www.youtube.com/watch?v=8679p9qL-wY"
+        },
+        {
+          "name": "Aperturas en Polea Alta",
+          "videoUrl": "https://www.youtube.com/watch?v=taI4XpqatW0"
+        },
+        {
+          "name": "Flexiones con manos juntas (Diamond Push Ups)",
+          "videoUrl": "https://www.youtube.com/watch?v=J0DnG1_S92I"
+        },
+        {
+          "name": "Press de Pecho en Máquina Hammer",
+          "videoUrl": "https://www.youtube.com/watch?v=xZ9Mms94k8o"
+        },
+        {
+          "name": "Aperturas Planas en Polea",
+          "videoUrl": "https://www.youtube.com/watch?v=eGjt4lk6g34"
+        },
+        {
+          "name": "Press de Banca con Mancuernas con Agarre Neutro",
+          "videoUrl": "https://www.youtube.com/watch?v=8iPEnn-ltC8"
+        },
+        {
+          "name": "Flexiones Declinadas",
+          "videoUrl": "https://www.youtube.com/watch?v=IODxDxX7oi4"
+        }
+      ],
+      "Abdominales": [
+        {
+          "name": "Plancha Abdominal",
+          "videoUrl": "https://www.youtube.com/watch?v=TvxNkmjdhMM"
+        },
+        {
+          "name": "Crunch en Polea Alta",
+          "videoUrl": "https://www.youtube.com/watch?v=S08E3B6xLMc"
+        },
+        {
+          "name": "Elevación de Piernas (Colgado)",
+          "videoUrl": "https://www.youtube.com/watch?v=hd_FpXy97r0"
+        },
+        {
+          "name": "Rueda Abdominal (Ab Wheel)",
+          "videoUrl": "https://www.youtube.com/watch?v=H7m_L0XF9vI"
+        },
+        {
+          "name": "Dead Bug",
+          "videoUrl": "https://www.youtube.com/watch?v=4XLEnwUr1gk"
+        },
+        {
+          "name": "Crunch Abdominal en Suelo",
+          "videoUrl": "https://www.youtube.com/watch?v=S08E3B6xLMc"
+        },
+        {
+          "name": "Elevación de Piernas tumbado (Leg Raises)",
+          "videoUrl": "https://www.youtube.com/watch?v=hd_FpXy97r0"
+        },
+        {
+          "name": "Giros Rusos (Russian Twists)",
+          "videoUrl": "https://www.youtube.com/watch?v=4XLEnwUr1gk"
+        },
+        {
+          "name": "Escaladores (Mountain Climbers)",
+          "videoUrl": "https://www.youtube.com/watch?v=TvxNkmjdhMM"
+        },
+        {
+          "name": "Crunch de Bicicleta",
+          "videoUrl": "https://www.youtube.com/watch?v=S08E3B6xLMc"
+        },
+        {
+          "name": "Tijeras Abdominales (Flutter Kicks)",
+          "videoUrl": "https://www.youtube.com/watch?v=hd_FpXy97r0"
+        },
+        {
+          "name": "Plancha Lateral (Side Plank)",
+          "videoUrl": "https://www.youtube.com/watch?v=TvxNkmjdhMM"
+        },
+        {
+          "name": "Elevación de Pelvis en Plancha",
+          "videoUrl": "https://www.youtube.com/watch?v=TvxNkmjdhMM"
+        },
+        {
+          "name": "Abdominales en V (V-Ups)",
+          "videoUrl": "https://www.youtube.com/watch?v=hd_FpXy97r0"
+        },
+        {
+          "name": "Leñador (Woodchopper) en Polea",
+          "videoUrl": "https://www.youtube.com/watch?v=H7m_L0XF9vI"
+        }
+      ],
+      "Isquiotibiales": [
+        {
+          "name": "Peso muerto rumano enfocado en glúteos",
+          "videoUrl": "https://www.youtube.com/watch?v=SEDZFull6pQ"
+        },
+        {
+          "name": "Peso Muerto Rumano (Lumbares)",
+          "videoUrl": "https://www.youtube.com/watch?v=JCXUYuzz9Sg"
+        },
+        {
+          "name": "Curl Femoral Tumbado",
+          "videoUrl": "https://www.youtube.com/watch?v=1Tq3QdAUUoI"
+        },
+        {
+          "name": "Curl Femoral Sentado",
+          "videoUrl": "https://www.youtube.com/watch?v=F488k66OZuE"
+        },
+        {
+          "name": "Peso Muerto Rumano (Isquios)",
+          "videoUrl": "https://www.youtube.com/watch?v=JCXUYuzz9Sg"
+        },
+        {
+          "name": "Peso Muerto Rumano con Mancuernas",
+          "videoUrl": "https://www.youtube.com/watch?v=JCXUYuzz9Sg"
+        },
+        {
+          "name": "Curl Femoral de Pie en Máquina",
+          "videoUrl": "https://www.youtube.com/watch?v=F488k66OZuE"
+        },
+        {
+          "name": "Curl Femoral con Fitball",
+          "videoUrl": "https://www.youtube.com/watch?v=1Tq3QdAUUoI"
+        },
+        {
+          "name": "Peso Muerto Rumano Unilateral",
+          "videoUrl": "https://www.youtube.com/watch?v=JCXUYuzz9Sg"
+        },
+        {
+          "name": "Buenos Días con Mancuernas",
+          "videoUrl": "https://www.youtube.com/watch?v=JCXUYuzz9Sg"
+        },
+        {
+          "name": "Curl Femoral con Mancuerna entre pies",
+          "videoUrl": "https://www.youtube.com/watch?v=1Tq3QdAUUoI"
+        },
+        {
+          "name": "Glute-Ham Raise (GHR)",
+          "videoUrl": "https://www.youtube.com/watch?v=F488k66OZuE"
+        },
+        {
+          "name": "Curl de Piernas Sentado Unilateral",
+          "videoUrl": "https://www.youtube.com/watch?v=F488k66OZuE"
+        },
+        {
+          "name": "Curl Femoral en Polea",
+          "videoUrl": "https://www.youtube.com/watch?v=1Tq3QdAUUoI"
+        },
+        {
+          "name": "Peso Muerto Rumano con barra hexagonal",
+          "videoUrl": "https://www.youtube.com/watch?v=JCXUYuzz9Sg"
+        }
+      ]
+    }
+  },
+  "hidden_system_media": [],
+  "deleted_system_media": [],
+  "supplementationTemplates": []
+}
