@@ -3,7 +3,7 @@ const path = require('path');
 const vm = require('vm');
 
 function run() {
-    const htmlPath = path.join(__dirname, 'public', 'trainer-login.html');
+    const htmlPath = path.join(__dirname, 'public', 'client-login.html');
     if (!fs.existsSync(htmlPath)) {
         console.error("HTML file not found:", htmlPath);
         return;

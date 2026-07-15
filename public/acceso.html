@@ -20,7 +20,7 @@
         })();
         // Force PWA cache bust / reload
         (function() {
-            const CURRENT_VERSION = '637';
+            const CURRENT_VERSION = '638';
             window.APP_VERSION = CURRENT_VERSION;
             const savedVersion = localStorage.getItem('app_version');
             if (savedVersion && parseInt(savedVersion) > parseInt(CURRENT_VERSION)) {
@@ -345,7 +345,7 @@
 
         <p class="footer">¿No tienes código?<br>Contacta con tu entrenador personal.</p>
         <p class="footer" style="margin-top: 15px; border-top: 1px solid rgba(255,255,255,0.05); padding-top: 15px;">
-            <a href="trainer-login.html?v=637" style="color: var(--gold-light); text-decoration: none; font-size: 0.8rem; font-weight: 600;">Acceso Entrenadores 🔐</a>
+            <a href="trainer-login.html?v=638" style="color: var(--gold-light); text-decoration: none; font-size: 0.8rem; font-weight: 600;">Acceso Entrenadores 🔐</a>
         </p>
         <p id="app-version-display" style="text-align: center; font-size: 0.65rem; color: var(--muted); margin-top: 10px; opacity: 0.7;"></p>
     </div>
@@ -354,11 +354,11 @@
 <div id="toast"></div>
 
 <!-- ── Scripts ──────────────────────────────────────────────────── -->
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="js/supabase-service.js?v=637"></script>
-<script src="js/config.js?v=637"></script>
-<script src="js/data-models.js?v=637"></script>
-<script src="js/utils.js?v=637"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" defer></script>
+<script src="js/supabase-service.js?v=638" defer></script>
+<script src="js/config.js?v=638" defer></script>
+<script src="js/data-models.js?v=638" defer></script>
+<script src="js/utils.js?v=638" defer></script>
 <script>
 
 // ── Auto-Redirección (Mantener sesión activa) ─────────────────────
@@ -366,7 +366,7 @@
     var storedClientId = localStorage.getItem('clientId') || sessionStorage.getItem('clientId');
     var params = new URLSearchParams(window.location.search);
     if (storedClientId && params.get('logout') !== 'true' && params.get('reauth') !== 'true') {
-        window.location.replace('dashboard.html?v=637');
+        window.location.replace('dashboard.html?v=638');
     }
 })();
 
@@ -393,58 +393,60 @@ document.getElementById('accessCode').addEventListener('keydown', function(e) {
 });
 
 // ── Trainer ID from URL ──────────────────────────────────────────
-(function() {
-    var params = new URLSearchParams(window.location.search);
-    var tParam = params.get('t');
-    if (tParam) {
-        tParam = tParam.toLowerCase().trim();
-        if (tParam === 'asteam' || tParam === 'alejandra') {
-            tParam = 't-w0iybl7qb';
-        } else if (tParam === 'toledo' || tParam === 'vtoledo') {
-            tParam = 't-8umeizyns';
-        } else if (tParam === 'brian' || tParam === 'phoenix') {
-            tParam = 't-kt1hgr95s';
-        }
-    }
-    
-    var storedTid = localStorage.getItem('activeTrainerId') || sessionStorage.getItem('activeTrainerId');
-    var tid = tParam;
-    
-    // Si no hay tParam o es genérico, pero hay un entrenador específico guardado, lo preservamos
-    if (!tid || tid === 'default' || tid === 'admin') {
-        if (storedTid && storedTid !== 'default' && storedTid !== 'admin') {
-            tid = storedTid;
-        } else {
-            tid = 'default';
-        }
-    }
-    
-    // Forzar activeTrainerId en window ANTES de que BrandConfig.get() lo lea
-    window.activeTrainerId = tid;
-    try { localStorage.setItem('activeTrainerId', tid); } catch(e) {}
-    try { sessionStorage.setItem('activeTrainerId', tid); } catch(e) {}
-    try {
-        if (typeof updateActiveTrainerId === 'function') updateActiveTrainerId(tid);
-    } catch(e) {}
-
-    // Apply brand theme instantly on page load
-    try {
-        if (window.BrandConfig) {
-            window.BrandConfig.applyTheme();
-            var brand = window.BrandConfig.get();
-            if (brand && brand.name) {
-                var nameEl = document.getElementById('brandName');
-                if (nameEl) nameEl.textContent = brand.name;
+document.addEventListener('DOMContentLoaded', function() {
+    (function() {
+        var params = new URLSearchParams(window.location.search);
+        var tParam = params.get('t');
+        if (tParam) {
+            tParam = tParam.toLowerCase().trim();
+            if (tParam === 'asteam' || tParam === 'alejandra') {
+                tParam = 't-w0iybl7qb';
+            } else if (tParam === 'toledo' || tParam === 'vtoledo') {
+                tParam = 't-8umeizyns';
+            } else if (tParam === 'brian' || tParam === 'phoenix') {
+                tParam = 't-kt1hgr95s';
             }
-            if (brand && brand.logo) {
-                var logoEl = document.getElementById('brandLogoContainer');
-                if (logoEl) {
-                    logoEl.innerHTML = '<img src="' + brand.logo + '" alt="' + (brand.name||'') + '" style="width: 100%; height: 100%; object-fit: contain; border-radius: 19px;">';
+        }
+        
+        var storedTid = localStorage.getItem('activeTrainerId') || sessionStorage.getItem('activeTrainerId');
+        var tid = tParam;
+        
+        // Si no hay tParam o es genérico, pero hay un entrenador específico guardado, lo preservamos
+        if (!tid || tid === 'default' || tid === 'admin') {
+            if (storedTid && storedTid !== 'default' && storedTid !== 'admin') {
+                tid = storedTid;
+            } else {
+                tid = 'default';
+            }
+        }
+        
+        // Forzar activeTrainerId en window ANTES de que BrandConfig.get() lo lea
+        window.activeTrainerId = tid;
+        try { localStorage.setItem('activeTrainerId', tid); } catch(e) {}
+        try { sessionStorage.setItem('activeTrainerId', tid); } catch(e) {}
+        try {
+            if (typeof updateActiveTrainerId === 'function') updateActiveTrainerId(tid);
+        } catch(e) {}
+
+        // Apply brand theme instantly on page load
+        try {
+            if (window.BrandConfig) {
+                window.BrandConfig.applyTheme();
+                var brand = window.BrandConfig.get();
+                if (brand && brand.name) {
+                    var nameEl = document.getElementById('brandName');
+                    if (nameEl) nameEl.textContent = brand.name;
+                }
+                if (brand && brand.logo) {
+                    var logoEl = document.getElementById('brandLogoContainer');
+                    if (logoEl) {
+                        logoEl.innerHTML = '<img src="' + brand.logo + '" alt="' + (brand.name||'') + '" style="width: 100%; height: 100%; object-fit: contain; border-radius: 19px;">';
+                    }
                 }
             }
-        }
-    } catch(e) {}
-})();
+        } catch(e) {}
+    })();
+});
 
 // ── Cloud sync on load (background) ─────────────────────────────
 var syncDone = true;
@@ -677,7 +679,7 @@ try {
     document.getElementById('app-version-display').textContent = 'Versión: v' + (window.APP_VERSION || 'desconocida');
 } catch(e) {}
 </script>
-<script src="js/custom-recipes.js?v=637"></script>
-<script src="js/pwa-install.js?v=637"></script>
+<script src="js/custom-recipes.js?v=638"></script>
+<script src="js/pwa-install.js?v=638"></script>
 </body>
 </html>
