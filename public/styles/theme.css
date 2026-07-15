@@ -17,6 +17,11 @@
   --warning: #F59E0B;
   --error: #EF4444;
   --info: #3B82F6;
+  
+  --success-color: var(--success);
+  --warning-color: var(--warning);
+  --error-color: var(--error);
+  --info-color: var(--info);
 
   /* Shadows */
   --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.1);
