@@ -1590,7 +1590,84 @@ const doSyncFromCloud = async () => {
         if (clientId && !isTrainer && cloudData) {
             cloudData = stripDatabaseForClient(cloudData, clientId);
         }
-        
+
+        // ═══════════════════════════════════════════════════════════════
+        // 🏋️ ENTRENADOR: LA NUBE ES SIEMPRE LA FUENTE ÚNICA DE VERDAD
+        // En cualquier dispositivo, el entrenador siempre ve los datos de la nube.
+        // Las ediciones locales se suben a la nube vía saveData(), no vía syncFromCloud().
+        // La fusión bidireccional SOLO se usa para sesiones de CLIENTES.
+        // ═══════════════════════════════════════════════════════════════
+        if (isTrainer) {
+            if (cloudData) {
+                // Asegurar que todas las colecciones existen
+                const collections = ['clients', 'routines', 'diets', 'foods', 'media', 'feedbacks', 'appointments', 'invoices', 'trainingBlocks', 'trainingLogs', 'habits', 'supplementationTemplates', 'library'];
+                collections.forEach(col => {
+                    if (!cloudData[col]) cloudData[col] = [];
+                });
+
+                // Blindaje de reset
+                if (cloudData.__reset_version) {
+                    const localResetKey = `_resetVersion_${currentId}`;
+                    localStorage.setItem(localResetKey, String(cloudData.__reset_version));
+                }
+
+                // ASTEAM fee fix
+                if (cloudData.clients) {
+                    cloudData.clients.forEach(c => {
+                        if (c && (c.id === '20f2e6c2-2699-4ccc-a982-1e9fb141b9bb' || 
+                                  c.id === '0db0ea7a-c413-44cb-b99e-dfd9790383eb' ||
+                                  c.id === '94e6e268-245b-4e52-bcee-a0c93396ef1a' ||
+                                  c.id === 'b2d4c948-3648-432d-97da-0d040c2d170b' ||
+                                  c.id === '42d79738-c525-4c07-ba1b-3315f64b9b98')) {
+                            c.monthlyFee = 65;
+                            c.subscriptionAmount = 65;
+                        }
+                    });
+                }
+
+                // Limpiar claves locales antiguas para evitar conflictos
+                localStorage.removeItem(`_trainerBrand_${currentId}`);
+                localStorage.removeItem('_trainerBrand');
+                localStorage.removeItem(`brand_settings_${currentId}`);
+                localStorage.removeItem('brand_settings');
+                localStorage.removeItem('isNewInstall_' + currentId);
+
+                // ✅ ADOPTAR datos de la nube directamente — sin fusión bidireccional
+                console.log("☁️ [TRAINER SYNC] Adoptando datos de la nube como fuente única de verdad. Sin fusión bidireccional.");
+                cloudData.deletedIds = [];
+                saveDatabaseRaw(JSON.stringify(cloudData));
+                setLastSyncTime(currentId);
+
+                // Actualizar backup local con los datos reales de la nube
+                try { localStorage.setItem(getStorageKey() + '_backup', JSON.stringify(cloudData)); } catch(e) {}
+
+                return cloudData;
+            } else {
+                // La nube está vacía — subir datos locales como migración inicial (solo primera vez)
+                const localRaw = safeGetDatabaseRaw();
+                let localData = null;
+                if (localRaw) {
+                    try { localData = JSON.parse(localRaw); } catch(e) {}
+                }
+                if (localData && ((localData.clients && localData.clients.length > 0) || (localData.routines && localData.routines.length > 0))) {
+                    console.log("📤 [TRAINER SYNC] Nube vacía. Subiendo datos locales como migración inicial...");
+                    localData.lastModified = new Date().toISOString();
+                    try {
+                        await window.SupabaseService.saveTrainerData(currentId, localData);
+                    } catch (e) {
+                        console.error("Error en migración inicial a la nube:", e);
+                    }
+                    return localData;
+                }
+                return null;
+            }
+        }
+
+        // ═══════════════════════════════════════════════════════════════
+        // 👤 CLIENTE: Fusión bidireccional (cliente y entrenador editan cosas diferentes)
+        // Este bloque SOLO se ejecuta para sesiones de clientes, NUNCA para entrenadores.
+        // ═══════════════════════════════════════════════════════════════
+
         // Obtener datos locales actuales
         const localRaw = safeGetDatabaseRaw();
         let localData = null;
