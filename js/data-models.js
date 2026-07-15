@@ -1,10 +1,153 @@
+
+// 🛡️ HELPERS DE ALMACENAMIENTO SEGUROS A PRUEBA DE CUOTA, COOKIES BLOQUEADAS Y EXCEPCIONES
+function safeGetLocalStorage(key) {
+    try {
+        if (typeof localStorage !== 'undefined' && localStorage) {
+            return localStorage.getItem(key);
+        }
+    } catch(e) {}
+    return null;
+}
+function safeGetSessionStorage(key) {
+    try {
+        if (typeof sessionStorage !== 'undefined' && sessionStorage) {
+            return sessionStorage.getItem(key);
+        }
+    } catch(e) {}
+    return null;
+}
+
 // ============================================
 // DATA MODELS & STORAGE MANAGEMENT - v311 BLINDAJE TOTAL
 // ============================================
 
+// 🛡️ HOOK DE ESPEJO DE ALMACENAMIENTO PARA WEBVIEWS DE IOS/WHATSAPP (CUOTA LLENA/SANDBOX)
+(function() {
+    if (typeof window === 'undefined' || !window.localStorage) return;
+    
+    // 1. Interceptar escrituras (espejar en sessionStorage y limpiar localStorage de clientes si es muy grande)
+    const originalSetItem = localStorage.setItem;
+    localStorage.setItem = function(key, value) {
+        let valueToStoreInLocal = value;
+        const clientId = (safeGetLocalStorage('clientId') || safeGetSessionStorage('clientId'));
+        const isTrainer = (safeGetLocalStorage('_trainerAuthed') === '1' || safeGetSessionStorage('_trainerAuthed') === '1');
+
+        // Si es la base de datos de un cliente, optimizar el contenido para localStorage
+        if (key && key.indexOf('fitnessAppData_') === 0 && !key.endsWith('_backup') && clientId && !isTrainer) {
+            try {
+                const data = JSON.parse(value);
+                if (data && data.clients) {
+                    // 1. Conservar solo el cliente logueado
+                    data.clients = data.clients.filter(c => c.id === clientId);
+                    
+                    // 2. Conseguir IDs de dietas y rutinas asociadas a este cliente
+                    const assignedRoutineIds = new Set();
+                    const assignedDietIds = new Set();
+                    if (data.clients[0]) {
+                        const cli = data.clients[0];
+                        if (cli.routineId) assignedRoutineIds.add(cli.routineId);
+                        if (cli.routineIds) cli.routineIds.forEach(id => assignedRoutineIds.add(id));
+                        if (cli.assignedDiet) assignedDietIds.add(cli.assignedDiet);
+                        if (cli.assignedDiets) cli.assignedDiets.forEach(id => assignedDietIds.add(id));
+                    }
+                    
+                    // 3. Filtrar rutinas y dietas
+                    if (data.routines) {
+                        data.routines = data.routines.filter(r => assignedRoutineIds.has(r.id));
+                    }
+                    if (data.diets) {
+                        data.diets = data.diets.filter(d => assignedDietIds.has(d.id));
+                    }
+                    
+                    // 4. Filtrar entrenamientos y logs
+                    if (data.trainingBlocks) {
+                        data.trainingBlocks = data.trainingBlocks.filter(b => b.clientId === clientId);
+                    }
+                    if (data.trainingLogs) {
+                        data.trainingLogs = data.trainingLogs.filter(l => l.clientId === clientId);
+                    }
+                    if (data.feedbacks) {
+                        data.feedbacks = data.feedbacks.filter(f => f.clientId === clientId);
+                    }
+                    if (data.appointments) {
+                        data.appointments = data.appointments.filter(a => a.clientId === clientId);
+                    }
+
+                    valueToStoreInLocal = JSON.stringify(data);
+                }
+            } catch(e) {
+                console.error("Error optimizando datos del cliente para localStorage:", e);
+            }
+        }
+
+        // Guardar original (completo) en sessionStorage
+        if (key && (key.indexOf('fitnessAppData_') === 0 || key === 'clientId' || key === 'activeTrainerId')) {
+            try { sessionStorage.setItem(key, value); } catch(e) {}
+        }
+        
+        // Guardar optimizado/original en localStorage
+        try {
+            originalSetItem.call(localStorage, key, valueToStoreInLocal);
+        } catch(e) {
+            console.warn("Storage write failed. Attempting to clear space and retry...", e);
+            const activeId = safeGetLocalStorage('activeTrainerId') || safeGetSessionStorage('activeTrainerId') || 'default';
+            if (activeId && activeId !== 'default') {
+                try {
+                    const keysToRemove = [];
+                    for (let i = 0; i < localStorage.length; i++) {
+                        const k = localStorage.key(i);
+                        if (k) {
+                            if (k.startsWith('fitnessAppData_') && !k.includes(activeId)) {
+                                keysToRemove.push(k);
+                            }
+                            if (k.startsWith('lastSyncTimestamp_') && !k.includes(activeId)) {
+                                keysToRemove.push(k);
+                            }
+                            if (k.endsWith('_backup') && !k.includes(activeId)) {
+                                keysToRemove.push(k);
+                            }
+                        }
+                    }
+                    keysToRemove.forEach(k => localStorage.removeItem(k));
+                    
+                    // Intento 2
+                    originalSetItem.call(localStorage, key, valueToStoreInLocal);
+                    console.log("Retry successful after cleaning storage space!");
+                } catch(retryErr) {
+                    console.error("Retry failed too:", retryErr);
+                }
+            }
+        }
+    };
+
+    // 2. Interceptar lecturas (priorizar sessionStorage sobre localStorage para evitar datos recortados)
+    const originalGetItem = localStorage.getItem;
+    localStorage.getItem = function(key) {
+        if (key && key.indexOf('fitnessAppData_') === 0 && !key.endsWith('_backup')) {
+            try {
+                const sessionVal = safeGetSessionStorage(key);
+                if (sessionVal) return sessionVal;
+            } catch(e) {}
+        }
+        try { return originalGetItem.apply(this, arguments); } catch(e) { return null; }
+    };
+    
+    // Espejar datos iniciales si ya existen en localStorage pero no en sessionStorage
+    try {
+        for (let i = 0; i < localStorage.length; i++) {
+            const key = localStorage.key(i);
+            if (key && (key.indexOf('fitnessAppData_') === 0 || key === 'clientId' || key === 'activeTrainerId')) {
+                if (!safeGetSessionStorage(key)) {
+                    sessionStorage.setItem(key, safeGetLocalStorage(key));
+                }
+            }
+        }
+    } catch(e) {}
+})();
+
 const DB_VERSION = '1.0.1';
 let activeTrainerId = (function() {
-    const isTrainer = typeof localStorage !== 'undefined' && localStorage.getItem('_trainerAuthed') === '1';
+    const isTrainer = (safeGetLocalStorage('_trainerAuthed') === '1' || safeGetSessionStorage('_trainerAuthed') === '1');
     const isClientPage = typeof window !== 'undefined' && 
         window.location && 
         window.location.pathname && 
@@ -34,32 +177,53 @@ let activeTrainerId = (function() {
         }
     }
     
-    let storedTrainerId = localStorage.getItem('activeTrainerId');
+    // Leer activeTrainerId: localStorage primero, sessionStorage como fallback (iOS WebView con cuota llena)
+    let storedTrainerId = safeGetLocalStorage('activeTrainerId') || safeGetSessionStorage('activeTrainerId');
     if (storedTrainerId) {
         storedTrainerId = storedTrainerId.trim();
     }
     
     // 2. Si el cliente está logueado, buscar su base de datos correspondiente (para restaurar contexto en PWA)
-    let clientId = localStorage.getItem('clientId') || sessionStorage.getItem('clientId');
+    let clientId = safeGetLocalStorage('clientId') || safeGetSessionStorage('clientId');
     if (clientId) {
-        for (let i = 0; i < localStorage.length; i++) {
-            const key = localStorage.key(i);
-            if (key && key.startsWith('fitnessAppData_') && !key.endsWith('_backup')) {
-                const raw = localStorage.getItem(key);
-                if (raw) {
-                    try {
-                        const parsed = JSON.parse(raw);
-                        if (parsed && parsed.clients && parsed.clients.some(c => c.id === clientId)) {
-                            const foundTid = key.replace('fitnessAppData_', '');
-                            if (foundTid && foundTid !== 'default' && foundTid !== 'admin') {
-                                console.log(`[data-models] Cliente detectado en base de datos: ${foundTid}. Restaurando contexto.`);
-                                return foundTid;
-                            }
+        // Buscar en localStorage
+    for (let i = 0; i < localStorage.length; i++) {
+        const key = localStorage.key(i);
+        if (key && key.startsWith('fitnessAppData_') && !key.endsWith('_backup')) {
+            const raw = safeGetLocalStorage(key);
+            if (raw) {
+                try {
+                    const parsed = JSON.parse(raw);
+                    if (parsed && parsed.clients && parsed.clients.some(c => c.id === clientId)) {
+                        const foundTid = key.replace('fitnessAppData_', '');
+                        if (foundTid && foundTid !== 'default' && foundTid !== 'admin') {
+                            console.log(`[data-models] Cliente detectado en localStorage: ${foundTid}. Restaurando contexto.`);
+                            return foundTid;
                         }
-                    } catch(e) {}
-                }
+                    }
+                } catch(e) {}
             }
         }
+    }
+    // Fallback: buscar en sessionStorage (p.ej. iOS WebView con cuota localStorage llena)
+    for (let i = 0; i < sessionStorage.length; i++) {
+        const key = sessionStorage.key(i);
+        if (key && key.startsWith('fitnessAppData_') && !key.endsWith('_backup')) {
+            const raw = safeGetSessionStorage(key);
+            if (raw) {
+                try {
+                    const parsed = JSON.parse(raw);
+                    if (parsed && parsed.clients && parsed.clients.some(c => c.id === clientId)) {
+                        const foundTid = key.replace('fitnessAppData_', '');
+                        if (foundTid && foundTid !== 'default' && foundTid !== 'admin') {
+                            console.log(`[data-models] Cliente detectado en sessionStorage (fallback): ${foundTid}. Restaurando contexto.`);
+                            return foundTid;
+                        }
+                    }
+                } catch(e) {}
+            }
+        }
+    }
     }
     
     // 3. Si hay tParam específico, priorizarlo
@@ -73,7 +237,7 @@ let activeTrainerId = (function() {
     }
     
     // 5. Mapeos de correos de entrenadores (si es el panel de coach)
-    const trainerEmail = localStorage.getItem('_trainerEmail') || '';
+    const trainerEmail = safeGetLocalStorage('_trainerEmail') || '';
     if (trainerEmail) {
         const emailLower = trainerEmail.toLowerCase().trim();
         if (emailLower === 'ingenia@ingeniaia.es') return 't-zum04ds2n';
@@ -91,15 +255,64 @@ if (!activeTrainerId || activeTrainerId === 'default' || activeTrainerId === 'ad
     activeTrainerId = 'default';
 }
 
-localStorage.setItem('activeTrainerId', activeTrainerId);
+try { localStorage.setItem('activeTrainerId', activeTrainerId); } catch(e) {}
 window.activeTrainerId = activeTrainerId;
 const getStorageKey = () => `fitnessAppData_${window.activeTrainerId || 'default'}`;
+const safeGetDatabaseRaw = () => {
+    const sessionRaw = safeGetSessionStorage(getStorageKey());
+    const localRaw = safeGetLocalStorage(getStorageKey());
+    if (!sessionRaw) return localRaw;
+    if (!localRaw) return sessionRaw;
+
+    try {
+        const sessionData = JSON.parse(sessionRaw);
+        const localData = JSON.parse(localRaw);
+        
+        const isTrainer = (safeGetLocalStorage('_trainerAuthed') === '1' || safeGetSessionStorage('_trainerAuthed') === '1');
+        if (isTrainer) {
+            const sessionClients = (sessionData.clients || []).length;
+            const localClients = (localData.clients || []).length;
+            if (sessionClients <= 1 && localClients > 1) {
+                return localRaw;
+            }
+            if (localClients <= 1 && sessionClients > 1) {
+                return sessionRaw;
+            }
+        } else {
+            // 🛡️ BLINDAJE DE CLIENTE: Si la base de datos de sesión no contiene el perfil del cliente
+            // pero la local sí lo contiene, ignoramos timestamps y leemos la local para evitar bucles.
+            const clientId = safeGetLocalStorage('clientId') || safeGetSessionStorage('clientId');
+            if (clientId) {
+                const sessionHasClient = sessionData.clients && sessionData.clients.some(c => String(c.id) === String(clientId));
+                const localHasClient = localData.clients && localData.clients.some(c => String(c.id) === String(clientId));
+                if (!sessionHasClient && localHasClient) {
+                    return localRaw;
+                }
+                if (!localHasClient && sessionHasClient) {
+                    return sessionRaw;
+                }
+            }
+        }
+
+        const sessionTime = sessionData.lastModified ? new Date(sessionData.lastModified).getTime() : 0;
+        const localTime = localData.lastModified ? new Date(localData.lastModified).getTime() : 0;
+        
+        return sessionTime >= localTime ? sessionRaw : localRaw;
+    } catch(e) {
+        return sessionRaw || localRaw;
+    }
+};
+
+const saveDatabaseRaw = (dataStr) => {
+    try { localStorage.setItem(getStorageKey(), dataStr); } catch(e) {}
+    try { sessionStorage.setItem(getStorageKey(), dataStr); } catch(e) {}
+};
 
 // 🧹 MOCK DATA CLEANUP FOR ASTEAM (PREVENT SPILLOVER RE-UPLOAD)
 (function() {
     try {
         const sKey = 'fitnessAppData_t-w0iybl7qb';
-        const raw = localStorage.getItem(sKey);
+        const raw = safeGetLocalStorage(sKey);
         if (raw) {
             const data = JSON.parse(raw);
             
@@ -125,7 +338,7 @@ const getStorageKey = () => `fitnessAppData_${window.activeTrainerId || 'default
 (function() {
     try {
         const sKey = 'fitnessAppData_t-vdyrwk7dt';
-        const raw = localStorage.getItem(sKey);
+        const raw = safeGetLocalStorage(sKey);
         if (raw) {
             const data = JSON.parse(raw);
             const invoices = data.invoices || [];
@@ -154,7 +367,7 @@ const getStorageKey = () => `fitnessAppData_${window.activeTrainerId || 'default
 (function() {
     try {
         const sKey = 'fitnessAppData_t-kghykurxf';
-        const raw = localStorage.getItem(sKey);
+        const raw = safeGetLocalStorage(sKey);
         if (raw) {
             const data = JSON.parse(raw);
             const targetDuplicateIds = ["abf7b31d-35bb-4f87-b293-21b0d3c516f1", "acdf83d0-3415-4f7e-87db-83aaff5198c2"];
@@ -178,7 +391,7 @@ const getStorageKey = () => `fitnessAppData_${window.activeTrainerId || 'default
                 
                 // Also purge backup key
                 const backupKey = sKey + '_backup';
-                const backupRaw = localStorage.getItem(backupKey);
+                const backupRaw = safeGetLocalStorage(backupKey);
                 if (backupRaw) {
                     try {
                         const backupData = JSON.parse(backupRaw);
@@ -204,7 +417,8 @@ const updateActiveTrainerId = (newId) => {
         targetId = 't-w0iybl7qb';
     }
     window.activeTrainerId = targetId;
-    localStorage.setItem('activeTrainerId', targetId);
+    try { localStorage.setItem('activeTrainerId', targetId); } catch(e) {}
+    try { sessionStorage.setItem('activeTrainerId', targetId); } catch(e) {}
     console.log("Storage Key actualizada para:", targetId);
 };
 window.updateActiveTrainerId = updateActiveTrainerId;
@@ -313,7 +527,8 @@ const syncClientWithLatestFeedback = (client, feedbacks) => {
 
 const getData = () => {
   const sKey = getStorageKey();
-  const raw = localStorage.getItem(sKey);
+  // Leer de localStorage; si no hay datos (cuota llena en iOS WebView), usar sessionStorage como fallback
+  const raw = safeGetSessionStorage(sKey) || safeGetLocalStorage(sKey);
   
     
 
@@ -323,9 +538,9 @@ const getData = () => {
     supplementationTemplates: [], feedbacks: [], appointments: [], invoices: [], trainingLogs: [], habits: [], trainingBlocks: [], deletedIds: [], teamMembers: []
   };
   if (!raw) {
-    const activeId = window.activeTrainerId || localStorage.getItem('activeTrainerId') || 'default';
+    const activeId = window.activeTrainerId || safeGetLocalStorage('activeTrainerId') || 'default';
     if (activeId !== 'default') {
-      localStorage.setItem('isNewInstall_' + activeId, 'true');
+      try { localStorage.setItem('isNewInstall_' + activeId, 'true'); } catch(e) {}
       console.log(`🆕 Nueva instalación o caché limpia detectada para el entrenador ${activeId}. Registrando bandera 'isNewInstall'.`);
     }
     return defaults;
@@ -367,7 +582,7 @@ const getData = () => {
     }
 
     // 🛡️ SHIELD FOR DUPLICATE ALEJANDRA SANCHIS CLIENTS (JULIAN t-kghykurxf)
-    if (data.clients && (window.activeTrainerId === 't-kghykurxf' || localStorage.getItem('activeTrainerId') === 't-kghykurxf')) {
+    if (data.clients && (window.activeTrainerId === 't-kghykurxf' || safeGetLocalStorage('activeTrainerId') === 't-kghykurxf')) {
         const targetDuplicateIds = ["abf7b31d-35bb-4f87-b293-21b0d3c516f1", "acdf83d0-3415-4f7e-87db-83aaff5198c2"];
         const hasDuplicates = data.clients.some(c => targetDuplicateIds.includes(c.id));
         if (hasDuplicates) {
@@ -384,7 +599,7 @@ const getData = () => {
 
     // 🛡️ SHIELD FOR OTHER TRAINERS FISCAL DATA
     if (data.brand && data.brand.fiscalData && data.brand.fiscalData.address === 'alejandra.asteam@gmail.com') {
-        const activeId = window.activeTrainerId || localStorage.getItem('activeTrainerId') || '';
+        const activeId = window.activeTrainerId || safeGetLocalStorage('activeTrainerId') || '';
         if (activeId !== 't-w0iybl7qb' && activeId !== 'alejandra_asteam_gmail_com') {
             data.brand.fiscalData.address = '';
             console.log("🛡️ [Shield] Cleared other trainer's fiscal address from alejandra.asteam@gmail.com.");
@@ -393,7 +608,7 @@ const getData = () => {
     }
 
     // 🔥 MIGRACIÓN ÚNICA: Restaurar recetas ocultas a activas
-    if (!localStorage.getItem('v310_unhide_recipes_done')) {
+    if (!safeGetLocalStorage('v310_unhide_recipes_done')) {
         if (data.hidden_system_media) {
             data.hidden_system_media = data.hidden_system_media.filter(id => {
                 const strId = String(id);
@@ -403,14 +618,14 @@ const getData = () => {
                 if (strId.includes('-rec-') || strId.startsWith('sys-br-') || strId.startsWith('sys-lun-') || strId.startsWith('sys-snack-') || strId.startsWith('prof-rec-')) return false;
                 return false; // Desocultar cualquier otra cosa dudosa
             });
-            localStorage.setItem('v310_unhide_recipes_done', 'true');
+            try { localStorage.setItem('v310_unhide_recipes_done', 'true'); } catch(e) {}
             try { localStorage.setItem(sKey, JSON.stringify(data)); } catch(e){}
             console.log('Restauradas recetas ocultas a activas.');
         }
     }
 
     // 🔥 MIGRACIÓN: Poblar "Mis Alimentos" con ingredientes maestros
-    if (!localStorage.getItem('v316_seed_foods_done_v4')) {
+    if (!safeGetLocalStorage('v316_seed_foods_done_v4')) {
         if (!data.foods) data.foods = [];
         const initialFoodsSeed = [];
 
@@ -432,12 +647,12 @@ const getData = () => {
                 });
             }
         });
-        localStorage.setItem('v316_seed_foods_done_v4', 'true');
+        try { localStorage.setItem('v316_seed_foods_done_v4', 'true'); } catch(e) {}
         try { localStorage.setItem(sKey, JSON.stringify(data)); } catch(e){}
     }
 
     // 🔥 MIGRACIÓN: Eliminar alimentos anteriores/duplicados obsoletos
-    if (!localStorage.getItem('v316_clean_duplicates_done_v5')) {
+    if (!safeGetLocalStorage('v316_clean_duplicates_done_v5')) {
         if (data.foods && Array.isArray(data.foods)) {
             const obsoleteNames = [
                 'mejillones',
@@ -456,18 +671,18 @@ const getData = () => {
             });
             if (data.foods.length !== initialLen) {
                 console.log(`🧹 Eliminados ${initialLen - data.foods.length} alimentos duplicados u obsoletos.`);
-                localStorage.setItem('v316_clean_duplicates_done_v5', 'true');
+                try { localStorage.setItem('v316_clean_duplicates_done_v5', 'true'); } catch(e) {}
                 try { localStorage.setItem(sKey, JSON.stringify(data)); } catch(e){}
             } else {
-                localStorage.setItem('v316_clean_duplicates_done_v5', 'true');
+                try { localStorage.setItem('v316_clean_duplicates_done_v5', 'true'); } catch(e) {}
             }
         } else {
-            localStorage.setItem('v316_clean_duplicates_done_v5', 'true');
+            try { localStorage.setItem('v316_clean_duplicates_done_v5', 'true'); } catch(e) {}
         }
     }
 
     // 🔥 MIGRACIÓN: Corregir tipo de alimentos y cantidades en dietas que se guardaron erróneamente como unidades
-    if (!localStorage.getItem('v316_fix_food_types_and_diets_v4')) {
+    if (!safeGetLocalStorage('v316_fix_food_types_and_diets_v4')) {
         let modified = false;
         const knownUnitKeywords = [
             'plátano', 'banana', 'manzana', 'pera', 'naranja', 'melocotón', 'durazno',
@@ -544,7 +759,7 @@ const getData = () => {
         if (modified) {
             try { localStorage.setItem(sKey, JSON.stringify(data)); } catch(e){}
         }
-        localStorage.setItem('v316_fix_food_types_and_diets_v4', 'true');
+        try { localStorage.setItem('v316_fix_food_types_and_diets_v4', 'true'); } catch(e) {}
     }
 
     // 🔥 PURGA DE RECETAS NO OFICIALES (Blindaje 145)
@@ -682,7 +897,7 @@ const getData = () => {
             localStorage.setItem(sKey, JSON.stringify(data));
             // Sincronizar inmediatamente si existe SupabaseService
             if (window.SupabaseService) {
-                const currentId = window.activeTrainerId || localStorage.getItem('activeTrainerId') || 'default';
+                const currentId = window.activeTrainerId || safeGetLocalStorage('activeTrainerId') || 'default';
                 if (currentId !== 'default') {
                     window.SupabaseService.saveTrainerData(currentId, data)
                         .then(() => console.log("🔥 [MIGRACIÓN v93] Sincronización exitosa con Supabase."))
@@ -712,6 +927,74 @@ const getData = () => {
   } catch (e) { return defaults; }
 };
 window.getData = getData;
+
+const stripDatabaseForClient = (data, clientId) => {
+    const isTrainer = (safeGetLocalStorage('_trainerAuthed') === '1' || safeGetSessionStorage('_trainerAuthed') === '1');
+    const isClientPage = typeof window !== 'undefined' && 
+        window.location && 
+        window.location.pathname && 
+        !window.location.pathname.includes('trainer-') && 
+        !window.location.pathname.includes('admin-');
+        
+    if (isTrainer) {
+        if (!isClientPage) {
+            try {
+                localStorage.removeItem('clientId');
+                sessionStorage.removeItem('clientId');
+            } catch(e) {}
+        }
+        return data; // 🛡️ NUNCA recortar si somos Entrenador!
+    }
+    if (!data || !clientId) return data;
+    try {
+        const optimized = { ...data };
+        
+        // 1. Conservar solo el cliente logueado
+        if (optimized.clients) {
+            optimized.clients = optimized.clients.filter(c => c.id === clientId);
+        }
+        
+        // 2. Conseguir IDs de dietas y rutinas asociadas a este cliente
+        const assignedRoutineIds = new Set();
+        const assignedDietIds = new Set();
+        if (optimized.clients && optimized.clients[0]) {
+            const cli = optimized.clients[0];
+            if (cli.routineId) assignedRoutineIds.add(cli.routineId);
+            if (cli.routineIds) cli.routineIds.forEach(id => assignedRoutineIds.add(id));
+            if (cli.assignedDiet) assignedDietIds.add(cli.assignedDiet);
+            if (cli.assignedDiets) cli.assignedDiets.forEach(id => assignedDietIds.add(id));
+        }
+        
+        // 3. Filtrar rutinas y dietas
+        if (optimized.routines) {
+            optimized.routines = optimized.routines.filter(r => assignedRoutineIds.has(r.id));
+        }
+        if (optimized.diets) {
+            optimized.diets = optimized.diets.filter(d => assignedDietIds.has(d.id));
+        }
+        
+        // 4. Filtrar otras colecciones específicas del cliente
+        if (optimized.trainingBlocks) {
+            optimized.trainingBlocks = optimized.trainingBlocks.filter(b => b.clientId === clientId);
+        }
+        if (optimized.trainingLogs) {
+            optimized.trainingLogs = optimized.trainingLogs.filter(l => l.clientId === clientId);
+        }
+        if (optimized.feedbacks) {
+            optimized.feedbacks = optimized.feedbacks.filter(f => f.clientId === clientId);
+        }
+        if (optimized.appointments) {
+            optimized.appointments = optimized.appointments.filter(a => a.clientId === clientId);
+        }
+        
+        return optimized;
+    } catch(e) {
+        console.error("Error optimizando base de datos para cliente:", e);
+        return data;
+    }
+};
+window.stripDatabaseForClient = stripDatabaseForClient;
+
 
 const mergeLocalEdits = (localNew, cloudMerged, localPrev, isTrainer) => {
     const collections = ['clients', 'routines', 'diets', 'foods', 'media', 'feedbacks', 'appointments', 'invoices', 'trainingBlocks', 'trainingLogs', 'habits', 'supplementationTemplates', 'library'];
@@ -780,20 +1063,17 @@ const mergeLocalEdits = (localNew, cloudMerged, localPrev, isTrainer) => {
         if (col === 'habits') {
             localItems.forEach(item => {
                 if (!item.id && item.clientId && item.date) {
-                    item.id = `${item.clientId}_
-${item.date}`.replace('\n', ''); // Safe compile
+                    item.id = item.clientId + '_' + item.date;
                 }
             });
             mergedItems.forEach(item => {
                 if (!item.id && item.clientId && item.date) {
-                    item.id = `${item.clientId}_
-${item.date}`.replace('\n', ''); // Safe compile
+                    item.id = item.clientId + '_' + item.date;
                 }
             });
             prevItems.forEach(item => {
                 if (!item.id && item.clientId && item.date) {
-                    item.id = `${item.clientId}_
-${item.date}`.replace('\n', ''); // Safe compile
+                    item.id = item.clientId + '_' + item.date;
                 }
             });
         }
@@ -821,8 +1101,8 @@ ${item.date}`.replace('\n', ''); // Safe compile
                 const isExplicitlyDeleted = localNew.deletedIds && localNew.deletedIds.includes(id);
                 if (isExplicitlyDeleted) return;
                 
-                // If we are on client-detail for client A, never apply local edits for client B (only for client-side to prevent leaks)
-                if (!isTrainer && activeClientId && id !== activeClientId) {
+                // If we are on client-detail for client A, never apply local edits for client B (only for trainer-side to prevent leaks)
+                if (isTrainer && activeClientId && id !== activeClientId) {
                     if (cloudClient) finalClients.push(cloudClient);
                     return;
                 }
@@ -937,9 +1217,9 @@ ${item.date}`.replace('\n', ''); // Safe compile
                 const isExplicitlyDeleted = localNew.deletedIds && localNew.deletedIds.includes(id);
                 if (isExplicitlyDeleted) return;
                 
-                // If we are on client-detail for client A, never apply local edits for items belonging to client B (only for client-side)
+                // If we are on client-detail for client A, never apply local edits for items belonging to client B (only for trainer-side)
                 const itemClientId = localItem?.clientId || cloudItem?.clientId || prevItem?.clientId;
-                if (!isTrainer && activeClientId && itemClientId && itemClientId !== activeClientId) {
+                if (isTrainer && activeClientId && itemClientId && itemClientId !== activeClientId) {
                     if (cloudItem) finalItems.push(cloudItem);
                     return;
                 }
@@ -979,6 +1259,13 @@ ${item.date}`.replace('\n', ''); // Safe compile
                     if (cloudItem) finalItems.push(cloudItem);
                     return;
                 }
+                    // Client collections logic for clients: trainingLogs and habits are client-owned, always keep local if it exists
+                if (!isTrainer && (col === 'trainingLogs' || col === 'habits')) {
+                    if (localItem) {
+                        finalItems.push(localItem);
+                        return;
+                    }
+                }
                 
                 if (localItem && cloudItem) {
                     const localChanged = !prevItem || JSON.stringify(localItem) !== JSON.stringify(prevItem);
@@ -995,15 +1282,8 @@ ${item.date}`.replace('\n', ''); // Safe compile
                             localItem.updatedAt = new Date().toISOString();
                             finalItems.push(localItem);
                         } else {
-                            // Check if it's a new local item created after the last sync
-                            const currentId = window.activeTrainerId || localStorage.getItem('activeTrainerId') || 'default';
-                            const lastSyncTime = getLastSyncTime(currentId);
-                            const itemCreatedAt = localItem.createdAt ? new Date(localItem.createdAt).getTime() : 0;
-                            const isNewLocal = itemCreatedAt >= lastSyncTime || lastSyncTime === 0 || itemCreatedAt === 0;
-                            
-                            if (isNewLocal) {
-                                finalItems.push(localItem);
-                            }
+                            // 🛡️ BLINDAJE ANTIPÉRDIDA: Conservamos el elemento local
+                            finalItems.push(localItem);
                         }
                     } else {
                         if (!localItem.updatedAt) {
@@ -1023,7 +1303,7 @@ ${item.date}`.replace('\n', ''); // Safe compile
         }
     });
     // Merge non-array config fields
-    const currentId = window.activeTrainerId || localStorage.getItem('activeTrainerId') || 'default';
+    const currentId = window.activeTrainerId || safeGetLocalStorage('activeTrainerId') || 'default';
     const configFields = ['brand', 'trainerSettings', 'paymentSettings', 'fiscalData', 'teamMembers'];
     configFields.forEach(field => {
         if (localNew[field] !== undefined) {
@@ -1064,7 +1344,7 @@ const saveData = (data) => {
   );
   
   // Comprobar si hay datos reales en el local storage que no debemos perder
-  const currentRaw = localStorage.getItem(getStorageKey());
+  const currentRaw = safeGetDatabaseRaw();
   let prevData = null;
   if (currentRaw) {
     try { prevData = JSON.parse(currentRaw); } catch(e) {}
@@ -1083,7 +1363,7 @@ const saveData = (data) => {
   }
 
   const localPrevModified = prevData ? prevData.lastModified : null;
-  const isTrainer = typeof localStorage !== 'undefined' && localStorage.getItem('_trainerAuthed') === '1';
+  const isTrainer = (safeGetLocalStorage('_trainerAuthed') === '1' || safeGetSessionStorage('_trainerAuthed') === '1');
   
   // Merge page changes with the current local storage state (to preserve other tabs' edits)
   let mergedWithLocal = data;
@@ -1110,17 +1390,17 @@ const saveData = (data) => {
     }
   } catch(e) {}
 
-  localStorage.setItem(getStorageKey(), JSON.stringify(mergedWithLocal));
+  saveDatabaseRaw(JSON.stringify(mergedWithLocal));
   if (window.SupabaseService) {
-    const currentId = window.activeTrainerId || localStorage.getItem('activeTrainerId') || 'default';
+    const currentId = window.activeTrainerId || safeGetLocalStorage('activeTrainerId') || 'default';
     if (currentId !== 'default') {
             enqueue(async () => {
           const clearLocalDeletedIds = () => {
               try {
-                  const currentLocal = JSON.parse(localStorage.getItem(getStorageKey()) || '{}');
+                  const currentLocal = JSON.parse(safeGetDatabaseRaw() || '{}');
                   if (currentLocal.deletedIds && currentLocal.deletedIds.length > 0) {
                       currentLocal.deletedIds = [];
-                      localStorage.setItem(getStorageKey(), JSON.stringify(currentLocal));
+                      saveDatabaseRaw(JSON.stringify(currentLocal));
                       console.log("🧹 [saveData] List of deletedIds cleared after successful upload.");
                   }
               } catch (errClear) {
@@ -1129,16 +1409,27 @@ const saveData = (data) => {
           };
 
           try {
+              // 1. Obtener la base de datos local actual (fresca) para no pisar cambios nuevos
+              let currentLocalData = mergedWithLocal;
+              try {
+                  const currentRaw = safeGetDatabaseRaw();
+                  if (currentRaw) {
+                      currentLocalData = JSON.parse(currentRaw);
+                  }
+              } catch (errJson) {
+                  console.warn("Error parsing current local data in sync queue, falling back to mergedWithLocal:", errJson);
+              }
+
               const cloudData = await window.SupabaseService.getTrainerData(currentId);
               if (cloudData) {
                   // 🛡️ BLINDAJE DE RESET: Si la nube tiene un reset pendiente que el local no ha procesado, descartar el guardado
                   if (cloudData.__reset_version) {
                       const localResetKey = `_resetVersion_${currentId}`;
-                      const localResetVersion = localStorage.getItem(localResetKey);
+                      const localResetVersion = safeGetLocalStorage(localResetKey);
                       if (String(localResetVersion) !== String(cloudData.__reset_version)) {
                           console.log(`🧹 [RESET BLOCK] Bloqueando guardado local: la nube tiene reset v${cloudData.__reset_version} no procesado. Adoptando datos de la nube...`);
                           localStorage.setItem(localResetKey, String(cloudData.__reset_version));
-                          localStorage.setItem(getStorageKey(), JSON.stringify(cloudData));
+                          saveDatabaseRaw(JSON.stringify(cloudData));
                           localStorage.removeItem(getStorageKey() + '_backup');
                           if (typeof window !== 'undefined' && window.location) {
                               console.log("🔄 [RESET] Recargando página para aplicar el reset de datos...");
@@ -1150,10 +1441,18 @@ const saveData = (data) => {
                   if (!isTrainer) {
                       // 🛡️ SECURITY BLOCK: Clients must ALWAYS merge their client-specific edits with cloud config to prevent overwriting brand/settings
                       console.log("🔒 [Client Save] Fusionando siempre con la nube para proteger la configuración del entrenador...");
-                      const finalData = mergeLocalEdits(mergedWithLocal, cloudData, prevData, isTrainer);
+                      
+                      // Volver a leer la base de datos local actual para tener cualquier cambio concurrente
+                      let activeLocal = currentLocalData;
+                      try {
+                          const rawNow = safeGetDatabaseRaw();
+                          if (rawNow) activeLocal = JSON.parse(rawNow);
+                      } catch(e){}
+
+                      const finalData = mergeLocalEdits(activeLocal, cloudData, prevData, isTrainer);
                       finalData.lastModified = new Date().toISOString();
                       
-                      localStorage.setItem(getStorageKey(), JSON.stringify(finalData));
+                      saveDatabaseRaw(JSON.stringify(finalData));
                       await window.SupabaseService.saveTrainerData(currentId, finalData);
                       clearLocalDeletedIds();
                       return;
@@ -1165,20 +1464,27 @@ const saveData = (data) => {
                           console.log("🔄 Se detectaron cambios externos más nuevos en la nube. Fusionando antes de subir...");
                           
                           // Temporarily restore local lastModified to localPrevModified for syncFromCloud comparison
-                          const tempSaved = JSON.parse(localStorage.getItem(getStorageKey()) || '{}');
+                          const tempSaved = JSON.parse(safeGetDatabaseRaw() || '{}');
                           tempSaved.lastModified = localPrevModified;
-                          localStorage.setItem(getStorageKey(), JSON.stringify(tempSaved));
+                          saveDatabaseRaw(JSON.stringify(tempSaved));
  
                           const freshData = await doSyncFromCloud();
                           if (freshData) {
                               // Obtenemos los datos recién fusionados en local storage
-                              const mergedLocal = JSON.parse(localStorage.getItem(getStorageKey()) || '{}');
+                              const mergedLocal = JSON.parse(safeGetDatabaseRaw() || '{}');
                               
+                              // Volver a leer local storage para tener los cambios locales concurrentes
+                              let activeLocal = currentLocalData;
+                              try {
+                                  const rawNow = safeGetDatabaseRaw();
+                                  if (rawNow) activeLocal = JSON.parse(rawNow);
+                              } catch(e){}
+
                               // Aplicamos de forma segura los cambios locales sobre los datos fusionados de la nube
-                              const finalData = mergeLocalEdits(mergedWithLocal, mergedLocal, prevData, isTrainer);
+                              const finalData = mergeLocalEdits(activeLocal, mergedLocal, prevData, isTrainer);
                               finalData.lastModified = new Date().toISOString();
                               
-                              localStorage.setItem(getStorageKey(), JSON.stringify(finalData));
+                              saveDatabaseRaw(JSON.stringify(finalData));
                               await window.SupabaseService.saveTrainerData(currentId, finalData);
                               clearLocalDeletedIds();
                               return;
@@ -1186,11 +1492,23 @@ const saveData = (data) => {
                       }
                   }
               }
-              await window.SupabaseService.saveTrainerData(currentId, mergedWithLocal);
+              // Volver a leer antes de guardar directamente para no subir datos desactualizados
+              let activeLocalFinal = currentLocalData;
+              try {
+                  const rawNow = safeGetDatabaseRaw();
+                  if (rawNow) activeLocalFinal = JSON.parse(rawNow);
+              } catch(e){}
+              
+              await window.SupabaseService.saveTrainerData(currentId, activeLocalFinal);
               clearLocalDeletedIds();
           } catch (e) {
               console.warn('Supabase DB Sync Error (Safe Merge failed, fallback directly):', e);
-              await window.SupabaseService.saveTrainerData(currentId, mergedWithLocal).then(clearLocalDeletedIds).catch(() => {});
+              let activeLocalFallback = mergedWithLocal;
+              try {
+                  const rawNow = safeGetDatabaseRaw();
+                  if (rawNow) activeLocalFallback = JSON.parse(rawNow);
+              } catch(e){}
+              await window.SupabaseService.saveTrainerData(currentId, activeLocalFallback).then(clearLocalDeletedIds).catch(() => {});
           }
       });
     }
@@ -1201,7 +1519,7 @@ window.saveData = saveData;
 const getLastSyncTime = (trainerId) => {
     if (typeof localStorage === 'undefined') return 0;
     const key = 'lastSyncTimestamp_' + trainerId;
-    const val = localStorage.getItem(key);
+    const val = safeGetLocalStorage(key);
     return val ? new Date(val).getTime() : 0;
 };
 const setLastSyncTime = (trainerId) => {
@@ -1211,12 +1529,12 @@ const setLastSyncTime = (trainerId) => {
 };
 
 const doSyncFromCloud = async () => {
-        let currentId = window.activeTrainerId || localStorage.getItem('activeTrainerId') || 'default';
+        let currentId = window.activeTrainerId || safeGetLocalStorage('activeTrainerId') || 'default';
         if (currentId === 'default' || !window.SupabaseService) return null;
         
         // 🛡️ FILTRO DE SEGURIDAD MULTI-INQUILINO: Impedir cruce de datos de cliente
-        const clientId = typeof localStorage !== 'undefined' ? (localStorage.getItem('clientId') || sessionStorage.getItem('clientId')) : null;
-        const isTrainer = typeof localStorage !== 'undefined' && localStorage.getItem('_trainerAuthed') === '1';
+        const clientId = (safeGetLocalStorage('clientId') || safeGetSessionStorage('clientId'));
+        const isTrainer = (safeGetLocalStorage('_trainerAuthed') === '1' || safeGetSessionStorage('_trainerAuthed') === '1');
         
         try {
             let cloudData = await window.SupabaseService.getTrainerData(currentId);
@@ -1230,17 +1548,17 @@ const doSyncFromCloud = async () => {
                 if (window.SupabaseService.client) {
                     const { data: profiles, error: scanError } = await window.SupabaseService.client
                         .from('trainer_profiles')
-                        .select('trainer_id, full_data');
+                        .select('trainer_id, clients:full_data->clients')
+                        .contains('full_data', { clients: [{ id: clientId }] });
                     
                     if (!scanError && profiles) {
                         let correctTid = null;
                         let correctData = null;
                         for (let i = 0; i < profiles.length; i++) {
                             const p = profiles[i];
-                            const clientsList = (p.full_data && p.full_data.clients) || [];
+                            const clientsList = p.clients || [];
                             if (clientsList.some(c => c.id === clientId)) {
                                 correctTid = p.trainer_id;
-                                correctData = p.full_data;
                                 break;
                             }
                         }
@@ -1249,30 +1567,70 @@ const doSyncFromCloud = async () => {
                             localStorage.setItem('activeTrainerId', correctTid);
                             window.activeTrainerId = correctTid;
                             currentId = correctTid;
-                            localStorage.setItem('fitnessAppData_' + correctTid, JSON.stringify(correctData));
-                            cloudData = correctData;
+                            
+                            try {
+                                const { data: trainerProfile } = await window.SupabaseService.client
+                                    .from('trainer_profiles')
+                                    .select('full_data')
+                                    .eq('trainer_id', correctTid)
+                                    .single();
+                                if (trainerProfile && trainerProfile.full_data) {
+                                    correctData = trainerProfile.full_data;
+                                    localStorage.setItem('fitnessAppData_' + correctTid, JSON.stringify(correctData));
+                                    cloudData = correctData;
+                                }
+                            } catch (fetchErr) {
+                                console.warn("Failed to fetch full data for correct trainer:", fetchErr);
+                            }
                         }
                     }
                 }
             }
         }
+        if (clientId && !isTrainer && cloudData) {
+            cloudData = stripDatabaseForClient(cloudData, clientId);
+        }
         
         // Obtener datos locales actuales
-        const localRaw = localStorage.getItem(getStorageKey());
+        const localRaw = safeGetDatabaseRaw();
         let localData = null;
         if (localRaw) {
             try { localData = JSON.parse(localRaw); } catch(e){}
+        }
+
+        // 🛡️ SALVAGUARDA DE COCHE CATASTRÓFICO:
+        // Si somos Entrenador, y los datos de la nube tienen 0 rutinas pero localmente tenemos rutinas,
+        // significa que la nube se corrompió/recortó por el login de un cliente.
+        // En este caso, ignoramos los datos de la nube y subimos los locales directamente para restaurar.
+        if (isTrainer && localData) {
+            const localRoutinesCount = localData.routines ? localData.routines.length : 0;
+            const cloudRoutinesCount = cloudData && cloudData.routines ? cloudData.routines.length : 0;
+            const localClientsCount = localData.clients ? localData.clients.length : 0;
+            const cloudClientsCount = cloudData && cloudData.clients ? cloudData.clients.length : 0;
+
+            if (localRoutinesCount > 0 && cloudRoutinesCount === 0 && localClientsCount > 1 && cloudClientsCount <= 1) {
+                console.warn("🚨 [SALVAGUARDA ENTRENADOR] Se detectó que la nube está vacía/recortada pero el local tiene los datos reales. Subiendo local para restaurar...");
+                localData.lastModified = new Date().toISOString();
+                try {
+                    await window.SupabaseService.saveTrainerData(currentId, localData);
+                } catch(e) {
+                    console.error("Error subiendo datos locales para restaurar:", e);
+                }
+                saveDatabaseRaw(JSON.stringify(localData));
+                setLastSyncTime(currentId);
+                return localData;
+            }
         }
 
         if (cloudData) {
             // 🛡️ BLINDAJE DE RESET: Si la nube tiene __reset_version, descartar caché local y adoptar nube directamente
             if (cloudData.__reset_version) {
                 const localResetKey = `_resetVersion_${currentId}`;
-                const localResetVersion = localStorage.getItem(localResetKey);
+                const localResetVersion = safeGetLocalStorage(localResetKey);
                 if (String(localResetVersion) !== String(cloudData.__reset_version)) {
                     console.log(`🧹 [RESET] Detectado reset de datos (v${cloudData.__reset_version}). Descartando caché local y adoptando datos de la nube...`);
                     localStorage.setItem(localResetKey, String(cloudData.__reset_version));
-                    localStorage.setItem(getStorageKey(), JSON.stringify(cloudData));
+                    saveDatabaseRaw(JSON.stringify(cloudData));
                     // Limpiar backups también
                     localStorage.removeItem(getStorageKey() + '_backup');
                     setLastSyncTime(currentId);
@@ -1284,11 +1642,25 @@ const doSyncFromCloud = async () => {
                 }
             }
 
-            // Garantizar que todos los arrays existen en la nube
             const collections = ['clients', 'routines', 'diets', 'foods', 'media', 'feedbacks', 'appointments', 'invoices', 'trainingBlocks', 'trainingLogs', 'habits', 'supplementationTemplates', 'library'];
             collections.forEach(col => {
                 if (!cloudData[col]) cloudData[col] = [];
             });
+
+            // 🛡️ AUTORECUPERACIÓN DE BASE DE DATOS DE ENTRENADOR RECORTADA
+            // Si somos Entrenador, y el local tiene 1 o menos clientes pero la nube tiene más de 1 cliente,
+            // significa que el local está recortado por haber entrado antes en modo cliente.
+            // Adoptamos los datos de la nube directamente.
+            if (isTrainer && localData) {
+                const localClientsCount = localData.clients ? localData.clients.length : 0;
+                const cloudClientsCount = cloudData.clients ? cloudData.clients.length : 0;
+                if (localClientsCount <= 1 && cloudClientsCount > 1) {
+                    console.warn("🚨 [AUTORECUPERACIÓN] Base de datos de entrenador local recortada detectada. Adoptando base de datos completa de la nube...");
+                    saveDatabaseRaw(JSON.stringify(cloudData));
+                    setLastSyncTime(currentId);
+                    return cloudData;
+                }
+            }
 
             if (localData) {
                 // Garantizar que todos los arrays existen localmente
@@ -1311,11 +1683,11 @@ const doSyncFromCloud = async () => {
 
                 const isLocalFreshlyInitialized = !localHasClients && !localHasRoutines && !localHasDiets && !localHasBlocks;
                 const cloudHasTrainerData = cloudHasClients || cloudHasRoutines || cloudHasDiets || cloudHasBlocks;
-                const isNewInstall = localStorage.getItem('isNewInstall_' + currentId) === 'true';
+                const isNewInstall = safeGetLocalStorage('isNewInstall_' + currentId) === 'true';
 
                 // 🛡️ BLINDAJE: Sólo tratar como "nueva instalación" si además NO hay un backup local válido
                 const backupKey = getStorageKey() + '_backup';
-                const localBackupRaw = localStorage.getItem(backupKey);
+                const localBackupRaw = safeGetLocalStorage(backupKey);
                 let localBackupHasData = false;
                 if (localBackupRaw) {
                     try {
@@ -1332,14 +1704,14 @@ const doSyncFromCloud = async () => {
                     localStorage.removeItem('_trainerBrand');
                     localStorage.removeItem(`brand_settings_${currentId}`);
                     localStorage.removeItem('brand_settings');
-                    localStorage.setItem(getStorageKey(), JSON.stringify(cloudData));
+                    saveDatabaseRaw(JSON.stringify(cloudData));
                     setLastSyncTime(currentId); // Update last sync time
                     return cloudData;
                 } else if ((isNewInstall || isLocalFreshlyInitialized) && cloudHasTrainerData && localBackupHasData) {
                     // Hay backup local válido - restaurarlo en vez de tratar como nueva instalación
                     console.log("🔄 [BLINDAJE] Se detectó backup local válido. Restaurando desde backup antes de fusionar...");
                     localData = JSON.parse(localBackupRaw);
-                    localStorage.setItem(getStorageKey(), localBackupRaw);
+                    saveDatabaseRaw(localBackupRaw);
                     localStorage.removeItem('isNewInstall_' + currentId);
                 }
 
@@ -1347,7 +1719,7 @@ const doSyncFromCloud = async () => {
                 const localTime = localData.lastModified ? new Date(localData.lastModified).getTime() : 0;
                 const cloudTime = cloudData.lastModified ? new Date(cloudData.lastModified).getTime() : 0;
                 
-                const isTrainer = typeof localStorage !== 'undefined' && localStorage.getItem('_trainerAuthed') === '1';
+                const isTrainer = (safeGetLocalStorage('_trainerAuthed') === '1' || safeGetSessionStorage('_trainerAuthed') === '1');
                 
                 // Categorizar colecciones según autoría
                 const trainerCollections = ['routines', 'diets', 'foods', 'media', 'trainingBlocks', 'supplementationTemplates', 'invoices', 'library']; // clients se maneja aparte
@@ -1364,14 +1736,12 @@ const doSyncFromCloud = async () => {
                     if (col === 'habits') {
                         localItems.forEach(item => {
                             if (!item.id && item.clientId && item.date) {
-                                item.id = `${item.clientId}_
-${item.date}`.replace('\n', ''); // Safe compile
+                                item.id = item.clientId + '_' + item.date;
                             }
                         });
                         cloudItems.forEach(item => {
                             if (!item.id && item.clientId && item.date) {
-                                item.id = `${item.clientId}_
-${item.date}`.replace('\n', ''); // Safe compile
+                                item.id = item.clientId + '_' + item.date;
                             }
                         });
                     }
@@ -1504,14 +1874,9 @@ ${item.date}`.replace('\n', ''); // Safe compile
                                     mergedItems.push(cloudItem);
                                 }
                             } else if (localItem) {
-                                const lastSyncTime = getLastSyncTime(currentId);
-                                const itemCreatedAt = localItem.createdAt ? new Date(localItem.createdAt).getTime() : 0;
-                                const isNewLocal = itemCreatedAt >= lastSyncTime || lastSyncTime === 0 || itemCreatedAt === 0;
-                                if (isNewLocal) {
-                                    mergedItems.push(localItem);
-                                } else {
-                                    dataChanged = true;
-                                }
+                                // 🛡️ BLINDAJE ANTIPÉRDIDA: Si el elemento existe localmente pero no en la nube,
+                                // lo conservamos siempre para evitar que se borre si la sincronización previa falló.
+                                mergedItems.push(localItem);
                             } else if (cloudItem) {
                                 const isExplicitlyDeleted = localData.deletedIds && localData.deletedIds.includes(cloudItem.id);
                                 if (!isExplicitlyDeleted) {
@@ -1577,14 +1942,8 @@ ${item.date}`.replace('\n', ''); // Safe compile
                                     mergedItems.push(cloudItem);
                                 }
                             } else if (localItem) {
-                                const lastSyncTime = getLastSyncTime(currentId);
-                                const itemCreatedAt = localItem.createdAt ? new Date(localItem.createdAt).getTime() : 0;
-                                const isNewLocal = itemCreatedAt >= lastSyncTime || lastSyncTime === 0 || itemCreatedAt === 0;
-                                if (isNewLocal) {
-                                    mergedItems.push(localItem);
-                                } else {
-                                    dataChanged = true;
-                                }
+                                // 🛡️ BLINDAJE ANTIPÉRDIDA: Conservamos el elemento local
+                                mergedItems.push(localItem);
                             } else if (cloudItem) {
                                 const isExplicitlyDeleted = localData.deletedIds && localData.deletedIds.includes(cloudItem.id);
                                 if (!isExplicitlyDeleted) {
@@ -1632,27 +1991,19 @@ ${item.date}`.replace('\n', ''); // Safe compile
                         } else if (localItem) {
                             // Solo existe localmente
                             if (isTrainer) {
-                                // Si es Entrenador y fue creado localmente más recientemente que el último sync en la nube: conservarlo
                                 if (trainerCollections.includes(col)) {
-                                    const lastSyncTime = getLastSyncTime(currentId);
-                                    const itemCreatedAt = localItem.createdAt ? new Date(localItem.createdAt).getTime() : 0;
-                                    const isNewLocal = itemCreatedAt >= lastSyncTime || lastSyncTime === 0 || itemCreatedAt === 0;
-
-                                    if (localTime > cloudTime || isNewLocal) {
-                                        mergedItems.push(localItem);
-                                        dataChanged = true;
-                                    }
+                                    mergedItems.push(localItem);
+                                    dataChanged = true;
                                 } else {
-                                    // Si es del cliente, la nube manda (si no está en nube, el cliente lo borró)
+                                    // Si es del cliente, la nube manda
                                     dataChanged = true;
                                 }
                             } else {
-                                // Si es Cliente y fue creado localmente (como sus logs, hábitos, feedbacks): conservarlo
                                 if (clientCollections.includes(col)) {
                                     mergedItems.push(localItem);
                                     dataChanged = true;
                                 } else {
-                                    // Si es del Entrenador (como rutinas, bloques, etc.), la nube manda (si no está en nube, el coach lo borró)
+                                    // Si es del Entrenador, la nube manda
                                     dataChanged = true;
                                 }
                             }
@@ -1738,11 +2089,11 @@ ${item.date}`.replace('\n', ''); // Safe compile
                 }
 
                 mergedData.deletedIds = [];
-                localStorage.setItem(getStorageKey(), JSON.stringify(mergedData));
+                saveDatabaseRaw(JSON.stringify(mergedData));
                 setLastSyncTime(currentId); // Update last sync time
                 
                 // 💾 Conservar el backup local intacto. Solo guardar si no existía uno previo para no pisar las ediciones locales del entrenador.
-                const hasExistingBackup = !!localStorage.getItem(getStorageKey() + '_backup');
+                const hasExistingBackup = !!safeGetLocalStorage(getStorageKey() + '_backup');
                 if (!hasExistingBackup) {
                     const mergedHasRealData = (
                         (mergedData.clients && mergedData.clients.length > 0) ||
@@ -1761,7 +2112,7 @@ ${item.date}`.replace('\n', ''); // Safe compile
             localStorage.removeItem('_trainerBrand');
             localStorage.removeItem(`brand_settings_${currentId}`);
             localStorage.removeItem('brand_settings');
-            localStorage.setItem(getStorageKey(), JSON.stringify(cloudData));
+            saveDatabaseRaw(JSON.stringify(cloudData));
             setLastSyncTime(currentId); // Update last sync time
             return cloudData;
         } else if (localData) {
@@ -2438,7 +2789,7 @@ window.SYSTEM_RECIPES = [
     "type": "image",
     "category": "recipe",
     "title": "Tostada de Requesón y Nueces",
-    "url": "https://bieeydhacavxymoosasx.supabase.co/storage/v1/object/public/Media/1778609603768_Tostada_de_requeson_y_nueces.png",
+    "url": "https://bieeydhacavxymoosasx.supabase.co/storage/v1/object/public/Media/1778609606768_Tostada_de_requeson_y_nueces.png",
     "ingredients": "Pan integral, requesón, nueces",
     "description": ""
   },
@@ -2852,7 +3203,7 @@ window.SYSTEM_RECIPES = [
     "type": "image",
     "category": "recipe",
     "title": "Ternera con Patatas ",
-    "url": "https://bieeydhacavxymoosasx.supabase.co/storage/v1/object/public/Media/1778661481685_Ternera_con_Patatas.png",
+    "url": "https://bieeydhacavxymoosasx.supabase.co/storage/v1/object/public/Media/1778661581685_Ternera_con_Patatas.png",
     "ingredients": "Tiras de ternera magra, patatas, salsa ligera de hierbas",
     "description": ""
   },
@@ -3104,7 +3455,7 @@ window.SYSTEM_RECIPES = [
     "type": "image",
     "category": "recipe",
     "title": "Tostada de Pavo con Queso Cottage",
-    "url": "img/tostada_pavo_minimalist_v2_1778657605543.png",
+    "url": "img/tostada_pavo_minimalist_v2_1778657606543.png",
     "ingredients": "Pan integral, pechuga de pavo, queso cottage, arándanos",
     "description": ""
   },
@@ -3433,8 +3784,8 @@ const Clients = {
     let clients = data.clients || [];
     
     // Filtro global para sub-entrenadores
-    if (localStorage.getItem('_isSubTrainer') === 'true') {
-      const subTrainerId = localStorage.getItem('_subTrainerId');
+    if (safeGetLocalStorage('_isSubTrainer') === 'true') {
+      const subTrainerId = safeGetLocalStorage('_subTrainerId');
       clients = clients.filter(c => c.assignedTrainerId === subTrainerId);
     }
 
@@ -3473,7 +3824,7 @@ const Clients = {
     for (let i = 0; i < localStorage.length; i++) {
         const key = localStorage.key(i);
         if (key && key.startsWith('fitnessAppData_') && !key.endsWith('_backup')) {
-            const raw = localStorage.getItem(key);
+            const raw = safeGetLocalStorage(key);
             if (raw) {
                 try {
                     const parsed = JSON.parse(raw);
@@ -4064,8 +4415,8 @@ const Feedbacks = {
     feedbacks = feedbacks.filter(f => clientIds.has(String(f.clientId)));
     
     // Filtro global para sub-entrenadores
-    if (localStorage.getItem('_isSubTrainer') === 'true') {
-      const subTrainerId = localStorage.getItem('_subTrainerId');
+    if (safeGetLocalStorage('_isSubTrainer') === 'true') {
+      const subTrainerId = safeGetLocalStorage('_subTrainerId');
       const assignedClientIds = new Set((data.clients || [])
         .filter(c => c.assignedTrainerId === subTrainerId)
         .map(c => String(c.id)));
@@ -4142,8 +4493,8 @@ const Appointments = {
     appointments = appointments.filter(a => clientIds.has(String(a.clientId)));
     
     // Filtro global para sub-entrenadores
-    if (localStorage.getItem('_isSubTrainer') === 'true') {
-      const subTrainerId = localStorage.getItem('_subTrainerId');
+    if (safeGetLocalStorage('_isSubTrainer') === 'true') {
+      const subTrainerId = safeGetLocalStorage('_subTrainerId');
       const assignedClientIds = new Set((data.clients || [])
         .filter(c => c.assignedTrainerId === subTrainerId)
         .map(c => String(c.id)));
@@ -4276,7 +4627,7 @@ const TrainingLogs = {
     return (data.trainingLogs || []).filter(l => l.clientId == clientId && l.completed !== false);
   },
 
-  getDraft: (clientId, routineId, dayNumber) => {
+  getDraft: (clientId, routineId, dayNumber, weekIndex = null) => {
     const data = getData();
     const activeBlock = (data.trainingBlocks || []).find(b => b.clientId == clientId && b.status === 'active');
     return (data.trainingLogs || []).find(l => 
@@ -4284,7 +4635,8 @@ const TrainingLogs = {
         l.routineId === routineId && 
         l.dayNumber === dayNumber && 
         l.completed === false &&
-        (!activeBlock || l.blockId === activeBlock.id)
+        (!activeBlock || l.blockId === activeBlock.id) &&
+        (weekIndex === null || l.weekIndex === undefined || l.weekIndex === null || l.weekIndex === weekIndex)
     );
   },
 
@@ -4295,19 +4647,23 @@ const TrainingLogs = {
     // Find active block for this client
     const activeBlock = (data.trainingBlocks || []).find(b => b.clientId == logData.clientId && b.status === 'active');
 
-    // Find if a draft already exists for this client, routine, and day
+    const weekIdx = logData.weekIndex !== undefined ? logData.weekIndex : null;
+
+    // Find if a draft already exists for this client, routine, day, and week
     let draft = data.trainingLogs.find(l => 
         l.clientId == logData.clientId && 
         l.routineId === logData.routineId && 
         l.dayNumber === logData.dayNumber && 
         l.completed === false &&
-        (!activeBlock || l.blockId === activeBlock.id)
+        (!activeBlock || l.blockId === activeBlock.id) &&
+        (weekIdx === null || l.weekIndex === undefined || l.weekIndex === null || l.weekIndex === weekIdx)
     );
 
     if (draft) {
         // Update existing draft
         draft.exercises = logData.exercises || [];
         draft.comment = logData.comment || '';
+        draft.weekIndex = weekIdx;
         draft.lastModified = new Date().toISOString();
     } else {
         // Create new draft
@@ -4316,6 +4672,7 @@ const TrainingLogs = {
             clientId: logData.clientId,
             routineId: logData.routineId,
             dayNumber: logData.dayNumber,
+            weekIndex: weekIdx,
             blockId: activeBlock ? activeBlock.id : null,
             date: logData.date || new Date().toISOString(),
             exercises: logData.exercises || [],
@@ -4336,6 +4693,7 @@ const TrainingLogs = {
     if (!data.trainingLogs) data.trainingLogs = [];
 
     const activeBlock = (data.trainingBlocks || []).find(b => b.clientId == logData.clientId && b.status === 'active');
+    const weekIdx = logData.weekIndex !== undefined ? logData.weekIndex : null;
 
     // Find and update the existing draft if it exists
     let existingLog = data.trainingLogs.find(l => 
@@ -4343,13 +4701,15 @@ const TrainingLogs = {
         l.routineId === logData.routineId && 
         l.dayNumber === logData.dayNumber && 
         l.completed === false &&
-        (!activeBlock || l.blockId === activeBlock.id)
+        (!activeBlock || l.blockId === activeBlock.id) &&
+        (weekIdx === null || l.weekIndex === undefined || l.weekIndex === null || l.weekIndex === weekIdx)
     );
 
     if (existingLog) {
         existingLog.exercises = logData.exercises || [];
         existingLog.comment = logData.comment || '';
         existingLog.completed = true;
+        existingLog.weekIndex = weekIdx;
         existingLog.date = new Date().toISOString();
         existingLog.lastModified = new Date().toISOString();
         if (activeBlock) existingLog.blockId = activeBlock.id;
@@ -4360,12 +4720,14 @@ const TrainingLogs = {
             l.routineId === logData.routineId && 
             l.dayNumber === logData.dayNumber && 
             l.completed === true &&
-            (!activeBlock || l.blockId === activeBlock.id)
+            (!activeBlock || l.blockId === activeBlock.id) &&
+            (weekIdx === null || l.weekIndex === undefined || l.weekIndex === null || l.weekIndex === weekIdx)
         );
         if (duplicateCompleted) {
             console.warn("Duplicate completed log submission detected. Updating instead of duplicating.");
             duplicateCompleted.exercises = logData.exercises || [];
             duplicateCompleted.comment = logData.comment || '';
+            duplicateCompleted.weekIndex = weekIdx;
             duplicateCompleted.lastModified = new Date().toISOString();
             existingLog = duplicateCompleted;
         } else {
@@ -4374,6 +4736,7 @@ const TrainingLogs = {
               clientId: logData.clientId,
               routineId: logData.routineId,
               dayNumber: logData.dayNumber,
+              weekIndex: weekIdx,
               blockId: activeBlock ? activeBlock.id : null,
               date: logData.date || new Date().toISOString(),
               exercises: logData.exercises || [],
@@ -4812,9 +5175,10 @@ const BrandConfig = {
     let isToledo = false;
     let isLucy = false;
     let isJulian = false;
+    let isBrian = false;
     if (typeof window !== 'undefined') {
-        const activeId = window.activeTrainerId || localStorage.getItem('activeTrainerId') || '';
-        const trainerEmail = localStorage.getItem('_trainerEmail') || '';
+        const activeId = window.activeTrainerId || safeGetLocalStorage('activeTrainerId') || '';
+        const trainerEmail = safeGetLocalStorage('_trainerEmail') || '';
         if (activeId.includes('t-w0iybl7qb') || 
             activeId.includes('t-zum04ds2n') || 
             activeId.includes('alejandra_asteam_gmail_com') ||
@@ -4830,7 +5194,10 @@ const BrandConfig = {
         if (activeId.includes('t-kghykurxf') || (trainerEmail && trainerEmail.toLowerCase() === 'julian@gmail.com')) {
             isJulian = true;
         }
-        console.log(`[BrandConfig] activeId="${activeId}" trainerEmail="${trainerEmail}" => isAlejandra=${isAlejandra}, isToledo=${isToledo}, isLucy=${isLucy}, isJulian=${isJulian}`);
+        if (activeId.includes('t-kt1hgr95s') || (trainerEmail && trainerEmail.toLowerCase() === 'brianarribas@gmail.com')) {
+            isBrian = true;
+        }
+        console.log(`[BrandConfig] activeId="${activeId}" trainerEmail="${trainerEmail}" => isAlejandra=${isAlejandra}, isToledo=${isToledo}, isLucy=${isLucy}, isJulian=${isJulian}, isBrian=${isBrian}`);
     }
 
     // Default brand settings
@@ -4849,7 +5216,7 @@ const BrandConfig = {
             logo: 'https://bieeydhacavxymoosasx.supabase.co/storage/v1/object/public/Media/1779724548154_Gemini_Generated_Image_vse84nvse84nvse8.png',
             configured: true,
             colors: { primary: '#fdbfec', secondary: '#1a1a2e', accent: '#ff6b6b' },
-            whatsapp: '615760338',
+            whatsapp: '615760638',
             fiscalData: { invoiceSeries: 'FAST' + new Date().getFullYear() }
         };
     } else if (isToledo) {
@@ -4890,13 +5257,33 @@ const BrandConfig = {
             },
             fiscalData: { invoiceSeries: 'FJFK' + new Date().getFullYear() }
         };
+    } else if (isBrian) {
+        defaultBrand = {
+            name: 'Phoenix Protocol',
+            logo: 'https://bieeydhacavxymoosasx.supabase.co/storage/v1/object/public/Media/1780593803077_ChatGPT_Image_4_jun_2026_18_24_46.png',
+            configured: true,
+            colors: { 
+                primary: '#ff0000', 
+                secondary: '#000000', 
+                accent: '#ffa3a3', 
+                themeMode: 'dark', 
+                bgDark: '#0f0f1e' 
+            },
+            whatsapp: '34601357283',
+            fiscalData: { invoiceSeries: 'F' + new Date().getFullYear() }
+        };
     }
 
     let res = data.brand || defaultBrand;
     
     // Brand config is fully persistent; no auto-resetting blocks for active trainers.
 
-    if (res && (res.name === 'MyFitness' || res.name === 'Fitness App' || (res.name === 'Infinite Coach' && defaultBrand.name === 'ASTeam') || (res.name === 'Infinite Coach' && defaultBrand.name === 'Lucy Tundidor') || (res.name === 'Infinite Coach' && defaultBrand.name === 'Método JFK'))) {
+    if (res && (res.name === 'MyFitness' || res.name === 'Fitness App' || 
+                (res.name === 'Infinite Coach' && defaultBrand.name === 'ASTeam') || 
+                (res.name === 'Infinite Coach' && defaultBrand.name === 'Lucy Tundidor') || 
+                (res.name === 'Infinite Coach' && defaultBrand.name === 'Método JFK') ||
+                (res.name === 'Infinite Coach' && defaultBrand.name === 'Toledo The Bull') ||
+                (res.name === 'Infinite Coach' && defaultBrand.name === 'Phoenix Protocol'))) {
         res.name = defaultBrand.name;
         res.colors = defaultBrand.colors;
         res.logo = defaultBrand.logo;
@@ -5073,7 +5460,7 @@ const BrandConfig = {
       if (isTrainerPage) {
           isLight = brand.colors.themeMode === 'light';
       } else {
-          const clientTheme = isClientPage ? (localStorage.getItem('clientThemeMode') || 'default') : 'default';
+          const clientTheme = isClientPage ? (safeGetLocalStorage('clientThemeMode') || 'default') : 'default';
           if (clientTheme === 'light') {
               isLight = true;
           } else if (clientTheme === 'dark') {
@@ -5218,7 +5605,7 @@ const BrandConfig = {
         try {
             let manifestLink = document.querySelector('link[rel="manifest"]');
             if (manifestLink) {
-                const activeId = window.activeTrainerId || localStorage.getItem('activeTrainerId') || 'default';
+                const activeId = window.activeTrainerId || safeGetLocalStorage('activeTrainerId') || 'default';
                 manifestLink.href = 'manifest.json?t=' + encodeURIComponent(activeId);
             }
         } catch (e) {
@@ -5249,14 +5636,14 @@ console.log("🏁 v311 BLINDAJE TOTAL: Sistema Cargado con protección máxima d
 // ============================================
 (async () => {
     try {
-        const currentId = window.activeTrainerId || localStorage.getItem('activeTrainerId') || 'default';
+        const currentId = window.activeTrainerId || safeGetLocalStorage('activeTrainerId') || 'default';
         if (currentId === 'default') return;
         
         const mainKey = getStorageKey();
         const backupKey = mainKey + '_backup';
         
-        const mainRaw = localStorage.getItem(mainKey);
-        const backupRaw = localStorage.getItem(backupKey);
+        const mainRaw = safeGetLocalStorage(mainKey);
+        const backupRaw = safeGetLocalStorage(backupKey);
         
         if (!backupRaw) return;
         
@@ -5302,19 +5689,19 @@ console.log("🏁 v311 BLINDAJE TOTAL: Sistema Cargado con protección máxima d
         // Prevent syncing too frequently (debounce to max once every 10 seconds)
         if (Date.now() - lastSyncTime < 10000) return;
         
-        const currentId = window.activeTrainerId || localStorage.getItem('activeTrainerId') || 'default';
+        const currentId = window.activeTrainerId || safeGetLocalStorage('activeTrainerId') || 'default';
         if (currentId === 'default' || !window.SupabaseService || !window.syncFromCloud) return;
 
         isSyncing = true;
         try {
             console.log("🔄 [AutoSync] Iniciando sincronización automática en segundo plano...");
-            const prevDataStr = localStorage.getItem(getStorageKey());
+            const prevDataStr = safeGetDatabaseRaw();
             
-            const freshData = await doSyncFromCloud();
+            const freshData = await window.syncFromCloud();
             lastSyncTime = Date.now();
 
             if (freshData) {
-                const freshDataStr = localStorage.getItem(getStorageKey());
+                const freshDataStr = safeGetDatabaseRaw();
                 let actualChange = false;
                 
                 if (prevDataStr !== freshDataStr) {
@@ -5392,7 +5779,7 @@ console.log("🏁 v311 BLINDAJE TOTAL: Sistema Cargado con protección máxima d
     document.addEventListener('visibilitychange', () => {
         if (document.visibilityState === 'visible') {
             if (window.APP_VERSION) {
-                const savedVersion = localStorage.getItem('app_version');
+                const savedVersion = safeGetLocalStorage('app_version');
                 if (savedVersion && savedVersion !== window.APP_VERSION) {
                     console.log("🔄 [AutoSync] Nueva versión detectada en localStorage (" + savedVersion + " vs " + window.APP_VERSION + "). Recargando pestaña...");
                     window.location.reload(true);
@@ -5406,7 +5793,7 @@ console.log("🏁 v311 BLINDAJE TOTAL: Sistema Cargado con protección máxima d
 
     window.addEventListener('focus', () => {
         if (window.APP_VERSION) {
-            const savedVersion = localStorage.getItem('app_version');
+            const savedVersion = safeGetLocalStorage('app_version');
             if (savedVersion && savedVersion !== window.APP_VERSION) {
                 console.log("🔄 [AutoSync] Nueva versión detectada en focus (" + savedVersion + " vs " + window.APP_VERSION + "). Recargando pestaña...");
                 window.location.reload(true);

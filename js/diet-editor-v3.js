@@ -5,6 +5,42 @@
 window.editingDietId = null;
 window.activeMealForm = null;
 
+window.getWeightPerUnit = function(foodName) {
+    const name = (foodName || '').trim().toLowerCase();
+    if (typeof window.foodDatabase !== 'undefined' && Array.isArray(window.foodDatabase)) {
+        const dbMatch = window.foodDatabase.find(f => f && f.names && Array.isArray(f.names) && f.names.some(n => n && typeof n === 'string' && (n.trim().toLowerCase() === name || name.includes(n.trim().toLowerCase()) || n.trim().toLowerCase().includes(name))));
+        if (dbMatch && dbMatch.weightPerUnit) {
+            return dbMatch.weightPerUnit;
+        }
+    }
+    const weights = {
+        'plátano': 120, 'banana': 120, 'manzana': 150, 'pera': 150, 'naranja': 150,
+        'melocotón': 150, 'durazno': 150, 'kiwi': 75, 'mandarina': 80, 'limón': 100,
+        'huevo': 55, 'clara': 35, 'dátil': 8, 'tostada': 30, 'rebanada': 30,
+        'pan': 30, 'tortita': 8, 'tortilla': 30, 'quesito': 15, 'yogur': 125,
+        'lata': 60, 'atún': 60, 'patata': 150, 'papa': 150, 'boniato': 150,
+        'batata': 150, 'aguacate': 150, 'tomate': 120, 'zanahoria': 80
+    };
+    for (const key in weights) {
+        if (name.includes(key)) {
+            return weights[key];
+        }
+    }
+    return null;
+};
+
+window.isForcedGramFood = function(foodName) {
+    const name = (foodName || '').trim().toLowerCase();
+    const forcedGramKeywords = [
+        'verdura', 'ensalada', 'vegetal', 'hortaliza', 'judía', 'judia', 'espinaca', 'acelga',
+        'pollo', 'pavo', 'ternera', 'cerdo', 'carne', 'pechuga', 'solomillo',
+        'pescado', 'merluza', 'salmón', 'salmon', 'atún', 'atun', 'bacalao',
+        'arroz', 'pasta', 'avena', 'harina', 'quinoa', 'legumbre', 'lenteja',
+        'aceite', 'mantequilla', 'crema', 'proteína', 'creatina'
+    ];
+    return forcedGramKeywords.some(kw => name.includes(kw));
+};
+
 window.onDietEditorClosed = function () {
     console.log('Diet editor closed');
 };
@@ -129,6 +165,11 @@ window.getDietEditorHTML = function (diet) {
         <div class="grid grid-2 gap-sm" style="padding-right: 5px;">
             ${(diet.meals || []).map((meal, idx) => window.renderMealCard(meal, idx)).join('')}
         </div>
+        <div class="flex gap-sm mt-lg justify-center pb-lg" style="grid-column: span 2; display: flex; justify-content: center; gap: 15px;">
+            <button class="btn btn-outline" style="border-color: var(--primary-color); color: var(--primary-color);" onclick="window.addMealToDiet()">➕ Añadir Comida</button>
+            <button class="btn btn-outline" style="border-color: var(--primary-color); color: var(--primary-color);" onclick="window.calculateRecipeQuantities()">⚡ Calcular macros</button>
+            ${(diet.meals || []).length > 1 ? `<button class="btn btn-outline" style="border-color: rgba(255,100,100,0.5); color: #ff6b6b;" onclick="window.removeLastMealFromDiet()">✕ Eliminar Última Comida</button>` : ''}
+        </div>
     `;
 };
 
@@ -136,6 +177,141 @@ window.renderDietEditor = function () {
     if (!window.editingDietId) return;
     const diet = Diets.getById(window.editingDietId);
     if (!diet) return;
+
+    // Helper para parsear la cantidad normalizando palabras en español
+    function parseSpanishQuantity(str) {
+        if (!str) return 0;
+        let s = str.trim().toLowerCase();
+        if (s.startsWith("un ") || s === "un" || s.startsWith("una ") || s === "una" || s.startsWith("uno ") || s === "uno") {
+            s = s.replace(/^(un|una|uno)\b/, "1");
+        } else if (s.startsWith("dos ")) {
+            s = s.replace(/^dos\b/, "2");
+        } else if (s.startsWith("tres ")) {
+            s = s.replace(/^tres\b/, "3");
+        } else if (s.startsWith("media ") || s.startsWith("medio ")) {
+            s = s.replace(/^(media|medio)\b/, "0.5");
+        }
+        const val = parseFloat(s);
+        return isNaN(val) ? 0 : val;
+    }
+
+    // Helper para obtener el peso por unidad de un alimento
+    function getWeightPerUnit(foodName) {
+        const name = (foodName || '').trim().toLowerCase();
+        if (typeof window.foodDatabase !== 'undefined' && Array.isArray(window.foodDatabase)) {
+            const dbMatch = window.foodDatabase.find(f => f && f.names && Array.isArray(f.names) && f.names.some(n => n && typeof n === 'string' && (n.trim().toLowerCase() === name || name.includes(n.trim().toLowerCase()) || n.trim().toLowerCase().includes(name))));
+            if (dbMatch && dbMatch.weightPerUnit) {
+                return dbMatch.weightPerUnit;
+            }
+        }
+        const weights = {
+            'plátano': 120,
+            'banana': 120,
+            'manzana': 150,
+            'pera': 150,
+            'naranja': 150,
+            'melocotón': 150,
+            'durazno': 150,
+            'kiwi': 75,
+            'mandarina': 80,
+            'limón': 100,
+            'huevo': 55,
+            'clara': 35,
+            'dátil': 8,
+            'tostada': 30,
+            'rebanada': 30,
+            'pan': 30,
+            'tortita': 8,
+            'tortilla': 30,
+            'quesito': 15,
+            'yogur': 125,
+            'lata': 60,
+            'atún': 60,
+            'patata': 150,
+            'papa': 150,
+            'boniato': 150,
+            'batata': 150,
+            'aguacate': 150,
+            'tomate': 120,
+            'zanahoria': 80
+        };
+        for (const key in weights) {
+            if (name.includes(key)) {
+                return weights[key];
+            }
+        }
+        return null;
+    }
+
+    // Auto-sanar alimentos con 0 kcal buscando en base de datos de forma dinámica
+    let dietChanged = false;
+    (diet.meals || []).forEach(meal => {
+        (meal.foods || []).forEach(food => {
+            const nameInput = (food.name || '').trim().toLowerCase();
+            const qtyStr = String(food.quantity || '');
+            const qtyVal = parseSpanishQuantity(qtyStr);
+            if (nameInput && qtyVal > 0 && (parseInt(food.calories) === 0 || !food.calories)) {
+                let found = null;
+                if (typeof Foods !== 'undefined') {
+                    const allFoods = Foods.getAll();
+                    if (Array.isArray(allFoods)) {
+                        found = allFoods.find(f => {
+                            if (!f || !f.name) return false;
+                            const dbName = f.name.trim().toLowerCase();
+                            return dbName === nameInput || dbName.includes(nameInput) || nameInput.includes(dbName);
+                        });
+                    }
+                }
+                if (!found && typeof window.foodDatabase !== 'undefined' && Array.isArray(window.foodDatabase)) {
+                    found = window.foodDatabase.find(f => f && f.names && Array.isArray(f.names) && f.names.some(n => {
+                        if (!n) return false;
+                        const dbName = n.trim().toLowerCase();
+                        return dbName === nameInput || dbName.includes(nameInput) || nameInput.includes(dbName);
+                    }));
+                }
+
+                if (found) {
+                    const baseCals = found.calories || found.cals || 0;
+                    const baseP = found.protein || found.p || 0;
+                    const baseC = found.carbs || found.c || 0;
+                    const baseF = found.fat || found.f || 0;
+
+                    let isUnit = (found.type === 'unit' || found.unit === 'unit');
+                    const isQtyUnitInput = /unidade?s?|uds?|ración|raciones/i.test(qtyStr);
+                    const isQtyGramInput = /g(r|ram(o|s|os)?)?s?\b/i.test(qtyStr.trim());
+                    const weightPerUnit = getWeightPerUnit(nameInput);
+                    
+                    if (isQtyGramInput || window.isForcedGramFood(nameInput)) {
+                        isUnit = false;
+                    } else if (!isUnit && (isQtyUnitInput || (qtyVal <= 20 && qtyVal > 0 && weightPerUnit !== null))) {
+                        isUnit = true;
+                    }
+
+                    let factor = 1;
+                    if (isUnit) {
+                        if (found.type === 'unit' || found.unit === 'unit') {
+                            factor = qtyVal;
+                        } else {
+                            const finalWeight = weightPerUnit !== null ? weightPerUnit : 100;
+                            factor = (qtyVal * finalWeight) / 100;
+                        }
+                    } else {
+                        factor = qtyVal / 100;
+                    }
+
+                    food.calories = Math.round(baseCals * factor);
+                    food.protein = parseFloat((baseP * factor).toFixed(1));
+                    food.carbs = parseFloat((baseC * factor).toFixed(1));
+                    food.fat = parseFloat((baseF * factor).toFixed(1));
+                    dietChanged = true;
+                }
+            }
+        });
+    });
+
+    if (dietChanged) {
+        Diets.update(window.editingDietId, { meals: diet.meals });
+    }
 
     const content = window.getDietEditorHTML(diet);
 
@@ -183,7 +359,7 @@ window.renderDietEditor = function () {
 
         showModal('Editor de Dieta', `<div id="dietEditorContainer">${content}</div>`, [
             { text: '💾 GUARDAR Y CERRAR', class: 'btn-primary', onclick: 'window.saveAndCloseDietEditor()' },
-            { text: 'Cerrar sin guardar', class: 'btn-secondary', onclick: 'window.closeDietEditor()' }
+            { text: 'Cerrar', class: 'btn-secondary', onclick: 'window.closeDietEditor()' }
         ], 'modal-xxl modal-compact');
     }
 };
@@ -337,7 +513,7 @@ window.renderMealCard = function (meal, idx) {
                                                           }
                                                           return q;
                                                       })()}
-                                                 </td>
+                                                  </td>
                                                 <td style="text-align: center; font-weight: bold; padding: 6px;">${food.calories}</td>
                                                 <td style="text-align: right; padding: 6px 5px;">
                                                     <div style="display: flex; justify-content: flex-end; gap: 10px;">
@@ -399,6 +575,395 @@ window.renderMealCard = function (meal, idx) {
 
 /* --- ACTION FUNCTIONS --- */
 
+window.calculateRecipeQuantities = function () {
+    const diet = Diets.getById(window.editingDietId);
+    if (!diet) {
+        showToast('No se encontró la dieta actual', 'error');
+        return;
+    }
+
+    // Helper para parsear la cantidad normalizando palabras en español
+    function parseSpanishQuantity(str) {
+        if (!str) return 0;
+        let s = str.trim().toLowerCase();
+        if (s.startsWith("un ") || s === "un" || s.startsWith("una ") || s === "una" || s.startsWith("uno ") || s === "uno") {
+            s = s.replace(/^(un|una|uno)\b/, "1");
+        } else if (s.startsWith("dos ")) {
+            s = s.replace(/^dos\b/, "2");
+        } else if (s.startsWith("tres ")) {
+            s = s.replace(/^tres\b/, "3");
+        } else if (s.startsWith("media ") || s.startsWith("medio ")) {
+            s = s.replace(/^(media|medio)\b/, "0.5");
+        }
+        const val = parseFloat(s);
+        return isNaN(val) ? 0 : val;
+    }
+
+    // Helper para obtener el peso por unidad de un alimento
+    function getWeightPerUnit(foodName) {
+        const name = (foodName || '').trim().toLowerCase();
+        if (typeof window.foodDatabase !== 'undefined' && Array.isArray(window.foodDatabase)) {
+            const dbMatch = window.foodDatabase.find(f => f && f.names && Array.isArray(f.names) && f.names.some(n => n && typeof n === 'string' && (n.trim().toLowerCase() === name || name.includes(n.trim().toLowerCase()) || n.trim().toLowerCase().includes(name))));
+            if (dbMatch && dbMatch.weightPerUnit) {
+                return dbMatch.weightPerUnit;
+            }
+        }
+        const weights = {
+            'plátano': 120,
+            'banana': 120,
+            'manzana': 150,
+            'pera': 150,
+            'naranja': 150,
+            'melocotón': 150,
+            'durazno': 150,
+            'kiwi': 75,
+            'mandarina': 80,
+            'limón': 100,
+            'huevo': 55,
+            'clara': 35,
+            'dátil': 8,
+            'tostada': 30,
+            'rebanada': 30,
+            'pan': 30,
+            'tortita': 8,
+            'tortilla': 30,
+            'quesito': 15,
+            'yogur': 125,
+            'lata': 60,
+            'atún': 60,
+            'patata': 150,
+            'papa': 150,
+            'boniato': 150,
+            'batata': 150,
+            'aguacate': 150,
+            'tomate': 120,
+            'zanahoria': 80
+        };
+        for (const key in weights) {
+            if (name.includes(key)) {
+                return weights[key];
+            }
+        }
+        return null;
+    }
+
+    // Helper para obtener porciones mínimas lógicas
+    function getMinQuantity(foodName) {
+        const name = (foodName || '').trim().toLowerCase();
+        
+        // Grasas, aceites, condimentos, semillas, suplementos
+        const microWeightKeywords = [
+            'aceite', 'oliva', 'crema de cacahuete', 'mantequilla', 'cacahuete', 'nuez', 'nueces',
+            'almendra', 'chía', 'chia', 'lino', 'sésamo', 'semillas', 'mayonesa', 'aguacate',
+            'quesito', 'queso rallado', 'proteína', 'creatina', 'cacao', 'canela', 'sal', 'especias'
+        ];
+        if (microWeightKeywords.some(kw => name.includes(kw))) {
+            return 5;
+        }
+        
+        // Proteínas principales (carnes, pescados, huevos, tofu, etc.)
+        const proteinKeywords = [
+            'pollo', 'pavo', 'ternera', 'cerdo', 'merluza', 'salmón', 'salmon', 'bacalao', 'atún', 'atun',
+            'lubina', 'dorada', 'pescado', 'carne', 'pechuga', 'muslo', 'solomillo', 'hamburguesa',
+            'tofu', 'seitan', 'seitán', 'queso fresco', 'queso cottage', 'skyr', 'yogur griego'
+        ];
+        if (proteinKeywords.some(kw => name.includes(kw))) {
+            return 80;
+        }
+        
+        // Carbohidratos principales (arroz, pasta, patata, pan, avena)
+        const carbKeywords = [
+            'arroz', 'pasta', 'patata', 'papa', 'boniato', 'batata', 'pan', 'avena', 'quinoa', 'legumbres',
+            'lentejas', 'garbanzos', 'alubias'
+        ];
+        if (carbKeywords.some(kw => name.includes(kw))) {
+            return 40;
+        }
+        
+        // Frutas y verduras
+        const fruitVegKeywords = [
+            'manzana', 'pera', 'plátano', 'banana', 'fresa', 'arándanos', 'naranja', 'tomate', 'zanahoria',
+            'lechuga', 'espinacas', 'brócoli', 'brocoli', 'calabacín', 'cebolla', 'pimiento'
+        ];
+        if (fruitVegKeywords.some(kw => name.includes(kw))) {
+            return 50;
+        }
+        
+        return 30;
+    }
+
+    const targetCals = parseFloat(diet.calories) || 0;
+    const targetP = parseFloat(diet.macros?.protein) || 0;
+    const targetC = parseFloat(diet.macros?.carbs) || 0;
+    const targetF = parseFloat(diet.macros?.fat) || 0;
+
+    if (targetCals <= 0) {
+        showToast('⚠️ Por favor, define primero un objetivo de calorías mayor a 0.', 'warning');
+        return;
+    }
+
+    if (!diet.meals || diet.meals.length === 0) {
+        showToast('⚠️ No hay comidas en esta dieta para calcular.', 'warning');
+        return;
+    }
+
+    const numMeals = diet.meals.length;
+    const targetMealCals = targetCals / numMeals;
+    const targetMealP = targetP / numMeals;
+    const targetMealC = targetC / numMeals;
+    const targetMealF = targetF / numMeals;
+
+    // Saber si ajustamos basándonos en los macros objetivos de la calculadora
+    const calculateByMacros = targetP > 0 && targetC > 0 && targetF > 0;
+
+    // Calcular la suma de calorías actuales de la Opción 1 de todas las comidas
+    const totalOption1Cals = diet.meals.reduce((sum, meal) => {
+        const opt1Foods = (meal.foods || []).filter(f => (f.option || 1) === 1);
+        const opt1Cals = opt1Foods.reduce((s, f) => s + (parseFloat(f.calories) || 0), 0);
+        return sum + opt1Cals;
+    }, 0);
+
+    // Consideramos que la dieta está alineada si la suma de todas las opción 1 es muy cercana o igual al targetCals.
+    // Esto significa que el entrenador ya tiene configuradas sus comidas de Opción 1 y quiere preservar su distribución de calorías
+    // (ya sea porque están repartidas de forma igual o con una distribución personalizada).
+    const keepExistingOption1 = Math.abs(totalOption1Cals - targetCals) < 15 && totalOption1Cals > 0;
+
+    // Recorrer comidas y ajustar las cantidades de cada opción de alimento
+    diet.meals.forEach((meal, mealIdx) => {
+        // Encontrar alimentos de la Opción 1 de esta comida
+        const opt1Foods = (meal.foods || []).filter(f => (f.option || 1) === 1);
+        const opt1Cals = opt1Foods.reduce((s, f) => s + (parseFloat(f.calories) || 0), 0);
+        
+        // Si optamos por mantener la Opción 1, y esta ya tiene calorías definidas,
+        // usamos esas calorías como objetivo para el resto de opciones de esta comida.
+        // De lo contrario, usamos el promedio targetMealCals.
+        const hasOpt1Configured = opt1Foods.length > 0 && opt1Cals > 0;
+        const mealTargetCals = (keepExistingOption1 && hasOpt1Configured) ? opt1Cals : targetMealCals;
+
+        // Encontrar todas las opciones únicas en esta comida
+        const optionNums = Array.from(new Set((meal.foods || []).map(f => f.option || 1)));
+        
+        optionNums.forEach(optNum => {
+            // Si debemos mantener Opción 1 intacta, saltamos el cálculo para la Opción 1
+            if (keepExistingOption1 && hasOpt1Configured && optNum === 1) {
+                return;
+            }
+
+            const optFoods = (meal.foods || []).filter(f => (f.option || 1) === optNum);
+            if (optFoods.length === 0) return;
+
+            // 1. Preparar referencias de base
+            optFoods.forEach(f => {
+                const nameInput = (f.name || '').trim().toLowerCase();
+                let found = null;
+
+                if (typeof Foods !== 'undefined') {
+                    const allFoods = Foods.getAll();
+                    if (Array.isArray(allFoods)) {
+                        found = allFoods.find(food => {
+                            if (!food || !food.name) return false;
+                            const dbName = food.name.trim().toLowerCase();
+                            return dbName === nameInput || dbName.includes(nameInput) || nameInput.includes(dbName);
+                        });
+                    }
+                }
+
+                if (!found && typeof window.foodDatabase !== 'undefined' && Array.isArray(window.foodDatabase)) {
+                    found = window.foodDatabase.find(food => {
+                        if (!food || !food.names) return false;
+                        return food.names.some(n => {
+                            if (!n) return false;
+                            const dbName = n.trim().toLowerCase();
+                            return dbName === nameInput || dbName.includes(nameInput) || n.trim().toLowerCase().includes(nameInput);
+                        });
+                    });
+                }
+
+                let isUnit = false;
+                let baseCals = 0;
+                let baseP = 0;
+                let baseC = 0;
+                let baseF = 0;
+
+                const qtyStr = String(f.quantity || '');
+                const qtyVal = parseSpanishQuantity(qtyStr);
+
+                if (found) {
+                    isUnit = (found.type === 'unit' || found.unit === 'unit');
+                    baseCals = found.calories || found.cals || 0;
+                    baseP = found.protein || found.p || 0;
+                    baseC = found.carbs || found.c || 0;
+                    baseF = found.fat || found.f || 0;
+
+                    // Determinar si es una cantidad basada en unidades o gramos
+                    const isQtyUnitInput = /unidade?s?|uds?|ración|raciones/i.test(qtyStr);
+                    const isQtyGramInput = /g(r|ram(o|s|os)?)?s?\b/i.test(qtyStr.trim());
+                    const weightPerUnit = getWeightPerUnit(nameInput);
+                    
+                    if (isQtyGramInput || window.isForcedGramFood(nameInput)) {
+                        isUnit = false;
+                    } else if (!isUnit && (isQtyUnitInput || (qtyVal > 0 && qtyVal <= 20 && weightPerUnit !== null))) {
+                        isUnit = true;
+                    }
+ 
+                    if (isUnit) {
+                        // Adaptar macros base de 100g a 1 unidad si no es de tipo unit
+                        if (found.type !== 'unit' && found.unit !== 'unit') {
+                            const finalWeight = weightPerUnit !== null ? weightPerUnit : 100;
+                            const unitFactor = finalWeight / 100;
+                            baseCals = baseCals * unitFactor;
+                            baseP = baseP * unitFactor;
+                            baseC = baseC * unitFactor;
+                            baseF = baseF * unitFactor;
+                        }
+                    }
+                } else {
+                    // Fallback using the food's existing macro values if positive
+                    const existingCals = parseFloat(f.calories) || 0;
+                    if (existingCals > 0) {
+                        baseCals = existingCals;
+                        baseP = parseFloat(f.protein) || 0;
+                        baseC = parseFloat(f.carbs) || 0;
+                        baseF = parseFloat(f.fat) || 0;
+
+                        const existingQty = parseFloat(f.quantity);
+                        if (!isNaN(existingQty) && existingQty > 0) {
+                            isUnit = (existingQty < 10);
+                            if (isUnit) {
+                                baseCals = baseCals / existingQty;
+                                baseP = baseP / existingQty;
+                                baseC = baseC / existingQty;
+                                baseF = baseF / existingQty;
+                            } else {
+                                baseCals = (baseCals / existingQty) * 100;
+                                baseP = (baseP / existingQty) * 100;
+                                baseC = (baseC / existingQty) * 100;
+                                baseF = (baseF / existingQty) * 100;
+                            }
+                        } else {
+                            isUnit = false;
+                        }
+                    } else {
+                        // Standard fallback
+                        isUnit = false;
+                        baseCals = 100;
+                        baseP = 5;
+                        baseC = 10;
+                        baseF = 2;
+                    }
+                }
+
+                let parsedQty = qtyVal;
+                let refQty = 100;
+                if (isUnit) {
+                    refQty = (!isNaN(parsedQty) && parsedQty > 0) ? parsedQty : 1;
+                } else {
+                    refQty = (!isNaN(parsedQty) && parsedQty > 0) ? parsedQty : 100;
+                }
+
+                let factor = isUnit ? refQty : (refQty / 100);
+                
+                f._refCals = baseCals * factor;
+                f._refP = baseP * factor;
+                f._refC = baseC * factor;
+                f._refF = baseF * factor;
+                f._baseCals = baseCals;
+                f._baseP = baseP;
+                f._baseC = baseC;
+                f._baseF = baseF;
+                f._refQty = refQty;
+                f._isUnit = isUnit;
+
+                // Determinar el macro dominante para escalado inteligente
+                const pCals = (parseFloat(baseP) || 0) * 4;
+                const cCals = (parseFloat(baseC) || 0) * 4;
+                const fCals = (parseFloat(baseF) || 0) * 9;
+                const maxCals = Math.max(pCals, cCals, fCals);
+                
+                if (maxCals === pCals && pCals > 0) {
+                    f._dominant = 'protein';
+                } else if (maxCals === cCals && cCals > 0) {
+                    f._dominant = 'carbs';
+                } else if (maxCals === fCals && fCals > 0) {
+                    f._dominant = 'fat';
+                } else {
+                    f._dominant = 'calories';
+                }
+            });
+
+            // 2. Sumar totales de referencia de la opción
+            const totalRefCals = optFoods.reduce((sum, f) => sum + (f._refCals || 0), 0);
+            const totalRefP = optFoods.reduce((sum, f) => sum + (f._refP || 0), 0);
+            const totalRefC = optFoods.reduce((sum, f) => sum + (f._refC || 0), 0);
+            const totalRefF = optFoods.reduce((sum, f) => sum + (f._refF || 0), 0);
+
+            // 3. Calcular factores de escala
+            let sCals = totalRefCals > 0 ? (mealTargetCals / totalRefCals) : 1;
+            let sP = totalRefP > 0 ? (targetMealP / totalRefP) : 1;
+            let sC = totalRefC > 0 ? (targetMealC / totalRefC) : 1;
+            let sF = totalRefF > 0 ? (targetMealF / totalRefF) : 1;
+
+            if (totalRefCals > 0) {
+                optFoods.forEach(f => {
+                    // Elegir factor de escala según dominant macro si calculamos por macros
+                    let S = sCals;
+                    if (calculateByMacros) {
+                        if (f._dominant === 'protein') S = sP;
+                        else if (f._dominant === 'carbs') S = sC;
+                        else if (f._dominant === 'fat') S = sF;
+                    }
+
+                    const newQty = f._refQty * S;
+                    let finalQty = 0;
+                    if (f._isUnit) {
+                        finalQty = Math.max(1, Math.round(newQty));
+                        f.quantity = String(`${finalQty} ${finalQty === 1 ? 'ud' : 'uds'}`);
+                    } else {
+                        // Obtener cantidad mínima lógica
+                        const minQty = getMinQuantity(f.name);
+                        finalQty = Math.max(minQty, Math.round(newQty / 5) * 5);
+                        f.quantity = finalQty + "g";
+                    }
+
+                    const finalFactor = f._isUnit ? finalQty : (finalQty / 100);
+                    f.calories = Math.round(f._baseCals * finalFactor);
+                    f.protein = parseFloat((f._baseP * finalFactor).toFixed(1));
+                    f.carbs = parseFloat((f._baseC * finalFactor).toFixed(1));
+                    f.fat = parseFloat((f._baseF * finalFactor).toFixed(1));
+                });
+            }
+
+            // Limpiar variables temporales
+            optFoods.forEach(f => {
+                delete f._refCals;
+                delete f._refP;
+                delete f._refC;
+                delete f._refF;
+                delete f._baseCals;
+                delete f._baseP;
+                delete f._baseC;
+                delete f._baseF;
+                delete f._refQty;
+                delete f._isUnit;
+                delete f._dominant;
+            });
+        });
+    });
+
+    // Guardar cambios
+    Diets.update(window.editingDietId, { meals: diet.meals });
+    
+    // Recalcular y re-renderizar
+    window.recalculateDietTotals(window.editingDietId);
+    window.renderDietEditor();
+
+    if (keepExistingOption1) {
+        showToast('⚡ Opción secundaria ajustada a los macros de la Opción 1', 'success');
+    } else {
+        showToast('⚡ Cantidades y macros ajustados proporcionalmente', 'success');
+    }
+};
+
 window.toggleAddFoodForm = function (mealIdx, option) {
     if (window.activeMealForm && window.activeMealForm.mealIdx === mealIdx && window.activeMealForm.option === option) {
         window.activeMealForm = null;
@@ -444,7 +1009,9 @@ window.addFood = function (mealIdx, optionNum) {
         const n = parseFloat(normalizedQty);
         if (!isNaN(n)) {
             let type = 'g';
-            if (typeof Foods !== 'undefined') {
+            if (window.isForcedGramFood(name)) {
+                type = 'g';
+            } else if (typeof Foods !== 'undefined') {
                 const dbFood = Foods.getAll().find(dbf => dbf && dbf.name && dbf.name.toLowerCase() === name.toLowerCase()) ||
                                Foods.getAll().find(dbf => dbf && dbf.name && (dbf.name.toLowerCase().includes(name.toLowerCase()) || name.toLowerCase().includes(dbf.name.toLowerCase())));
                 if (dbFood) type = dbFood.type || 'g';
@@ -479,13 +1046,31 @@ window.addFood = function (mealIdx, optionNum) {
         // Guardar en base de datos global de alimentos si no existe
         const existingFood = Foods.getAll().find(f => f.name.toLowerCase() === name.toLowerCase());
         if (!existingFood) {
+            let detectedType = 'g';
+            if (window.isForcedGramFood(name)) {
+                detectedType = 'g';
+            } else {
+                const qtyStr = String(quantity || '');
+                if (/[a-zA-Z]/.test(qtyStr)) {
+                    if (/unidade?s?|uds?|ración|raciones/i.test(qtyStr)) {
+                        detectedType = 'unit';
+                    }
+                } else {
+                    const n = parseFloat(qtyStr);
+                    if (!isNaN(n) && n <= 20) {
+                        if (window.getWeightPerUnit(name) !== null) {
+                            detectedType = 'unit';
+                        }
+                    }
+                }
+            }
             Foods.create({
                 name: food.name,
                 calories: food.calories,
                 protein: food.protein,
                 carbs: food.carbs,
                 fat: food.fat,
-                type: 'unit'
+                type: detectedType
             });
         }
     }
@@ -499,33 +1084,6 @@ window.addFood = function (mealIdx, optionNum) {
 };
 
 window.recalculateDietTotals = function(dietId) {
-    const diet = Diets.getById(dietId);
-    if (!diet) return;
-
-    let totalCals = 0;
-    let totalMacros = { protein: 0, carbs: 0, fat: 0 };
-
-    (diet.meals || []).forEach(meal => {
-        // Solo sumamos la Opción 1 para el total de la tarjeta
-        const option1Foods = (meal.foods || []).filter(f => !f.option || Number(f.option) === 1);
-        option1Foods.forEach(food => {
-            totalCals += parseInt(food.calories || 0);
-            totalMacros.protein += parseFloat(food.protein || 0);
-            totalMacros.carbs += parseFloat(food.carbs || 0);
-            totalMacros.fat += parseFloat(food.fat || 0);
-        });
-    });
-
-    // Actualizamos los valores reales del objeto dieta
-    Diets.update(dietId, { 
-        calories: totalCals, 
-        macros: {
-            protein: Math.round(totalMacros.protein),
-            carbs: Math.round(totalMacros.carbs),
-            fat: Math.round(totalMacros.fat)
-        }
-    });
-
     // Si existe la función de refrescar la lista de dietas, la llamamos
     if (typeof loadDiets === 'function') loadDiets();
 };
@@ -659,6 +1217,43 @@ window.updateMealName = function (mealIdx, newName) {
     Diets.update(window.editingDietId, { meals: diet.meals });
 };
 
+window.addMealToDiet = function () {
+    const diet = Diets.getById(window.editingDietId);
+    if (!diet) return;
+    if (!diet.meals) diet.meals = [];
+    
+    const newMealIndex = diet.meals.length + 1;
+    diet.meals.push({
+        name: 'Comida ' + newMealIndex,
+        foods: [],
+        optionPhotos: {},
+        optionIngredients: {}
+    });
+    
+    Diets.update(diet.id, { 
+        meals: diet.meals,
+        mealsCount: diet.meals.length
+    });
+    showToast('Comida añadida', 'success');
+    window.renderDietEditor();
+};
+
+window.removeLastMealFromDiet = function () {
+    const diet = Diets.getById(window.editingDietId);
+    if (!diet) return;
+    if (!diet.meals || diet.meals.length <= 1) return;
+    
+    if (confirm('¿Estás seguro de eliminar la última comida (' + diet.meals[diet.meals.length - 1].name + ')?')) {
+        diet.meals.pop();
+        Diets.update(diet.id, { 
+            meals: diet.meals,
+            mealsCount: diet.meals.length
+        });
+        showToast('Última comida eliminada', 'success');
+        window.renderDietEditor();
+    }
+};
+
 window.updateDietGoal = function (type, value) {
     const val = parseInt(value) || 0;
     const diet = Diets.getById(window.editingDietId);
@@ -675,20 +1270,42 @@ window.updateDietGoal = function (type, value) {
 // --- PHOTO SELECTOR LOGIC ---
 
 window.openPhotoSelector = function (mealIdx, optionNum) {
-    const recipes = Media.getAll().filter(m => m.category === 'recipe');
+    const renderPhotosList = (query = '') => {
+        const recipes = Media.getAll().filter(m => m.category === 'recipe');
+        const filtered = recipes.filter(r => r.title.toLowerCase().includes(query.toLowerCase()));
+        
+        if (filtered.length === 0) {
+            return `<p class="text-muted p-md text-center">No se encontraron recetas con "${query}"</p>`;
+        }
+        return `
+            <div class="grid grid-3 gap-sm">${filtered.map(r => `
+                <div class="card p-0 cursor-pointer hover-scale" style="transition: transform 0.2s;" onclick="window.selectDietPhoto(${mealIdx}, ${optionNum}, '${r.url}')">
+                    <img src="${r.url}" style="width: 100%; aspect-ratio: 16/9; object-fit: cover;">
+                    <div class="p-xs text-xs text-center text-truncate" style="font-weight: 600;">${r.title}</div>
+                </div>`).join('')}
+            </div>`;
+    };
+
+    window.onPhotoSearch = function (val) {
+        const container = document.getElementById('photoListContainer');
+        if (container) {
+            container.innerHTML = renderPhotosList(val);
+        }
+    };
+
+    const initialList = renderPhotosList();
     const content = `
         <div class="tabs mb-md" style="display: flex; gap: 10px; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 10px;">
             <button id="tabBtn-lib" class="btn btn-sm btn-primary" onclick="window.switchPhotoTab('lib')">Biblioteca</button>
             <button id="tabBtn-upload" class="btn btn-sm btn-outline" onclick="window.switchPhotoTab('upload')">Subir Foto</button>
         </div>
         <div id="tab-lib">
-             ${recipes.length === 0 ? '<p class="text-muted p-md text-center">No hay recetas en la biblioteca</p>' :
-            `<div class="grid grid-3 gap-sm">${recipes.map(r => `
-                <div class="card p-0 cursor-pointer" onclick="window.selectDietPhoto(${mealIdx}, ${optionNum}, '${r.url}')">
-                    <img src="${r.url}" style="width: 100%; aspect-ratio: 16/9; object-fit: cover;">
-                    <div class="p-xs text-xs text-center text-truncate">${r.title}</div>
-                </div>`).join('')}</div>`
-        }
+             <div class="mb-md">
+                 <input type="text" id="photoSearchInput" class="form-input" placeholder="🔍 Buscar receta por título..." oninput="window.onPhotoSearch(this.value)" style="width: 100%; margin-bottom: 10px; background: rgba(0,0,0,0.2); border: 1px solid rgba(255,255,255,0.1); border-radius: 6px; padding: 8px 12px; color: var(--text-primary);">
+             </div>
+             <div id="photoListContainer" style="max-height: 400px; overflow-y: auto; padding-right: 5px;">
+                 ${initialList}
+             </div>
         </div>
         <div id="tab-upload" style="display: none; padding: 20px; text-center;">
              <input type="file" id="dietPhotoInput" accept="image/*" class="form-input" onchange="window.previewDietPhotoUpload()">
@@ -697,6 +1314,10 @@ window.openPhotoSelector = function (mealIdx, optionNum) {
         </div>
     `;
     showModal('Seleccionar Foto', content, [{ text: 'Cerrar', class: 'btn-secondary', onclick: 'window.closeModal(this)' }]);
+    
+    setTimeout(() => {
+        document.getElementById('photoSearchInput')?.focus();
+    }, 100);
 };
 
 window.switchPhotoTab = function (tab) {
@@ -1004,15 +1625,17 @@ window.publishDietToClient = function (dietIdOverride) {
     const clients = Clients.getAll().filter(c => c.status !== 'inactive');
 
     const clientRows = clients.map(c => {
-        const hasThisDiet  = c.assignedDiet === dietId;
-        const hasDiffDiet  = c.assignedDiet && c.assignedDiet !== dietId;
-        const otherDiet    = hasDiffDiet ? Diets.getById(c.assignedDiet) : null;
+        let assignedDiets = c.assignedDiets || [];
+        if (!Array.isArray(assignedDiets)) {
+            assignedDiets = c.assignedDiet ? [c.assignedDiet] : [];
+        }
+        const hasThisDiet  = assignedDiets.includes(dietId);
 
         let statusHtml = '';
         if (hasThisDiet) {
             statusHtml = '<span style="color:#00e676;">✓ Esta dieta está activa para este cliente</span>';
-        } else if (hasDiffDiet) {
-            statusHtml = `Tiene asignada: <em>${otherDiet ? otherDiet.name : 'otra dieta'}</em>`;
+        } else if (assignedDiets.length > 0) {
+            statusHtml = `Tiene asignadas ${assignedDiets.length} dietas activas`;
         } else {
             statusHtml = 'Sin dieta asignada';
         }
@@ -1023,24 +1646,18 @@ window.publishDietToClient = function (dietIdOverride) {
                 <div style="display:flex;flex-direction:column;gap:6px;align-items:flex-end;">
                     <button class="btn btn-sm btn-primary" style="font-size:0.75rem;min-width:160px;"
                         onclick="window._updateActiveDiet('${c.id}','${dietId}')">
-                        🔄 Actualizar dieta actual
+                        🔄 Actualizar dieta
                     </button>
                     <button class="btn btn-sm btn-outline" style="font-size:0.75rem;min-width:160px;color:#ff9800;border-color:rgba(255,152,0,0.4);"
                         onclick="window._archiveDiet('${c.id}','${dietId}')">
                         📦 Guardar como dieta antigua
                     </button>
                 </div>`;
-        } else if (hasDiffDiet) {
-            actionsHtml = `
-                <button class="btn btn-sm btn-outline" style="font-size:0.75rem;"
-                    onclick="window._assignDiet('${c.id}','${dietId}')">
-                    📤 Reemplazar&nbsp;dieta
-                </button>`;
         } else {
             actionsHtml = `
                 <button class="btn btn-sm btn-primary" style="font-size:0.75rem;"
                     onclick="window._assignDiet('${c.id}','${dietId}')">
-                    📤 Asignar
+                    📤 Asignar Dieta
                 </button>`;
         }
 
@@ -1104,7 +1721,34 @@ window.publishDietToClient = function (dietIdOverride) {
 };
 
 window._assignDiet = function (clientId, dietId) {
-    Clients.update(clientId, { assignedDiet: dietId, dietPublished: true });
+    const client = Clients.getById(clientId);
+    if (!client) return;
+    let assignedDiets = client.assignedDiets || [];
+    if (!Array.isArray(assignedDiets)) {
+        assignedDiets = client.assignedDiet ? [client.assignedDiet] : [];
+    }
+    if (!assignedDiets.includes(dietId)) {
+        assignedDiets.push(dietId);
+    }
+    
+    let publishedDiets = client.publishedDiets || [];
+    if (!Array.isArray(publishedDiets)) {
+        if (client.dietPublished !== false) {
+            publishedDiets = [...assignedDiets];
+        } else {
+            publishedDiets = [];
+        }
+    }
+    if (!publishedDiets.includes(dietId)) {
+        publishedDiets.push(dietId);
+    }
+
+    Clients.update(clientId, { 
+        assignedDiet: dietId, 
+        assignedDiets: assignedDiets,
+        publishedDiets: publishedDiets,
+        dietPublished: true 
+    });
     showToast('✓ Dieta publicada al cliente correctamente', 'success');
     document.getElementById('publishDietModal')?.remove();
     window.publishDietToClient(dietId);
@@ -1112,7 +1756,31 @@ window._assignDiet = function (clientId, dietId) {
 
 window._updateActiveDiet = function (clientId, dietId) {
     _snapshotDietToHistory(clientId, dietId, 'updated');
-    Clients.update(clientId, { assignedDiet: dietId, dietPublished: true });
+    const client = Clients.getById(clientId);
+    if (client) {
+        let assignedDiets = client.assignedDiets || [];
+        if (!Array.isArray(assignedDiets)) {
+            assignedDiets = client.assignedDiet ? [client.assignedDiet] : [];
+        }
+        if (!assignedDiets.includes(dietId)) {
+            assignedDiets.push(dietId);
+        }
+        
+        let publishedDiets = client.publishedDiets || [];
+        if (!Array.isArray(publishedDiets)) {
+            publishedDiets = [...assignedDiets];
+        }
+        if (!publishedDiets.includes(dietId)) {
+            publishedDiets.push(dietId);
+        }
+
+        Clients.update(clientId, { 
+            assignedDiet: dietId, 
+            assignedDiets: assignedDiets,
+            publishedDiets: publishedDiets,
+            dietPublished: true 
+        });
+    }
     showToast('🔄 Dieta actualizada en la App del cliente y guardada en historial', 'success');
     document.getElementById('publishDietModal')?.remove();
     window.publishDietToClient(dietId);
@@ -1128,7 +1796,32 @@ window._togglePublicStatus = function (clientId, status) {
 window._archiveDiet = function (clientId, dietId) {
     if (!confirm('¿Guardar esta dieta como "antigua"?')) return;
     _snapshotDietToHistory(clientId, dietId, 'archived');
-    Clients.update(clientId, { assignedDiet: null, dietPublished: false });
+    
+    const client = Clients.getById(clientId);
+    if (client) {
+        let assignedDiets = client.assignedDiets || [];
+        if (!Array.isArray(assignedDiets)) {
+            assignedDiets = client.assignedDiet ? [client.assignedDiet] : [];
+        }
+        assignedDiets = assignedDiets.filter(id => id !== dietId);
+        
+        let publishedDiets = client.publishedDiets || [];
+        if (Array.isArray(publishedDiets)) {
+            publishedDiets = publishedDiets.filter(id => id !== dietId);
+        }
+        
+        let primaryDietId = client.assignedDiet;
+        if (primaryDietId === dietId) {
+            primaryDietId = assignedDiets.length > 0 ? assignedDiets[0] : null;
+        }
+
+        Clients.update(clientId, { 
+            assignedDiet: primaryDietId, 
+            assignedDiets: assignedDiets,
+            publishedDiets: publishedDiets,
+            dietPublished: publishedDiets.length > 0
+        });
+    }
     showToast('📦 Dieta archivada', 'info');
     document.getElementById('publishDietModal')?.remove();
     window.publishDietToClient(dietId);
@@ -1236,7 +1929,7 @@ window.foodDatabase = [
     { names: ['Anacardos'], cals: 553, p: 18, c: 30, f: 44 },
     { names: ['Pistachos'], cals: 562, p: 20, c: 28, f: 45 },
     { names: ['Almendras', 'Almendras laminadas', 'Almendra molida'], cals: 579, p: 21, c: 22, f: 49 },
-    { names: ['Proteina en polvo', 'Batido de proteina', 'Whey Protein', 'Proteína de vainilla', 'Proteína chocolate', 'Proteína', 'Proteína en polvo isolate'], cals: 380, p: 80, c: 5, f: 4, type: 'unit', weightPerUnit: 30 },
+    { names: ['Proteina en polvo', 'Batido de proteina', 'Whey Protein', 'Proteína de vainilla', 'Proteína chocolate', 'Proteína', 'Proteína en polvo isolate'], cals: 380, p: 80, c: 5, f: 4 },
     { names: ['Miel'], cals: 304, p: 0.3, c: 82, f: 0 },
     { names: ['Dátil'], cals: 282, p: 2.5, c: 75, f: 0.4, type: 'unit', weightPerUnit: 8 },
     { names: ['Cacao'], cals: 228, p: 20, c: 58, f: 14 },
@@ -1334,7 +2027,7 @@ window.checkFoodMacros = function (mealIdx, optionNum) {
                 return weights[key];
             }
         }
-        return 100;
+        return null;
     }
 
     const qty = parseSpanishQuantity(qtyInput);
@@ -1371,10 +2064,11 @@ window.checkFoodMacros = function (mealIdx, optionNum) {
         const isQtyUnitInput = /unidade?s?|uds?|ración|raciones/i.test(qtyInput);
         const isQtyGramInput = /g(r|ram(o|s|os)?)?s?\b/i.test(qtyInput.trim());
         let isUnit = (found.type === 'unit' || found.unit === 'unit');
+        const weightPerUnit = getWeightPerUnit(nameInput);
         
-        if (isQtyGramInput) {
+        if (isQtyGramInput || window.isForcedGramFood(nameInput)) {
             isUnit = false;
-        } else if (!isUnit && (isQtyUnitInput || (qty <= 20 && qty > 0))) {
+        } else if (!isUnit && (isQtyUnitInput || (qty <= 20 && qty > 0 && weightPerUnit !== null))) {
             isUnit = true;
         }
 
@@ -1384,8 +2078,8 @@ window.checkFoodMacros = function (mealIdx, optionNum) {
                 factor = qty; // Multiplicamos directo
             } else {
                 // Alimento en gramos pero ingresado por unidades: buscar peso por unidad
-                const weightPerUnit = getWeightPerUnit(nameInput);
-                factor = (qty * weightPerUnit) / 100;
+                const finalWeight = weightPerUnit !== null ? weightPerUnit : 100;
+                factor = (qty * finalWeight) / 100;
             }
         } else {
             // Por defecto asumimos gramos (cada 100g)
