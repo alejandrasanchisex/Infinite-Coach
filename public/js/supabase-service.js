@@ -317,7 +317,7 @@ const SupabaseService = {
             console.error("Error guardando en Supabase DB despues de reintentos:", error);
             return false;
         }
-    }
+    },
 
     /**
      * Gestión del Panel Maestro (SaaS Global Config)
