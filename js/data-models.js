@@ -5255,7 +5255,9 @@ const BrandConfig = {
     let isBrian = false;
     if (typeof window !== 'undefined') {
         const activeId = window.activeTrainerId || safeGetLocalStorage('activeTrainerId') || '';
-        const trainerEmail = safeGetLocalStorage('_trainerEmail') || '';
+        const isClientView = !window.location.pathname.includes('trainer-') && !window.location.pathname.includes('admin-');
+        const trainerEmail = isClientView ? '' : (safeGetLocalStorage('_trainerEmail') || '');
+
         if (activeId.includes('t-w0iybl7qb') || 
             activeId.includes('t-zum04ds2n') || 
             activeId.includes('alejandra_asteam_gmail_com') ||
@@ -5274,7 +5276,7 @@ const BrandConfig = {
         if (activeId.includes('t-kt1hgr95s') || (trainerEmail && trainerEmail.toLowerCase() === 'brianarribas@gmail.com')) {
             isBrian = true;
         }
-        console.log(`[BrandConfig] activeId="${activeId}" trainerEmail="${trainerEmail}" => isAlejandra=${isAlejandra}, isToledo=${isToledo}, isLucy=${isLucy}, isJulian=${isJulian}, isBrian=${isBrian}`);
+        console.log(`[BrandConfig] activeId="${activeId}" isClientView=${isClientView} trainerEmail="${trainerEmail}" => isAlejandra=${isAlejandra}, isToledo=${isToledo}, isLucy=${isLucy}, isJulian=${isJulian}, isBrian=${isBrian}`);
     }
 
     // Default brand settings

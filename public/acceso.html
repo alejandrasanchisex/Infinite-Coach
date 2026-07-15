@@ -20,7 +20,7 @@
         })();
         // Force PWA cache bust / reload
         (function() {
-            const CURRENT_VERSION = '645';
+            const CURRENT_VERSION = '646';
             window.APP_VERSION = CURRENT_VERSION;
             const savedVersion = localStorage.getItem('app_version');
             if (savedVersion && savedVersion !== CURRENT_VERSION) {
@@ -351,7 +351,7 @@
 
         <p class="footer">¿No tienes código?<br>Contacta con tu entrenador personal.</p>
         <p class="footer" style="margin-top: 15px; border-top: 1px solid rgba(255,255,255,0.05); padding-top: 15px;">
-            <a href="trainer-login.html?v=645" style="color: var(--gold-light); text-decoration: none; font-size: 0.8rem; font-weight: 600;">Acceso Entrenadores 🔐</a>
+            <a href="trainer-login.html?v=646" style="color: var(--gold-light); text-decoration: none; font-size: 0.8rem; font-weight: 600;">Acceso Entrenadores 🔐</a>
         </p>
         <p id="app-version-display" style="text-align: center; font-size: 0.65rem; color: var(--muted); margin-top: 10px; opacity: 0.7;"></p>
     </div>
@@ -361,10 +361,10 @@
 
 <!-- ── Scripts ──────────────────────────────────────────────────── -->
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" defer></script>
-<script src="js/supabase-service.js?v=645" defer></script>
-<script src="js/config.js?v=645" defer></script>
-<script src="js/data-models.js?v=645" defer></script>
-<script src="js/utils.js?v=645" defer></script>
+<script src="js/supabase-service.js?v=646" defer></script>
+<script src="js/config.js?v=646" defer></script>
+<script src="js/data-models.js?v=646" defer></script>
+<script src="js/utils.js?v=646" defer></script>
 <script>
 
 // ── Auto-Redirección (Mantener sesión activa) ─────────────────────
@@ -372,7 +372,7 @@
     var storedClientId = localStorage.getItem('clientId') || sessionStorage.getItem('clientId');
     var params = new URLSearchParams(window.location.search);
     if (storedClientId && params.get('logout') !== 'true' && params.get('reauth') !== 'true') {
-        window.location.replace('dashboard.html?v=645');
+        window.location.replace('dashboard.html?v=646');
     }
 })();
 
@@ -478,6 +478,14 @@ async function doLogin() {
         return;
     }
 
+    // Envoltura de timeout local para peticiones de red de acceso
+    const withTimeout = (promise, ms = 3000) => {
+        return Promise.race([
+            promise,
+            new Promise((_, reject) => setTimeout(() => reject(new Error("Timeout de red")), ms))
+        ]);
+    };
+
     // Disable button & show spinner
     btn.disabled = true;
     content.innerHTML = '<span class="spinner"></span>';
@@ -489,7 +497,6 @@ async function doLogin() {
         var foundClient = null;
         var foundTrainerId = null;
         var foundTrainerData = null;
-        var profilesList = null;
 
         // 1. Prioridad: Buscar en Supabase en tiempo real en todos los perfiles de entrenadores (un solo fetch para evitar fallos de red intermitentes)
         if (window.SupabaseService) {
@@ -497,19 +504,16 @@ async function doLogin() {
         }
         if (window.SupabaseService && window.SupabaseService.client) {
             try {
-                const { data: profiles, error } = await window.SupabaseService.client
-                    .from('trainer_profiles')
-                    .select('trainer_id, clients:full_data->clients')
-                    .contains('full_data', { clients: [{ accessCode: code }] });
-                profilesList = profiles;
+                // Fetch profiles with the code
+                const profiles = await withTimeout((async () => {
+                    const { data, error } = await window.SupabaseService.client
+                        .from('trainer_profiles')
+                        .select('trainer_id, clients:full_data->clients')
+                        .contains('full_data', { clients: [{ accessCode: code }] });
+                    if (error) throw error;
+                    return data;
+                })(), 3000);
                 
-                if (error) {
-                    console.error("Supabase query error:", error);
-                    showMsg("Error de base de datos: " + (error.message || JSON.stringify(error)));
-                    btn.disabled = false;
-                    content.textContent = 'Acceder';
-                    return;
-                }
                 if (profiles) {
                     // Ordenar perfiles para priorizar el entrenador activo actual y evitar genéricos
                     profiles.sort(function(a, b) {
@@ -541,27 +545,22 @@ async function doLogin() {
                     }
 
                     if (foundClient) {
-                        const { data: trainerProfile, error: fetchError } = await window.SupabaseService.client
-                            .from('trainer_profiles')
-                            .select('full_data')
-                            .eq('trainer_id', foundTrainerId)
-                            .single();
-                        if (fetchError) {
-                            console.error("Error fetching trainer data:", fetchError);
-                            showMsg("Error de base de datos al cargar perfil: " + (fetchError.message || JSON.stringify(fetchError)));
-                            btn.disabled = false;
-                            content.textContent = 'Acceder';
-                            return;
-                        }
+                        const trainerProfile = await withTimeout((async () => {
+                            const { data, error: fetchError } = await window.SupabaseService.client
+                                .from('trainer_profiles')
+                                .select('full_data')
+                                .eq('trainer_id', foundTrainerId)
+                                .single();
+                            if (fetchError) throw fetchError;
+                            return data;
+                        })(), 3000);
+                        
                         foundTrainerData = trainerProfile ? trainerProfile.full_data : null;
                     }
                 }
             } catch(e) {
-                console.warn("Supabase cross-trainer search failed:", e);
-                showMsg("Fallo de conexión o Supabase: " + (e.message || JSON.stringify(e)));
-                btn.disabled = false;
-                content.textContent = 'Acceder';
-                return;
+                console.warn("Supabase login check failed or timed out, using local fallbacks:", e);
+                // No retornamos aquí para poder continuar con el escaneo de LocalStorage
             }
         }
 
@@ -685,7 +684,7 @@ try {
     document.getElementById('app-version-display').textContent = 'Versión: v' + (window.APP_VERSION || 'desconocida');
 } catch(e) {}
 </script>
-<script src="js/custom-recipes.js?v=645"></script>
-<script src="js/pwa-install.js?v=645"></script>
+<script src="js/custom-recipes.js?v=646"></script>
+<script src="js/pwa-install.js?v=646"></script>
 </body>
 </html>
