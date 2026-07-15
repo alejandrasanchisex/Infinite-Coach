@@ -23,9 +23,7 @@
             const CURRENT_VERSION = '629';
             window.APP_VERSION = CURRENT_VERSION;
             const savedVersion = localStorage.getItem('app_version');
-            if (savedVersion !== CURRENT_VERSION) {
-                localStorage.setItem('app_version', CURRENT_VERSION);
-                localStorage.setItem('app_version', CURRENT_VERSION);
+            if (savedVersion && parseInt(savedVersion) > parseInt(CURRENT_VERSION)) {
                 if ('serviceWorker' in navigator) {
                     navigator.serviceWorker.getRegistrations().then(function(regs) {
                         for (let r of regs) r.unregister();
@@ -36,6 +34,8 @@
                     window.location.reload(true);
                 }
                 return;
+            } else if (savedVersion !== CURRENT_VERSION) {
+                localStorage.setItem('app_version', CURRENT_VERSION);
             }
             if (typeof window !== 'undefined' && window.location && navigator.onLine !== false) {
                 const checkKey = '_lastVersionCheck';
