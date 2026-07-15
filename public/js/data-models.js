@@ -1,4 +1,6 @@
 
+let isLocalUploadInProgress = false;
+
 // 🛡️ HELPERS DE ALMACENAMIENTO SEGUROS A PRUEBA DE CUOTA, COOKIES BLOQUEADAS Y EXCEPCIONES
 function safeGetLocalStorage(key) {
     try {
@@ -1394,7 +1396,9 @@ const saveData = (data) => {
   if (window.SupabaseService) {
     const currentId = window.activeTrainerId || safeGetLocalStorage('activeTrainerId') || 'default';
     if (currentId !== 'default') {
+            isLocalUploadInProgress = true;
             enqueue(async () => {
+                try {
           const clearLocalDeletedIds = () => {
               try {
                   const currentLocal = JSON.parse(safeGetDatabaseRaw() || '{}');
@@ -1509,9 +1513,11 @@ const saveData = (data) => {
                   if (rawNow) activeLocalFallback = JSON.parse(rawNow);
               } catch(e){}
               await window.SupabaseService.saveTrainerData(currentId, activeLocalFallback).then(clearLocalDeletedIds).catch(() => {});
+          } finally {
+              isLocalUploadInProgress = false;
           }
-      });
-    }
+       });
+     }
   }
 };
 window.saveData = saveData;
@@ -2233,6 +2239,10 @@ const doSyncFromCloud = async () => {
 };
 
 window.syncFromCloud = () => {
+    if (typeof isLocalUploadInProgress !== 'undefined' && isLocalUploadInProgress) {
+        console.log("⏳ [Sync Blocked] Cancelando descarga de la nube: hay un entreno subiéndose en segundo plano para evitar sobrescritura.");
+        return Promise.resolve(null);
+    }
     return enqueue(doSyncFromCloud);
 };
 
