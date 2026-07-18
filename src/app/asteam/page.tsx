@@ -240,7 +240,7 @@ export default function ASTeamLanding() {
               </div>
               <h3 className="text-xl font-bold mb-3">Contacto y Chat Directo</h3>
               <p className="text-gray-400 leading-relaxed">
-                Estaremos comunicados a diario. Podrás realizar tus revisiones periódicas y resolver dudas rápidamente para mantenerte siempre motivado y enfocado.
+                Estaremos comunicados a diario. Podrás realizar tus revisiones periódicas y resolver dudas rápidamente para mantenerte siempre motivada y enfocada.
               </p>
             </div>
           </div>
@@ -400,19 +400,19 @@ export default function ASTeamLanding() {
                     </span>
                   </label>
 
-                  <label className="flex items-start gap-3 cursor-pointer group">
+                   <label className="flex items-start gap-3 cursor-pointer group">
                     <div className="flex items-center h-6">
                       <input
                         type="radio"
                         name="attitude"
-                        value="Tengo muchas ganas de empezar el cambio y mejorar. ¡Estoy 100% comprometido/a!"
-                        checked={formData.attitude === "Tengo muchas ganas de empezar el cambio y mejorar. ¡Estoy 100% comprometido/a!"}
+                        value="Tengo muchas ganas de empezar el cambio y mejorar. ¡Estoy 100% comprometida!"
+                        checked={formData.attitude === "Tengo muchas ganas de empezar el cambio y mejorar. ¡Estoy 100% comprometida!"}
                         onChange={(e) => setFormData({ ...formData, attitude: e.target.value })}
                         className="w-5 h-5 rounded-full bg-[#0F111A] border border-white/10 text-[#fdbfec] focus:ring-[#fdbfec]/20 cursor-pointer transition-all"
                       />
                     </div>
                     <span className="text-gray-300 text-sm sm:text-base group-hover:text-white transition-colors">
-                      Tengo muchas ganas de empezar el cambio y mejorar. ¡Estoy 100% comprometido/a!
+                      Tengo muchas ganas de empezar el cambio y mejorar. ¡Estoy 100% comprometida!
                     </span>
                   </label>
                 </div>
@@ -494,7 +494,7 @@ export default function ASTeamLanding() {
               {/* Question 7: Email */}
               <div className="bg-[#1A1D2B]/50 backdrop-blur-sm border border-white/5 rounded-2xl p-6 sm:p-8 space-y-4 shadow-xl">
                 <label className="block text-base font-bold text-gray-200">
-                  Y correo electrónico para trabajar juntos/as <span className="text-[#ff6b6b]">*</span>
+                  Y correo electrónico para trabajar juntas <span className="text-[#ff6b6b]">*</span>
                 </label>
                 <div className="relative">
                   <Mail className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500" size={18} />
