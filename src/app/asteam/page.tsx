@@ -172,9 +172,6 @@ export default function ASTeamLanding() {
             <h2 className="text-3xl font-extrabold tracking-tight mb-4">
               ¿Qué encontrarás dentro de la <span className="text-[#fdbfec]">App de ASTeam</span>?
             </h2>
-            <p className="text-gray-400 max-w-xl mx-auto">
-              Todo lo que necesitas para optimizar tus resultados reunido en un solo ecosistema digital de alto rendimiento.
-            </p>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
