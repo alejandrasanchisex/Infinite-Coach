@@ -14,7 +14,9 @@ import {
   CheckCircle,
   Calendar,
   ChevronRight,
-  ShieldCheck
+  ShieldCheck,
+  BookOpen,
+  TrendingUp
 } from "lucide-react";
 
 export default function ASTeamLanding() {
@@ -187,7 +189,18 @@ export default function ASTeamLanding() {
               </p>
             </div>
 
-            {/* Card 2: Nutrición */}
+            {/* Card 2: Evolución Entreno */}
+            <div className="bg-[#1A1D2B]/60 backdrop-blur-md p-8 rounded-3xl border border-white/5 hover:border-[#ff6b6b]/30 transition-all group">
+              <div className="w-14 h-14 rounded-2xl bg-[#ff6b6b]/10 text-[#ff6b6b] flex items-center justify-center mb-6 group-hover:bg-[#ff6b6b] group-hover:text-black transition-all">
+                <TrendingUp size={28} />
+              </div>
+              <h3 className="text-xl font-bold mb-3">Evolución del Entrenamiento</h3>
+              <p className="text-gray-400 leading-relaxed">
+                Registra tus series, cargas, repeticiones y esfuerzo (RIR). Visualiza gráficamente tu progresión de fuerza y sobrecarga progresiva en cada ejercicio.
+              </p>
+            </div>
+
+            {/* Card 3: Nutrición */}
             <div className="bg-[#1A1D2B]/60 backdrop-blur-md p-8 rounded-3xl border border-white/5 hover:border-[#fdbfec]/30 transition-all group">
               <div className="w-14 h-14 rounded-2xl bg-[#fdbfec]/10 text-[#fdbfec] flex items-center justify-center mb-6 group-hover:bg-[#fdbfec] group-hover:text-black transition-all">
                 <Apple size={28} />
@@ -198,9 +211,20 @@ export default function ASTeamLanding() {
               </p>
             </div>
 
-            {/* Card 3: Evolución */}
+            {/* Card 4: Biblioteca */}
             <div className="bg-[#1A1D2B]/60 backdrop-blur-md p-8 rounded-3xl border border-white/5 hover:border-[#ff6b6b]/30 transition-all group">
               <div className="w-14 h-14 rounded-2xl bg-[#ff6b6b]/10 text-[#ff6b6b] flex items-center justify-center mb-6 group-hover:bg-[#ff6b6b] group-hover:text-black transition-all">
+                <BookOpen size={28} />
+              </div>
+              <h3 className="text-xl font-bold mb-3">Biblioteca de Recursos</h3>
+              <p className="text-gray-400 leading-relaxed">
+                Accede a e-books exclusivos, guías de nutrición, recetarios saludables y documentos de apoyo diseñados para complementar tu aprendizaje y acelerar tus resultados.
+              </p>
+            </div>
+
+            {/* Card 5: Evolución Hábitos */}
+            <div className="bg-[#1A1D2B]/60 backdrop-blur-md p-8 rounded-3xl border border-white/5 hover:border-[#fdbfec]/30 transition-all group">
+              <div className="w-14 h-14 rounded-2xl bg-[#fdbfec]/10 text-[#fdbfec] flex items-center justify-center mb-6 group-hover:bg-[#fdbfec] group-hover:text-black transition-all">
                 <LineChart size={28} />
               </div>
               <h3 className="text-xl font-bold mb-3">Control de Hábitos y Evolución</h3>
@@ -209,9 +233,9 @@ export default function ASTeamLanding() {
               </p>
             </div>
 
-            {/* Card 4: Soporte */}
-            <div className="bg-[#1A1D2B]/60 backdrop-blur-md p-8 rounded-3xl border border-white/5 hover:border-[#fdbfec]/30 transition-all group">
-              <div className="w-14 h-14 rounded-2xl bg-[#fdbfec]/10 text-[#fdbfec] flex items-center justify-center mb-6 group-hover:bg-[#fdbfec] group-hover:text-black transition-all">
+            {/* Card 6: Soporte */}
+            <div className="bg-[#1A1D2B]/60 backdrop-blur-md p-8 rounded-3xl border border-white/5 hover:border-[#ff6b6b]/30 transition-all group">
+              <div className="w-14 h-14 rounded-2xl bg-[#ff6b6b]/10 text-[#ff6b6b] flex items-center justify-center mb-6 group-hover:bg-[#ff6b6b] group-hover:text-black transition-all">
                 <MessageSquare size={28} />
               </div>
               <h3 className="text-xl font-bold mb-3">Contacto y Chat Directo</h3>
