@@ -148,7 +148,7 @@ export default function ASTeamLanding() {
             Lleva tu físico y rendimiento al <span className="text-[#fdbfec] italic font-serif">Siguiente Nivel</span>
           </h1>
           <p className="text-gray-400 text-lg sm:text-xl leading-relaxed mb-10">
-            Únete a ASTeam y accede a nuestra aplicación privada de asesoramiento premium. Todo tu plan de entrenamiento, nutrición y seguimiento diario estructurado de forma inteligente.
+            Únete a ASTeam. Asesorías online enfocadas a mujeres que buscan seguir un estilo de vida saludable disfrutando del camino a su mejor versión.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <a
