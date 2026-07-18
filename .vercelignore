@@ -14,23 +14,25 @@ fitness-pro
 planio-saas
 assets
 
-# Ignorar archivos sueltos en la raíz
-*.png
-*.jpg
-*.jpeg
-*.gif
-*.zip
-*.docx
-*.txt
-*.ps1
-*.mjs
-*.tsbuildinfo
-*.log
-*.js
+# Ignorar archivos sueltos en la raíz (anclados con /)
+/*.png
+/*.jpg
+/*.jpeg
+/*.gif
+/*.zip
+/*.docx
+/*.txt
+/*.ps1
+/*.mjs
+/*.tsbuildinfo
+/*.log
+/*.js
+/git_diff.txt
+/git_log.txt
 
-# Excepciones para scripts necesarios de build
-!scripts
-!scripts/validate_html_js.js
+# Excepciones para scripts necesarios de build en la raíz
+!/scripts
+!/scripts/validate_html_js.js
 
 # Ignorar base de datos local y JSONs estáticos gigantescos
 public/data
