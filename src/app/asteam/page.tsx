@@ -183,7 +183,7 @@ export default function ASTeamLanding() {
               </div>
               <h3 className="text-xl font-bold mb-3">Rutinas de Entrenamiento a Medida</h3>
               <p className="text-gray-400 leading-relaxed">
-                Planes adaptados a tu nivel, material disponible y objetivos. Cada ejercicio cuenta con un vídeo explicativo en HD para que ejecutes la técnica de forma impecable y evites lesiones. Registro e indicaciones de intensidad.
+                Planes adaptados a tu nivel, material disponible y objetivos. Registro e indicaciones de intensidad.
               </p>
             </div>
 
