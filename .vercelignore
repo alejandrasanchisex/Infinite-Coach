@@ -1,12 +1,47 @@
+# Ignorar carpetas de dependencias y temporales
 node_modules
 scratch
 .agents
 .git
 .vercel
-*.log
 tmp
 .gemini
+.next
+
+# Ignorar carpetas de otros proyectos o assets pesados
+legacy
+fitness-pro
+planio-saas
+assets
+
+# Ignorar archivos sueltos en la raíz
+*.png
+*.jpg
+*.jpeg
+*.gif
+*.zip
+*.docx
+*.txt
+*.ps1
+*.mjs
+*.tsbuildinfo
+*.log
+*.js
+
+# Excepciones para scripts necesarios de build
+!scripts
+!scripts/validate_html_js.js
+
+# Ignorar base de datos local y JSONs estáticos gigantescos
 public/data
 public/data/
 public/data/*
 public/data/*.json
+data
+data/
+data/*
+data/*.json
+
+# Excepciones para archivos JSON necesarios
+!public/version.json
+!public/manifest.json
