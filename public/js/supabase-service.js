@@ -101,9 +101,9 @@ const SupabaseService = {
                 subscriptionAmount: r.monthly_fee ? parseFloat(r.monthly_fee) : 0,
                 assignedRoutine: r.assigned_routine,
                 assignedDiet: r.assigned_diet,
-                technicalData: r.technical_data,
-                onboardingAnswers: r.onboarding_answers,
-                initialSetupDone: r.initial_setup_done,
+                technicalData: r.technical_data || {},
+                onboardingAnswers: r.onboarding_answers || [],
+                initialSetupDone: r.initial_setup_done || false,
                 profilePhoto: r.profile_photo,
                 
                 accessCode: r.access_code,
@@ -128,10 +128,10 @@ const SupabaseService = {
                 name: r.title,
                 title: r.title,
                 status: r.status,
-                published: r.published,
+                published: r.published || false,
                 startDate: r.start_date,
                 endDate: r.end_date,
-                weeks: r.weeks
+                weeks: r.weeks || []
             });
 
             const mapDietFromSQL = r => ({
@@ -140,8 +140,8 @@ const SupabaseService = {
                 name: r.title,
                 title: r.title,
                 status: r.status,
-                published: r.published,
-                days: r.days
+                published: r.published || false,
+                days: r.days || []
             });
 
             const mapLogFromSQL = r => ({
@@ -150,7 +150,7 @@ const SupabaseService = {
                 date: r.date,
                 weekNumber: r.week_number,
                 dayNumber: r.day_number,
-                exercises: r.exercises
+                exercises: r.exercises || []
             });
 
             const mapFeedbackFromSQL = r => ({
@@ -164,9 +164,9 @@ const SupabaseService = {
                 energy: r.energy ? parseInt(r.energy) : null,
                 adherence: r.adherence ? parseInt(r.adherence) : null,
                 satisfaction: r.satisfaction ? parseInt(r.satisfaction) : null,
-                answers: r.answers,
-                perimeters: r.perimeters,
-                photos: r.photos,
+                answers: r.answers || {},
+                perimeters: r.perimeters || {},
+                photos: r.photos || [],
                 comments: r.comments,
                 trainerResponse: r.trainer_response,
                 createdAt: r.created_at,
