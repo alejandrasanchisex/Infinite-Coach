@@ -1615,6 +1615,34 @@ const doSyncFromCloud = async () => {
                     if (!cloudData[col]) cloudData[col] = [];
                 });
 
+                // Salvaguarda robusta para recuperar rutinas y media vacías en local
+                let localData = null;
+                try {
+                    const localRaw = safeGetDatabaseRaw();
+                    if (localRaw) localData = JSON.parse(localRaw);
+                } catch(e) {}
+
+                if (localData) {
+                    const localRoutinesCount = localData.routines ? localData.routines.length : 0;
+                    const cloudRoutinesCount = cloudData.routines ? cloudData.routines.length : 0;
+                    const localMediaCount = localData.media ? localData.media.length : 0;
+                    const cloudMediaCount = cloudData.media ? cloudData.media.length : 0;
+
+                    if ((localRoutinesCount === 0 && cloudRoutinesCount > 0) || (localMediaCount === 0 && cloudMediaCount > 0)) {
+                        console.warn("🚨 [AUTORECUPERACIÓN] Datos locales vacíos detectados. Adoptando base de datos completa de la nube...");
+                        saveDatabaseRaw(JSON.stringify(cloudData));
+                        setLastSyncTime(currentId);
+                        
+                        // Blindaje de reset
+                        if (cloudData.__reset_version) {
+                            const localResetKey = `_resetVersion_${currentId}`;
+                            localStorage.setItem(localResetKey, String(cloudData.__reset_version));
+                        }
+                        
+                        return cloudData;
+                    }
+                }
+
                 // Blindaje de reset
                 if (cloudData.__reset_version) {
                     const localResetKey = `_resetVersion_${currentId}`;
@@ -5349,7 +5377,7 @@ const BrandConfig = {
     } else if (isLucy) {
         defaultBrand = {
             name: 'Lucy Tundidor',
-            logo: 'https://bieeydhacavxymoosasx.supabase.co/storage/v1/object/public/Media/lucy_logo_cropped.png?v=678',
+            logo: 'https://bieeydhacavxymoosasx.supabase.co/storage/v1/object/public/Media/lucy_logo_cropped.png?v=679',
             configured: true,
             colors: { 
                 primary: '#816e61', 
@@ -5460,7 +5488,7 @@ const BrandConfig = {
             res.colors = defaultBrand.colors;
             changed = true;
         }
-        if (!res.logo || res.logo === 'img/logo-infinite-coach.png' || res.logo.includes('1779724548154') || res.logo.includes('lucy_logo_v1.png') || !res.logo.includes('lucy_logo_cropped.png?v=678')) {
+        if (!res.logo || res.logo === 'img/logo-infinite-coach.png' || res.logo.includes('1779724548154') || res.logo.includes('lucy_logo_v1.png') || !res.logo.includes('lucy_logo_cropped.png?v=679')) {
             res.logo = defaultBrand.logo;
             changed = true;
         }
