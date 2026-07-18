@@ -1324,9 +1324,9 @@ let saveQueuePromise = Promise.resolve();
 const enqueue = (op) => {
   const nextPromise = saveQueuePromise.then(op).catch(err => {
     console.error("Queue operation failed:", err);
-    return null;
+    throw err;
   });
-  saveQueuePromise = nextPromise;
+  saveQueuePromise = nextPromise.catch(() => {}); // Prevenir que el siguiente en cola falle por el error anterior
   return nextPromise;
 };
 
@@ -5347,7 +5347,7 @@ const BrandConfig = {
     } else if (isLucy) {
         defaultBrand = {
             name: 'Lucy Tundidor',
-            logo: 'https://bieeydhacavxymoosasx.supabase.co/storage/v1/object/public/Media/lucy_logo_cropped.png?v=668',
+            logo: 'https://bieeydhacavxymoosasx.supabase.co/storage/v1/object/public/Media/lucy_logo_cropped.png?v=669',
             configured: true,
             colors: { 
                 primary: '#816e61', 
@@ -5458,7 +5458,7 @@ const BrandConfig = {
             res.colors = defaultBrand.colors;
             changed = true;
         }
-        if (!res.logo || res.logo === 'img/logo-infinite-coach.png' || res.logo.includes('1779724548154') || res.logo.includes('lucy_logo_v1.png') || !res.logo.includes('lucy_logo_cropped.png?v=668')) {
+        if (!res.logo || res.logo === 'img/logo-infinite-coach.png' || res.logo.includes('1779724548154') || res.logo.includes('lucy_logo_v1.png') || !res.logo.includes('lucy_logo_cropped.png?v=669')) {
             res.logo = defaultBrand.logo;
             changed = true;
         }
