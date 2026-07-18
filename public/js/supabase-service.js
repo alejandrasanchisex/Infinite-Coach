@@ -134,15 +134,31 @@ const SupabaseService = {
                 weeks: r.weeks || []
             });
 
-            const mapDietFromSQL = r => ({
-                id: r.id,
-                clientId: r.client_id,
-                name: r.title,
-                title: r.title,
-                status: r.status,
-                published: r.published || false,
-                days: r.days || []
-            });
+            const mapDietFromSQL = r => {
+                const sqlDays = r.days || [];
+                let days = [];
+                let meals = [];
+                
+                // Si el primer elemento del array tiene la propiedad 'foods', es un array de comidas (meals)
+                const isMealsArray = sqlDays.length > 0 && (sqlDays[0].foods || Object.prototype.hasOwnProperty.call(sqlDays[0], 'foods'));
+                
+                if (isMealsArray) {
+                    meals = sqlDays;
+                } else {
+                    days = sqlDays;
+                }
+                
+                return {
+                    id: r.id,
+                    clientId: r.client_id,
+                    name: r.title,
+                    title: r.title,
+                    status: r.status,
+                    published: r.published || false,
+                    days: days,
+                    meals: meals
+                };
+            };
 
             const mapLogFromSQL = r => ({
                 id: r.id,
@@ -328,16 +344,25 @@ const SupabaseService = {
                 updated_at: new Date().toISOString()
             });
 
-            const mapDietToSQL = d => ({
-                id: d.id,
-                client_id: d.clientId,
-                trainer_id: trainerId,
-                title: d.title || d.name || 'Dieta',
-                status: d.status || 'active',
-                published: d.published || false,
-                days: d.days || [],
-                updated_at: new Date().toISOString()
-            });
+            const mapDietToSQL = d => {
+                let sqlDays = [];
+                if (d.days && d.days.length > 0) {
+                    sqlDays = d.days;
+                } else if (d.meals && d.meals.length > 0) {
+                    sqlDays = d.meals;
+                }
+                
+                return {
+                    id: d.id,
+                    client_id: d.clientId,
+                    trainer_id: trainerId,
+                    title: d.title || d.name || 'Dieta',
+                    status: d.status || 'active',
+                    published: d.published || false,
+                    days: sqlDays,
+                    updated_at: new Date().toISOString()
+                };
+            };
 
             const mapLogToSQL = l => ({
                 id: l.id,
