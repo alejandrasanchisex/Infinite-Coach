@@ -18,7 +18,7 @@
         })();
         // Force PWA cache bust / reload
         (function() {
-            const CURRENT_VERSION = '672';
+            const CURRENT_VERSION = '673';
             window.APP_VERSION = CURRENT_VERSION;
             const savedVersion = localStorage.getItem('app_version');
             if (savedVersion && savedVersion !== CURRENT_VERSION) {
@@ -72,8 +72,8 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="styles/theme.css?v=672">
-    <link rel="stylesheet" href="styles/components.css?v=672">
+    <link rel="stylesheet" href="styles/theme.css?v=673">
+    <link rel="stylesheet" href="styles/components.css?v=673">
 </head>
 
 <body>
@@ -102,14 +102,14 @@
                     </div>
                     <button class="menu-toggle" onclick="toggleMenu()">☰</button>
                     <ul class="nav-links" id="navLinks">
-                        <li><a href="trainer-dashboard.html?v=672" class="nav-link active">Dashboard</a></li>
-                        <li><a href="trainer-clients.html?v=672" class="nav-link">Clientes</a></li>
-                        <li><a href="trainer-routines.html?v=672" class="nav-link">Rutinas</a></li>
-                        <li><a href="trainer-diets.html?v=672" class="nav-link">Dietas</a></li>
-                        <li><a href="trainer-feedbacks.html?v=672" class="nav-link">Revisiones</a></li>
-                        <li><a href="trainer-media.html?v=672" class="nav-link">Biblioteca</a></li>
-                        <li><a href="trainer-appointments.html?v=672" class="nav-link">Agenda</a></li>
-                        <li><a href="trainer-settings.html?v=672" class="nav-link">Configuración</a></li>
+                        <li><a href="trainer-dashboard.html?v=673" class="nav-link active">Dashboard</a></li>
+                        <li><a href="trainer-clients.html?v=673" class="nav-link">Clientes</a></li>
+                        <li><a href="trainer-routines.html?v=673" class="nav-link">Rutinas</a></li>
+                        <li><a href="trainer-diets.html?v=673" class="nav-link">Dietas</a></li>
+                        <li><a href="trainer-feedbacks.html?v=673" class="nav-link">Revisiones</a></li>
+                        <li><a href="trainer-media.html?v=673" class="nav-link">Biblioteca</a></li>
+                        <li><a href="trainer-appointments.html?v=673" class="nav-link">Agenda</a></li>
+                        <li><a href="trainer-settings.html?v=673" class="nav-link">Configuración</a></li>
                         <li><a href="#" onclick="signOutTrainer(); return false;" class="nav-link" style="color:var(--error-color)">🚪 Salir</a></li>
                     </ul>
                 </nav>
@@ -310,14 +310,14 @@
 
     <!-- Supabase SDK & Service -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="js/supabase-service.js?v=672"></script>
+    <script src="js/supabase-service.js?v=673"></script>
 
     <!-- UI Scripts -->
-    <script src="js/config.js?v=672"></script>
-    <script src="js/auth.js?v=672"></script>
-    <script src="js/sheets.js?v=672"></script>
-    <script src="js/data-models.js?v=672"></script>
-    <script src="js/utils.js?v=672"></script>
+    <script src="js/config.js?v=673"></script>
+    <script src="js/auth.js?v=673"></script>
+    <script src="js/sheets.js?v=673"></script>
+    <script src="js/data-models.js?v=673"></script>
+    <script src="js/utils.js?v=673"></script>
     <script>
         // Branding is handled via onGoogleAuthSuccess() and global listeners
 
@@ -1127,7 +1127,6 @@
         }
 
         async function runDiagnostic() {
-            return; // Deshabilitado a petición del usuario para evitar el modal de diagnóstico.
             const clients = Clients.getAll();
             if (clients.length > 0) return; // Si ya hay clientes, no mostramos nada
 
@@ -1218,7 +1217,7 @@
 
             // 1. Pintar el dashboard local al instante
             loadDashboard();
-            // setTimeout(runDiagnostic, 2500); // Deshabilitado a petición del usuario.
+            setTimeout(runDiagnostic, 1500);
 
             // 2. Sincronizar con la nube en segundo plano asíncronamente
             if (window.SupabaseService) {
@@ -1626,6 +1625,6 @@
             }
         }
     </script>
-    <script src="js/custom-recipes.js?v=672"></script></body>
+    <script src="js/custom-recipes.js?v=673"></script></body>
 
 </html>
