@@ -18,7 +18,7 @@
         })();
         // Force PWA cache bust / reload
         (function() {
-            const CURRENT_VERSION = '673';
+            const CURRENT_VERSION = '674';
             window.APP_VERSION = CURRENT_VERSION;
             const savedVersion = localStorage.getItem('app_version');
             if (savedVersion && savedVersion !== CURRENT_VERSION) {
@@ -72,8 +72,8 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="styles/theme.css?v=673">
-    <link rel="stylesheet" href="styles/components.css?v=673">
+    <link rel="stylesheet" href="styles/theme.css?v=674">
+    <link rel="stylesheet" href="styles/components.css?v=674">
 </head>
 
 <body>
@@ -102,14 +102,14 @@
                     </div>
                     <button class="menu-toggle" onclick="toggleMenu()">☰</button>
                     <ul class="nav-links" id="navLinks">
-                        <li><a href="trainer-dashboard.html?v=673" class="nav-link active">Dashboard</a></li>
-                        <li><a href="trainer-clients.html?v=673" class="nav-link">Clientes</a></li>
-                        <li><a href="trainer-routines.html?v=673" class="nav-link">Rutinas</a></li>
-                        <li><a href="trainer-diets.html?v=673" class="nav-link">Dietas</a></li>
-                        <li><a href="trainer-feedbacks.html?v=673" class="nav-link">Revisiones</a></li>
-                        <li><a href="trainer-media.html?v=673" class="nav-link">Biblioteca</a></li>
-                        <li><a href="trainer-appointments.html?v=673" class="nav-link">Agenda</a></li>
-                        <li><a href="trainer-settings.html?v=673" class="nav-link">Configuración</a></li>
+                        <li><a href="trainer-dashboard.html?v=674" class="nav-link active">Dashboard</a></li>
+                        <li><a href="trainer-clients.html?v=674" class="nav-link">Clientes</a></li>
+                        <li><a href="trainer-routines.html?v=674" class="nav-link">Rutinas</a></li>
+                        <li><a href="trainer-diets.html?v=674" class="nav-link">Dietas</a></li>
+                        <li><a href="trainer-feedbacks.html?v=674" class="nav-link">Revisiones</a></li>
+                        <li><a href="trainer-media.html?v=674" class="nav-link">Biblioteca</a></li>
+                        <li><a href="trainer-appointments.html?v=674" class="nav-link">Agenda</a></li>
+                        <li><a href="trainer-settings.html?v=674" class="nav-link">Configuración</a></li>
                         <li><a href="#" onclick="signOutTrainer(); return false;" class="nav-link" style="color:var(--error-color)">🚪 Salir</a></li>
                     </ul>
                 </nav>
@@ -122,7 +122,7 @@
                 <!-- Page Header -->
                     <div class="flex-between align-center mb-lg">
                         <div>
-                            <h1>Dashboard</h1>
+                            <h1>Dashboard <span id="appVersionBadge" style="font-size:0.9rem; font-weight:normal; color:rgba(255,255,255,0.4); margin-left:10px; background:rgba(255,255,255,0.05); padding:4px 8px; border-radius:6px; vertical-align:middle;">v674</span></h1>
                             <p class="text-muted">Resumen de tu negocio fitness</p>
                         </div>
                         <button id="syncBtn" class="btn btn-secondary" onclick="syncAndRefreshDashboard(this)" style="border-radius: 50px; display: inline-flex; align-items: center; gap: 8px; font-weight: 600; font-size: 0.85rem; padding: 10px 18px;">
@@ -310,14 +310,14 @@
 
     <!-- Supabase SDK & Service -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="js/supabase-service.js?v=673"></script>
+    <script src="js/supabase-service.js?v=674"></script>
 
     <!-- UI Scripts -->
-    <script src="js/config.js?v=673"></script>
-    <script src="js/auth.js?v=673"></script>
-    <script src="js/sheets.js?v=673"></script>
-    <script src="js/data-models.js?v=673"></script>
-    <script src="js/utils.js?v=673"></script>
+    <script src="js/config.js?v=674"></script>
+    <script src="js/auth.js?v=674"></script>
+    <script src="js/sheets.js?v=674"></script>
+    <script src="js/data-models.js?v=674"></script>
+    <script src="js/utils.js?v=674"></script>
     <script>
         // Branding is handled via onGoogleAuthSuccess() and global listeners
 
@@ -1625,6 +1625,6 @@
             }
         }
     </script>
-    <script src="js/custom-recipes.js?v=673"></script></body>
+    <script src="js/custom-recipes.js?v=674"></script></body>
 
 </html>
