@@ -310,7 +310,8 @@ const saveDatabaseRaw = (dataStr) => {
     try { sessionStorage.setItem(getStorageKey(), dataStr); } catch(e) {}
 };
 
-// 🧹 MOCK DATA CLEANUP FOR ASTEAM (PREVENT SPILLOVER RE-UPLOAD)
+// 🧹 MOCK DATA CLEANUP FOR ASTEAM (DESHABILITADO PARA NO BORRAR DATOS REALES DE SUPABASE)
+/*
 (function() {
     try {
         const sKey = 'fitnessAppData_t-w0iybl7qb';
@@ -335,6 +336,7 @@ const saveDatabaseRaw = (dataStr) => {
         console.error("[ASTEAM CLEANUP] Error checking local storage:", e);
     }
 })();
+*/
 
 // 🧹 MOCK DATA CLEANUP FOR DEMO 2 (PREVENT SPILLOVER RE-UPLOAD FOR t-vdyrwk7dt)
 (function() {
@@ -5347,7 +5349,7 @@ const BrandConfig = {
     } else if (isLucy) {
         defaultBrand = {
             name: 'Lucy Tundidor',
-            logo: 'https://bieeydhacavxymoosasx.supabase.co/storage/v1/object/public/Media/lucy_logo_cropped.png?v=670',
+            logo: 'https://bieeydhacavxymoosasx.supabase.co/storage/v1/object/public/Media/lucy_logo_cropped.png?v=671',
             configured: true,
             colors: { 
                 primary: '#816e61', 
@@ -5458,7 +5460,7 @@ const BrandConfig = {
             res.colors = defaultBrand.colors;
             changed = true;
         }
-        if (!res.logo || res.logo === 'img/logo-infinite-coach.png' || res.logo.includes('1779724548154') || res.logo.includes('lucy_logo_v1.png') || !res.logo.includes('lucy_logo_cropped.png?v=670')) {
+        if (!res.logo || res.logo === 'img/logo-infinite-coach.png' || res.logo.includes('1779724548154') || res.logo.includes('lucy_logo_v1.png') || !res.logo.includes('lucy_logo_cropped.png?v=671')) {
             res.logo = defaultBrand.logo;
             changed = true;
         }
