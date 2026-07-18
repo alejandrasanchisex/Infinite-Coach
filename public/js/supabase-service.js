@@ -84,33 +84,159 @@ const SupabaseService = {
     async getTrainerData(trainerId) {
         if (!this.client) this.init();
         try {
-            const runQuery = async () => {
+            const isTrainer = (safeGetLocalStorage('_trainerAuthed') === '1' || safeGetSessionStorage('_trainerAuthed') === '1');
+            const clientId = (safeGetLocalStorage('clientId') || safeGetSessionStorage('clientId'));
+
+            console.log(`[Supabase GetData] Cargando datos granulares. isTrainer: ${isTrainer}, clientId: ${clientId}`);
+
+            // Helpers de conversión locales
+            const mapClientFromSQL = r => ({
+                id: r.id,
+                name: r.name,
+                email: r.email,
+                phone: r.phone,
+                gender: r.gender,
+                status: r.status,
+                monthlyFee: r.monthly_fee ? parseFloat(r.monthly_fee) : 0,
+                subscriptionAmount: r.monthly_fee ? parseFloat(r.monthly_fee) : 0,
+                assignedRoutine: r.assigned_routine,
+                assignedDiet: r.assigned_diet,
+                technicalData: r.technical_data,
+                onboardingAnswers: r.onboarding_answers,
+                initialSetupDone: r.initial_setup_done,
+                profilePhoto: r.profile_photo,
+                createdAt: r.created_at,
+                updatedAt: r.updated_at
+            });
+
+            const mapBlockFromSQL = r => ({
+                id: r.id,
+                clientId: r.client_id,
+                name: r.title,
+                title: r.title,
+                status: r.status,
+                published: r.published,
+                startDate: r.start_date,
+                endDate: r.end_date,
+                weeks: r.weeks
+            });
+
+            const mapDietFromSQL = r => ({
+                id: r.id,
+                clientId: r.client_id,
+                name: r.title,
+                title: r.title,
+                status: r.status,
+                published: r.published,
+                days: r.days
+            });
+
+            const mapLogFromSQL = r => ({
+                id: r.id,
+                clientId: r.client_id,
+                date: r.date,
+                weekNumber: r.week_number,
+                dayNumber: r.day_number,
+                exercises: r.exercises
+            });
+
+            const mapFeedbackFromSQL = r => ({
+                id: r.id,
+                clientId: r.client_id,
+                week: r.week,
+                date: r.date,
+                weight: r.weight ? parseFloat(r.weight) : null,
+                sleep: r.sleep ? parseInt(r.sleep) : null,
+                stress: r.stress ? parseInt(r.stress) : null,
+                energy: r.energy ? parseInt(r.energy) : null,
+                adherence: r.adherence ? parseInt(r.adherence) : null,
+                satisfaction: r.satisfaction ? parseInt(r.satisfaction) : null,
+                answers: r.answers,
+                perimeters: r.perimeters,
+                photos: r.photos,
+                comments: r.comments,
+                trainerResponse: r.trainer_response,
+                createdAt: r.created_at,
+                updatedAt: r.updated_at
+            });
+
+            // 1. Obtener la cabecera del perfil (para el tema de brand, habits, appointments, invoices)
+            const runProfileQuery = async () => {
                 const { data, error } = await this.client
                     .from('trainer_profiles')
                     .select('full_data')
                     .eq('trainer_id', trainerId)
                     .single();
-
                 if (error) {
-                    if (error.code === 'PGRST116') return { full_data: null }; // Retornar envoltura para PGRST116
+                    if (error.code === 'PGRST116') return { full_data: null };
                     throw error;
                 }
                 return data;
             };
+            const profileRes = await retryOp(runProfileQuery, 3, 1000);
+            const profileObj = (profileRes && profileRes.full_data) ? profileRes.full_data : {};
 
-            const result = await retryOp(runQuery, 3, 1000);
-            if (!result || !result.full_data) return null;
+            let clientRows = [], blockRows = [], dietRows = [], logRows = [], feedbackRows = [];
 
-            const fd = result.full_data;
-            if (trainerId === 't-w0iybl7qb' && fd && fd.clients) {
-                fd.clients.forEach(c => {
+            // 2. Carga granular optimizada según el rol del usuario
+            if (!isTrainer && clientId) {
+                // ROL CLIENTE: Descarga aislada y rápida de sus propios datos (5 KB)
+                const queries = [
+                    retryOp(() => this.client.from('clients').select('*').eq('id', clientId), 3, 1000),
+                    retryOp(() => this.client.from('training_blocks').select('*').eq('client_id', clientId), 3, 1000),
+                    retryOp(() => this.client.from('client_diets').select('*').eq('client_id', clientId), 3, 1000),
+                    retryOp(() => this.client.from('training_logs').select('*').eq('client_id', clientId), 3, 1000),
+                    retryOp(() => this.client.from('feedbacks').select('*').eq('client_id', clientId), 3, 1000)
+                ];
+                const [cRes, bRes, dRes, lRes, fRes] = await Promise.all(queries);
+                clientRows = cRes.data || [];
+                blockRows = bRes.data || [];
+                dietRows = dRes.data || [];
+                logRows = lRes.data || [];
+                feedbackRows = fRes.data || [];
+            } else {
+                // ROL ENTRENADOR: Descarga segmentada por lotes de toda la marca
+                const queries = [
+                    retryOp(() => this.client.from('clients').select('*').eq('trainer_id', trainerId), 3, 1000),
+                    retryOp(() => this.client.from('training_blocks').select('*').eq('trainer_id', trainerId), 3, 1000),
+                    retryOp(() => this.client.from('client_diets').select('*').eq('trainer_id', trainerId), 3, 1000),
+                    retryOp(() => this.client.from('training_logs').select('*').eq('trainer_id', trainerId), 3, 1000),
+                    retryOp(() => this.client.from('feedbacks').select('*').eq('trainer_id', trainerId), 3, 1000)
+                ];
+                const [cRes, bRes, dRes, lRes, fRes] = await Promise.all(queries);
+                clientRows = cRes.data || [];
+                blockRows = bRes.data || [];
+                dietRows = dRes.data || [];
+                logRows = lRes.data || [];
+                feedbackRows = fRes.data || [];
+            }
+
+            // 3. Ensamblado del JSON monolítico compatible en memoria
+            const assembled = {
+                brand: profileObj.brand || {},
+                appointments: profileObj.appointments || [],
+                habits: profileObj.habits || [],
+                invoices: profileObj.invoices || [],
+                __reset_version: profileObj.__reset_version || null,
+                clients: clientRows.map(mapClientFromSQL),
+                trainingBlocks: blockRows.map(mapBlockFromSQL),
+                diets: dietRows.map(mapDietFromSQL),
+                trainingLogs: logRows.map(mapLogFromSQL),
+                feedbacks: feedbackRows.map(mapFeedbackFromSQL),
+                lastModified: profileObj.lastModified || new Date().toISOString()
+            };
+
+            // Cortafuegos de cuota para ASTeam
+            if (trainerId === 't-w0iybl7qb' && assembled.clients) {
+                assembled.clients.forEach(c => {
                     if (c.id === '20f2e6c2-2699-4ccc-a982-1e9fb141b9bb' || c.id === '0db0ea7a-c413-44cb-b99e-dfd9790383eb') {
                         if (!c.monthlyFee || c.monthlyFee === 0) c.monthlyFee = 65;
                         if (!c.subscriptionAmount || c.subscriptionAmount === 0) c.subscriptionAmount = 65;
                     }
                 });
             }
-            return fd;
+
+            return assembled;
         } catch (error) {
             console.error("Error cargando desde Supabase despues de reintentos:", error);
             return null;
@@ -126,75 +252,93 @@ const SupabaseService = {
             const isTrainer = (safeGetLocalStorage('_trainerAuthed') === '1' || safeGetSessionStorage('_trainerAuthed') === '1');
             const clientId = (safeGetLocalStorage('clientId') || safeGetSessionStorage('clientId'));
 
-            let cloudData = null;
+            console.log(`[Supabase SaveData] Guardando datos granulares. isTrainer: ${isTrainer}, clientId: ${clientId}`);
 
-            // 1. Unificar las lecturas de la nube (reset check, clients check, brand check) en una sola consulta
-            if (trainerId && trainerId !== 'default') {
-                try {
-                    const fetchProfile = async () => {
-                        const { data, error } = await this.client
-                            .from('trainer_profiles')
-                            .select('full_data')
-                            .eq('trainer_id', trainerId)
-                            .single();
-                        if (error && error.code !== 'PGRST116') throw error;
-                        return data ? data.full_data : null;
-                    };
-                    cloudData = await retryOp(fetchProfile, 3, 1000);
-                } catch (errFetch) {
-                    console.warn("[saveTrainerData] Error pre-cargando perfil de la nube:", errFetch);
-                }
+            // Helpers de mapeo locales
+            const mapClientToSQL = c => ({
+                id: c.id,
+                trainer_id: trainerId,
+                name: c.name || 'Sin Nombre',
+                email: c.email || null,
+                phone: c.phone || null,
+                gender: c.gender || null,
+                status: c.status || 'active',
+                monthly_fee: c.monthlyFee ? parseFloat(c.monthlyFee) : 0,
+                assigned_routine: c.assignedRoutine || null,
+                assigned_diet: c.assignedDiet || null,
+                technical_data: c.technicalData || {},
+                onboarding_answers: c.onboardingAnswers || [],
+                initial_setup_done: c.initialSetupDone || false,
+                profile_photo: c.profilePhoto || null,
+                updated_at: new Date().toISOString()
+            });
+
+            const mapBlockToSQL = b => ({
+                id: b.id,
+                client_id: b.clientId,
+                trainer_id: trainerId,
+                title: b.title || b.name || 'Bloque',
+                status: b.status || 'active',
+                published: b.published || false,
+                start_date: b.startDate || null,
+                end_date: b.endDate || null,
+                weeks: b.weeks || [],
+                updated_at: new Date().toISOString()
+            });
+
+            const mapDietToSQL = d => ({
+                id: d.id,
+                client_id: d.clientId,
+                trainer_id: trainerId,
+                title: d.title || d.name || 'Dieta',
+                status: d.status || 'active',
+                published: d.published || false,
+                days: d.days || [],
+                updated_at: new Date().toISOString()
+            });
+
+            const mapLogToSQL = l => ({
+                id: l.id,
+                client_id: l.clientId,
+                trainer_id: trainerId,
+                date: l.date,
+                week_number: l.weekNumber,
+                day_number: l.dayNumber,
+                exercises: l.exercises || []
+            });
+
+            const mapFeedbackToSQL = f => ({
+                id: f.id,
+                client_id: f.clientId,
+                trainer_id: trainerId,
+                week: f.week || 0,
+                date: f.date,
+                weight: f.weight ? parseFloat(f.weight) : null,
+                sleep: f.sleep ? parseInt(f.sleep) : null,
+                stress: f.stress ? parseInt(f.stress) : null,
+                energy: f.energy ? parseInt(f.energy) : null,
+                adherence: f.adherence ? parseInt(f.adherence) : null,
+                satisfaction: f.satisfaction ? parseInt(f.satisfaction) : null,
+                answers: f.answers || [],
+                perimeters: f.perimeters || {},
+                photos: f.photos || {},
+                comments: f.comments || null,
+                trainer_response: f.trainerResponse || null,
+                updated_at: new Date().toISOString()
+            });
+
+            // 1. Blindaje contra guardados vacíos accidentalmente
+            const dataIsEmpty = (
+                (!fullData.clients || fullData.clients.length === 0) &&
+                (!fullData.trainingBlocks || fullData.trainingBlocks.length === 0)
+            );
+            if (dataIsEmpty) {
+                console.error("🚨 [BLINDAJE SUPABASE] Guardado cancelado para evitar pisar datos vacíos.");
+                return false;
             }
 
-            // 2. Ejecutar Reset Check con la información cargada
-            if (cloudData && cloudData.__reset_version) {
-                const cloudReset = cloudData.__reset_version;
-                const localReset = fullData ? fullData.__reset_version : null;
-                if (String(localReset) !== String(cloudReset)) {
-                    console.error(`🚨 [RESET DB SHIELD] GUARDADO BLOQUEADO: La nube tiene un reset v${cloudReset} y el cliente intentó guardar v${localReset}. Descartando guardado.`);
-                    return false; 
-                }
-            }
-
-            // 3. Ejecutar Cortafuegos Multi-inquilino de Cliente
-            if (!isTrainer && clientId) {
-                if (!cloudData || !cloudData.clients) {
-                    console.error("🚨 [CORTAFUEGOS SUPABASE] ABORTANDO GUARDADO: No se pudieron obtener los datos válidos del entrenador de la nube.");
-                    return false;
-                }
-                
-                console.log("🛡️ [Fusión Cliente Cortafuegos] Fusionando cambios del cliente en el perfil completo del entrenador...");
-                const merged = { ...cloudData };
-                
-                if (merged.clients && fullData.clients) {
-                    const localClient = fullData.clients.find(c => c.id === clientId);
-                    if (localClient) {
-                        merged.clients = merged.clients.map(c => c.id === clientId ? localClient : c);
-                    }
-                }
-                
-                const clientSpecificCols = ['feedbacks', 'appointments', 'trainingLogs', 'habits'];
-                clientSpecificCols.forEach(col => {
-                    if (fullData[col]) {
-                        const otherClientsItems = (merged[col] || []).filter(item => item.clientId !== clientId);
-                        const localClientItems = fullData[col].filter(item => item.clientId === clientId);
-                        merged[col] = [...otherClientsItems, ...localClientItems];
-                    }
-                });
-                
-                fullData = merged;
-
-                const clientsList = fullData.clients || [];
-                const clientExists = clientsList.some(c => c.id === clientId);
-                if (!clientExists) {
-                    console.error(`🚨 [CORTAFUEGOS SUPABASE] INTENTO DE ACCESO NO AUTORIZADO BLOQUEADO: El cliente ${clientId} no pertenece a ${trainerId}.`);
-                    return false;
-                }
-            }
-
-            // 4. Cortafuegos ASTEAM
+            // Sanitización ASTeam
             if (trainerId === 't-w0iybl7qb' && fullData) {
-                console.log("🛡️ [ASTEAM CORTAFUEGOS] Aplicando sanitización estricta...");
                 if (fullData.clients) {
                     fullData.clients.forEach(c => {
                         if (c.id === '20f2e6c2-2699-4ccc-a982-1e9fb141b9bb' || c.id === '0db0ea7a-c413-44cb-b99e-dfd9790383eb') {
@@ -208,56 +352,78 @@ const SupabaseService = {
                 if (fullData.feedbacks) {
                     fullData.feedbacks = fullData.feedbacks.filter(f => !String(f.id).startsWith('fb-demo'));
                 }
-                if (fullData.invoices) {
-                    fullData.invoices = fullData.invoices.filter(i => !String(i.id).startsWith('inv-'));
+            }
+
+            // 2. Clasificar datos a guardar según rol del usuario
+            const upsertPromises = [];
+
+            if (!isTrainer && clientId) {
+                // MODO CLIENTE: Solo guarda sus propios datos aislados (No toca datos de otros clientes)
+                const myClient = fullData.clients ? fullData.clients.find(c => c.id === clientId) : null;
+                if (myClient) {
+                    upsertPromises.push(retryOp(() => this.client.from('clients').upsert(mapClientToSQL(myClient)), 3, 1000));
                 }
-            }
 
-            // 5. Blindaje de datos vacíos
-            const dataIsEmpty = (
-                (!fullData.clients || fullData.clients.length === 0) &&
-                (!fullData.routines || fullData.routines.length === 0) &&
-                (!fullData.trainingBlocks || fullData.trainingBlocks.length === 0)
-            );
-            
-            if (dataIsEmpty) {
-                if (cloudData) {
-                    const cloudHasData = (
-                        (cloudData.clients && cloudData.clients.length > 0) ||
-                        (cloudData.routines && cloudData.routines.length > 0) ||
-                        (cloudData.trainingBlocks && cloudData.trainingBlocks.length > 0)
-                    );
-                    if (cloudHasData) {
-                        console.error('🚨 [BLINDAJE SUPABASE] BLOQUEADO: Intento de sobrescribir datos reales en la nube con datos vacíos.');
-                        return false;
-                    }
-                } else {
-                    return false;
+                if (fullData.trainingBlocks) {
+                    const myBlocks = fullData.trainingBlocks.filter(b => b.clientId === clientId).map(mapBlockToSQL);
+                    if (myBlocks.length > 0) upsertPromises.push(retryOp(() => this.client.from('training_blocks').upsert(myBlocks), 3, 1000));
                 }
-            }
+                if (fullData.diets) {
+                    const myDiets = fullData.diets.filter(d => d.clientId === clientId).map(mapDietToSQL);
+                    if (myDiets.length > 0) upsertPromises.push(retryOp(() => this.client.from('client_diets').upsert(myDiets), 3, 1000));
+                }
+                if (fullData.trainingLogs) {
+                    const myLogs = fullData.trainingLogs.filter(l => l.clientId === clientId).map(mapLogToSQL);
+                    if (myLogs.length > 0) upsertPromises.push(retryOp(() => this.client.from('training_logs').upsert(myLogs), 3, 1000));
+                }
+                if (fullData.feedbacks) {
+                    const myFeedbacks = fullData.feedbacks.filter(f => f.clientId === clientId).map(mapFeedbackToSQL);
+                    if (myFeedbacks.length > 0) upsertPromises.push(retryOp(() => this.client.from('feedbacks').upsert(myFeedbacks), 3, 1000));
+                }
+            } else {
+                // MODO ENTRENADOR: Guarda todo de forma relacional y actualiza cabecera de perfil
+                if (fullData.clients) {
+                    const sqlClients = fullData.clients.map(mapClientToSQL);
+                    upsertPromises.push(retryOp(() => this.client.from('clients').upsert(sqlClients), 3, 1000));
+                }
+                if (fullData.trainingBlocks) {
+                    const sqlBlocks = fullData.trainingBlocks.map(mapBlockToSQL);
+                    upsertPromises.push(retryOp(() => this.client.from('training_blocks').upsert(sqlBlocks), 3, 1000));
+                }
+                if (fullData.diets) {
+                    const sqlDiets = fullData.diets.map(mapDietToSQL);
+                    upsertPromises.push(retryOp(() => this.client.from('client_diets').upsert(sqlDiets), 3, 1000));
+                }
+                if (fullData.trainingLogs) {
+                    const sqlLogs = fullData.trainingLogs.map(mapLogToSQL);
+                    upsertPromises.push(retryOp(() => this.client.from('training_logs').upsert(sqlLogs), 3, 1000));
+                }
+                if (fullData.feedbacks) {
+                    const sqlFeedbacks = fullData.feedbacks.map(mapFeedbackToSQL);
+                    upsertPromises.push(retryOp(() => this.client.from('feedbacks').upsert(sqlFeedbacks), 3, 1000));
+                }
 
-            // 6. Colisiones de accesos omitidas en guardado automático por rendimiento (la probabilidad de colisión aleatoria de código de 8 caracteres es de 1 entre 2.8 billones)
+                // Guardar la cabecera en trainer_profiles con brand, appointments, habits, invoices
+                const profileData = {
+                    brand: fullData.brand || {},
+                    appointments: fullData.appointments || [],
+                    habits: fullData.habits || [],
+                    invoices: fullData.invoices || [],
+                    __reset_version: fullData.__reset_version || null,
+                    lastModified: new Date().toISOString()
+                };
 
-            // 7. Preservar marca si es cliente
-            if (!isTrainer && cloudData && cloudData.brand) {
-                fullData.brand = cloudData.brand;
-            }
-
-            // 8. Upsert final
-            const runUpsert = async () => {
-                const { error } = await this.client
+                upsertPromises.push(retryOp(() => this.client
                     .from('trainer_profiles')
-                    .upsert({ 
-                        trainer_id: trainerId, 
-                        full_data: fullData,
+                    .upsert({
+                        trainer_id: trainerId,
+                        full_data: profileData,
                         updated_at: new Date().toISOString()
-                    }, { onConflict: 'trainer_id' });
+                    }, { onConflict: 'trainer_id' }), 3, 1000));
+            }
 
-                if (error) throw error;
-                return true;
-            };
-
-            await retryOp(runUpsert, 3, 1000);
+            await Promise.all(upsertPromises);
+            console.log("✅ Guardado granular relacional completado con éxito en Supabase!");
             return true;
         } catch (error) {
             console.error("Error guardando en Supabase DB despues de reintentos:", error);
