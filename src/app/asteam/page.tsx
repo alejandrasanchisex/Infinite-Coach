@@ -216,7 +216,7 @@ export default function ASTeamLanding() {
               </div>
               <h3 className="text-xl font-bold mb-3">Contacto y Chat Directo</h3>
               <p className="text-gray-400 leading-relaxed">
-                Estaremos comunicados a diario a través del chat. Podrás realizar tus revisiones periódicas y resolver dudas rápidamente para mantenerte siempre motivado y enfocado.
+                Estaremos comunicados a diario. Podrás realizar tus revisiones periódicas y resolver dudas rápidamente para mantenerte siempre motivado y enfocado.
               </p>
             </div>
           </div>
