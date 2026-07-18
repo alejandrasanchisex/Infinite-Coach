@@ -187,14 +187,47 @@ const SupabaseService = {
                 };
             };
 
-            const mapLogFromSQL = r => ({
-                id: r.id,
-                clientId: r.client_id,
-                date: r.date,
-                weekNumber: r.week_number,
-                dayNumber: r.day_number,
-                exercises: r.exercises || []
-            });
+            const mapLogFromSQL = r => {
+                let routineId = null;
+                let blockId = null;
+                let weekIndex = null;
+                
+                if (typeof Clients !== 'undefined' && typeof TrainingBlocks !== 'undefined') {
+                    const clientObj = Clients.getById(r.client_id);
+                    if (clientObj) {
+                        const blocks = TrainingBlocks.getByClientId(r.client_id) || [];
+                        const activeBlock = blocks.find(b => b.status === 'active') || blocks[0];
+                        
+                        if (activeBlock) {
+                            blockId = activeBlock.id;
+                            if (r.week_number !== undefined && r.week_number !== null) {
+                                const wIdx = parseInt(r.week_number) - 1;
+                                weekIndex = wIdx;
+                                if (activeBlock.weeks && activeBlock.weeks[wIdx]) {
+                                    routineId = activeBlock.weeks[wIdx].id;
+                                }
+                            }
+                        }
+                        
+                        if (!routineId) {
+                            routineId = clientObj.assignedRoutine || (clientObj.individualRoutine && clientObj.individualRoutine.id);
+                        }
+                    }
+                }
+
+                return {
+                    id: r.id,
+                    clientId: r.client_id,
+                    date: r.date,
+                    weekNumber: r.week_number,
+                    dayNumber: r.day_number,
+                    exercises: r.exercises || [],
+                    completed: true,
+                    routineId: routineId,
+                    blockId: blockId,
+                    weekIndex: weekIndex
+                };
+            };
 
             const mapFeedbackFromSQL = r => ({
                 id: r.id,
