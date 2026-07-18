@@ -192,6 +192,7 @@ const SupabaseService = {
             let clientRows = [], blockRows = [], dietRows = [], logRows = [], feedbackRows = [];
 
             // 2. Carga granular optimizada según el rol del usuario
+            // 2. Carga granular optimizada según el rol del usuario
             if (!isTrainer && clientId) {
                 // ROL CLIENTE: Descarga aislada y rápida de sus propios datos (5 KB)
                 const queries = [
@@ -202,6 +203,13 @@ const SupabaseService = {
                     retryOp(() => this.client.from('feedbacks').select('*').eq('client_id', clientId), 3, 1000)
                 ];
                 const [cRes, bRes, dRes, lRes, fRes] = await Promise.all(queries);
+                
+                if (cRes.error) throw new Error(`[Supabase Error clients] ${cRes.error.message} (${cRes.error.code})`);
+                if (bRes.error) throw new Error(`[Supabase Error blocks] ${bRes.error.message} (${bRes.error.code})`);
+                if (dRes.error) throw new Error(`[Supabase Error diets] ${dRes.error.message} (${dRes.error.code})`);
+                if (lRes.error) throw new Error(`[Supabase Error logs] ${lRes.error.message} (${lRes.error.code})`);
+                if (fRes.error) throw new Error(`[Supabase Error feedbacks] ${fRes.error.message} (${fRes.error.code})`);
+
                 clientRows = cRes.data || [];
                 blockRows = bRes.data || [];
                 dietRows = dRes.data || [];
@@ -217,6 +225,13 @@ const SupabaseService = {
                     retryOp(() => this.client.from('feedbacks').select('*').eq('trainer_id', trainerId), 3, 1000)
                 ];
                 const [cRes, bRes, dRes, lRes, fRes] = await Promise.all(queries);
+                
+                if (cRes.error) throw new Error(`[Supabase Error clients] ${cRes.error.message} (${cRes.error.code})`);
+                if (bRes.error) throw new Error(`[Supabase Error blocks] ${bRes.error.message} (${bRes.error.code})`);
+                if (dRes.error) throw new Error(`[Supabase Error diets] ${dRes.error.message} (${dRes.error.code})`);
+                if (lRes.error) throw new Error(`[Supabase Error logs] ${lRes.error.message} (${lRes.error.code})`);
+                if (fRes.error) throw new Error(`[Supabase Error feedbacks] ${fRes.error.message} (${fRes.error.code})`);
+
                 clientRows = cRes.data || [];
                 blockRows = bRes.data || [];
                 dietRows = dRes.data || [];
