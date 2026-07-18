@@ -105,6 +105,19 @@ const SupabaseService = {
                 onboardingAnswers: r.onboarding_answers,
                 initialSetupDone: r.initial_setup_done,
                 profilePhoto: r.profile_photo,
+                
+                accessCode: r.access_code,
+                paymentStatus: r.payment_status || 'pending',
+                paymentExpiry: r.payment_expiry,
+                reviewDay: r.review_day,
+                reviewFrequency: r.review_frequency,
+                activeBlockId: r.active_block_id,
+                dietPublished: r.diet_published || false,
+                cardio: r.cardio,
+                cardioUrl: r.cardio_url,
+                supplementation: r.supplementation,
+                supplementationUrl: r.supplementation_url,
+                
                 createdAt: r.created_at,
                 updatedAt: r.updated_at
             });
@@ -270,6 +283,20 @@ const SupabaseService = {
                 onboarding_answers: c.onboardingAnswers || [],
                 initial_setup_done: c.initialSetupDone || false,
                 profile_photo: c.profilePhoto || null,
+                
+                access_code: c.accessCode || null,
+                payment_status: c.paymentStatus || 'pending',
+                payment_expiry: c.paymentExpiry || null,
+                review_day: c.reviewDay || null,
+                review_frequency: c.reviewFrequency || null,
+                active_block_id: c.activeBlockId || null,
+                diet_published: c.dietPublished || false,
+                cardio: c.cardio || null,
+                cardio_url: c.cardioUrl || null,
+                supplementation: c.supplementation || null,
+                supplementation_url: c.supplementationUrl || null,
+                start_date: c.startDate || null,
+                
                 updated_at: new Date().toISOString()
             });
 
