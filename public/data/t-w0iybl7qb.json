@@ -107628,6 +107628,255 @@
           ],
           "name": "Semana 5",
           "number": 5
+        },
+        {
+          "id": "e53ff95f-ace8-43c1-9179-d4778a092a93",
+          "days": [
+            {
+              "name": "Empujes",
+              "exercises": [
+                {
+                  "name": "Press de Banca Plano (Barra)",
+                  "reps": "1 TS ( 3 a 5) - 2 BO ( 8 a 10)",
+                  "sets": "3",
+                  "notes": "Aproxima las series que hagan falta",
+                  "intensity": "1"
+                },
+                {
+                  "name": "Press superior multipower",
+                  "reps": "16-14-12-10",
+                  "sets": "4",
+                  "notes": "",
+                  "intensity": "1"
+                },
+                {
+                  "name": "Cruce de Poleas Altas",
+                  "reps": "16-14-12-10",
+                  "sets": "4",
+                  "notes": "",
+                  "intensity": "1"
+                },
+                {
+                  "name": "Fondos en Máquina para Tríceps",
+                  "reps": "Fallo",
+                  "sets": "3",
+                  "notes": "",
+                  "intensity": "0"
+                },
+                {
+                  "name": "Elevaciones Laterales (Mancuernas)",
+                  "reps": "15 a 20",
+                  "sets": "4",
+                  "notes": "Aguantar 1s isométrica",
+                  "intensity": "1-0"
+                },
+                {
+                  "name": "Triceps polea cuerda + Crunch en polea",
+                  "reps": "25 + 25",
+                  "sets": "4",
+                  "notes": "",
+                  "intensity": "1-0"
+                }
+              ]
+            },
+            {
+              "name": "Tirones",
+              "exercises": [
+                {
+                  "name": "Pull over",
+                  "reps": "20-18-16",
+                  "sets": "3",
+                  "notes": "",
+                  "intensity": "1"
+                },
+                {
+                  "name": "Dominadas (Prono)",
+                  "reps": "fallo",
+                  "sets": "3",
+                  "notes": "",
+                  "intensity": "0"
+                },
+                {
+                  "name": "Remo en barra libre",
+                  "reps": "1 TS ( 3 a 5) - 2 BO ( 8 a 10)",
+                  "sets": "3",
+                  "notes": "Aproxima las series que hagan falta",
+                  "intensity": "1"
+                },
+                {
+                  "name": "Remo (Gironda)",
+                  "reps": "16-14-12",
+                  "sets": "3",
+                  "notes": "",
+                  "intensity": "1"
+                },
+                {
+                  "name": "Jalón abierto",
+                  "reps": "16-14-12",
+                  "sets": "3",
+                  "notes": "",
+                  "intensity": "1"
+                },
+                {
+                  "name": "Pájaros en Peck Deck Invertido",
+                  "reps": "15",
+                  "sets": "4",
+                  "notes": "",
+                  "intensity": "1"
+                },
+                {
+                  "name": "Curl bíceps mancuerna",
+                  "reps": "15",
+                  "sets": "4",
+                  "notes": "",
+                  "intensity": "0"
+                }
+              ]
+            },
+            {
+              "name": "Pierna",
+              "exercises": [
+                {
+                  "name": "Hacka",
+                  "reps": "12-10-8",
+                  "sets": "3",
+                  "notes": "Subiendo peso",
+                  "intensity": "1"
+                },
+                {
+                  "name": "Prensa",
+                  "reps": "12-10-8",
+                  "sets": "3",
+                  "notes": "Subiendo peso",
+                  "intensity": "1"
+                },
+                {
+                  "name": "Extensiones",
+                  "reps": "20-18-16-14-Última serie poco peso 30 repes",
+                  "sets": "5",
+                  "notes": "",
+                  "intensity": "1"
+                },
+                {
+                  "name": "Pendular",
+                  "reps": "10 a 12",
+                  "sets": "3",
+                  "notes": "",
+                  "intensity": "1"
+                },
+                {
+                  "name": "Aductor",
+                  "reps": "15 a 20",
+                  "sets": "3",
+                  "notes": "",
+                  "intensity": "1"
+                },
+                {
+                  "name": "Elevación de Gemelos (Sentado)",
+                  "reps": "20-18-16",
+                  "sets": "3",
+                  "notes": "",
+                  "intensity": "0"
+                }
+              ]
+            },
+            {
+              "name": "Empujes prioridad hombro/tríceps",
+              "exercises": [
+                {
+                  "name": "Press militar multipower",
+                  "reps": "1 TS ( 3 a 5) - 2 BO ( 8 a 10)",
+                  "sets": "3",
+                  "notes": "Aproxima las series que hagan falta",
+                  "intensity": "1"
+                },
+                {
+                  "name": "Elevaciones frontales con mancuerna",
+                  "reps": "15 a 20",
+                  "sets": "3",
+                  "notes": "",
+                  "intensity": "1"
+                },
+                {
+                  "name": "Elevaciones laterales con mancuerna aguantar 1s isométrico",
+                  "reps": "20-18-16-14",
+                  "sets": "4",
+                  "notes": "Aguantar 1s isométrica",
+                  "intensity": "1"
+                },
+                {
+                  "name": "Press superior máquina",
+                  "reps": "1 TS ( 3 a 5) - 2 BO ( 8 a 10)",
+                  "sets": "3",
+                  "notes": "Aproxima las series que hagan falta",
+                  "intensity": "1"
+                },
+                {
+                  "name": "Extensión de Tríceps unilateral en Polea + Con los dos",
+                  "reps": "15 a 20",
+                  "sets": "3",
+                  "notes": "Superserie",
+                  "intensity": "0"
+                },
+                {
+                  "name": "Crunch en polea + Elevación piernas",
+                  "reps": "25 + 25",
+                  "sets": "3",
+                  "notes": "Superserie",
+                  "intensity": "-"
+                }
+              ]
+            },
+            {
+              "name": "Femoral",
+              "exercises": [
+                {
+                  "name": "Peso muerto convencional",
+                  "reps": "1 TS ( 3 a 5) - 2 BO ( 8 a 10)",
+                  "sets": "3",
+                  "notes": "Aproxima las series que hagan falta",
+                  "intensity": "1"
+                },
+                {
+                  "name": "Femoral sentado",
+                  "reps": "20-18-16 + Drop Set última serie",
+                  "sets": "4",
+                  "notes": "",
+                  "intensity": "1"
+                },
+                {
+                  "name": "Hip thrust",
+                  "reps": "12-10-8",
+                  "sets": "3",
+                  "notes": "",
+                  "intensity": "1"
+                },
+                {
+                  "name": "Abductor",
+                  "reps": "20-18-16",
+                  "sets": "3",
+                  "notes": "",
+                  "intensity": "1"
+                },
+                {
+                  "name": "Curl barra Z",
+                  "reps": "16-14-12-10",
+                  "sets": "4",
+                  "notes": "",
+                  "intensity": "1"
+                },
+                {
+                  "name": "Curl mancuernas con banco inclinado",
+                  "reps": "16-14-12-10",
+                  "sets": "4",
+                  "notes": "",
+                  "intensity": "1"
+                }
+              ]
+            }
+          ],
+          "name": "Semana 6",
+          "number": 5
         }
       ],
       "status": "active",
