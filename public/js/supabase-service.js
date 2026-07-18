@@ -148,6 +148,27 @@ const SupabaseService = {
                     days = sqlDays;
                 }
                 
+                // Calcular dinámicamente las calorías y macros de la Opción 1 de cada comida/día
+                let calories = 0;
+                let protein = 0;
+                let carbs = 0;
+                let fat = 0;
+
+                const items = meals.length > 0 ? meals : days;
+                items.forEach(mealOrDay => {
+                    if (mealOrDay && Array.isArray(mealOrDay.foods)) {
+                        const option1Foods = mealOrDay.foods.filter(f => f && (f.option === 1 || f.option === '1'));
+                        const foodsToSum = option1Foods.length > 0 ? option1Foods : mealOrDay.foods.filter(f => f && (!f.option || f.option === 1 || f.option === '1'));
+                        
+                        foodsToSum.forEach(f => {
+                            calories += Math.round(parseFloat(f.calories) || 0);
+                            protein += Math.round(parseFloat(f.protein || f.proteins || 0));
+                            carbs += Math.round(parseFloat(f.carbs || f.carbohydrates || 0));
+                            fat += Math.round(parseFloat(f.fat || f.fats || 0));
+                        });
+                    }
+                });
+                
                 return {
                     id: r.id,
                     clientId: r.client_id,
@@ -156,7 +177,13 @@ const SupabaseService = {
                     status: r.status,
                     published: r.published || false,
                     days: days,
-                    meals: meals
+                    meals: meals,
+                    calories: calories || r.calories || 0,
+                    macros: {
+                        protein: protein || 0,
+                        carbs: carbs || 0,
+                        fat: fat || 0
+                    }
                 };
             };
 
