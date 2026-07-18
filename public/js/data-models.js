@@ -1543,6 +1543,9 @@ const doSyncFromCloud = async () => {
         
         try {
             let cloudData = await window.SupabaseService.getTrainerData(currentId);
+            if (cloudData === null) {
+                throw new Error("Supabase inalcanzable o error de red (retornó null)");
+            }
         
         if (clientId && !isTrainer) {
             // Verificar si el cliente pertenece a este entrenador
