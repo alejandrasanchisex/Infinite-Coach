@@ -118,12 +118,13 @@ function safeGetSessionStorage(key) {
                     }
                     keysToRemove.forEach(k => localStorage.removeItem(k));
                     
-                    // Intento 2
-                    originalSetItem.call(localStorage, key, valueToStoreInLocal);
-                    console.log("Retry successful after cleaning storage space!");
-                } catch(retryErr) {
-                    console.error("Retry failed too:", retryErr);
-                }
+                    // Intento 2 (envuelto de forma segura contra cuota excedida)
+                    try {
+                        originalSetItem.call(localStorage, key, valueToStoreInLocal);
+                        console.log("Retry successful after cleaning storage space!");
+                    } catch(retryErr) {
+                        console.error("Retry failed too (LocalStorage quota exceeded):", retryErr);
+                    }
             }
         }
     };
@@ -5390,7 +5391,7 @@ const BrandConfig = {
     } else if (isLucy) {
         defaultBrand = {
             name: 'Lucy Tundidor',
-            logo: 'https://bieeydhacavxymoosasx.supabase.co/storage/v1/object/public/Media/lucy_logo_cropped.png?v=688',
+            logo: 'https://bieeydhacavxymoosasx.supabase.co/storage/v1/object/public/Media/lucy_logo_cropped.png?v=689',
             configured: true,
             colors: { 
                 primary: '#816e61', 
@@ -5501,7 +5502,7 @@ const BrandConfig = {
             res.colors = defaultBrand.colors;
             changed = true;
         }
-        if (!res.logo || res.logo === 'img/logo-infinite-coach.png' || res.logo.includes('1779724548154') || res.logo.includes('lucy_logo_v1.png') || !res.logo.includes('lucy_logo_cropped.png?v=688')) {
+        if (!res.logo || res.logo === 'img/logo-infinite-coach.png' || res.logo.includes('1779724548154') || res.logo.includes('lucy_logo_v1.png') || !res.logo.includes('lucy_logo_cropped.png?v=689')) {
             res.logo = defaultBrand.logo;
             changed = true;
         }

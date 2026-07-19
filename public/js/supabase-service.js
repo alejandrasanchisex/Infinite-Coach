@@ -27,7 +27,7 @@ const SUPABASE_KEY = "sb_publishable_ffxbK3z-Am1wVmqV5Szs_w_zOv8RLWQ";
 
 const delay = ms => new Promise(resolve => setTimeout(resolve, ms));
 
-async function retryOp(operation, maxAttempts = 3, initialDelay = 1000, timeoutMs = 6000) {
+async function retryOp(operation, maxAttempts = 3, initialDelay = 1000, timeoutMs = 30000) {
     let lastError = null;
     for (let attempt = 1; attempt <= maxAttempts; attempt++) {
         try {
