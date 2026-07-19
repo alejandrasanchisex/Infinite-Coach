@@ -90,37 +90,42 @@ const SupabaseService = {
             console.log(`[Supabase GetData] Cargando datos granulares. isTrainer: ${isTrainer}, clientId: ${clientId}`);
 
             // Helpers de conversión locales
-            const mapClientFromSQL = r => ({
-                id: r.id,
-                name: r.name,
-                email: r.email,
-                phone: r.phone,
-                gender: r.gender,
-                status: r.status,
-                monthlyFee: r.monthly_fee ? parseFloat(r.monthly_fee) : 0,
-                subscriptionAmount: r.monthly_fee ? parseFloat(r.monthly_fee) : 0,
-                assignedRoutine: r.assigned_routine,
-                assignedDiet: r.assigned_diet,
-                technicalData: r.technical_data || {},
-                onboardingAnswers: r.onboarding_answers || [],
-                initialSetupDone: r.initial_setup_done || false,
-                profilePhoto: r.profile_photo,
-                
-                accessCode: r.access_code,
-                paymentStatus: r.payment_status || 'pending',
-                paymentExpiry: r.payment_expiry,
-                reviewDay: r.review_day,
-                reviewFrequency: r.review_frequency,
-                activeBlockId: r.active_block_id,
-                dietPublished: r.diet_published || false,
-                cardio: r.cardio,
-                cardioUrl: r.cardio_url,
-                supplementation: r.supplementation,
-                supplementationUrl: r.supplementation_url,
-                
-                createdAt: r.created_at,
-                updatedAt: r.updated_at
-            });
+            const mapClientFromSQL = r => {
+                const tech = r.technical_data || {};
+                return {
+                    id: r.id,
+                    name: r.name,
+                    email: r.email,
+                    phone: r.phone,
+                    gender: r.gender,
+                    status: r.status,
+                    monthlyFee: r.monthly_fee ? parseFloat(r.monthly_fee) : 0,
+                    subscriptionAmount: r.monthly_fee ? parseFloat(r.monthly_fee) : 0,
+                    assignedRoutine: r.assigned_routine,
+                    assignedDiet: r.assigned_diet,
+                    technicalData: tech,
+                    onboardingAnswers: r.onboarding_answers || [],
+                    initialSetupDone: r.initial_setup_done || false,
+                    profilePhoto: r.profile_photo,
+                    
+                    accessCode: r.access_code,
+                    paymentStatus: r.payment_status || 'pending',
+                    paymentExpiry: r.payment_expiry,
+                    reviewDay: r.review_day,
+                    reviewFrequency: r.review_frequency,
+                    activeBlockId: r.active_block_id,
+                    dietPublished: r.diet_published || false,
+                    cardio: r.cardio,
+                    cardioUrl: r.cardio_url,
+                    cardioPublished: tech.cardioPublished !== undefined ? tech.cardioPublished : true,
+                    cardioUrlVisible: tech.cardioUrlVisible !== undefined ? tech.cardioUrlVisible : true,
+                    supplementation: r.supplementation,
+                    supplementationUrl: r.supplementation_url,
+                    
+                    createdAt: r.created_at,
+                    updatedAt: r.updated_at
+                };
+            };
 
             const mapBlockFromSQL = r => ({
                 id: r.id,
@@ -395,37 +400,45 @@ const SupabaseService = {
             console.log(`[Supabase SaveData] Guardando datos granulares. isTrainer: ${isTrainer}, clientId: ${clientId}`);
 
             // Helpers de mapeo locales
-            const mapClientToSQL = c => ({
-                id: c.id,
-                trainer_id: trainerId,
-                name: c.name || 'Sin Nombre',
-                email: c.email || null,
-                phone: c.phone || null,
-                gender: c.gender || null,
-                status: c.status || 'active',
-                monthly_fee: c.monthlyFee ? parseFloat(c.monthlyFee) : 0,
-                assigned_routine: c.assignedRoutine || null,
-                assigned_diet: c.assignedDiet || null,
-                technical_data: c.technicalData || {},
-                onboarding_answers: c.onboardingAnswers || [],
-                initial_setup_done: c.initialSetupDone || false,
-                profile_photo: c.profilePhoto || null,
+            const mapClientToSQL = c => {
+                const tech = { ...(c.technicalData || {}) };
+                tech.cardioPublished = c.cardioPublished !== undefined ? c.cardioPublished : true;
+                tech.cardioUrlVisible = c.cardioUrlVisible !== undefined ? c.cardioUrlVisible : true;
+                if (c.supplementationPublished !== undefined) tech.supplementationPublished = c.supplementationPublished;
+                if (c.supplementationUrlVisible !== undefined) tech.supplementationUrlVisible = c.supplementationUrlVisible;
                 
-                access_code: c.accessCode || null,
-                payment_status: c.paymentStatus || 'pending',
-                payment_expiry: c.paymentExpiry || null,
-                review_day: c.reviewDay || null,
-                review_frequency: c.reviewFrequency || null,
-                active_block_id: c.activeBlockId || null,
-                diet_published: c.dietPublished || false,
-                cardio: c.cardio || null,
-                cardio_url: c.cardioUrl || null,
-                supplementation: c.supplementation || null,
-                supplementation_url: c.supplementationUrl || null,
-                start_date: c.startDate || null,
-                
-                updated_at: new Date().toISOString()
-            });
+                return {
+                    id: c.id,
+                    trainer_id: trainerId,
+                    name: c.name || 'Sin Nombre',
+                    email: c.email || null,
+                    phone: c.phone || null,
+                    gender: c.gender || null,
+                    status: c.status || 'active',
+                    monthly_fee: c.monthlyFee ? parseFloat(c.monthlyFee) : 0,
+                    assigned_routine: c.assignedRoutine || null,
+                    assigned_diet: c.assignedDiet || null,
+                    technical_data: tech,
+                    onboarding_answers: c.onboardingAnswers || [],
+                    initial_setup_done: c.initialSetupDone || false,
+                    profile_photo: c.profilePhoto || null,
+                    
+                    access_code: c.accessCode || null,
+                    payment_status: c.paymentStatus || 'pending',
+                    payment_expiry: c.paymentExpiry || null,
+                    review_day: c.reviewDay || null,
+                    review_frequency: c.reviewFrequency || null,
+                    active_block_id: c.activeBlockId || null,
+                    diet_published: c.dietPublished || false,
+                    cardio: c.cardio || null,
+                    cardio_url: c.cardioUrl || null,
+                    supplementation: c.supplementation || null,
+                    supplementation_url: c.supplementationUrl || null,
+                    start_date: c.startDate || null,
+                    
+                    updated_at: new Date().toISOString()
+                };
+            };
 
             const mapBlockToSQL = b => ({
                 id: b.id,
