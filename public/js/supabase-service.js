@@ -532,26 +532,44 @@ const SupabaseService = {
                     if (myFeedbacks.length > 0) upsertPromises.push(retryOp(() => this.client.from('feedbacks').upsert(myFeedbacks), 3, 1000));
                 }
             } else {
-                // MODO ENTRENADOR: Guarda todo de forma relacional y actualiza cabecera de perfil
+                // MODO ENTRENADOR: Guarda de forma relacional granular e individualizada para evitar fallos de lote completo
                 if (fullData.clients) {
                     const sqlClients = fullData.clients.map(mapClientToSQL);
-                    upsertPromises.push(retryOp(() => this.client.from('clients').upsert(sqlClients), 3, 1000));
+                    sqlClients.forEach(c => {
+                        upsertPromises.push(retryOp(() => this.client.from('clients').upsert(c), 3, 1000).catch(err => {
+                            console.warn(`[Supabase Save Client Error] Falló upsert del cliente ${c.id}:`, err);
+                        }));
+                    });
                 }
                 if (fullData.trainingBlocks) {
                     const sqlBlocks = fullData.trainingBlocks.map(mapBlockToSQL);
-                    upsertPromises.push(retryOp(() => this.client.from('training_blocks').upsert(sqlBlocks), 3, 1000));
+                    sqlBlocks.forEach(b => {
+                        upsertPromises.push(retryOp(() => this.client.from('training_blocks').upsert(b), 3, 1000).catch(err => {
+                            console.warn(`[Supabase Save Block Error] Falló upsert del bloque ${b.id}:`, err);
+                        }));
+                    });
                 }
                 if (fullData.diets) {
                     const sqlDiets = fullData.diets.map(mapDietToSQL);
-                    upsertPromises.push(retryOp(() => this.client.from('client_diets').upsert(sqlDiets), 3, 1000));
+                    sqlDiets.forEach(d => {
+                        upsertPromises.push(retryOp(() => this.client.from('client_diets').upsert(d), 3, 1000).catch(err => {
+                            console.warn(`[Supabase Save Diet Error] Falló upsert de la dieta ${d.id}:`, err);
+                        }));
+                    });
                 }
                 if (fullData.trainingLogs) {
                     const sqlLogs = fullData.trainingLogs.map(mapLogToSQL);
-                    upsertPromises.push(retryOp(() => this.client.from('training_logs').upsert(sqlLogs), 3, 1000));
+                    upsertPromises.push(retryOp(() => this.client.from('training_logs').upsert(sqlLogs), 3, 1000).catch(err => {
+                        console.warn(`[Supabase Save Logs Error] Falló upsert del lote de logs:`, err);
+                    }));
                 }
                 if (fullData.feedbacks) {
                     const sqlFeedbacks = fullData.feedbacks.map(mapFeedbackToSQL);
-                    upsertPromises.push(retryOp(() => this.client.from('feedbacks').upsert(sqlFeedbacks), 3, 1000));
+                    sqlFeedbacks.forEach(f => {
+                        upsertPromises.push(retryOp(() => this.client.from('feedbacks').upsert(f), 3, 1000).catch(err => {
+                            console.warn(`[Supabase Save Feedback Error] Falló upsert del feedback ${f.id}:`, err);
+                        }));
+                    });
                 }
 
                 // Guardar la cabecera en trainer_profiles con brand, appointments, habits, invoices
