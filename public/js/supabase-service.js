@@ -208,6 +208,18 @@ const SupabaseService = {
                             if (activeBlock.weeks && activeBlock.weeks[wIdx]) {
                                 routineId = activeBlock.weeks[wIdx].id;
                             }
+                        } else if (activeBlock.startDate && r.date) {
+                            // Fallback para entrenamientos con week_number nulo (recalcular por fechas)
+                            const logDate = new Date(r.date);
+                            const blockStart = new Date(activeBlock.startDate);
+                            const diff = Math.floor((logDate - blockStart) / (1000 * 60 * 60 * 24));
+                            if (diff >= 0) {
+                                const wIdx = Math.floor(diff / 7);
+                                if (activeBlock.weeks && activeBlock.weeks[wIdx]) {
+                                    weekIndex = wIdx;
+                                    routineId = activeBlock.weeks[wIdx].id;
+                                }
+                            }
                         }
                     }
                     
@@ -453,7 +465,7 @@ const SupabaseService = {
                 client_id: l.clientId,
                 trainer_id: trainerId,
                 date: l.date,
-                week_number: l.weekNumber,
+                week_number: l.weekNumber !== undefined && l.weekNumber !== null ? l.weekNumber : (l.weekIndex !== undefined && l.weekIndex !== null ? l.weekIndex + 1 : null),
                 day_number: l.dayNumber,
                 exercises: l.exercises || []
             });
@@ -524,7 +536,7 @@ const SupabaseService = {
                     if (myDiets.length > 0) upsertPromises.push(retryOp(() => this.client.from('client_diets').upsert(myDiets), 3, 1000));
                 }
                 if (fullData.trainingLogs) {
-                    const myLogs = fullData.trainingLogs.filter(l => l.clientId === clientId).map(mapLogToSQL);
+                    const myLogs = fullData.trainingLogs.filter(l => l.clientId === clientId && l.completed === true).map(mapLogToSQL);
                     if (myLogs.length > 0) upsertPromises.push(retryOp(() => this.client.from('training_logs').upsert(myLogs), 3, 1000));
                 }
                 if (fullData.feedbacks) {
@@ -558,7 +570,7 @@ const SupabaseService = {
                     });
                 }
                 if (fullData.trainingLogs) {
-                    const sqlLogs = fullData.trainingLogs.map(mapLogToSQL);
+                    const sqlLogs = fullData.trainingLogs.filter(l => l.completed === true).map(mapLogToSQL);
                     upsertPromises.push(retryOp(() => this.client.from('training_logs').upsert(sqlLogs), 3, 1000).catch(err => {
                         console.warn(`[Supabase Save Logs Error] Falló upsert del lote de logs:`, err);
                     }));
