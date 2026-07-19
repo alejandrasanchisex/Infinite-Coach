@@ -340,17 +340,31 @@ const SupabaseService = {
                  lastModified: profileObj.lastModified || new Date().toISOString()
              };
 
-            // Cortafuegos de cuota para ASTeam
-            if (trainerId === 't-w0iybl7qb' && assembled.clients) {
-                assembled.clients.forEach(c => {
-                    if (c.id === '20f2e6c2-2699-4ccc-a982-1e9fb141b9bb' || c.id === '0db0ea7a-c413-44cb-b99e-dfd9790383eb') {
-                        if (!c.monthlyFee || c.monthlyFee === 0) c.monthlyFee = 65;
-                        if (!c.subscriptionAmount || c.subscriptionAmount === 0) c.subscriptionAmount = 65;
-                    }
-                });
-            }
+             // Reconstrucción dinámica de arrays de dietas múltiples (assignedDiets y publishedDiets)
+             if (assembled.clients && assembled.diets) {
+                 assembled.clients.forEach(c => {
+                     const clientDiets = assembled.diets.filter(d => d.clientId === c.id) || [];
+                     c.assignedDiets = clientDiets.map(d => d.id);
+                     c.publishedDiets = clientDiets.map(d => d.id);
+                     
+                     // Si assignedDiet está vacío pero el cliente tiene dietas, asignar la primera
+                     if (c.assignedDiets.length > 0 && !c.assignedDiet) {
+                         c.assignedDiet = c.assignedDiets[0];
+                     }
+                 });
+             }
 
-            return assembled;
+             // Cortafuegos de cuota para ASTeam
+             if (trainerId === 't-w0iybl7qb' && assembled.clients) {
+                 assembled.clients.forEach(c => {
+                     if (c.id === '20f2e6c2-2699-4ccc-a982-1e9fb141b9bb' || c.id === '0db0ea7a-c413-44cb-b99e-dfd9790383eb') {
+                         if (!c.monthlyFee || c.monthlyFee === 0) c.monthlyFee = 65;
+                         if (!c.subscriptionAmount || c.subscriptionAmount === 0) c.subscriptionAmount = 65;
+                     }
+                 });
+             }
+
+             return assembled;
         } catch (error) {
             console.error("Error cargando desde Supabase despues de reintentos:", error);
             return null;
