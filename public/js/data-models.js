@@ -87,6 +87,12 @@ function safeGetSessionStorage(key) {
             try { sessionStorage.setItem(key, value); } catch(e) {}
         }
         
+        // Invalidar caché en memoria tras una escritura en caliente
+        if (key && key.indexOf('fitnessAppData_') === 0) {
+            window._cachedDbRaw = null;
+            window._cachedDbObj = null;
+        }
+
         // Guardar optimizado/original en localStorage
         try {
             originalSetItem.call(localStorage, key, valueToStoreInLocal);
@@ -534,13 +540,12 @@ const getData = () => {
   // Leer de localStorage; si no hay datos (cuota llena en iOS WebView), usar sessionStorage como fallback
   const raw = safeGetSessionStorage(sKey) || safeGetLocalStorage(sKey);
   
-    
-
-    const defaults = {
+  const defaults = {
     version: DB_VERSION, clients: [], routines: [], diets: [], foods: [], media: [], library: [],
     hidden_system_media: [], deleted_system_media: [], brand: { name: 'Infinite Coach', configured: true },
     supplementationTemplates: [], feedbacks: [], appointments: [], invoices: [], trainingLogs: [], habits: [], trainingBlocks: [], deletedIds: [], teamMembers: []
   };
+
   if (!raw) {
     const activeId = window.activeTrainerId || safeGetLocalStorage('activeTrainerId') || 'default';
     if (activeId !== 'default') {
@@ -548,6 +553,11 @@ const getData = () => {
       console.log(`🆕 Nueva instalación o caché limpia detectada para el entrenador ${activeId}. Registrando bandera 'isNewInstall'.`);
     }
     return defaults;
+  }
+
+  // Si el string crudo en almacenamiento coincide con nuestra caché, retornar el objeto ya parseado
+  if (raw === window._cachedDbRaw && window._cachedDbObj) {
+      return window._cachedDbObj;
   }
   try {
     const parsed = JSON.parse(raw);
@@ -926,10 +936,13 @@ const getData = () => {
         }
     }
 
-    return data;
+     // Guardar en caché antes de retornar
+     window._cachedDbRaw = raw;
+     window._cachedDbObj = data;
+     return data;
 
-  } catch (e) { return defaults; }
-};
+   } catch (e) { return defaults; }
+ };
 window.getData = getData;
 
 const stripDatabaseForClient = (data, clientId) => {
@@ -5377,7 +5390,7 @@ const BrandConfig = {
     } else if (isLucy) {
         defaultBrand = {
             name: 'Lucy Tundidor',
-            logo: 'https://bieeydhacavxymoosasx.supabase.co/storage/v1/object/public/Media/lucy_logo_cropped.png?v=687',
+            logo: 'https://bieeydhacavxymoosasx.supabase.co/storage/v1/object/public/Media/lucy_logo_cropped.png?v=688',
             configured: true,
             colors: { 
                 primary: '#816e61', 
@@ -5488,7 +5501,7 @@ const BrandConfig = {
             res.colors = defaultBrand.colors;
             changed = true;
         }
-        if (!res.logo || res.logo === 'img/logo-infinite-coach.png' || res.logo.includes('1779724548154') || res.logo.includes('lucy_logo_v1.png') || !res.logo.includes('lucy_logo_cropped.png?v=687')) {
+        if (!res.logo || res.logo === 'img/logo-infinite-coach.png' || res.logo.includes('1779724548154') || res.logo.includes('lucy_logo_v1.png') || !res.logo.includes('lucy_logo_cropped.png?v=688')) {
             res.logo = defaultBrand.logo;
             changed = true;
         }
