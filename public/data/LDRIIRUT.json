@@ -105338,6 +105338,167 @@
       "updatedAt": "2026-07-15T04:43:31.870Z",
       "weekIndex": 4,
       "lastModified": "2026-07-15T04:43:31.870Z"
+    },
+    {
+      "id": "2a4e8d35-3b9c-4e8c-8f9f-0c8a9d1e2f3b",
+      "clientId": "20f2e6c2-2699-4ccc-a982-1e9fb141b9bb",
+      "blockId": "0b3a2808-c9e0-4b6f-8136-f7fd74a98abb",
+      "comment": "",
+      "completed": true,
+      "createdAt": "2026-06-30T12:00:00.000Z",
+      "date": "2026-06-30T12:00:00.000Z",
+      "dayNumber": 2,
+      "exercises": [
+        {
+          "name": "Pull over",
+          "sets": [
+            {
+              "rir": "",
+              "reps": "",
+              "weight": ""
+            },
+            {
+              "rir": "",
+              "reps": "",
+              "weight": ""
+            },
+            {
+              "rir": "",
+              "reps": "",
+              "weight": ""
+            }
+          ]
+        },
+        {
+          "name": "Dominadas (Prono)",
+          "sets": [
+            {
+              "rir": "",
+              "reps": "",
+              "weight": ""
+            },
+            {
+              "rir": "",
+              "reps": "",
+              "weight": ""
+            },
+            {
+              "rir": "",
+              "reps": "",
+              "weight": ""
+            }
+          ]
+        },
+        {
+          "name": "Remo en barra libre",
+          "sets": [
+            {
+              "rir": "",
+              "reps": "",
+              "weight": ""
+            },
+            {
+              "rir": "",
+              "reps": "",
+              "weight": ""
+            },
+            {
+              "rir": "",
+              "reps": "",
+              "weight": ""
+            }
+          ]
+        },
+        {
+          "name": "Remo mancuerna unilateral",
+          "sets": [
+            {
+              "rir": "",
+              "reps": "",
+              "weight": ""
+            },
+            {
+              "rir": "",
+              "reps": "",
+              "weight": ""
+            },
+            {
+              "rir": "",
+              "reps": "",
+              "weight": ""
+            }
+          ]
+        },
+        {
+          "name": "Jalón abierto",
+          "sets": [
+            {
+              "rir": "",
+              "reps": "",
+              "weight": ""
+            },
+            {
+              "rir": "",
+              "reps": "",
+              "weight": ""
+            },
+            {
+              "rir": "",
+              "reps": "",
+              "weight": ""
+            }
+          ]
+        },
+        {
+          "name": "Pájaros en Peck Deck Invertido",
+          "sets": [
+            {
+              "rir": "",
+              "reps": "",
+              "weight": ""
+            },
+            {
+              "rir": "",
+              "reps": "",
+              "weight": ""
+            },
+            {
+              "rir": "",
+              "reps": "",
+              "weight": ""
+            },
+            {
+              "rir": "",
+              "reps": "",
+              "weight": ""
+            }
+          ]
+        },
+        {
+          "name": "Curl bíceps mancuerna",
+          "sets": [
+            {
+              "rir": "",
+              "reps": "",
+              "weight": ""
+            },
+            {
+              "rir": "",
+              "reps": "",
+              "weight": ""
+            },
+            {
+              "rir": "",
+              "reps": "",
+              "weight": ""
+            }
+          ]
+        }
+      ],
+      "routineId": "230e4765-0521-4ee9-8446-7e0da54b301a",
+      "updatedAt": "2026-06-30T12:00:00.000Z",
+      "weekIndex": 3,
+      "lastModified": "2026-06-30T12:00:00.000Z"
     }
   ],
   "habits": [
