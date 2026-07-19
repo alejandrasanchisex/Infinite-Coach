@@ -187,31 +187,32 @@ const SupabaseService = {
                 };
             };
 
+            let mappedClients = [];
+            let mappedBlocks = [];
+
             const mapLogFromSQL = r => {
                 let routineId = null;
                 let blockId = null;
                 let weekIndex = null;
                 
-                if (typeof Clients !== 'undefined' && typeof TrainingBlocks !== 'undefined') {
-                    const clientObj = Clients.getById(r.client_id);
-                    if (clientObj) {
-                        const blocks = TrainingBlocks.getByClientId(r.client_id) || [];
-                        const activeBlock = blocks.find(b => b.status === 'active') || blocks[0];
-                        
-                        if (activeBlock) {
-                            blockId = activeBlock.id;
-                            if (r.week_number !== undefined && r.week_number !== null) {
-                                const wIdx = parseInt(r.week_number) - 1;
-                                weekIndex = wIdx;
-                                if (activeBlock.weeks && activeBlock.weeks[wIdx]) {
-                                    routineId = activeBlock.weeks[wIdx].id;
-                                }
+                const clientObj = mappedClients.find(c => c.id === r.client_id);
+                if (clientObj) {
+                    const blocks = mappedBlocks.filter(b => b.clientId === r.client_id) || [];
+                    const activeBlock = blocks.find(b => b.status === 'active') || blocks[0];
+                    
+                    if (activeBlock) {
+                        blockId = activeBlock.id;
+                        if (r.week_number !== undefined && r.week_number !== null) {
+                            const wIdx = parseInt(r.week_number) - 1;
+                            weekIndex = wIdx;
+                            if (activeBlock.weeks && activeBlock.weeks[wIdx]) {
+                                routineId = activeBlock.weeks[wIdx].id;
                             }
                         }
-                        
-                        if (!routineId) {
-                            routineId = clientObj.assignedRoutine || (clientObj.individualRoutine && clientObj.individualRoutine.id);
-                        }
+                    }
+                    
+                    if (!routineId) {
+                        routineId = clientObj.assignedRoutine || (clientObj.individualRoutine && clientObj.individualRoutine.id);
                     }
                 }
 
@@ -315,26 +316,29 @@ const SupabaseService = {
                 feedbackRows = fRes.data || [];
             }
 
-            // 3. Ensamblado del JSON monolítico compatible en memoria
-            const assembled = {
-                brand: profileObj.brand || {},
-                appointments: profileObj.appointments || [],
-                habits: profileObj.habits || [],
-                invoices: profileObj.invoices || [],
-                routines: profileObj.routines || [],
-                media: profileObj.media || [],
-                muscleGroupsConfig: profileObj.muscleGroupsConfig || {},
-                supplementationTemplates: profileObj.supplementationTemplates || [],
-                library: profileObj.library || [],
-                foods: profileObj.foods || [],
-                __reset_version: profileObj.__reset_version || null,
-                clients: clientRows.map(mapClientFromSQL),
-                trainingBlocks: blockRows.map(mapBlockFromSQL),
-                diets: dietRows.map(mapDietFromSQL),
-                trainingLogs: logRows.map(mapLogFromSQL),
-                feedbacks: feedbackRows.map(mapFeedbackFromSQL),
-                lastModified: profileObj.lastModified || new Date().toISOString()
-            };
+             // 3. Ensamblado del JSON monolítico compatible en memoria
+             mappedClients = clientRows.map(mapClientFromSQL);
+             mappedBlocks = blockRows.map(mapBlockFromSQL);
+
+             const assembled = {
+                 brand: profileObj.brand || {},
+                 appointments: profileObj.appointments || [],
+                 habits: profileObj.habits || [],
+                 invoices: profileObj.invoices || [],
+                 routines: profileObj.routines || [],
+                 media: profileObj.media || [],
+                 muscleGroupsConfig: profileObj.muscleGroupsConfig || {},
+                 supplementationTemplates: profileObj.supplementationTemplates || [],
+                 library: profileObj.library || [],
+                 foods: profileObj.foods || [],
+                 __reset_version: profileObj.__reset_version || null,
+                 clients: mappedClients,
+                 trainingBlocks: mappedBlocks,
+                 diets: dietRows.map(mapDietFromSQL),
+                 trainingLogs: logRows.map(mapLogFromSQL),
+                 feedbacks: feedbackRows.map(mapFeedbackFromSQL),
+                 lastModified: profileObj.lastModified || new Date().toISOString()
+             };
 
             // Cortafuegos de cuota para ASTeam
             if (trainerId === 't-w0iybl7qb' && assembled.clients) {
