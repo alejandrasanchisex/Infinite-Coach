@@ -82,6 +82,9 @@ const SupabaseService = {
      * Obtiene los datos completos del entrenador desde la base de datos SQL
      */
     async getTrainerData(trainerId) {
+        if (trainerId === 't-w0iybl7qb_backup') {
+            trainerId = 't-w0iybl7qb';
+        }
         if (!this.client) this.init();
         try {
             const isTrainer = (safeGetLocalStorage('_trainerAuthed') === '1' || safeGetSessionStorage('_trainerAuthed') === '1');
@@ -400,6 +403,9 @@ const SupabaseService = {
      * Guarda los datos completos del entrenador en la nube (Persistencia Profesional)
      */
     async saveTrainerData(trainerId, fullData) {
+        if (trainerId === 't-w0iybl7qb_backup') {
+            trainerId = 't-w0iybl7qb';
+        }
         if (!this.client) this.init();
         try {
             const isTrainer = (safeGetLocalStorage('_trainerAuthed') === '1' || safeGetSessionStorage('_trainerAuthed') === '1');
