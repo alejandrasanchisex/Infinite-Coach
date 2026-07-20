@@ -73,9 +73,9 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="styles/theme.css?v=716">
-  <link rel="stylesheet" href="styles/components.css?v=716">
-  <link rel="stylesheet" href="styles/mobile.css?v=716">
+  <link rel="stylesheet" href="styles/theme.css?v=717">
+  <link rel="stylesheet" href="styles/components.css?v=717">
+  <link rel="stylesheet" href="styles/mobile.css?v=717">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <script>
@@ -187,10 +187,10 @@
           <span id="brandName">Infinite Coach</span>
         </div>
         <ul class="nav-links" id="navLinks">
-          <li><a href="dashboard.html?v=716" class="nav-link">Inicio</a></li>
-          <li><a href="profile.html?v=716" class="nav-link">Ficha Técnica</a></li>
+          <li><a href="dashboard.html?v=717" class="nav-link">Inicio</a></li>
+          <li><a href="profile.html?v=717" class="nav-link">Ficha Técnica</a></li>
 
-          <li><a href="acceso.html?v=716" class="nav-link">Salir</a></li>
+          <li><a href="acceso.html?v=717" class="nav-link">Salir</a></li>
         </ul>
         <button class="menu-toggle" onclick="toggleMenu()" style="margin-left: auto;">☰</button>
       </nav>
@@ -257,12 +257,12 @@
 
   <!-- Supabase SDK & Service -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script src="js/supabase-service.js?v=716"></script>
+  <script src="js/supabase-service.js?v=717"></script>
 
-  <script src="js/config.js?v=716"></script>
-  <script src="js/data-models.js?v=716"></script>
-  <script src="js/custom-exercises.js?v=716"></script>
-  <script src="js/utils.js?v=716"></script>
+  <script src="js/config.js?v=717"></script>
+  <script src="js/data-models.js?v=717"></script>
+  <script src="js/custom-exercises.js?v=717"></script>
+  <script src="js/utils.js?v=717"></script>
   <script>
     // --- RESOLUCIÓN DE TRAINER ID (FALLBACK SEGURO) ---
     (function() {
@@ -323,47 +323,69 @@
         if (activeDays.length === 0) return true; // Empty week acts as completed
         
         return activeDays.every(d => {
-            return userLogs.some(l => (l.routineId === w.id || l.routineId === logicId) && l.dayNumber === d && l.completed && (!isBlockBased || !publishedBlock || l.blockId === publishedBlock.id));
+            return userLogs.some(l => (l.routineId === w.id || l.routineId === logicId) && l.dayNumber === d && l.completed);
         });
     }
 
     // --- INITIALIZATION ---
-    async function initializeApp() {
-      try {
-        // Cleanup local storage for Amalia Delgado's incorrect Week 2 Day 5 log
+    function applyAmaliaLogsPatch() {
         try {
-            for (let i = 0; i < localStorage.length; i++) {
-                const key = localStorage.key(i);
-                if (key && key.startsWith("fitnessAppData_")) {
-                    const localRaw = localStorage.getItem(key);
-                    if (localRaw) {
-                        let localData = JSON.parse(localRaw);
-                        if (localData.trainingLogs) {
-                            const originalLen = localData.trainingLogs.length;
-                            localData.trainingLogs = localData.trainingLogs.filter(l => {
-                                if (l.clientId === '0db0ea7a-c413-44cb-b99e-dfd9790383eb' && l.dayNumber === 5) {
-                                    const logDate = new Date(l.date || l.createdAt);
-                                    if (logDate >= new Date('2026-05-25T00:00:00.000Z')) {
-                                        return false; // delete!
-                                    }
-                                }
-                                if (l.id === 'fca4bf24-5ec6-4202-aeca-d17d8335d4fa') {
-                                    return false; // delete Fernando incorrect Week 6 Day 1 draft log!
-                                }
-                                return true;
-                            });
-                            if (localData.trainingLogs.length !== originalLen) {
-                                localData.lastModified = new Date().toISOString();
-                                localStorage.setItem(key, JSON.stringify(localData));
-                                console.log(`Comprehensive local cleanup successful for key ${key}`);
+            const data = typeof window.getData === 'function' ? window.getData() : null;
+            if (data && data.trainingLogs) {
+                let changed = false;
+                const originalLen = data.trainingLogs.length;
+                const seen = new Set();
+                data.trainingLogs = data.trainingLogs.filter(l => {
+                    if (l.clientId === '0db0ea7a-c413-44cb-b99e-dfd9790383eb' && l.completed) {
+                        const d = new Date(l.date || l.createdAt);
+                        let start = null;
+                        let blockTitle = '';
+                        if (d >= new Date('2026-06-26T00:00:00Z')) {
+                            start = new Date('2026-06-26T00:00:00Z');
+                            blockTitle = 'Hipertrofia 2';
+                        } else if (d >= new Date('2026-05-19T00:00:00Z')) {
+                            start = new Date('2026-05-19T00:00:00Z');
+                            blockTitle = 'Hipertrofia 1';
+                        }
+                        if (start) {
+                            const diffDays = Math.floor((d - start) / (1000 * 60 * 60 * 24));
+                            const calcWeekIdx = Math.floor(diffDays / 7);
+                            const finalWeekIdx = Math.max(0, Math.min(calcWeekIdx, 4));
+                            
+                            if (l.weekIndex !== finalWeekIdx) {
+                                l.weekIndex = finalWeekIdx;
+                                l.lastModified = new Date().toISOString();
+                                changed = true;
                             }
+                            
+                            const key = blockTitle + '_' + finalWeekIdx + '_' + l.dayNumber;
+                            if (seen.has(key)) {
+                                changed = true;
+                                return false; // Eliminar duplicado local
+                            }
+                            seen.add(key);
                         }
                     }
+                    return true;
+                });
+                if (data.trainingLogs.length !== originalLen) {
+                    changed = true;
+                }
+                if (changed) {
+                    data.lastModified = new Date().toISOString();
+                    window.saveData(data);
+                    console.log("✅ [Amalia Patch] Logs dinámicamente corregidos.");
                 }
             }
-        } catch(e) {
-            console.error("Local cleanup error:", e);
+        } catch(errPatch) {
+            console.error("Amalia patch error:", errPatch);
         }
+    }
+
+    async function initializeApp() {
+      try {
+        // Corregir logs locales antes de renderizar
+        applyAmaliaLogsPatch();
 
         // Renderizar localmente al instante
         await renderRoutinePage();
@@ -375,12 +397,14 @@
                     window.SupabaseService.init();
                     const freshData = await window.syncFromCloud();
                     if (freshData) {
+                        applyAmaliaLogsPatch();
                         await renderRoutinePage();
                     }
                 } else if (window.FirebaseService) {
                     await window.FirebaseService.init();
                     const freshData = await window.syncFromCloud();
                     if (freshData) {
+                        applyAmaliaLogsPatch();
                         await renderRoutinePage();
                     }
                 }
@@ -679,7 +703,7 @@
 
             tabsContainer.innerHTML = days.map((day, index) => {
                const fallbackBlockWeekId = isBlockBased && publishedBlock ? `block_${publishedBlock.id}_week_${currentWeekIdx}` : null;
-               const isCompleted = logsToUse.some(l => (l.routineId === routine.id || l.routineId === currentLogicId || (fallbackBlockWeekId && l.routineId === fallbackBlockWeekId)) && l.dayNumber === day && l.completed && (!isBlockBased || !publishedBlock || l.blockId === publishedBlock.id) && (!isBlockBased || (l.weekIndex !== undefined && l.weekIndex !== null ? l.weekIndex === currentWeekIdx : (l.routineId === routine.id || currentWeekIdx === 0))));
+               const isCompleted = logsToUse.some(l => (l.routineId === routine.id || l.routineId === currentLogicId || (fallbackBlockWeekId && l.routineId === fallbackBlockWeekId)) && l.dayNumber === day && l.completed && (!isBlockBased || (l.weekIndex !== undefined && l.weekIndex !== null ? l.weekIndex === currentWeekIdx : (l.routineId === routine.id || currentWeekIdx === 0))));
                const dayEx = routine.days ? (routine.days[day-1]?.exercises || []) : (routine.exercises || []).filter(e=>e.day===day);
                const hasEx = dayEx.length > 0;
 
@@ -786,7 +810,6 @@
           return (l.routineId === routine.id || l.routineId === currentRoutineId || (fallbackBlockWeekId && l.routineId === fallbackBlockWeekId)) && 
                  l.dayNumber === dayNumber && 
                  l.completed &&
-                 (!isBlockBased || !publishedBlock || l.blockId === publishedBlock.id) &&
                  (!isBlockBased || (l.weekIndex !== undefined && l.weekIndex !== null ? l.weekIndex === currentWeekIdx : (l.routineId === routine.id || currentWeekIdx === 0)));
       });
       if (completedLog) sessionCompleted = true;
@@ -1305,6 +1328,6 @@
     // Trigger App Initialization
     initializeApp();
   </script>
-    <script src="js/custom-recipes.js?v=716"></script></body>
+    <script src="js/custom-recipes.js?v=717"></script></body>
 
 </html>

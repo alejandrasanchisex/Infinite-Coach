@@ -650,64 +650,84 @@ async function doLogin() {
         }
         if (window.SupabaseService && window.SupabaseService.client) {
             try {
-                // Fetch profiles with the code
-                const profiles = await withTimeout((async () => {
+                // A. Buscar en la tabla relacional de SQL 'clients'
+                const sqlResult = await withTimeout((async () => {
                     const { data, error } = await window.SupabaseService.client
-                        .from('trainer_profiles')
-                        .select('trainer_id, clients:full_data->clients')
-                        .contains('full_data', { clients: [{ accessCode: code }] });
+                        .from('clients')
+                        .select('id, name, trainer_id, access_code, status')
+                        .eq('access_code', code);
                     if (error) throw error;
                     return data;
                 })(), 3000);
                 
-                if (profiles) {
-                    // Ordenar perfiles para priorizar el entrenador activo actual y evitar genéricos
-                    profiles.sort(function(a, b) {
-                        var aIsActive = (a.trainer_id === window.activeTrainerId);
-                        var bIsActive = (b.trainer_id === window.activeTrainerId);
-                        if (aIsActive && !bIsActive) return -1;
-                        if (!aIsActive && bIsActive) return 1;
+                if (sqlResult && sqlResult.length > 0) {
+                    const matchedSql = sqlResult[0];
+                    foundClient = {
+                        id: matchedSql.id,
+                        name: matchedSql.name,
+                        accessCode: matchedSql.access_code,
+                        status: matchedSql.status
+                    };
+                    foundTrainerId = matchedSql.trainer_id;
+                }
+                
+                // B. Fallback a 'trainer_profiles' por compatibilidad con entrenadores que no usan SQL
+                if (!foundClient) {
+                    const profiles = await withTimeout((async () => {
+                        const { data, error } = await window.SupabaseService.client
+                            .from('trainer_profiles')
+                            .select('trainer_id, clients:full_data->clients')
+                            .contains('full_data', { clients: [{ accessCode: code }] });
+                        if (error) throw error;
+                        return data;
+                    })(), 3000);
+                    
+                    if (profiles && profiles.length > 0) {
+                        profiles.sort(function(a, b) {
+                            var aIsActive = (a.trainer_id === window.activeTrainerId);
+                            var bIsActive = (b.trainer_id === window.activeTrainerId);
+                            if (aIsActive && !bIsActive) return -1;
+                            if (!aIsActive && bIsActive) return 1;
+                            return 0;
+                        });
 
-                        var aIsGeneric = (a.trainer_id === 'admin' || a.trainer_id === 'default');
-                        var bIsGeneric = (b.trainer_id === 'admin' || b.trainer_id === 'default');
-                        if (aIsGeneric && !bIsGeneric) return 1;
-                        if (!aIsGeneric && bIsGeneric) return -1;
-
-                        return 0;
-                    });
-
-                    for (var i = 0; i < profiles.length; i++) {
-                        var p = profiles[i];
-                        var clientsList = p.clients || [];
-                        for (var j = 0; j < clientsList.length; j++) {
-                            var c = clientsList[j];
-                            if ((c.accessCode || '').trim().toUpperCase() === code) {
-                                foundClient = c;
-                                foundTrainerId = p.trainer_id;
-                                break;
+                        for (var i = 0; i < profiles.length; i++) {
+                            var p = profiles[i];
+                            var clientsList = p.clients || [];
+                            for (var j = 0; j < clientsList.length; j++) {
+                                var c = clientsList[j];
+                                if ((c.accessCode || '').trim().toUpperCase() === code) {
+                                    foundClient = c;
+                                    foundTrainerId = p.trainer_id;
+                                    break;
+                                }
                             }
+                            if (foundClient) break;
                         }
-                        if (foundClient) break;
                     }
-
-                    if (foundClient) {
-                        const trainerProfile = await withTimeout((async () => {
-                            const { data, error: fetchError } = await window.SupabaseService.client
-                                .from('trainer_profiles')
-                                .select('full_data')
-                                .eq('trainer_id', foundTrainerId)
-                                .single();
-                            if (fetchError) throw fetchError;
-                            return data;
-                        })(), 3000);
-                        
-                        foundTrainerData = trainerProfile ? trainerProfile.full_data : null;
-                    }
+                }
+                
+                // Si encontramos el cliente, descargar datos de configuración del entrenador
+                if (foundClient && foundTrainerId) {
+                    const trainerProfile = await withTimeout((async () => {
+                        const { data, error: fetchError } = await window.SupabaseService.client
+                            .from('trainer_profiles')
+                            .select('full_data')
+                            .eq('trainer_id', foundTrainerId)
+                            .single();
+                        if (fetchError) throw fetchError;
+                        return data;
+                    })(), 3000);
+                    
+                    foundTrainerData = trainerProfile ? trainerProfile.full_data : null;
                 }
             } catch(e) {
                 console.warn("Supabase login check failed or timed out, trying static fallback file:", e);
+            }
+            
+            // C. Fallback a archivo estático local si no se encontró en Supabase por red o porque no existe en la DB principal
+            if (!foundClient) {
                 try {
-                    // Descargar ficha estática desde el servidor web como contingencia
                     const resp = await fetch(`/data/${code}.json`);
                     if (resp.ok) {
                         const staticData = await resp.json();
