@@ -2290,7 +2290,8 @@ const doSyncFromCloud = async () => {
 };
 
 window.syncFromCloud = () => {
-    if (typeof isLocalUploadInProgress !== 'undefined' && isLocalUploadInProgress) {
+    const isTrainer = (safeGetLocalStorage('_trainerAuthed') === '1' || safeGetSessionStorage('_trainerAuthed') === '1');
+    if (isTrainer && typeof isLocalUploadInProgress !== 'undefined' && isLocalUploadInProgress) {
         console.log("⏳ [Sync Blocked] Cancelando descarga de la nube: hay un entreno subiéndose en segundo plano para evitar sobrescritura.");
         return Promise.resolve(null);
     }

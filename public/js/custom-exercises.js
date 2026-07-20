@@ -236,6 +236,13 @@
     };
 
     function initializeProExercises() {
+        const isClient = !window.location.pathname.includes('trainer-') && !window.location.pathname.includes('admin-');
+        if (isClient) {
+            if (typeof loadMedia === 'function') loadMedia();
+            if (typeof loadRoutines === 'function') loadRoutines();
+            return;
+        }
+
         if (!window.getData || !window.saveData) {
             console.warn("CustomExercises: Core functions not found. Retrying in 100ms...");
             setTimeout(initializeProExercises, 100);
