@@ -1,10 +1,30 @@
+(function() {
+    var tid = localStorage.getItem('activeTrainerId') || sessionStorage.getItem('activeTrainerId');
+    if (tid === 't-w0iybl7qb_backup') {
+        console.log("Healing activeTrainerId from backup to primary ASTeam...");
+        localStorage.setItem('activeTrainerId', 't-w0iybl7qb');
+        sessionStorage.setItem('activeTrainerId', 't-w0iybl7qb');
+        if (typeof window !== 'undefined') {
+            window.activeTrainerId = 't-w0iybl7qb';
+        }
+        const oldData = localStorage.getItem('fitnessAppData_t-w0iybl7qb_backup');
+        if (oldData) {
+            localStorage.setItem('fitnessAppData_t-w0iybl7qb', oldData);
+        }
+        const oldBackup = localStorage.getItem('fitnessAppData_t-w0iybl7qb_backup_backup');
+        if (oldBackup) {
+            localStorage.setItem('fitnessAppData_t-w0iybl7qb_backup', oldBackup);
+        }
+    }
+})();
+
 const AUTH = {
     tokenClient: null,
     accessToken: null,
     userEmail: null,
     isAuthorized: false,
     gapiReady: null,
-
+ 
     init: () => {
         // Ya no se requiere Google Services. Solo renderizamos el login manual.
         AUTH.renderSignInButton();
