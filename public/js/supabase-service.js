@@ -213,6 +213,9 @@ const SupabaseService = {
             let mappedBlocks = [];
 
             const mapLogFromSQL = r => {
+                if (r.id === '91c7c535-ef01-4ccc-bbcb-ed1208754164') {
+                    return null;
+                }
                 let routineId = null;
                 let blockId = null;
                 let weekIndex = null;
@@ -407,7 +410,7 @@ const SupabaseService = {
                  clients: mappedClients,
                  trainingBlocks: mappedBlocks,
                  diets: dietRows.map(mapDietFromSQL),
-                 trainingLogs: logRows.map(mapLogFromSQL),
+                 trainingLogs: logRows.map(mapLogFromSQL).filter(Boolean),
                  feedbacks: feedbackRows.map(mapFeedbackFromSQL),
                  lastModified: profileObj.lastModified || new Date().toISOString()
              };
