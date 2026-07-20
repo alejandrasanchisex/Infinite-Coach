@@ -147,7 +147,9 @@ const SupabaseService = {
                 published: r.published || false,
                 startDate: r.start_date,
                 endDate: r.end_date,
-                weeks: r.weeks || []
+                weeks: r.weeks || [],
+                createdAt: r.created_at,
+                updatedAt: r.updated_at
             });
 
             const mapDietFromSQL = r => {
@@ -199,7 +201,9 @@ const SupabaseService = {
                         protein: protein || 0,
                         carbs: carbs || 0,
                         fat: fat || 0
-                    }
+                    },
+                    createdAt: r.created_at,
+                    updatedAt: r.updated_at
                 };
             };
 

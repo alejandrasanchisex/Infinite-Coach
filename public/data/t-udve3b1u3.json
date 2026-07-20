@@ -1,6 +1,6 @@
 {
   "brand": {
-    "logo": "https://bieeydhacavxymoosasx.supabase.co/storage/v1/object/public/Media/lucy_logo_cropped.png?v=727",
+    "logo": "https://bieeydhacavxymoosasx.supabase.co/storage/v1/object/public/Media/lucy_logo_cropped.png?v=666",
     "name": "Lucy Tundidor",
     "colors": {
       "accent": "#a79788",
@@ -9292,7 +9292,7 @@
               "reps": "8-10",
               "sets": "3",
               "notes": "Mantener abdomen tenso",
-              "videoUrl": "https://www.youtube.com/watch?v=727yjwxtZ_Vkg",
+              "videoUrl": "https://www.youtube.com/watch?v=666yjwxtZ_Vkg",
               "intensity": "RIR 2"
             }
           ],
@@ -9819,7 +9819,7 @@
     },
     {
       "id": "sys-ex-press-plano-(mancuernas)",
-      "url": "https://www.youtube.com/watch?v=727p9qL-wY",
+      "url": "https://www.youtube.com/watch?v=696p9qL-wY",
       "type": "video",
       "title": "Press Plano (Mancuernas)",
       "category": "exercise",
@@ -9830,7 +9830,7 @@
     },
     {
       "id": "sys-ex-press-inclinado-(mancuernas)",
-      "url": "https://www.youtube.com/watch?v=727iPEnn-ltC8",
+      "url": "https://www.youtube.com/watch?v=696iPEnn-ltC8",
       "type": "video",
       "title": "Press Inclinado (Mancuernas)",
       "category": "exercise",
@@ -9852,7 +9852,7 @@
     },
     {
       "id": "sys-ex-aperturas-en-peck-deck",
-      "url": "https://www.youtube.com/watch?v=727id882M_39E",
+      "url": "https://www.youtube.com/watch?v=696id882M_39E",
       "type": "video",
       "title": "Aperturas en Peck Deck",
       "category": "exercise",
@@ -9896,7 +9896,7 @@
     },
     {
       "id": "sys-ex-fondos-en-paralelas-(pecho)",
-      "url": "https://www.youtube.com/watch?v=727z8JmcrW-As",
+      "url": "https://www.youtube.com/watch?v=696z8JmcrW-As",
       "type": "video",
       "title": "Fondos en Paralelas (Pecho)",
       "category": "exercise",
@@ -9962,7 +9962,7 @@
     },
     {
       "id": "sys-ex-press-de-banca-con-agarre-invertido",
-      "url": "https://www.youtube.com/watch?v=727p9qL-wY",
+      "url": "https://www.youtube.com/watch?v=696p9qL-wY",
       "type": "video",
       "title": "Press de Banca con Agarre Invertido",
       "category": "exercise",
@@ -10017,7 +10017,7 @@
     },
     {
       "id": "sys-ex-press-de-banca-con-mancuernas-con-agarre-neutro",
-      "url": "https://www.youtube.com/watch?v=727iPEnn-ltC8",
+      "url": "https://www.youtube.com/watch?v=696iPEnn-ltC8",
       "type": "video",
       "title": "Press de Banca con Mancuernas con Agarre Neutro",
       "category": "exercise",
@@ -10303,7 +10303,7 @@
     },
     {
       "id": "sys-ex-buenos-días-con-barra",
-      "url": "https://www.youtube.com/watch?v=727S8vR3XUaA",
+      "url": "https://www.youtube.com/watch?v=696S8vR3XUaA",
       "type": "video",
       "title": "Buenos Días con Barra",
       "category": "exercise",
@@ -10347,7 +10347,7 @@
     },
     {
       "id": "sys-ex-bird-dog-(perro-de-caza)",
-      "url": "https://www.youtube.com/watch?v=727XLEnwUr1gk",
+      "url": "https://www.youtube.com/watch?v=696XLEnwUr1gk",
       "type": "video",
       "title": "Bird Dog (Perro de caza)",
       "category": "exercise",
@@ -10402,7 +10402,7 @@
     },
     {
       "id": "sys-ex-press-militar-(barra)",
-      "url": "https://www.youtube.com/watch?v=727yjwxtZ_Vkg",
+      "url": "https://www.youtube.com/watch?v=696yjwxtZ_Vkg",
       "type": "video",
       "title": "Press Militar (Barra)",
       "category": "exercise",
@@ -10424,7 +10424,7 @@
     },
     {
       "id": "sys-ex-press-arnold",
-      "url": "https://www.youtube.com/watch?v=727mcHe6Pvefc",
+      "url": "https://www.youtube.com/watch?v=696mcHe6Pvefc",
       "type": "video",
       "title": "Press Arnold",
       "category": "exercise",
@@ -10435,7 +10435,7 @@
     },
     {
       "id": "sys-ex-elevaciones-laterales-(mancuernas)",
-      "url": "https://www.youtube.com/watch?v=727VcKaXpzqRo",
+      "url": "https://www.youtube.com/watch?v=696VcKaXpzqRo",
       "type": "video",
       "title": "Elevaciones Laterales (Mancuernas)",
       "category": "exercise",
@@ -10468,7 +10468,7 @@
     },
     {
       "id": "sys-ex-pájaros-(mancuernas)",
-      "url": "https://www.youtube.com/watch?v=727yMdhi2DVao",
+      "url": "https://www.youtube.com/watch?v=696yMdhi2DVao",
       "type": "video",
       "title": "Pájaros (Mancuernas)",
       "category": "exercise",
@@ -10523,7 +10523,7 @@
     },
     {
       "id": "sys-ex-pájaros-en-peck-deck-invertido",
-      "url": "https://www.youtube.com/watch?v=727yWTVfXNntc",
+      "url": "https://www.youtube.com/watch?v=696yWTVfXNntc",
       "type": "video",
       "title": "Pájaros en Peck Deck Invertido",
       "category": "exercise",
@@ -10545,7 +10545,7 @@
     },
     {
       "id": "sys-ex-elevaciones-laterales-inclinadas-(mancuerna)",
-      "url": "https://www.youtube.com/watch?v=727VcKaXpzqRo",
+      "url": "https://www.youtube.com/watch?v=696VcKaXpzqRo",
       "type": "video",
       "title": "Elevaciones Laterales Inclinadas (Mancuerna)",
       "category": "exercise",
@@ -10567,7 +10567,7 @@
     },
     {
       "id": "sys-ex-pájaros-sentado",
-      "url": "https://www.youtube.com/watch?v=727yMdhi2DVao",
+      "url": "https://www.youtube.com/watch?v=696yMdhi2DVao",
       "type": "video",
       "title": "Pájaros Sentado",
       "category": "exercise",
@@ -10578,7 +10578,7 @@
     },
     {
       "id": "sys-ex-press-de-hombros-en-máquina-smith",
-      "url": "https://www.youtube.com/watch?v=727yjwxtZ_Vkg",
+      "url": "https://www.youtube.com/watch?v=696yjwxtZ_Vkg",
       "type": "video",
       "title": "Press de Hombros en Máquina Smith",
       "category": "exercise",
@@ -10611,7 +10611,7 @@
     },
     {
       "id": "sys-ex-elevaciones-laterales-en-máquina",
-      "url": "https://www.youtube.com/watch?v=727VcKaXpzqRo",
+      "url": "https://www.youtube.com/watch?v=696VcKaXpzqRo",
       "type": "video",
       "title": "Elevaciones Laterales en Máquina",
       "category": "exercise",
@@ -10688,7 +10688,7 @@
     },
     {
       "id": "sys-ex-sentadilla-búlgara-(foco-cuádriceps)",
-      "url": "https://www.youtube.com/watch?v=727C-uNgKwPLE",
+      "url": "https://www.youtube.com/watch?v=696C-uNgKwPLE",
       "type": "video",
       "title": "Sentadilla Búlgara (Foco Cuádriceps)",
       "category": "exercise",
@@ -10765,7 +10765,7 @@
     },
     {
       "id": "sys-ex-step-ups-con-mancuernas",
-      "url": "https://www.youtube.com/watch?v=727_C8p9pNc6U",
+      "url": "https://www.youtube.com/watch?v=696_C8p9pNc6U",
       "type": "video",
       "title": "Step Ups con Mancuernas",
       "category": "exercise",
@@ -10787,7 +10787,7 @@
     },
     {
       "id": "sys-ex-sentadilla-búlgara-con-mancuernas",
-      "url": "https://www.youtube.com/watch?v=727C-uNgKwPLE",
+      "url": "https://www.youtube.com/watch?v=696C-uNgKwPLE",
       "type": "video",
       "title": "Sentadilla Búlgara con Mancuernas",
       "category": "exercise",
@@ -10831,7 +10831,7 @@
     },
     {
       "id": "sys-ex-curl-femoral-tumbado",
-      "url": "https://www.youtube.com/watch?v=727Tq3QdAUUoI",
+      "url": "https://www.youtube.com/watch?v=696Tq3QdAUUoI",
       "type": "video",
       "title": "Curl Femoral Tumbado",
       "category": "exercise",
@@ -10886,7 +10886,7 @@
     },
     {
       "id": "sys-ex-curl-femoral-con-fitball",
-      "url": "https://www.youtube.com/watch?v=727Tq3QdAUUoI",
+      "url": "https://www.youtube.com/watch?v=696Tq3QdAUUoI",
       "type": "video",
       "title": "Curl Femoral con Fitball",
       "category": "exercise",
@@ -10919,7 +10919,7 @@
     },
     {
       "id": "sys-ex-curl-femoral-con-mancuerna-entre-pies",
-      "url": "https://www.youtube.com/watch?v=727Tq3QdAUUoI",
+      "url": "https://www.youtube.com/watch?v=696Tq3QdAUUoI",
       "type": "video",
       "title": "Curl Femoral con Mancuerna entre pies",
       "category": "exercise",
@@ -10952,7 +10952,7 @@
     },
     {
       "id": "sys-ex-curl-femoral-en-polea",
-      "url": "https://www.youtube.com/watch?v=727Tq3QdAUUoI",
+      "url": "https://www.youtube.com/watch?v=696Tq3QdAUUoI",
       "type": "video",
       "title": "Curl Femoral en Polea",
       "category": "exercise",
@@ -11150,7 +11150,7 @@
     },
     {
       "id": "sys-ex-zancada-búlgara-(foco-glúteo)",
-      "url": "https://www.youtube.com/watch?v=727C-uNgKwPLE",
+      "url": "https://www.youtube.com/watch?v=696C-uNgKwPLE",
       "type": "video",
       "title": "Zancada Búlgara (Foco Glúteo)",
       "category": "exercise",
@@ -11161,7 +11161,7 @@
     },
     {
       "id": "sys-ex-step-up-(cajón-alto)",
-      "url": "https://www.youtube.com/watch?v=727_C8p9pNc6U",
+      "url": "https://www.youtube.com/watch?v=696_C8p9pNc6U",
       "type": "video",
       "title": "Step Up (Cajón Alto)",
       "category": "exercise",
@@ -11227,7 +11227,7 @@
     },
     {
       "id": "sys-ex-zancadas-cruzadas-(curtsy-lunges)",
-      "url": "https://www.youtube.com/watch?v=727C-uNgKwPLE",
+      "url": "https://www.youtube.com/watch?v=696C-uNgKwPLE",
       "type": "video",
       "title": "Zancadas cruzadas (Curtsy Lunges)",
       "category": "exercise",
@@ -11271,7 +11271,7 @@
     },
     {
       "id": "sys-ex-sentadilla-sumo-con-mancuerna",
-      "url": "https://www.youtube.com/watch?v=727_C8p9pNc6U",
+      "url": "https://www.youtube.com/watch?v=696_C8p9pNc6U",
       "type": "video",
       "title": "Sentadilla Sumo con Mancuerna",
       "category": "exercise",
@@ -11469,7 +11469,7 @@
     },
     {
       "id": "sys-ex-press-francés",
-      "url": "https://www.youtube.com/watch?v=727u1_NreL7mU",
+      "url": "https://www.youtube.com/watch?v=696u1_NreL7mU",
       "type": "video",
       "title": "Press Francés",
       "category": "exercise",
@@ -11480,7 +11480,7 @@
     },
     {
       "id": "sys-ex-extensiones-en-polea-alta",
-      "url": "https://www.youtube.com/watch?v=727-LAMcpzHLU",
+      "url": "https://www.youtube.com/watch?v=696-LAMcpzHLU",
       "type": "video",
       "title": "Extensiones en Polea Alta",
       "category": "exercise",
@@ -11491,7 +11491,7 @@
     },
     {
       "id": "sys-ex-patada-de-tríceps-(polea)",
-      "url": "https://www.youtube.com/watch?v=727SS6K3lAwZ8",
+      "url": "https://www.youtube.com/watch?v=696SS6K3lAwZ8",
       "type": "video",
       "title": "Patada de Tríceps (Polea)",
       "category": "exercise",
@@ -11513,7 +11513,7 @@
     },
     {
       "id": "sys-ex-extensiones-tras-nuca",
-      "url": "https://www.youtube.com/watch?v=727XhS6_q1Vtc",
+      "url": "https://www.youtube.com/watch?v=696XhS6_q1Vtc",
       "type": "video",
       "title": "Extensiones tras nuca",
       "category": "exercise",
@@ -11524,7 +11524,7 @@
     },
     {
       "id": "sys-ex-patada-de-tríceps-con-mancuerna",
-      "url": "https://www.youtube.com/watch?v=727SS6K3lAwZ8",
+      "url": "https://www.youtube.com/watch?v=696SS6K3lAwZ8",
       "type": "video",
       "title": "Patada de Tríceps con Mancuerna",
       "category": "exercise",
@@ -11535,7 +11535,7 @@
     },
     {
       "id": "sys-ex-fondos-entre-bancos-(tríceps)",
-      "url": "https://www.youtube.com/watch?v=727z8JmcrW-As",
+      "url": "https://www.youtube.com/watch?v=696z8JmcrW-As",
       "type": "video",
       "title": "Fondos entre Bancos (Tríceps)",
       "category": "exercise",
@@ -11546,7 +11546,7 @@
     },
     {
       "id": "sys-ex-press-francés-con-mancuernas",
-      "url": "https://www.youtube.com/watch?v=727u1_NreL7mU",
+      "url": "https://www.youtube.com/watch?v=696u1_NreL7mU",
       "type": "video",
       "title": "Press Francés con Mancuernas",
       "category": "exercise",
@@ -11557,7 +11557,7 @@
     },
     {
       "id": "sys-ex-extensión-de-tríceps-por-encima-de-la-cabeza-en-polea",
-      "url": "https://www.youtube.com/watch?v=727XhS6_q1Vtc",
+      "url": "https://www.youtube.com/watch?v=696XhS6_q1Vtc",
       "type": "video",
       "title": "Extensión de Tríceps por encima de la cabeza en Polea",
       "category": "exercise",
@@ -11568,7 +11568,7 @@
     },
     {
       "id": "sys-ex-fondos-en-máquina-para-tríceps",
-      "url": "https://www.youtube.com/watch?v=727z8JmcrW-As",
+      "url": "https://www.youtube.com/watch?v=696z8JmcrW-As",
       "type": "video",
       "title": "Fondos en Máquina para Tríceps",
       "category": "exercise",
@@ -11579,7 +11579,7 @@
     },
     {
       "id": "sys-ex-rompecráneos-(skull-crushers)-con-barra-ez",
-      "url": "https://www.youtube.com/watch?v=727u1_NreL7mU",
+      "url": "https://www.youtube.com/watch?v=696u1_NreL7mU",
       "type": "video",
       "title": "Rompecráneos (Skull Crushers) con barra EZ",
       "category": "exercise",
@@ -11590,7 +11590,7 @@
     },
     {
       "id": "sys-ex-extensión-de-tríceps-unilateral-en-polea",
-      "url": "https://www.youtube.com/watch?v=727-LAMcpzHLU",
+      "url": "https://www.youtube.com/watch?v=696-LAMcpzHLU",
       "type": "video",
       "title": "Extensión de Tríceps unilateral en Polea",
       "category": "exercise",
@@ -11612,7 +11612,7 @@
     },
     {
       "id": "sys-ex-extensión-de-tríceps-con-mancuerna-a-dos-manos",
-      "url": "https://www.youtube.com/watch?v=727XhS6_q1Vtc",
+      "url": "https://www.youtube.com/watch?v=696XhS6_q1Vtc",
       "type": "video",
       "title": "Extensión de Tríceps con mancuerna a dos manos",
       "category": "exercise",
@@ -11623,7 +11623,7 @@
     },
     {
       "id": "sys-ex-extensiones-de-tríceps-con-cuerda-invertida",
-      "url": "https://www.youtube.com/watch?v=727-LAMcpzHLU",
+      "url": "https://www.youtube.com/watch?v=696-LAMcpzHLU",
       "type": "video",
       "title": "Extensiones de Tríceps con Cuerda invertida",
       "category": "exercise",
@@ -11788,7 +11788,7 @@
     },
     {
       "id": "sys-ex-dead-bug",
-      "url": "https://www.youtube.com/watch?v=727XLEnwUr1gk",
+      "url": "https://www.youtube.com/watch?v=696XLEnwUr1gk",
       "type": "video",
       "title": "Dead Bug",
       "category": "exercise",
@@ -11821,7 +11821,7 @@
     },
     {
       "id": "sys-ex-giros-rusos-(russian-twists)",
-      "url": "https://www.youtube.com/watch?v=727XLEnwUr1gk",
+      "url": "https://www.youtube.com/watch?v=696XLEnwUr1gk",
       "type": "video",
       "title": "Giros Rusos (Russian Twists)",
       "category": "exercise",
@@ -13513,7 +13513,9 @@
         "protein": 0,
         "carbs": 0,
         "fat": 0
-      }
+      },
+      "createdAt": "2026-07-20T06:56:23.819452+00:00",
+      "updatedAt": "2026-07-20T09:10:17.838+00:00"
     },
     {
       "id": "b687cdc0-b49c-4fd2-9c4e-b7962e0a904e",
@@ -13868,7 +13870,9 @@
         "protein": 0,
         "carbs": 0,
         "fat": 0
-      }
+      },
+      "createdAt": "2026-07-18T18:44:39.977192+00:00",
+      "updatedAt": "2026-07-20T09:10:17.838+00:00"
     },
     {
       "id": "a178ff1d-98d3-4c42-8976-fe59b2e3dfba",
@@ -14624,7 +14628,9 @@
         "protein": 0,
         "carbs": 0,
         "fat": 0
-      }
+      },
+      "createdAt": "2026-07-19T13:49:02.186152+00:00",
+      "updatedAt": "2026-07-20T09:10:17.838+00:00"
     },
     {
       "id": "1629d3a4-f6a3-4947-95fb-953fc69b2c2c",
@@ -15380,7 +15386,9 @@
         "protein": 0,
         "carbs": 0,
         "fat": 0
-      }
+      },
+      "createdAt": "2026-07-18T18:44:40.84658+00:00",
+      "updatedAt": "2026-07-20T09:10:17.838+00:00"
     },
     {
       "id": "c32da99f-d680-445b-926a-e619658c6b40",
@@ -15396,7 +15404,9 @@
         "protein": 0,
         "carbs": 0,
         "fat": 0
-      }
+      },
+      "createdAt": "2026-07-18T18:44:42.089465+00:00",
+      "updatedAt": "2026-07-20T09:10:17.838+00:00"
     },
     {
       "id": "fed7f01a-54c1-4609-96ef-fa9034d84509",
@@ -15751,7 +15761,9 @@
         "protein": 0,
         "carbs": 0,
         "fat": 0
-      }
+      },
+      "createdAt": "2026-07-18T18:44:40.211913+00:00",
+      "updatedAt": "2026-07-20T09:10:17.838+00:00"
     },
     {
       "id": "f3b72bf1-2f64-4f17-b286-1d40d77d102e",
@@ -16353,7 +16365,9 @@
         "protein": 0,
         "carbs": 0,
         "fat": 0
-      }
+      },
+      "createdAt": "2026-07-18T18:44:40.330051+00:00",
+      "updatedAt": "2026-07-20T09:10:17.838+00:00"
     },
     {
       "id": "84c7b997-8c49-4e40-bc1e-34337988728e",
@@ -17109,7 +17123,9 @@
         "protein": 0,
         "carbs": 0,
         "fat": 0
-      }
+      },
+      "createdAt": "2026-07-18T18:44:42.324682+00:00",
+      "updatedAt": "2026-07-20T09:10:17.838+00:00"
     },
     {
       "id": "43973c56-0051-497a-80be-fe98e0ce61f0",
@@ -17928,7 +17944,9 @@
         "protein": 0,
         "carbs": 0,
         "fat": 0
-      }
+      },
+      "createdAt": "2026-07-18T18:44:41.443289+00:00",
+      "updatedAt": "2026-07-20T09:10:17.838+00:00"
     },
     {
       "id": "3a2d3096-2b7b-48a1-9afa-bc851d1ce5db",
@@ -18684,7 +18702,9 @@
         "protein": 0,
         "carbs": 0,
         "fat": 0
-      }
+      },
+      "createdAt": "2026-07-18T18:44:41.047787+00:00",
+      "updatedAt": "2026-07-20T09:10:17.838+00:00"
     },
     {
       "id": "fe14f6f6-f2f8-4958-9e9d-0f1504fa7283",
@@ -19503,7 +19523,9 @@
         "protein": 0,
         "carbs": 0,
         "fat": 0
-      }
+      },
+      "createdAt": "2026-07-18T18:44:41.660158+00:00",
+      "updatedAt": "2026-07-20T09:10:17.838+00:00"
     },
     {
       "id": "36129706-a0d7-47c2-9311-cef2ace279e2",
@@ -20075,7 +20097,9 @@
         "protein": 0,
         "carbs": 0,
         "fat": 0
-      }
+      },
+      "createdAt": "2026-07-18T18:44:39.843107+00:00",
+      "updatedAt": "2026-07-20T09:10:17.838+00:00"
     },
     {
       "id": "631366a2-18b3-4423-813b-317cfa5e75df",
@@ -20997,7 +21021,9 @@
         "protein": 0,
         "carbs": 0,
         "fat": 0
-      }
+      },
+      "createdAt": "2026-07-18T18:44:41.140003+00:00",
+      "updatedAt": "2026-07-20T09:10:17.838+00:00"
     },
     {
       "id": "f75c905a-d57c-434f-b113-b1babc9e0be3",
@@ -21834,7 +21860,9 @@
         "protein": 0,
         "carbs": 0,
         "fat": 0
-      }
+      },
+      "createdAt": "2026-07-18T18:44:41.979334+00:00",
+      "updatedAt": "2026-07-20T09:10:17.838+00:00"
     },
     {
       "id": "d1f8505e-60c2-4b66-ba4a-830d48ac28fa",
@@ -22680,7 +22708,9 @@
         "protein": 0,
         "carbs": 0,
         "fat": 0
-      }
+      },
+      "createdAt": "2026-07-18T18:44:41.77063+00:00",
+      "updatedAt": "2026-07-20T09:10:17.838+00:00"
     },
     {
       "id": "6ce57537-1f15-407b-96b5-801390f8e75c",
@@ -23018,7 +23048,9 @@
         "protein": 0,
         "carbs": 0,
         "fat": 0
-      }
+      },
+      "createdAt": "2026-07-18T18:44:40.493778+00:00",
+      "updatedAt": "2026-07-20T09:10:17.838+00:00"
     }
   ],
   "trainingBlocks": [
@@ -23288,7 +23320,9 @@
           "name": "Semana 1",
           "number": 1
         }
-      ]
+      ],
+      "createdAt": "2026-06-29T07:03:45.916+00:00",
+      "updatedAt": "2026-07-20T09:10:17.838+00:00"
     },
     {
       "id": "8579a32a-114d-4dfc-9e66-5f1d1e056ff7",
@@ -24644,7 +24678,9 @@
           "name": "Semana 6",
           "number": 6
         }
-      ]
+      ],
+      "createdAt": "2026-06-30T08:33:28.982+00:00",
+      "updatedAt": "2026-07-20T09:10:17.838+00:00"
     },
     {
       "id": "3c301982-4a3d-4256-830e-d9a301d38758",
@@ -25502,7 +25538,9 @@
           "name": "Semana 6",
           "number": 6
         }
-      ]
+      ],
+      "createdAt": "2026-06-25T22:01:18.516+00:00",
+      "updatedAt": "2026-07-20T09:10:17.838+00:00"
     },
     {
       "id": "f7699552-c117-4849-9033-2ca401702a1a",
@@ -27458,7 +27496,9 @@
           "name": "Semana 12",
           "number": 12
         }
-      ]
+      ],
+      "createdAt": "2026-06-28T15:32:47.463+00:00",
+      "updatedAt": "2026-07-20T09:10:17.838+00:00"
     },
     {
       "id": "f60e6b8d-6a69-4f97-a41b-6a2ede537534",
@@ -29198,7 +29238,9 @@
           "name": "Semana 8",
           "number": 8
         }
-      ]
+      ],
+      "createdAt": "2026-07-04T15:42:52.111+00:00",
+      "updatedAt": "2026-07-20T09:10:17.838+00:00"
     },
     {
       "id": "4416dd9e-ab29-4b78-8a0a-fae2767763b5",
@@ -30050,7 +30092,9 @@
           "number": 4,
           "description": ""
         }
-      ]
+      ],
+      "createdAt": "2026-07-15T08:25:14.427+00:00",
+      "updatedAt": "2026-07-20T09:10:17.838+00:00"
     },
     {
       "id": "42ceb80d-40f1-47bc-a524-bdc78be027ee",
@@ -30271,7 +30315,9 @@
           "name": "Semana 1",
           "number": 1
         }
-      ]
+      ],
+      "createdAt": "2026-07-18T16:53:32.434+00:00",
+      "updatedAt": "2026-07-20T09:10:17.838+00:00"
     },
     {
       "id": "6ba50f10-6c37-412f-a094-b83b65f362b8",
@@ -30479,7 +30525,9 @@
           "number": 1,
           "description": ""
         }
-      ]
+      ],
+      "createdAt": "2026-07-17T08:15:46.041+00:00",
+      "updatedAt": "2026-07-20T09:10:17.838+00:00"
     },
     {
       "id": "208d3cbc-c91e-444b-962f-810f8e2e2064",
@@ -30490,7 +30538,9 @@
       "published": false,
       "startDate": "2026-06-29T00:00:00+00:00",
       "endDate": "2026-06-29T21:17:23.227+00:00",
-      "weeks": []
+      "weeks": [],
+      "createdAt": "2026-06-29T21:13:57.928+00:00",
+      "updatedAt": "2026-07-20T09:10:17.838+00:00"
     },
     {
       "id": "0e47590e-e436-4510-9607-e574940f67e5",
@@ -30698,7 +30748,9 @@
           "name": "Semana 1",
           "number": 1
         }
-      ]
+      ],
+      "createdAt": "2026-06-29T21:17:23.238+00:00",
+      "updatedAt": "2026-07-20T09:10:17.838+00:00"
     }
   ],
   "trainingLogs": [
@@ -34019,5 +34071,5 @@
       "updatedAt": "2026-07-20T09:10:17.838+00:00"
     }
   ],
-  "lastModified": "2026-07-20T09:25:21.099Z"
+  "lastModified": "2026-07-20T10:12:32.731Z"
 }

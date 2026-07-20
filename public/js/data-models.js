@@ -4174,7 +4174,7 @@ const Routines = {
     const data = getData();
     const index = data.routines.findIndex(r => r.id === id);
     if (index !== -1) {
-      data.routines[index] = { ...data.routines[index], ...updates };
+      data.routines[index] = { ...data.routines[index], ...updates, updatedAt: new Date().toISOString() };
       saveData(data);
       return data.routines[index];
     }
@@ -4253,7 +4253,7 @@ const Diets = {
     const data = getData();
     const index = data.diets.findIndex(d => d.id === id);
     if (index !== -1) {
-      let merged = { ...data.diets[index], ...updates };
+      let merged = { ...data.diets[index], ...updates, updatedAt: new Date().toISOString() };
       
       // Auto-recalculate calories and macros if meals are being updated
       if (updates.meals) {
@@ -5071,7 +5071,7 @@ const TrainingBlocks = {
     if (!data.trainingBlocks) return null;
     const index = data.trainingBlocks.findIndex(b => b.id == id);
     if (index !== -1) {
-      data.trainingBlocks[index] = { ...data.trainingBlocks[index], ...updates };
+      data.trainingBlocks[index] = { ...data.trainingBlocks[index], ...updates, updatedAt: new Date().toISOString() };
       saveData(data);
       return data.trainingBlocks[index];
     }
