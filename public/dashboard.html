@@ -619,22 +619,13 @@
                     if (window.SupabaseService) {
                         window.SupabaseService.init();
                         const freshData = await window.syncFromCloud();
-                        const afterLocalData = Clients.getById(clientId);
-                        alert("DEBUG HOT SYNC:\n" +
-                              "- clientId: " + clientId + "\n" +
-                              "- activeTrainerId: " + window.activeTrainerId + "\n" +
-                              "- freshData exists: " + (!!freshData) + "\n" +
-                              "- freshData clients length: " + (freshData && freshData.clients ? freshData.clients.length : 'none') + "\n" +
-                              "- client after sync: " + (afterLocalData ? afterLocalData.name : 'undefined') + "\n" +
-                              "- all clients in DB: " + JSON.stringify((Clients.getAll() || []).map(c => c.name))
-                        );
                         if (freshData) {
                             renderLocalData(true);
                             client = Clients.getById(clientId);
                         }
                     }
                 } catch(syncErr) {
-                    alert("Sync Error: " + syncErr.message);
+                    console.warn("Hot sync failed silently:", syncErr);
                 }
             }
             if (!client) {

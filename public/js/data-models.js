@@ -1012,6 +1012,9 @@ const stripDatabaseForClient = (data, clientId) => {
         if (optimized.appointments) {
             optimized.appointments = optimized.appointments.filter(a => a.clientId === clientId);
         }
+        if (optimized.habits) {
+            optimized.habits = optimized.habits.filter(h => String(h.clientId) === String(clientId));
+        }
         
         return optimized;
     } catch(e) {
