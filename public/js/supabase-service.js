@@ -100,7 +100,8 @@ const SupabaseService = {
                     gender: r.gender,
                     status: r.status,
                     monthlyFee: r.monthly_fee ? parseFloat(r.monthly_fee) : 0,
-                    subscriptionAmount: r.monthly_fee ? parseFloat(r.monthly_fee) : 0,
+                    subscriptionAmount: tech.subscriptionAmount !== undefined ? parseFloat(tech.subscriptionAmount) : (r.monthly_fee ? parseFloat(r.monthly_fee) : 0),
+                    subscriptionType: tech.subscriptionType || 'Mensual',
                     assignedRoutine: r.assigned_routine,
                     assignedDiet: r.assigned_diet,
                     technicalData: tech,
@@ -121,6 +122,13 @@ const SupabaseService = {
                     cardioUrlVisible: tech.cardioUrlVisible !== undefined ? tech.cardioUrlVisible : true,
                     supplementation: r.supplementation,
                     supplementationUrl: r.supplementation_url,
+                    
+                    reviewDaysOfMonth: tech.reviewDaysOfMonth || '',
+                    specificReviewDate: tech.specificReviewDate || '',
+                    customFeedbackQuestions: tech.customFeedbackQuestions || [],
+                    customOnboardingQuestions: tech.customOnboardingQuestions || [],
+                    customPerimeters: tech.customPerimeters || [],
+                    weightHistory: tech.weightHistory || [],
                     
                     createdAt: r.created_at,
                     updatedAt: r.updated_at
@@ -406,6 +414,15 @@ const SupabaseService = {
                 tech.cardioUrlVisible = c.cardioUrlVisible !== undefined ? c.cardioUrlVisible : true;
                 if (c.supplementationPublished !== undefined) tech.supplementationPublished = c.supplementationPublished;
                 if (c.supplementationUrlVisible !== undefined) tech.supplementationUrlVisible = c.supplementationUrlVisible;
+                
+                tech.subscriptionType = c.subscriptionType || 'Mensual';
+                tech.subscriptionAmount = c.subscriptionAmount !== undefined ? c.subscriptionAmount : (c.monthlyFee || 0);
+                tech.reviewDaysOfMonth = c.reviewDaysOfMonth || '';
+                tech.specificReviewDate = c.specificReviewDate || '';
+                tech.customFeedbackQuestions = c.customFeedbackQuestions || [];
+                tech.customOnboardingQuestions = c.customOnboardingQuestions || [];
+                tech.customPerimeters = c.customPerimeters || [];
+                tech.weightHistory = c.weightHistory || [];
                 
                 return {
                     id: c.id,

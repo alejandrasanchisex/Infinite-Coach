@@ -2986,45 +2986,25 @@
   ],
   "clients": [
     {
-      "id": "16798b20-3f44-4820-af01-762b05f5f622",
-      "name": "Marta Casamitjana",
-      "email": "mcasamitjanavicens@gmail.com",
-      "phone": "608421919",
-      "gender": "female",
+      "id": "c10929ce-438b-42f4-85ca-8b127154b282",
+      "name": "Luisa Mejia",
+      "email": "luisa.mejia.raigoza5@gmail.com",
+      "phone": null,
+      "gender": null,
       "status": "active",
-      "monthlyFee": 190,
-      "subscriptionAmount": 190,
+      "monthlyFee": 0,
+      "subscriptionAmount": 0,
       "subscriptionType": "Mensual",
       "assignedRoutine": null,
-      "assignedDiet": "f3b72bf1-2f64-4f17-b286-1d40d77d102e",
+      "assignedDiet": null,
       "technicalData": {
         "age": 0,
-        "arm": 0,
-        "leg": 0,
-        "chest": 0,
-        "glute": 0,
         "goals": "",
         "notes": "",
-        "waist": 0,
-        "height": 157,
-        "weight": 61.3,
+        "height": 0,
+        "weight": 0,
         "injuries": "",
         "allergies": "",
-        "skinfolds": {
-          "abd": 0,
-          "pec": 0,
-          "sub": 0,
-          "tri": 0,
-          "supra": 0,
-          "thigh": 0,
-          "axilla": 0
-        },
-        "targetMacros": {
-          "fat": 43,
-          "carbs": 174,
-          "protein": 135,
-          "calories": 1621
-        },
         "cardioPublished": true,
         "cardioUrlVisible": true,
         "skinfoldsEnabled": false
@@ -3032,18 +3012,18 @@
       "onboardingAnswers": [],
       "initialSetupDone": false,
       "profilePhoto": null,
-      "accessCode": "JV17O9DM",
+      "accessCode": "2UJWYV68",
       "paymentStatus": "paid",
-      "paymentExpiry": "25/09/2026",
-      "reviewDay": "7",
-      "reviewFrequency": "biweekly",
+      "paymentExpiry": null,
+      "reviewDay": null,
+      "reviewFrequency": "weekly",
       "activeBlockId": null,
-      "dietPublished": true,
+      "dietPublished": false,
       "cardio": null,
       "cardioUrl": null,
       "cardioPublished": true,
       "cardioUrlVisible": true,
-      "supplementation": "<br>",
+      "supplementation": null,
       "supplementationUrl": null,
       "reviewDaysOfMonth": "",
       "specificReviewDate": "",
@@ -3055,661 +3035,65 @@
       "updatedAt": "2026-07-20T09:10:17.838+00:00"
     }
   ],
-  "diets": [
-    {
-      "id": "f3b72bf1-2f64-4f17-b286-1d40d77d102e",
-      "clientId": "16798b20-3f44-4820-af01-762b05f5f622",
-      "name": "Recomposición corporal",
-      "title": "Recomposición corporal",
-      "status": "active",
-      "published": false,
-      "days": [],
-      "meals": [
-        {
-          "id": "meal_1782453304530_0",
-          "name": "Desayuno",
-          "foods": [
-            {
-              "fat": 3.5,
-              "name": "Harina de avena",
-              "carbs": 33,
-              "option": 1,
-              "protein": 8.4,
-              "calories": 195,
-              "quantity": "50"
-            },
-            {
-              "fat": 11,
-              "name": "Huevos",
-              "carbs": 1.1,
-              "option": 1,
-              "protein": 13,
-              "calories": 155,
-              "quantity": "1"
-            },
-            {
-              "fat": 0.1,
-              "name": "Queso Fresco Batido 0%",
-              "carbs": 1.8,
-              "option": 1,
-              "protein": 4,
-              "calories": 23,
-              "quantity": "50"
-            },
-            {
-              "fat": 0.2,
-              "name": "Frutos Rojos (Mix)",
-              "carbs": 5,
-              "option": 1,
-              "protein": 0.4,
-              "calories": 23,
-              "quantity": "50"
-            },
-            {
-              "fat": 5,
-              "name": "Crema de Cacahuete/Almendra",
-              "carbs": 1.2,
-              "option": 1,
-              "protein": 2.5,
-              "calories": 60,
-              "quantity": "10"
-            },
-            {
-              "fat": 2.3,
-              "name": "Pan integral ",
-              "carbs": 40.5,
-              "option": 2,
-              "protein": 7.7,
-              "calories": 216,
-              "quantity": "90"
-            },
-            {
-              "fat": 2.1,
-              "name": "Queso cottage",
-              "carbs": 1.7,
-              "option": 2,
-              "protein": 5.5,
-              "calories": 49,
-              "quantity": "50"
-            },
-            {
-              "fat": 5,
-              "name": "Huevo Entero (1 ud L)",
-              "carbs": 0.5,
-              "option": 2,
-              "protein": 6.5,
-              "calories": 75,
-              "quantity": "1"
-            },
-            {
-              "fat": 7.5,
-              "name": "Aguacate",
-              "carbs": 4.5,
-              "option": 2,
-              "protein": 1,
-              "calories": 80,
-              "quantity": "50"
-            },
-            {
-              "fat": 0.3,
-              "name": "Pavo",
-              "carbs": 0,
-              "option": 2,
-              "protein": 6,
-              "calories": 26,
-              "quantity": "25"
-            },
-            {
-              "fat": 1.4,
-              "name": "Tortitas de arroz",
-              "carbs": 41,
-              "option": 3,
-              "protein": 4,
-              "calories": 194,
-              "quantity": "50"
-            },
-            {
-              "fat": 0.5,
-              "name": "Pavo",
-              "carbs": 0,
-              "option": 3,
-              "protein": 12,
-              "calories": 53,
-              "quantity": "50"
-            },
-            {
-              "fat": 7.5,
-              "name": "Aguacate",
-              "carbs": 4.5,
-              "option": 3,
-              "protein": 1,
-              "calories": 80,
-              "quantity": "50"
-            },
-            {
-              "fat": 0.3,
-              "name": "Manzana / Pera",
-              "carbs": 21,
-              "option": 3,
-              "protein": 0.4,
-              "calories": 78,
-              "quantity": "150"
-            },
-            {
-              "fat": 1.5,
-              "name": "Leche vegetal",
-              "carbs": 3,
-              "option": 3,
-              "protein": 1,
-              "calories": 35,
-              "quantity": "100"
-            },
-            {
-              "fat": 0.2,
-              "name": "Queso Fresco Batido 0%",
-              "carbs": 7,
-              "option": 4,
-              "protein": 16,
-              "calories": 92,
-              "quantity": "200"
-            },
-            {
-              "fat": 0.2,
-              "name": "Frutos Rojos (Mix)",
-              "carbs": 5,
-              "option": 4,
-              "protein": 0.4,
-              "calories": 23,
-              "quantity": "50"
-            },
-            {
-              "fat": 0.4,
-              "name": "Corn flakes/Crema arroz/Cereales 0%",
-              "carbs": 33.6,
-              "option": 4,
-              "protein": 2.8,
-              "calories": 148,
-              "quantity": "40"
-            },
-            {
-              "fat": 10,
-              "name": "Crema de Cacahuete/Almendra",
-              "carbs": 2.4,
-              "option": 4,
-              "protein": 5,
-              "calories": 119,
-              "quantity": "20"
-            },
-            {
-              "fat": 0.4,
-              "name": "proteina en polvo",
-              "carbs": 0.5,
-              "option": 4,
-              "protein": 8,
-              "calories": 38,
-              "quantity": "10"
-            }
-          ],
-          "description": "",
-          "optionPhotos": {
-            "1": "https://bieeydhacavxymoosasx.supabase.co/storage/v1/object/public/Media/1778609307849_Tortitas_de_avena_y_platano.png",
-            "2": "img/tostada_aguacate_huevo.png",
-            "3": "https://bieeydhacavxymoosasx.supabase.co/storage/v1/object/public/Media/1778607800096_Tortitas_de_arroz_pack.png",
-            "4": "https://bieeydhacavxymoosasx.supabase.co/storage/v1/object/public/Media/1778609197334_Bowl_de_Skyr_y_Melocoton.png"
-          },
-          "optionIngredients": {
-            "1": "",
-            "2": "",
-            "3": "",
-            "4": ""
-          }
-        },
-        {
-          "id": "meal_1782453304530_1",
-          "name": "Almuerzo",
-          "foods": [
-            {
-              "fat": 1.5,
-              "name": "Pechuga de pavo",
-              "carbs": 0,
-              "option": 1,
-              "protein": 22,
-              "calories": 105,
-              "quantity": "100"
-            },
-            {
-              "fat": 4.8,
-              "name": "Quinoa/ Pasta/ arroz",
-              "carbs": 51.2,
-              "option": 1,
-              "protein": 11.2,
-              "calories": 294,
-              "quantity": "80"
-            },
-            {
-              "fat": 0.3,
-              "name": "Verdura",
-              "carbs": 6,
-              "option": 1,
-              "protein": 2.3,
-              "calories": 38,
-              "quantity": "150"
-            },
-            {
-              "fat": 0.7,
-              "name": "Atún",
-              "carbs": 0,
-              "option": 2,
-              "protein": 17.7,
-              "calories": 79,
-              "quantity": "68"
-            },
-            {
-              "fat": 0.6,
-              "name": "Arroz (Integral/Jazmín/Basmati)",
-              "carbs": 62.4,
-              "option": 2,
-              "protein": 5.6,
-              "calories": 284,
-              "quantity": "80"
-            },
-            {
-              "fat": 1.5,
-              "name": "Edamame",
-              "carbs": 3,
-              "option": 2,
-              "protein": 3.3,
-              "calories": 37,
-              "quantity": "30"
-            },
-            {
-              "fat": 4.5,
-              "name": "Aguacate",
-              "carbs": 2.7,
-              "option": 2,
-              "protein": 0.6,
-              "calories": 48,
-              "quantity": "30"
-            },
-            {
-              "fat": 4,
-              "name": "Garbanzos / Lentejas (Cocidos)",
-              "carbs": 40,
-              "option": 3,
-              "protein": 17,
-              "calories": 280,
-              "quantity": "200"
-            },
-            {
-              "fat": 0.3,
-              "name": "Verdura",
-              "carbs": 6,
-              "option": 3,
-              "protein": 2.3,
-              "calories": 38,
-              "quantity": "150"
-            },
-            {
-              "fat": 5,
-              "name": "Aceite de Oliva / Coco",
-              "carbs": 0,
-              "option": 3,
-              "protein": 0,
-              "calories": 44,
-              "quantity": "5"
-            },
-            {
-              "fat": 2.6,
-              "name": "Queso Cottage",
-              "carbs": 2,
-              "option": 3,
-              "protein": 6.6,
-              "calories": 59,
-              "quantity": "60"
-            },
-            {
-              "fat": 12,
-              "name": "Tortilla integral",
-              "carbs": 90,
-              "option": 4,
-              "protein": 16,
-              "calories": 200,
-              "quantity": "2"
-            },
-            {
-              "fat": 0.3,
-              "name": "Pimiento rojo",
-              "carbs": 6.9,
-              "option": 4,
-              "protein": 1.4,
-              "calories": 30,
-              "quantity": "150"
-            },
-            {
-              "fat": 7.5,
-              "name": "Guacamole",
-              "carbs": 4.5,
-              "option": 4,
-              "protein": 1,
-              "calories": 80,
-              "quantity": "50"
-            },
-            {
-              "fat": 3.6,
-              "name": "Pechuga de Pollo",
-              "carbs": 0,
-              "option": 4,
-              "protein": 31,
-              "calories": 165,
-              "quantity": "100"
-            }
-          ],
-          "description": "",
-          "optionPhotos": {
-            "1": "img/pavo-pro.png",
-            "2": "https://bieeydhacavxymoosasx.supabase.co/storage/v1/object/public/Media/1778608129811_Poke_de_atun.png",
-            "3": "img/ensalada-garbanzos-pro.png",
-            "4": "https://bieeydhacavxymoosasx.supabase.co/storage/v1/object/public/Media/1778611407465_Fajita_de_Pollo_y_Guacamole.png"
-          },
-          "optionIngredients": {
-            "1": "",
-            "2": "",
-            "3": "",
-            "4": ""
-          }
-        },
-        {
-          "id": "meal_1782453304530_2",
-          "name": "Merienda",
-          "foods": [
-            {
-              "fat": 0.3,
-              "name": "Cereales de maíz (cornflakes)",
-              "carbs": 25.2,
-              "option": 1,
-              "protein": 2.1,
-              "calories": 114,
-              "quantity": "30"
-            },
-            {
-              "fat": 0.2,
-              "name": "Queso Fresco Batido 0%",
-              "carbs": 5.3,
-              "option": 1,
-              "protein": 12,
-              "calories": 69,
-              "quantity": "150"
-            },
-            {
-              "fat": 0.2,
-              "name": "Frutos Rojos (Mix)",
-              "carbs": 5,
-              "option": 1,
-              "protein": 0.4,
-              "calories": 23,
-              "quantity": "50"
-            },
-            {
-              "fat": 0.8,
-              "name": "Tortitas de arroz",
-              "carbs": 24.6,
-              "option": 2,
-              "protein": 2.4,
-              "calories": 116,
-              "quantity": "30"
-            },
-            {
-              "fat": 0.5,
-              "name": "Pavo",
-              "carbs": 0,
-              "option": 2,
-              "protein": 12,
-              "calories": 53,
-              "quantity": "50"
-            },
-            {
-              "fat": 2.1,
-              "name": "Queso Cottage",
-              "carbs": 1.7,
-              "option": 2,
-              "protein": 5.5,
-              "calories": 49,
-              "quantity": "50"
-            }
-          ],
-          "description": "",
-          "optionPhotos": {
-            "1": "https://bieeydhacavxymoosasx.supabase.co/storage/v1/object/public/Media/1778656663316_Yogur_con_Cornflakes_y_Almendras.png",
-            "2": "img/tortitas_pavo.png"
-          },
-          "optionIngredients": {
-            "1": "",
-            "2": ""
-          }
-        },
-        {
-          "id": "meal_1782453304530_3",
-          "name": "Cena",
-          "foods": [
-            {
-              "fat": 5,
-              "name": "Tortilla Trigo/Maíz (1 ud)",
-              "carbs": 40,
-              "option": 1,
-              "protein": 7,
-              "calories": 200,
-              "quantity": "2"
-            },
-            {
-              "fat": 3.6,
-              "name": "Pechuga de Pollo",
-              "carbs": 0,
-              "option": 1,
-              "protein": 31,
-              "calories": 165,
-              "quantity": "100"
-            },
-            {
-              "fat": 7.5,
-              "name": "Aguacate",
-              "carbs": 4.5,
-              "option": 1,
-              "protein": 1,
-              "calories": 80,
-              "quantity": "50"
-            },
-            {
-              "fat": 0.3,
-              "name": "Pimientos / Tomate",
-              "carbs": 6,
-              "option": 1,
-              "protein": 1.5,
-              "calories": 33,
-              "quantity": "150"
-            },
-            {
-              "fat": 7,
-              "name": "Ternera Magra ",
-              "carbs": 0,
-              "option": 2,
-              "protein": 26,
-              "calories": 170,
-              "quantity": "100"
-            },
-            {
-              "fat": 0.3,
-              "name": "Patata / Batata (Cruda)",
-              "carbs": 45,
-              "option": 2,
-              "protein": 5,
-              "calories": 200,
-              "quantity": "250"
-            },
-            {
-              "fat": 1.5,
-              "name": "Solomillo de pavo",
-              "carbs": 0,
-              "option": 3,
-              "protein": 22,
-              "calories": 105,
-              "quantity": "100"
-            },
-            {
-              "fat": 0.3,
-              "name": "Arroz jazmín",
-              "carbs": 46.8,
-              "option": 3,
-              "protein": 4.2,
-              "calories": 210,
-              "quantity": "60"
-            },
-            {
-              "fat": 4.9,
-              "name": "Almendras laminadas",
-              "carbs": 2.2,
-              "option": 3,
-              "protein": 2.1,
-              "calories": 58,
-              "quantity": "10"
-            },
-            {
-              "fat": 0.1,
-              "name": "Queso Fresco Batido 0%",
-              "carbs": 1.8,
-              "option": 3,
-              "protein": 4,
-              "calories": 23,
-              "quantity": "50"
-            },
-            {
-              "fat": 0,
-              "name": "curry",
-              "carbs": 0,
-              "option": 3,
-              "protein": 0,
-              "calories": 1,
-              "quantity": "1"
-            },
-            {
-              "fat": 7.5,
-              "name": "Aguacate",
-              "carbs": 4.5,
-              "option": 2,
-              "protein": 1,
-              "calories": 80,
-              "quantity": "50"
-            },
-            {
-              "fat": 5,
-              "name": "Aceite de Oliva / Coco",
-              "carbs": 0,
-              "option": 3,
-              "protein": 0,
-              "calories": 44,
-              "quantity": "5"
-            },
-            {
-              "fat": 13,
-              "name": "Salmón",
-              "carbs": 0,
-              "option": 4,
-              "protein": 20,
-              "calories": 208,
-              "quantity": "100"
-            },
-            {
-              "fat": 4.2,
-              "name": "Quinoa/arroz/pasta",
-              "carbs": 44.8,
-              "option": 4,
-              "protein": 9.8,
-              "calories": 258,
-              "quantity": "60"
-            },
-            {
-              "fat": 0.2,
-              "name": "Espárragos al vapor",
-              "carbs": 5.8,
-              "option": 4,
-              "protein": 3.3,
-              "calories": 30,
-              "quantity": "150"
-            }
-          ],
-          "description": "",
-          "optionPhotos": {
-            "1": "https://bieeydhacavxymoosasx.supabase.co/storage/v1/object/public/Media/1778611407465_Fajita_de_Pollo_y_Guacamole.png",
-            "2": "https://bieeydhacavxymoosasx.supabase.co/storage/v1/object/public/Media/1779007310662_Ternera_con_patatas.png",
-            "3": "https://bieeydhacavxymoosasx.supabase.co/storage/v1/object/public/Media/1778608284179_Pavo_con_arroz_jazmin.png",
-            "4": "https://bieeydhacavxymoosasx.supabase.co/storage/v1/object/public/Media/1778608067861_Salmon_con_quinoa.png"
-          },
-          "optionIngredients": {
-            "1": "",
-            "2": "",
-            "3": "",
-            "4": ""
-          }
-        }
-      ],
-      "calories": 0,
-      "macros": {
-        "protein": 0,
-        "carbs": 0,
-        "fat": 0
-      }
-    }
-  ],
+  "diets": [],
   "trainingBlocks": [
     {
-      "id": "3c301982-4a3d-4256-830e-d9a301d38758",
-      "clientId": "16798b20-3f44-4820-af01-762b05f5f622",
-      "name": "Mesociclo 1 - Hipertrofia Marta Casamitjana",
-      "title": "Mesociclo 1 - Hipertrofia Marta Casamitjana",
+      "id": "42ceb80d-40f1-47bc-a524-bdc78be027ee",
+      "clientId": "c10929ce-438b-42f4-85ca-8b127154b282",
+      "name": "Mesociclo 1- HIPERTROFIA",
+      "title": "Mesociclo 1- HIPERTROFIA",
       "status": "active",
-      "published": true,
-      "startDate": "2026-06-25T00:00:00+00:00",
-      "endDate": "2026-09-25T00:00:00+00:00",
+      "published": false,
+      "startDate": "2026-07-18T00:00:00+00:00",
+      "endDate": null,
       "weeks": [
         {
-          "id": "2e542b54-b0e9-4bee-b9d2-7b40fa81e2a8",
+          "id": "4ba96651-bd06-4dca-b84d-0ce181661455",
           "days": [
             {
-              "name": "Pierna",
+              "name": "Femoral y glúteo",
               "exercises": [
                 {
-                  "name": "Aductores en máquina",
+                  "name": "Crunch abdominal en polea",
                   "reps": "10-14",
-                  "sets": "3",
-                  "notes": "",
-                  "intensity": "2-3"
-                },
-                {
-                  "name": "Sentadilla en multipower",
-                  "reps": "9-12",
-                  "sets": "3",
-                  "notes": "",
-                  "intensity": "2-3"
-                },
-                {
-                  "name": "Peso muerto rumano con mancuernas",
-                  "reps": "9-12",
                   "sets": "2",
                   "notes": "",
-                  "intensity": "2-3"
-                },
-                {
-                  "name": "Hip thrust ",
-                  "reps": "9-12",
-                  "sets": "3",
-                  "notes": "",
-                  "intensity": "2-3"
+                  "intensity": "2"
                 },
                 {
                   "name": "Femoral sentado",
-                  "reps": "10-14",
+                  "reps": "9-12",
                   "sets": "3",
                   "notes": "",
-                  "intensity": "2-3"
+                  "intensity": "1-0"
+                },
+                {
+                  "name": "RLDL maquina",
+                  "reps": "9-12",
+                  "sets": "2",
+                  "notes": "",
+                  "intensity": "3-2"
+                },
+                {
+                  "name": "Hip thrust en maquina",
+                  "reps": "6-8, 2x9-12",
+                  "sets": "3",
+                  "notes": "",
+                  "intensity": "2-1"
+                },
+                {
+                  "name": "Zancadas mp deficit",
+                  "reps": "9-12",
+                  "sets": "2",
+                  "notes": "",
+                  "intensity": "1-0"
+                },
+                {
+                  "name": "Abductores en máquina",
+                  "reps": "11-15",
+                  "sets": "3",
+                  "notes": "",
+                  "intensity": "0"
                 }
               ]
             },
@@ -3717,1051 +3101,165 @@
               "name": "Torso",
               "exercises": [
                 {
-                  "name": "Remo con barra",
-                  "reps": "8-12",
-                  "sets": "3",
+                  "name": "Pullover unilateral",
+                  "reps": "10-14",
+                  "sets": "2",
                   "notes": "",
-                  "intensity": ""
+                  "intensity": "1-0"
                 },
                 {
-                  "name": "Jalon al pecho agarre cerrado",
+                  "name": "Remo máquina unilateral",
+                  "reps": "8-10",
+                  "sets": "2",
+                  "notes": "",
+                  "intensity": "0"
+                },
+                {
+                  "name": "Jalon al pecho ",
                   "reps": "10-12",
                   "sets": "3",
                   "notes": "",
                   "intensity": ""
                 },
                 {
-                  "name": "Remo con mancuernas unilateral",
-                  "reps": "10-12",
+                  "name": "Elevaciones laterales en polea",
+                  "reps": "10-14",
                   "sets": "3",
-                  "notes": "",
-                  "intensity": ""
+                  "notes": "tobillera y agarre",
+                  "intensity": "1-0"
                 },
                 {
-                  "name": "Press hombro mancuernas",
-                  "reps": "9-12",
+                  "name": "Press de hombro maquina",
+                  "reps": "2x8-10, 9-12",
                   "sets": "3",
                   "notes": "",
-                  "intensity": ""
+                  "intensity": "0"
                 },
                 {
-                  "name": "Elevaciones laterales de pie con mancuernas",
-                  "reps": "11-15",
+                  "name": "Posterior en máquina",
+                  "reps": "10-14",
                   "sets": "3",
                   "notes": "",
-                  "intensity": ""
+                  "intensity": "2-1"
                 },
                 {
-                  "name": "Curl de biceps con mancuernas ",
-                  "reps": "11-15",
-                  "sets": "3",
+                  "name": "Extensiones Tríceps",
+                  "reps": "10-14",
+                  "sets": "2",
                   "notes": "",
-                  "intensity": ""
+                  "intensity": "2"
                 }
               ]
             },
             {
-              "name": "Full body",
+              "name": "Leg day B",
               "exercises": [
                 {
-                  "name": "Sentadilla bulgara",
-                  "reps": "10-12",
+                  "name": "Patada de gluteo polea alta",
+                  "reps": "9-12",
                   "sets": "3",
                   "notes": "",
-                  "intensity": "2-3"
+                  "intensity": "1-0"
                 },
                 {
                   "name": "Extension de cuadriceps",
+                  "reps": "9-12",
+                  "sets": "3",
+                  "notes": "",
+                  "intensity": "1-0"
+                },
+                {
+                  "name": "Sentadilla pendulo",
+                  "reps": "8-12",
+                  "sets": "2",
+                  "notes": "",
+                  "intensity": "0"
+                },
+                {
+                  "name": "Bulgaras Mp",
+                  "reps": "8-10",
+                  "sets": "2",
+                  "notes": "",
+                  "intensity": "2"
+                },
+                {
+                  "name": "Prensa",
+                  "reps": "9-13",
+                  "sets": "3",
+                  "notes": "",
+                  "intensity": "2"
+                },
+                {
+                  "name": "Hiperextensiones",
                   "reps": "10-14",
-                  "sets": "4",
+                  "sets": "3",
                   "notes": "",
-                  "intensity": "2-3"
+                  "intensity": "1-0"
                 },
                 {
-                  "name": "Abducciones en maquina",
+                  "name": "Aductores",
+                  "reps": "11-15",
+                  "sets": "2",
+                  "notes": "",
+                  "intensity": "0"
+                }
+              ]
+            },
+            {
+              "name": "Hombro/espalda",
+              "exercises": [
+                {
+                  "name": "Crucifix tumbada",
                   "reps": "10-14",
                   "sets": "3",
                   "notes": "",
-                  "intensity": "2-3"
+                  "intensity": "2"
                 },
                 {
-                  "name": "Jalon al pecho agarre abierto",
-                  "reps": "10-12",
+                  "name": "Remo en T",
+                  "reps": "8-10",
                   "sets": "3",
                   "notes": "",
-                  "intensity": "2-3"
+                  "intensity": "2"
                 },
                 {
-                  "name": "Remo gironda",
-                  "reps": "10-12",
+                  "name": "Press militar MP",
+                  "reps": "6-9",
                   "sets": "3",
                   "notes": "",
-                  "intensity": "2-3"
+                  "intensity": "2"
                 },
                 {
-                  "name": "Press francés con mancuernas",
+                  "name": "Jalon unilateral",
+                  "reps": "9-12",
+                  "sets": "3",
+                  "notes": "",
+                  "intensity": "2"
+                },
+                {
+                  "name": "Jalon agarre V",
                   "reps": "10-14",
                   "sets": "3",
                   "notes": "",
-                  "intensity": "2-3"
+                  "intensity": "2-1"
+                },
+                {
+                  "name": "Curl de biceps barra en polea",
+                  "reps": "11-15",
+                  "sets": "3",
+                  "notes": "",
+                  "intensity": "2"
                 }
               ]
             }
           ],
           "name": "Semana 1",
           "number": 1
-        },
-        {
-          "id": "7ba8a1be-7568-4d27-b82e-b741da916d65",
-          "days": [
-            {
-              "name": "Pierna",
-              "exercises": [
-                {
-                  "name": "Aductores en máquina",
-                  "reps": "10-14",
-                  "sets": "3",
-                  "notes": "",
-                  "intensity": "2-3"
-                },
-                {
-                  "name": "Sentadilla en multipower",
-                  "reps": "9-12",
-                  "sets": "3",
-                  "notes": "",
-                  "intensity": "2-3"
-                },
-                {
-                  "name": "Peso muerto rumano con mancuernas",
-                  "reps": "9-12",
-                  "sets": "2",
-                  "notes": "",
-                  "intensity": "2-3"
-                },
-                {
-                  "name": "Hip thrust ",
-                  "reps": "9-12",
-                  "sets": "3",
-                  "notes": "",
-                  "intensity": "2-3"
-                },
-                {
-                  "name": "Femoral sentado",
-                  "reps": "10-14",
-                  "sets": "3",
-                  "notes": "",
-                  "intensity": "2-3"
-                }
-              ]
-            },
-            {
-              "name": "Torso",
-              "exercises": [
-                {
-                  "name": "Remo con barra",
-                  "reps": "",
-                  "sets": "",
-                  "notes": "",
-                  "intensity": ""
-                },
-                {
-                  "name": "Jalon al pecho agarre cerrado",
-                  "reps": "",
-                  "sets": "",
-                  "notes": "",
-                  "intensity": ""
-                },
-                {
-                  "name": "Remo con mancuernas unilateral",
-                  "reps": "",
-                  "sets": "",
-                  "notes": "",
-                  "intensity": ""
-                },
-                {
-                  "name": "Press hombro mancuernas",
-                  "reps": "",
-                  "sets": "",
-                  "notes": "",
-                  "intensity": ""
-                },
-                {
-                  "name": "Elevaciones laterales de pie con mancuernas",
-                  "reps": "",
-                  "sets": "",
-                  "notes": "",
-                  "intensity": ""
-                },
-                {
-                  "name": "Curl de biceps con mancuernas ",
-                  "reps": "",
-                  "sets": "",
-                  "notes": "",
-                  "intensity": ""
-                }
-              ]
-            },
-            {
-              "name": "Full body",
-              "exercises": [
-                {
-                  "name": "Sentadilla bulgara",
-                  "reps": "10-12",
-                  "sets": "3",
-                  "notes": "",
-                  "intensity": "2-3"
-                },
-                {
-                  "name": "Extension de cuadriceps",
-                  "reps": "10-14",
-                  "sets": "4",
-                  "notes": "",
-                  "intensity": "2-3"
-                },
-                {
-                  "name": "Abducciones en maquina",
-                  "reps": "10-14",
-                  "sets": "3",
-                  "notes": "",
-                  "intensity": "2-3"
-                },
-                {
-                  "name": "Jalon al pecho agarre abierto",
-                  "reps": "10-12",
-                  "sets": "3",
-                  "notes": "",
-                  "intensity": "2-3"
-                },
-                {
-                  "name": "Remo gironda",
-                  "reps": "10-12",
-                  "sets": "3",
-                  "notes": "",
-                  "intensity": "2-3"
-                },
-                {
-                  "name": "Press francés con mancuernas",
-                  "reps": "10-14",
-                  "sets": "3",
-                  "notes": "",
-                  "intensity": "2-3"
-                }
-              ]
-            }
-          ],
-          "name": "Semana 2",
-          "number": 2
-        },
-        {
-          "id": "ad060bf5-11f0-41a2-b781-dd15567f5b9d",
-          "days": [
-            {
-              "name": "Pierna",
-              "exercises": [
-                {
-                  "name": "Aductores en máquina",
-                  "reps": "10-14",
-                  "sets": "3",
-                  "notes": "",
-                  "intensity": "2-3"
-                },
-                {
-                  "name": "Sentadilla en multipower",
-                  "reps": "9-12",
-                  "sets": "3",
-                  "notes": "",
-                  "intensity": "2-3"
-                },
-                {
-                  "name": "Peso muerto rumano con mancuernas",
-                  "reps": "9-12",
-                  "sets": "2",
-                  "notes": "",
-                  "intensity": "2-3"
-                },
-                {
-                  "name": "Hip thrust ",
-                  "reps": "9-12",
-                  "sets": "3",
-                  "notes": "",
-                  "intensity": "2-3"
-                },
-                {
-                  "name": "Femoral sentado",
-                  "reps": "10-14",
-                  "sets": "3",
-                  "notes": "",
-                  "intensity": "2-3"
-                }
-              ]
-            },
-            {
-              "name": "Torso",
-              "exercises": [
-                {
-                  "name": "Remo con barra",
-                  "reps": "",
-                  "sets": "",
-                  "notes": "",
-                  "intensity": ""
-                },
-                {
-                  "name": "Jalon al pecho agarre cerrado",
-                  "reps": "",
-                  "sets": "",
-                  "notes": "",
-                  "intensity": ""
-                },
-                {
-                  "name": "Remo con mancuernas unilateral",
-                  "reps": "",
-                  "sets": "",
-                  "notes": "",
-                  "intensity": ""
-                },
-                {
-                  "name": "Press hombro mancuernas",
-                  "reps": "",
-                  "sets": "",
-                  "notes": "",
-                  "intensity": ""
-                },
-                {
-                  "name": "Elevaciones laterales de pie con mancuernas",
-                  "reps": "",
-                  "sets": "",
-                  "notes": "",
-                  "intensity": ""
-                },
-                {
-                  "name": "Curl de biceps con mancuernas ",
-                  "reps": "",
-                  "sets": "",
-                  "notes": "",
-                  "intensity": ""
-                }
-              ]
-            },
-            {
-              "name": "Full body",
-              "exercises": [
-                {
-                  "name": "Sentadilla bulgara",
-                  "reps": "10-12",
-                  "sets": "3",
-                  "notes": "",
-                  "intensity": "2-3"
-                },
-                {
-                  "name": "Extension de cuadriceps",
-                  "reps": "10-14",
-                  "sets": "4",
-                  "notes": "",
-                  "intensity": "2-3"
-                },
-                {
-                  "name": "Abducciones en maquina",
-                  "reps": "10-14",
-                  "sets": "3",
-                  "notes": "",
-                  "intensity": "2-3"
-                },
-                {
-                  "name": "Jalon al pecho agarre abierto",
-                  "reps": "10-12",
-                  "sets": "3",
-                  "notes": "",
-                  "intensity": "2-3"
-                },
-                {
-                  "name": "Remo gironda",
-                  "reps": "10-12",
-                  "sets": "3",
-                  "notes": "",
-                  "intensity": "2-3"
-                },
-                {
-                  "name": "Press francés con mancuernas",
-                  "reps": "10-14",
-                  "sets": "3",
-                  "notes": "",
-                  "intensity": "2-3"
-                }
-              ]
-            }
-          ],
-          "name": "Semana 3",
-          "number": 3
-        },
-        {
-          "id": "6a8f22c6-aa4b-455c-97c7-e63e4c33294f",
-          "days": [
-            {
-              "name": "Pierna",
-              "exercises": [
-                {
-                  "name": "Aductores en máquina",
-                  "reps": "10-14",
-                  "sets": "3",
-                  "notes": "",
-                  "intensity": "2-3"
-                },
-                {
-                  "name": "Sentadilla en multipower",
-                  "reps": "9-12",
-                  "sets": "3",
-                  "notes": "",
-                  "intensity": "2-3"
-                },
-                {
-                  "name": "Peso muerto rumano con mancuernas",
-                  "reps": "9-12",
-                  "sets": "2",
-                  "notes": "",
-                  "intensity": "2-3"
-                },
-                {
-                  "name": "Hip thrust ",
-                  "reps": "9-12",
-                  "sets": "3",
-                  "notes": "",
-                  "intensity": "2-3"
-                },
-                {
-                  "name": "Femoral sentado",
-                  "reps": "10-14",
-                  "sets": "3",
-                  "notes": "",
-                  "intensity": "2-3"
-                }
-              ]
-            },
-            {
-              "name": "Torso",
-              "exercises": [
-                {
-                  "name": "Remo con barra",
-                  "reps": "",
-                  "sets": "",
-                  "notes": "",
-                  "intensity": ""
-                },
-                {
-                  "name": "Jalon al pecho agarre cerrado",
-                  "reps": "",
-                  "sets": "",
-                  "notes": "",
-                  "intensity": ""
-                },
-                {
-                  "name": "Remo con mancuernas unilateral",
-                  "reps": "",
-                  "sets": "",
-                  "notes": "",
-                  "intensity": ""
-                },
-                {
-                  "name": "Press hombro mancuernas",
-                  "reps": "",
-                  "sets": "",
-                  "notes": "",
-                  "intensity": ""
-                },
-                {
-                  "name": "Elevaciones laterales de pie con mancuernas",
-                  "reps": "",
-                  "sets": "",
-                  "notes": "",
-                  "intensity": ""
-                },
-                {
-                  "name": "Curl de biceps con mancuernas ",
-                  "reps": "",
-                  "sets": "",
-                  "notes": "",
-                  "intensity": ""
-                }
-              ]
-            },
-            {
-              "name": "Full body",
-              "exercises": [
-                {
-                  "name": "Sentadilla bulgara",
-                  "reps": "10-12",
-                  "sets": "3",
-                  "notes": "",
-                  "intensity": "2-3"
-                },
-                {
-                  "name": "Extension de cuadriceps",
-                  "reps": "10-14",
-                  "sets": "4",
-                  "notes": "",
-                  "intensity": "2-3"
-                },
-                {
-                  "name": "Abducciones en maquina",
-                  "reps": "10-14",
-                  "sets": "3",
-                  "notes": "",
-                  "intensity": "2-3"
-                },
-                {
-                  "name": "Jalon al pecho agarre abierto",
-                  "reps": "10-12",
-                  "sets": "3",
-                  "notes": "",
-                  "intensity": "2-3"
-                },
-                {
-                  "name": "Remo gironda",
-                  "reps": "10-12",
-                  "sets": "3",
-                  "notes": "",
-                  "intensity": "2-3"
-                },
-                {
-                  "name": "Press francés con mancuernas",
-                  "reps": "10-14",
-                  "sets": "3",
-                  "notes": "",
-                  "intensity": "2-3"
-                }
-              ]
-            }
-          ],
-          "name": "Semana 4",
-          "number": 4
-        },
-        {
-          "id": "1c6027ae-2d1b-41dd-8c93-679c03b03942",
-          "days": [
-            {
-              "name": "Pierna",
-              "exercises": [
-                {
-                  "name": "Aductores en máquina",
-                  "reps": "10-14",
-                  "sets": "3",
-                  "notes": "",
-                  "intensity": "2-3"
-                },
-                {
-                  "name": "Sentadilla en multipower",
-                  "reps": "9-12",
-                  "sets": "3",
-                  "notes": "",
-                  "intensity": "2-3"
-                },
-                {
-                  "name": "Peso muerto rumano con mancuernas",
-                  "reps": "9-12",
-                  "sets": "2",
-                  "notes": "",
-                  "intensity": "2-3"
-                },
-                {
-                  "name": "Hip thrust ",
-                  "reps": "9-12",
-                  "sets": "3",
-                  "notes": "",
-                  "intensity": "2-3"
-                },
-                {
-                  "name": "Femoral sentado",
-                  "reps": "10-14",
-                  "sets": "3",
-                  "notes": "",
-                  "intensity": "2-3"
-                }
-              ]
-            },
-            {
-              "name": "Torso",
-              "exercises": [
-                {
-                  "name": "Remo con barra",
-                  "reps": "",
-                  "sets": "",
-                  "notes": "",
-                  "intensity": ""
-                },
-                {
-                  "name": "Jalon al pecho agarre cerrado",
-                  "reps": "",
-                  "sets": "",
-                  "notes": "",
-                  "intensity": ""
-                },
-                {
-                  "name": "Remo con mancuernas unilateral",
-                  "reps": "",
-                  "sets": "",
-                  "notes": "",
-                  "intensity": ""
-                },
-                {
-                  "name": "Press hombro mancuernas",
-                  "reps": "",
-                  "sets": "",
-                  "notes": "",
-                  "intensity": ""
-                },
-                {
-                  "name": "Elevaciones laterales de pie con mancuernas",
-                  "reps": "",
-                  "sets": "",
-                  "notes": "",
-                  "intensity": ""
-                },
-                {
-                  "name": "Curl de biceps con mancuernas ",
-                  "reps": "",
-                  "sets": "",
-                  "notes": "",
-                  "intensity": ""
-                }
-              ]
-            },
-            {
-              "name": "Full body",
-              "exercises": [
-                {
-                  "name": "Sentadilla bulgara",
-                  "reps": "10-12",
-                  "sets": "3",
-                  "notes": "",
-                  "intensity": "2-3"
-                },
-                {
-                  "name": "Extension de cuadriceps",
-                  "reps": "10-14",
-                  "sets": "4",
-                  "notes": "",
-                  "intensity": "2-3"
-                },
-                {
-                  "name": "Abducciones en maquina",
-                  "reps": "10-14",
-                  "sets": "3",
-                  "notes": "",
-                  "intensity": "2-3"
-                },
-                {
-                  "name": "Jalon al pecho agarre abierto",
-                  "reps": "10-12",
-                  "sets": "3",
-                  "notes": "",
-                  "intensity": "2-3"
-                },
-                {
-                  "name": "Remo gironda",
-                  "reps": "10-12",
-                  "sets": "3",
-                  "notes": "",
-                  "intensity": "2-3"
-                },
-                {
-                  "name": "Press francés con mancuernas",
-                  "reps": "10-14",
-                  "sets": "3",
-                  "notes": "",
-                  "intensity": "2-3"
-                }
-              ]
-            }
-          ],
-          "name": "Semana 5",
-          "number": 5
-        },
-        {
-          "id": "9349988e-f2f1-4f1d-afe9-c1780503c79c",
-          "days": [
-            {
-              "name": "Pierna",
-              "exercises": [
-                {
-                  "name": "Aductores en máquina",
-                  "reps": "10-14",
-                  "sets": "3",
-                  "notes": "",
-                  "intensity": "2-3"
-                },
-                {
-                  "name": "Sentadilla en multipower",
-                  "reps": "9-12",
-                  "sets": "3",
-                  "notes": "",
-                  "intensity": "2-3"
-                },
-                {
-                  "name": "Peso muerto rumano con mancuernas",
-                  "reps": "9-12",
-                  "sets": "2",
-                  "notes": "",
-                  "intensity": "2-3"
-                },
-                {
-                  "name": "Hip thrust ",
-                  "reps": "9-12",
-                  "sets": "3",
-                  "notes": "",
-                  "intensity": "2-3"
-                },
-                {
-                  "name": "Femoral sentado",
-                  "reps": "10-14",
-                  "sets": "3",
-                  "notes": "",
-                  "intensity": "2-3"
-                }
-              ]
-            },
-            {
-              "name": "Torso",
-              "exercises": [
-                {
-                  "name": "Remo con barra",
-                  "reps": "",
-                  "sets": "",
-                  "notes": "",
-                  "intensity": ""
-                },
-                {
-                  "name": "Jalon al pecho agarre cerrado",
-                  "reps": "",
-                  "sets": "",
-                  "notes": "",
-                  "intensity": ""
-                },
-                {
-                  "name": "Remo con mancuernas unilateral",
-                  "reps": "",
-                  "sets": "",
-                  "notes": "",
-                  "intensity": ""
-                },
-                {
-                  "name": "Press hombro mancuernas",
-                  "reps": "",
-                  "sets": "",
-                  "notes": "",
-                  "intensity": ""
-                },
-                {
-                  "name": "Elevaciones laterales de pie con mancuernas",
-                  "reps": "",
-                  "sets": "",
-                  "notes": "",
-                  "intensity": ""
-                },
-                {
-                  "name": "Curl de biceps con mancuernas ",
-                  "reps": "",
-                  "sets": "",
-                  "notes": "",
-                  "intensity": ""
-                }
-              ]
-            },
-            {
-              "name": "Full body",
-              "exercises": [
-                {
-                  "name": "Sentadilla bulgara",
-                  "reps": "10-12",
-                  "sets": "3",
-                  "notes": "",
-                  "intensity": "2-3"
-                },
-                {
-                  "name": "Extension de cuadriceps",
-                  "reps": "10-14",
-                  "sets": "4",
-                  "notes": "",
-                  "intensity": "2-3"
-                },
-                {
-                  "name": "Abducciones en maquina",
-                  "reps": "10-14",
-                  "sets": "3",
-                  "notes": "",
-                  "intensity": "2-3"
-                },
-                {
-                  "name": "Jalon al pecho agarre abierto",
-                  "reps": "10-12",
-                  "sets": "3",
-                  "notes": "",
-                  "intensity": "2-3"
-                },
-                {
-                  "name": "Remo gironda",
-                  "reps": "10-12",
-                  "sets": "3",
-                  "notes": "",
-                  "intensity": "2-3"
-                },
-                {
-                  "name": "Press francés con mancuernas",
-                  "reps": "10-14",
-                  "sets": "3",
-                  "notes": "",
-                  "intensity": "2-3"
-                }
-              ]
-            }
-          ],
-          "name": "Semana 6",
-          "number": 6
         }
       ]
     }
   ],
-  "trainingLogs": [
-    {
-      "id": "ad88e308-6f4e-476e-8617-354378dfaf7d",
-      "clientId": "16798b20-3f44-4820-af01-762b05f5f622",
-      "date": "2026-07-03T09:10:42.557+00:00",
-      "weekNumber": 1,
-      "dayNumber": 2,
-      "exercises": [
-        {
-          "name": "Remo con barra",
-          "sets": [
-            {
-              "rir": "",
-              "reps": "12",
-              "weight": "20"
-            },
-            {
-              "rir": "3",
-              "reps": "12",
-              "weight": "25"
-            },
-            {
-              "rir": "2",
-              "reps": "12",
-              "weight": "30"
-            }
-          ]
-        },
-        {
-          "name": "Jalon al pecho agarre cerrado",
-          "sets": [
-            {
-              "rir": "",
-              "reps": "",
-              "weight": ""
-            },
-            {
-              "rir": "",
-              "reps": "",
-              "weight": ""
-            },
-            {
-              "rir": "",
-              "reps": "",
-              "weight": ""
-            }
-          ]
-        },
-        {
-          "name": "Remo con mancuernas unilateral",
-          "sets": [
-            {
-              "rir": "",
-              "reps": "",
-              "weight": ""
-            },
-            {
-              "rir": "",
-              "reps": "",
-              "weight": ""
-            },
-            {
-              "rir": "",
-              "reps": "",
-              "weight": ""
-            }
-          ]
-        },
-        {
-          "name": "Press hombro mancuernas",
-          "sets": [
-            {
-              "rir": "",
-              "reps": "",
-              "weight": ""
-            },
-            {
-              "rir": "",
-              "reps": "",
-              "weight": ""
-            },
-            {
-              "rir": "",
-              "reps": "",
-              "weight": ""
-            }
-          ]
-        },
-        {
-          "name": "Elevaciones laterales de pie con mancuernas",
-          "sets": [
-            {
-              "rir": "",
-              "reps": "",
-              "weight": ""
-            },
-            {
-              "rir": "",
-              "reps": "",
-              "weight": ""
-            },
-            {
-              "rir": "",
-              "reps": "",
-              "weight": ""
-            }
-          ]
-        },
-        {
-          "name": "Curl de biceps con mancuernas ",
-          "sets": [
-            {
-              "rir": "",
-              "reps": "",
-              "weight": ""
-            },
-            {
-              "rir": "",
-              "reps": "",
-              "weight": ""
-            },
-            {
-              "rir": "",
-              "reps": "",
-              "weight": ""
-            }
-          ]
-        }
-      ],
-      "completed": true,
-      "routineId": null,
-      "blockId": null,
-      "weekIndex": 0
-    },
-    {
-      "id": "18d1c533-c334-4a0c-aa26-d62aa151331b",
-      "clientId": "16798b20-3f44-4820-af01-762b05f5f622",
-      "date": "2026-06-29T10:24:35.923+00:00",
-      "weekNumber": 1,
-      "dayNumber": 1,
-      "exercises": [
-        {
-          "name": "Aductores en máquina",
-          "sets": [
-            {
-              "rir": 0,
-              "reps": "14",
-              "weight": "15"
-            },
-            {
-              "rir": 0,
-              "reps": "14",
-              "weight": "15"
-            },
-            {
-              "rir": "4",
-              "reps": "14",
-              "weight": "25"
-            }
-          ]
-        },
-        {
-          "name": "Sentadilla en multipower",
-          "sets": [
-            {
-              "rir": 0,
-              "reps": "12",
-              "weight": "5"
-            },
-            {
-              "rir": "3",
-              "reps": "10",
-              "weight": "10"
-            },
-            {
-              "rir": "1",
-              "reps": "9",
-              "weight": "15"
-            }
-          ]
-        },
-        {
-          "name": "Peso muerto rumano con mancuernas",
-          "sets": [
-            {
-              "rir": 0,
-              "reps": "12",
-              "weight": "15"
-            },
-            {
-              "rir": "3",
-              "reps": "12",
-              "weight": "20"
-            }
-          ]
-        },
-        {
-          "name": "Hip thrust ",
-          "sets": [
-            {
-              "rir": 0,
-              "reps": "12",
-              "weight": "10"
-            },
-            {
-              "rir": 0,
-              "reps": "12",
-              "weight": "20"
-            },
-            {
-              "rir": "0",
-              "reps": "9",
-              "weight": "30"
-            }
-          ]
-        },
-        {
-          "name": "Femoral sentado",
-          "sets": [
-            {
-              "rir": 0,
-              "reps": "14",
-              "weight": "15"
-            },
-            {
-              "rir": "2",
-              "reps": "14",
-              "weight": "20"
-            },
-            {
-              "rir": "0",
-              "reps": "14",
-              "weight": "20"
-            }
-          ]
-        }
-      ],
-      "completed": true,
-      "routineId": null,
-      "blockId": null,
-      "weekIndex": 0
-    }
-  ],
+  "trainingLogs": [],
   "feedbacks": [],
   "lastModified": "2026-07-20T09:25:21.099Z"
 }
