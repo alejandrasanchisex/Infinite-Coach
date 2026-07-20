@@ -855,7 +855,8 @@ async function doLogin() {
             content.textContent = '✓';
             btn.style.background = 'linear-gradient(110deg,#22c55e,#4ade80)';
             setTimeout(function(){ 
-                window.location.replace('dashboard.html?t=' + encodeURIComponent(foundTrainerId) + '&cid=' + encodeURIComponent(foundClient.id)); 
+                var versionQuery = window.APP_VERSION ? '&v=' + window.APP_VERSION : '';
+                window.location.replace('dashboard.html?t=' + encodeURIComponent(foundTrainerId) + '&cid=' + encodeURIComponent(foundClient.id) + versionQuery); 
             }, 400);
         } else {
             showMsg('Código de acceso incorrecto. Por favor, verifícalo.');
