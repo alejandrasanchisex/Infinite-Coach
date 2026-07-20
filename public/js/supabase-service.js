@@ -92,7 +92,6 @@ const SupabaseService = {
 
             console.log(`[Supabase GetData] Cargando datos granulares. isTrainer: ${isTrainer}, clientId: ${clientId}`);
 
-            // Helpers de conversión locales
             const mapClientFromSQL = r => {
                 const tech = r.technical_data || {};
                 return {
@@ -107,7 +106,10 @@ const SupabaseService = {
                     subscriptionType: tech.subscriptionType || 'Mensual',
                     assignedRoutine: r.assigned_routine,
                     assignedDiet: r.assigned_diet,
-                    technicalData: tech,
+                    technicalData: {
+                        ...tech,
+                        habits: tech.habits || []
+                    },
                     onboardingAnswers: r.onboarding_answers || [],
                     initialSetupDone: r.initial_setup_done || false,
                     profilePhoto: r.profile_photo,
@@ -371,14 +373,29 @@ const SupabaseService = {
                 feedbackRows = fRes.data || [];
             }
 
+
              // 3. Ensamblado del JSON monolítico compatible en memoria
              mappedClients = clientRows.map(mapClientFromSQL);
              mappedBlocks = blockRows.map(mapBlockFromSQL);
 
+             // Unificar hábitos guardados de forma granular en las fichas de los clientes
+             let allHabits = [...(profileObj.habits || [])];
+             if (mappedClients) {
+                 mappedClients.forEach(c => {
+                     if (c.technicalData && Array.isArray(c.technicalData.habits)) {
+                         c.technicalData.habits.forEach(h => {
+                             if (!allHabits.some(ex => ex.id === h.id)) {
+                                 allHabits.push(h);
+                             }
+                         });
+                     }
+                 });
+             }
+
              const assembled = {
                  brand: profileObj.brand || {},
                  appointments: profileObj.appointments || [],
-                 habits: profileObj.habits || [],
+                 habits: allHabits,
                  invoices: profileObj.invoices || [],
                  routines: profileObj.routines || [],
                  media: profileObj.media || [],
@@ -456,6 +473,7 @@ const SupabaseService = {
                 tech.customOnboardingQuestions = c.customOnboardingQuestions || [];
                 tech.customPerimeters = c.customPerimeters || [];
                 tech.weightHistory = c.weightHistory || [];
+                tech.habits = c.technicalData?.habits || [];
                 
                 return {
                     id: c.id,
@@ -587,6 +605,9 @@ const SupabaseService = {
                 // MODO CLIENTE: Solo guarda sus propios datos aislados (No toca datos de otros clientes)
                 const myClient = fullData.clients ? fullData.clients.find(c => c.id === clientId) : null;
                 if (myClient) {
+                    if (!myClient.technicalData) myClient.technicalData = {};
+                    myClient.technicalData.habits = fullData.habits ? fullData.habits.filter(h => String(h.clientId) === String(clientId)) : [];
+                    
                     upsertPromises.push(retryOp(() => this.client.from('clients').upsert(mapClientToSQL(myClient)), 3, 1000));
                 }
 
@@ -609,6 +630,10 @@ const SupabaseService = {
             } else {
                 // MODO ENTRENADOR: Guarda de forma relacional granular e individualizada para evitar fallos de lote completo
                 if (fullData.clients) {
+                    fullData.clients.forEach(c => {
+                        if (!c.technicalData) c.technicalData = {};
+                        c.technicalData.habits = fullData.habits ? fullData.habits.filter(h => String(h.clientId) === String(c.id)) : [];
+                    });
                     const sqlClients = fullData.clients.map(mapClientToSQL);
                     sqlClients.forEach(c => {
                         upsertPromises.push(retryOp(() => this.client.from('clients').upsert(c), 3, 1000).catch(err => {

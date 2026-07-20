@@ -75,6 +75,9 @@ function safeGetSessionStorage(key) {
                     if (data.appointments) {
                         data.appointments = data.appointments.filter(a => a.clientId === clientId);
                     }
+                    if (data.habits) {
+                        data.habits = data.habits.filter(h => String(h.clientId) === String(clientId));
+                    }
 
                     valueToStoreInLocal = JSON.stringify(data);
                 }
@@ -5400,7 +5403,7 @@ const BrandConfig = {
     } else if (isLucy) {
         defaultBrand = {
             name: 'Lucy Tundidor',
-            logo: 'https://bieeydhacavxymoosasx.supabase.co/storage/v1/object/public/Media/lucy_logo_cropped.png?v=742',
+            logo: 'https://bieeydhacavxymoosasx.supabase.co/storage/v1/object/public/Media/lucy_logo_cropped.png?v=743',
             configured: true,
             colors: { 
                 primary: '#816e61', 
@@ -5511,7 +5514,7 @@ const BrandConfig = {
             res.colors = defaultBrand.colors;
             changed = true;
         }
-        if (!res.logo || res.logo === 'img/logo-infinite-coach.png' || res.logo.includes('1779724548154') || res.logo.includes('lucy_logo_v1.png') || !res.logo.includes('lucy_logo_cropped.png?v=742')) {
+        if (!res.logo || res.logo === 'img/logo-infinite-coach.png' || res.logo.includes('1779724548154') || res.logo.includes('lucy_logo_v1.png') || !res.logo.includes('lucy_logo_cropped.png?v=743')) {
             res.logo = defaultBrand.logo;
             changed = true;
         }
