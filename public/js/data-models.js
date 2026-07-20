@@ -1567,6 +1567,7 @@ const doSyncFromCloud = async () => {
         // 🛡️ FILTRO DE SEGURIDAD MULTI-INQUILINO: Impedir cruce de datos de cliente
         const clientId = (safeGetLocalStorage('clientId') || safeGetSessionStorage('clientId'));
         const isTrainer = (safeGetLocalStorage('_trainerAuthed') === '1' || safeGetSessionStorage('_trainerAuthed') === '1');
+        let localData = null;
         
         try {
             let cloudData = await window.SupabaseService.getTrainerData(currentId);
@@ -1641,7 +1642,7 @@ const doSyncFromCloud = async () => {
                 });
 
                 // Salvaguarda robusta para recuperar rutinas y media vacías en local
-                let localData = null;
+                localData = null;
                 try {
                     const localRaw = safeGetDatabaseRaw();
                     if (localRaw) localData = JSON.parse(localRaw);
@@ -1708,7 +1709,7 @@ const doSyncFromCloud = async () => {
             } else {
                 // La nube está vacía — subir datos locales como migración inicial (solo primera vez)
                 const localRaw = safeGetDatabaseRaw();
-                let localData = null;
+                localData = null;
                 if (localRaw) {
                     try { localData = JSON.parse(localRaw); } catch(e) {}
                 }
@@ -1733,7 +1734,7 @@ const doSyncFromCloud = async () => {
 
         // Obtener datos locales actuales
         const localRaw = safeGetDatabaseRaw();
-        let localData = null;
+        localData = null;
         if (localRaw) {
             try { localData = JSON.parse(localRaw); } catch(e){}
         }
@@ -5406,7 +5407,7 @@ const BrandConfig = {
     } else if (isLucy) {
         defaultBrand = {
             name: 'Lucy Tundidor',
-            logo: 'https://bieeydhacavxymoosasx.supabase.co/storage/v1/object/public/Media/lucy_logo_cropped.png?v=749',
+            logo: 'https://bieeydhacavxymoosasx.supabase.co/storage/v1/object/public/Media/lucy_logo_cropped.png?v=750',
             configured: true,
             colors: { 
                 primary: '#816e61', 
@@ -5517,7 +5518,7 @@ const BrandConfig = {
             res.colors = defaultBrand.colors;
             changed = true;
         }
-        if (!res.logo || res.logo === 'img/logo-infinite-coach.png' || res.logo.includes('1779724548154') || res.logo.includes('lucy_logo_v1.png') || !res.logo.includes('lucy_logo_cropped.png?v=749')) {
+        if (!res.logo || res.logo === 'img/logo-infinite-coach.png' || res.logo.includes('1779724548154') || res.logo.includes('lucy_logo_v1.png') || !res.logo.includes('lucy_logo_cropped.png?v=750')) {
             res.logo = defaultBrand.logo;
             changed = true;
         }

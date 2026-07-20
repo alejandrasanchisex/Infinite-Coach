@@ -20,7 +20,7 @@
         })();
         // Force PWA cache bust / reload
         (function() {
-            const CURRENT_VERSION = '749';
+            const CURRENT_VERSION = '750';
             window.APP_VERSION = CURRENT_VERSION;
             const savedVersion = localStorage.getItem('app_version');
             if (savedVersion && savedVersion !== CURRENT_VERSION) {
@@ -351,7 +351,7 @@
 
         <p class="footer">¿No tienes código?<br>Contacta con tu entrenador personal.</p>
         <p class="footer" style="margin-top: 15px; border-top: 1px solid rgba(255,255,255,0.05); padding-top: 15px;">
-            <a href="trainer-login.html?v=749" style="color: var(--gold-light); text-decoration: none; font-size: 0.8rem; font-weight: 600;">Acceso Entrenadores 🔐</a>
+            <a href="trainer-login.html?v=750" style="color: var(--gold-light); text-decoration: none; font-size: 0.8rem; font-weight: 600;">Acceso Entrenadores 🔐</a>
         </p>
         <p id="app-version-display" style="text-align: center; font-size: 0.65rem; color: var(--muted); margin-top: 10px; opacity: 0.7;"></p>
     </div>
@@ -361,10 +361,10 @@
 
 <!-- ── Scripts ──────────────────────────────────────────────────── -->
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" defer></script>
-<script src="js/supabase-service.js?v=749" defer></script>
-<script src="js/config.js?v=749" defer></script>
-<script src="js/data-models.js?v=749" defer></script>
-<script src="js/utils.js?v=749" defer></script>
+<script src="js/supabase-service.js?v=750" defer></script>
+<script src="js/config.js?v=750" defer></script>
+<script src="js/data-models.js?v=750" defer></script>
+<script src="js/utils.js?v=750" defer></script>
 <script>
 
 // ── Auto-Redirección (Mantener sesión activa) ─────────────────────
@@ -372,7 +372,7 @@
     var storedClientId = localStorage.getItem('clientId') || sessionStorage.getItem('clientId');
     var params = new URLSearchParams(window.location.search);
     if (storedClientId && params.get('logout') !== 'true' && params.get('reauth') !== 'true') {
-        window.location.replace('dashboard.html?v=749');
+        window.location.replace('dashboard.html?v=750');
     }
 })();
 
@@ -697,7 +697,7 @@ try {
     document.getElementById('app-version-display').textContent = 'Versión: v' + (window.APP_VERSION || 'desconocida');
 } catch(e) {}
 </script>
-<script src="js/custom-recipes.js?v=749"></script>
-<script src="js/pwa-install.js?v=749"></script>
+<script src="js/custom-recipes.js?v=750"></script>
+<script src="js/pwa-install.js?v=750"></script>
 </body>
 </html>
