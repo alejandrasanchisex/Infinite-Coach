@@ -17,10 +17,10 @@ function safeGetSessionStorage(key) {
     return null;
 }
 
-const checkIsTrainer = () => {
+var checkIsTrainer = checkIsTrainer || function() {
     const authed = (safeGetLocalStorage('_trainerAuthed') === '1' || safeGetSessionStorage('_trainerAuthed') === '1');
     if (!authed) return false;
-    if (typeof window === 'undefined') return true;
+    if (typeof window === 'undefined' || !window.location || !window.location.pathname) return true;
     const path = window.location.pathname.toLowerCase();
     const isClientPage = !path.includes('trainer-') && !path.includes('admin-') && !path.includes('trainer-login');
     return !isClientPage;
