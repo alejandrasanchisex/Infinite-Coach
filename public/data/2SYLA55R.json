@@ -4002,7 +4002,7 @@
         }
       ],
       "createdAt": "2026-07-18T18:42:40.282624+00:00",
-      "updatedAt": "2026-07-20T10:20:01.632+00:00"
+      "updatedAt": "2026-07-20T10:23:02.002+00:00"
     }
   ],
   "diets": [
@@ -4489,7 +4489,7 @@
         "fat": 0
       },
       "createdAt": "2026-07-18T18:44:04.935338+00:00",
-      "updatedAt": "2026-07-20T10:20:01.632+00:00"
+      "updatedAt": "2026-07-20T10:23:02.003+00:00"
     }
   ],
   "trainingBlocks": [
@@ -4895,7 +4895,7 @@
         }
       ],
       "createdAt": "2026-07-20T09:12:57.351289+00:00",
-      "updatedAt": "2026-07-20T10:20:01.632+00:00"
+      "updatedAt": "2026-07-20T10:23:02.002+00:00"
     },
     {
       "id": "46b3e3c5-870f-4c5f-9ca4-f9f943fab68a",
@@ -6119,7 +6119,7 @@
         }
       ],
       "createdAt": "2026-06-26T17:21:21.353+00:00",
-      "updatedAt": "2026-07-20T10:20:01.632+00:00"
+      "updatedAt": "2026-07-20T10:23:02.002+00:00"
     },
     {
       "id": "51f21397-0da8-429b-8864-d36631e6f133",
@@ -6989,7 +6989,7 @@
         }
       ],
       "createdAt": "2026-05-19T13:21:43.656+00:00",
-      "updatedAt": "2026-07-20T10:20:01.632+00:00"
+      "updatedAt": "2026-07-20T10:23:02.002+00:00"
     },
     {
       "id": "abdc3aaa-2f3b-46be-b42e-570614ca0214",
@@ -7337,7 +7337,7 @@
         }
       ],
       "createdAt": "2026-07-04T12:59:19.389+00:00",
-      "updatedAt": "2026-07-20T10:20:01.632+00:00"
+      "updatedAt": "2026-07-20T10:23:02.002+00:00"
     }
   ],
   "trainingLogs": [
@@ -7453,6 +7453,119 @@
       "routineId": "8b58082d-654d-44c8-88ca-4f3e951288cd",
       "blockId": "51f21397-0da8-429b-8864-d36631e6f133",
       "weekIndex": 3
+    },
+    {
+      "id": "66952155-87c1-4555-9a92-205521bd4f43",
+      "clientId": "0db0ea7a-c413-44cb-b99e-dfd9790383eb",
+      "date": "2026-06-16T08:17:09.851+00:00",
+      "weekNumber": null,
+      "dayNumber": 3,
+      "exercises": [
+        {
+          "name": "Abducciones en Máquina + Monster Walks",
+          "sets": [
+            {
+              "rir": 0,
+              "reps": "20",
+              "weight": "120"
+            },
+            {
+              "rir": 0,
+              "reps": "20",
+              "weight": "120"
+            },
+            {
+              "rir": 0,
+              "reps": "20",
+              "weight": "120"
+            }
+          ]
+        },
+        {
+          "name": "RDL con barra",
+          "sets": [
+            {
+              "rir": 0,
+              "reps": "4",
+              "weight": "100"
+            },
+            {
+              "rir": 0,
+              "reps": "8",
+              "weight": "70"
+            },
+            {
+              "rir": 0,
+              "reps": "10",
+              "weight": "70"
+            }
+          ]
+        },
+        {
+          "name": "Sentadilla Sumo con mancuerna",
+          "sets": [
+            {
+              "rir": 0,
+              "reps": "10",
+              "weight": "40"
+            },
+            {
+              "rir": 0,
+              "reps": "10",
+              "weight": "40"
+            },
+            {
+              "rir": 0,
+              "reps": "10",
+              "weight": "40"
+            }
+          ]
+        },
+        {
+          "name": "Patada de Glúteo en Polea + Abddución Polea",
+          "sets": [
+            {
+              "rir": 0,
+              "reps": "20",
+              "weight": "20"
+            },
+            {
+              "rir": 0,
+              "reps": "20",
+              "weight": "20"
+            },
+            {
+              "rir": 0,
+              "reps": "20",
+              "weight": "20"
+            }
+          ]
+        },
+        {
+          "name": "Curl Femoral Sentado",
+          "sets": [
+            {
+              "rir": 0,
+              "reps": "15",
+              "weight": "15"
+            },
+            {
+              "rir": 0,
+              "reps": "12",
+              "weight": "20"
+            },
+            {
+              "rir": 0,
+              "reps": "8",
+              "weight": "25"
+            }
+          ]
+        }
+      ],
+      "completed": true,
+      "routineId": "51f21397-0da8-429b-8864-d36631e6f133",
+      "blockId": "51f21397-0da8-429b-8864-d36631e6f133",
+      "weekIndex": null
     },
     {
       "id": "e49bb1b3-8461-412c-b08d-8a601f36021e",
@@ -7573,375 +7686,6 @@
               "rir": 1,
               "reps": 15,
               "weight": 12
-            }
-          ]
-        }
-      ],
-      "completed": true,
-      "routineId": "cf1df2fe-9d5d-42c8-91a9-daa636cbce70",
-      "blockId": "51f21397-0da8-429b-8864-d36631e6f133",
-      "weekIndex": 0
-    },
-    {
-      "id": "c5edaf62-73b4-4f93-a14d-a74a859e9466",
-      "clientId": "0db0ea7a-c413-44cb-b99e-dfd9790383eb",
-      "date": "2026-06-23T19:11:29.638+00:00",
-      "weekNumber": null,
-      "dayNumber": 3,
-      "exercises": [
-        {
-          "name": "Abducciones en Máquina + Monster Walks",
-          "sets": [
-            {
-              "rir": 0,
-              "reps": "20",
-              "weight": "120"
-            },
-            {
-              "rir": 0,
-              "reps": "20",
-              "weight": "120"
-            },
-            {
-              "rir": 0,
-              "reps": "20",
-              "weight": "120"
-            }
-          ]
-        },
-        {
-          "name": "RDL con barra",
-          "sets": [
-            {
-              "rir": 0,
-              "reps": "5",
-              "weight": "100"
-            },
-            {
-              "rir": 0,
-              "reps": "12",
-              "weight": "60"
-            },
-            {
-              "rir": 0,
-              "reps": "12",
-              "weight": "60"
-            }
-          ]
-        },
-        {
-          "name": "Sentadilla Sumo Multipower",
-          "sets": [
-            {
-              "rir": 0,
-              "reps": "6",
-              "weight": "80"
-            },
-            {
-              "rir": 0,
-              "reps": "6",
-              "weight": "80"
-            },
-            {
-              "rir": 0,
-              "reps": "12",
-              "weight": "60"
-            },
-            {
-              "rir": 0,
-              "reps": "12",
-              "weight": "60"
-            }
-          ]
-        },
-        {
-          "name": "Patada de Glúteo en Polea + Abddución Polea",
-          "sets": [
-            {
-              "rir": 0,
-              "reps": "20",
-              "weight": "22.5"
-            },
-            {
-              "rir": 0,
-              "reps": "20",
-              "weight": "22.5"
-            },
-            {
-              "rir": 0,
-              "reps": "20",
-              "weight": "22.5"
-            }
-          ]
-        },
-        {
-          "name": "Curl Femoral Sentado",
-          "sets": [
-            {
-              "rir": 0,
-              "reps": "20",
-              "weight": "10"
-            },
-            {
-              "rir": 0,
-              "reps": "15",
-              "weight": "10"
-            },
-            {
-              "rir": 0,
-              "reps": "12",
-              "weight": "10"
-            },
-            {
-              "rir": 0,
-              "reps": "10",
-              "weight": "20"
-            },
-            {
-              "rir": 0,
-              "reps": "10",
-              "weight": "20"
-            }
-          ]
-        }
-      ],
-      "completed": true,
-      "routineId": "51f21397-0da8-429b-8864-d36631e6f133",
-      "blockId": "51f21397-0da8-429b-8864-d36631e6f133",
-      "weekIndex": null
-    },
-    {
-      "id": "66952155-87c1-4555-9a92-205521bd4f43",
-      "clientId": "0db0ea7a-c413-44cb-b99e-dfd9790383eb",
-      "date": "2026-06-16T08:17:09.851+00:00",
-      "weekNumber": null,
-      "dayNumber": 3,
-      "exercises": [
-        {
-          "name": "Abducciones en Máquina + Monster Walks",
-          "sets": [
-            {
-              "rir": 0,
-              "reps": "20",
-              "weight": "120"
-            },
-            {
-              "rir": 0,
-              "reps": "20",
-              "weight": "120"
-            },
-            {
-              "rir": 0,
-              "reps": "20",
-              "weight": "120"
-            }
-          ]
-        },
-        {
-          "name": "RDL con barra",
-          "sets": [
-            {
-              "rir": 0,
-              "reps": "4",
-              "weight": "100"
-            },
-            {
-              "rir": 0,
-              "reps": "8",
-              "weight": "70"
-            },
-            {
-              "rir": 0,
-              "reps": "10",
-              "weight": "70"
-            }
-          ]
-        },
-        {
-          "name": "Sentadilla Sumo con mancuerna",
-          "sets": [
-            {
-              "rir": 0,
-              "reps": "10",
-              "weight": "40"
-            },
-            {
-              "rir": 0,
-              "reps": "10",
-              "weight": "40"
-            },
-            {
-              "rir": 0,
-              "reps": "10",
-              "weight": "40"
-            }
-          ]
-        },
-        {
-          "name": "Patada de Glúteo en Polea + Abddución Polea",
-          "sets": [
-            {
-              "rir": 0,
-              "reps": "20",
-              "weight": "20"
-            },
-            {
-              "rir": 0,
-              "reps": "20",
-              "weight": "20"
-            },
-            {
-              "rir": 0,
-              "reps": "20",
-              "weight": "20"
-            }
-          ]
-        },
-        {
-          "name": "Curl Femoral Sentado",
-          "sets": [
-            {
-              "rir": 0,
-              "reps": "15",
-              "weight": "15"
-            },
-            {
-              "rir": 0,
-              "reps": "12",
-              "weight": "20"
-            },
-            {
-              "rir": 0,
-              "reps": "8",
-              "weight": "25"
-            }
-          ]
-        }
-      ],
-      "completed": true,
-      "routineId": "51f21397-0da8-429b-8864-d36631e6f133",
-      "blockId": "51f21397-0da8-429b-8864-d36631e6f133",
-      "weekIndex": null
-    },
-    {
-      "id": "fcac433f-deb2-4e15-a4d1-a989464fae02",
-      "clientId": "0db0ea7a-c413-44cb-b99e-dfd9790383eb",
-      "date": "2026-05-23T18:15:00+00:00",
-      "weekNumber": null,
-      "dayNumber": 4,
-      "exercises": [
-        {
-          "name": "Press Militar (Mancuernas)",
-          "sets": [
-            {
-              "rir": 1,
-              "reps": 15,
-              "weight": 10
-            },
-            {
-              "rir": 1,
-              "reps": 12,
-              "weight": 10
-            },
-            {
-              "rir": 1,
-              "reps": 10,
-              "weight": 12
-            }
-          ]
-        },
-        {
-          "name": "Elevaciones Laterales (Mancuernas)",
-          "sets": [
-            {
-              "rir": 0,
-              "reps": 20,
-              "weight": 6
-            },
-            {
-              "rir": 0,
-              "reps": 18,
-              "weight": 6
-            },
-            {
-              "rir": 0,
-              "reps": 16,
-              "weight": 8
-            },
-            {
-              "rir": 0,
-              "reps": 14,
-              "weight": 8
-            },
-            {
-              "rir": 0,
-              "reps": 12,
-              "weight": 10
-            }
-          ]
-        },
-        {
-          "name": "Elevaciones Laterales (Máquina)",
-          "sets": [
-            {
-              "rir": 0,
-              "reps": 20,
-              "weight": 15
-            },
-            {
-              "rir": 0,
-              "reps": 20,
-              "weight": 15
-            },
-            {
-              "rir": 0,
-              "reps": 20,
-              "weight": 20
-            },
-            {
-              "rir": 0,
-              "reps": 20,
-              "weight": 20
-            }
-          ]
-        },
-        {
-          "name": "Facepulls + Extensión Tríceps Polea",
-          "sets": [
-            {
-              "rir": 1,
-              "reps": 15,
-              "weight": 15
-            },
-            {
-              "rir": 1,
-              "reps": 15,
-              "weight": 15
-            },
-            {
-              "rir": 1,
-              "reps": 15,
-              "weight": 15
-            }
-          ]
-        },
-        {
-          "name": "Crunch + Elevación Piernas",
-          "sets": [
-            {
-              "rir": 0,
-              "reps": 15,
-              "weight": 0
-            },
-            {
-              "rir": 0,
-              "reps": 15,
-              "weight": 0
-            },
-            {
-              "rir": 0,
-              "reps": 15,
-              "weight": 0
             }
           ]
         }
@@ -8198,122 +7942,230 @@
       "weekIndex": null
     },
     {
-      "id": "2e69d448-a286-44d5-9693-1a4c6e1add21",
+      "id": "8b6c8013-e37e-49ef-a8fd-86a9e62bc166",
       "clientId": "0db0ea7a-c413-44cb-b99e-dfd9790383eb",
-      "date": "2026-06-23T15:56:57.587+00:00",
+      "date": "2026-05-22T19:00:00+00:00",
       "weekNumber": null,
-      "dayNumber": 2,
+      "dayNumber": 3,
       "exercises": [
         {
-          "name": "Jalón al Pecho (Ancho)",
+          "name": "Abducciones en Máquina + Monster Walks",
           "sets": [
             {
-              "rir": 0,
-              "reps": "6",
-              "weight": "80"
+              "rir": 1,
+              "reps": 20,
+              "weight": 45
             },
             {
-              "rir": 0,
-              "reps": "12",
-              "weight": "60"
+              "rir": 1,
+              "reps": 20,
+              "weight": 45
             },
             {
-              "rir": 0,
-              "reps": "12",
-              "weight": "60"
+              "rir": 1,
+              "reps": 20,
+              "weight": 45
             }
           ]
         },
         {
-          "name": "Remo con Barra (90º)",
+          "name": "RDL con barra",
           "sets": [
             {
-              "rir": 0,
-              "reps": "6",
-              "weight": "70"
+              "rir": 1,
+              "reps": 8,
+              "weight": 40
             },
             {
-              "rir": 0,
-              "reps": 0,
-              "weight": 0
+              "rir": 1,
+              "reps": 12,
+              "weight": 35
             },
             {
-              "rir": 0,
-              "reps": "12",
-              "weight": "50"
-            },
-            {
-              "rir": 0,
-              "reps": "12",
-              "weight": "50"
+              "rir": 1,
+              "reps": 12,
+              "weight": 35
             }
           ]
         },
         {
-          "name": "Pull-over en Polea Alta",
+          "name": "Sentadilla Sumo con mancuerna",
           "sets": [
             {
-              "rir": 0,
-              "reps": "12",
-              "weight": "17.5"
+              "rir": 1,
+              "reps": 8,
+              "weight": 20
             },
             {
-              "rir": 0,
-              "reps": "11",
-              "weight": "17.5"
+              "rir": 1,
+              "reps": 12,
+              "weight": 16
             },
             {
-              "rir": 0,
-              "reps": "12",
-              "weight": "17.5"
+              "rir": 1,
+              "reps": 12,
+              "weight": 16
             }
           ]
         },
         {
-          "name": "Facepulls + Curl Bíceps",
+          "name": "Patada de Glúteo en Polea + Abddución Polea",
           "sets": [
             {
-              "rir": 0,
-              "reps": "15",
-              "weight": "17.5"
+              "rir": 1,
+              "reps": 20,
+              "weight": 10
             },
             {
-              "rir": 0,
-              "reps": "15",
-              "weight": "17.5"
+              "rir": 1,
+              "reps": 20,
+              "weight": 10
             },
             {
-              "rir": 0,
-              "reps": "15",
-              "weight": "17.5"
+              "rir": 1,
+              "reps": 20,
+              "weight": 10
             }
           ]
         },
         {
-          "name": "Crunch + Elevación Piernas",
+          "name": "Curl Femoral Sentado",
           "sets": [
             {
               "rir": 0,
-              "reps": 0,
-              "weight": 0
+              "reps": 15,
+              "weight": 20
             },
             {
               "rir": 0,
-              "reps": 0,
-              "weight": 0
+              "reps": 12,
+              "weight": 25
             },
             {
               "rir": 0,
-              "reps": 0,
-              "weight": 0
+              "reps": 10,
+              "weight": 30
             }
           ]
         }
       ],
       "completed": true,
-      "routineId": "51f21397-0da8-429b-8864-d36631e6f133",
+      "routineId": "cf1df2fe-9d5d-42c8-91a9-daa636cbce70",
       "blockId": "51f21397-0da8-429b-8864-d36631e6f133",
-      "weekIndex": null
+      "weekIndex": 0
+    },
+    {
+      "id": "b6a6a0ce-3c12-42fd-8969-e03d449c6108",
+      "clientId": "0db0ea7a-c413-44cb-b99e-dfd9790383eb",
+      "date": "2026-05-28T19:54:18.116+00:00",
+      "weekNumber": null,
+      "dayNumber": 3,
+      "exercises": [
+        {
+          "name": "Abducciones en Máquina + Monster Walks",
+          "sets": [
+            {
+              "rir": 0,
+              "reps": "20",
+              "weight": "100"
+            },
+            {
+              "rir": 0,
+              "reps": "20",
+              "weight": "110"
+            },
+            {
+              "rir": 0,
+              "reps": "20",
+              "weight": "110"
+            }
+          ]
+        },
+        {
+          "name": "RDL con barra",
+          "sets": [
+            {
+              "rir": 0,
+              "reps": "6",
+              "weight": "90"
+            },
+            {
+              "rir": 0,
+              "reps": "10",
+              "weight": "60"
+            },
+            {
+              "rir": 0,
+              "reps": "10",
+              "weight": "60"
+            }
+          ]
+        },
+        {
+          "name": "Sentadilla Sumo con mancuerna",
+          "sets": [
+            {
+              "rir": 0,
+              "reps": "10",
+              "weight": "32"
+            },
+            {
+              "rir": 0,
+              "reps": "10",
+              "weight": "32"
+            },
+            {
+              "rir": 0,
+              "reps": "10",
+              "weight": "32"
+            }
+          ]
+        },
+        {
+          "name": "Patada de Glúteo en Polea + Abddución Polea",
+          "sets": [
+            {
+              "rir": 0,
+              "reps": "16",
+              "weight": "20"
+            },
+            {
+              "rir": 0,
+              "reps": "16",
+              "weight": "20"
+            },
+            {
+              "rir": 0,
+              "reps": "16",
+              "weight": "20"
+            }
+          ]
+        },
+        {
+          "name": "Curl Femoral Sentado",
+          "sets": [
+            {
+              "rir": 0,
+              "reps": "15",
+              "weight": "25"
+            },
+            {
+              "rir": 0,
+              "reps": "12",
+              "weight": "25"
+            },
+            {
+              "rir": 0,
+              "reps": "10",
+              "weight": "25"
+            }
+          ]
+        }
+      ],
+      "completed": true,
+      "routineId": "6de869a7-bd71-4f08-affe-6525d8be70b4",
+      "blockId": "51f21397-0da8-429b-8864-d36631e6f133",
+      "weekIndex": 1
     },
     {
       "id": "0c440e1f-667c-4c38-9d11-64a94be64c3d",
@@ -8610,6 +8462,1369 @@
       "routineId": "c5921830-8799-4c1d-8b07-8b70d1c1b841",
       "blockId": "068a14a7-59ba-44fe-8ee5-ea9ed27ce20a",
       "weekIndex": 0
+    },
+    {
+      "id": "dd2f5b1a-1bfb-48d3-a040-abda65e6f6ef",
+      "clientId": "0db0ea7a-c413-44cb-b99e-dfd9790383eb",
+      "date": "2026-06-10T10:00:05.858+00:00",
+      "weekNumber": null,
+      "dayNumber": 3,
+      "exercises": [
+        {
+          "name": "Abducciones en Máquina + Monster Walks",
+          "sets": [
+            {
+              "rir": 0,
+              "reps": "20",
+              "weight": "120"
+            },
+            {
+              "rir": 0,
+              "reps": "20",
+              "weight": "120"
+            },
+            {
+              "rir": 0,
+              "reps": "16",
+              "weight": "120"
+            }
+          ]
+        },
+        {
+          "name": "RDL con barra",
+          "sets": [
+            {
+              "rir": 0,
+              "reps": "3",
+              "weight": "100"
+            },
+            {
+              "rir": 0,
+              "reps": "10",
+              "weight": "70"
+            },
+            {
+              "rir": 0,
+              "reps": "10",
+              "weight": "70"
+            }
+          ]
+        },
+        {
+          "name": "Sentadilla Sumo con mancuerna",
+          "sets": [
+            {
+              "rir": 0,
+              "reps": "8",
+              "weight": "40"
+            },
+            {
+              "rir": 0,
+              "reps": "8",
+              "weight": "40"
+            },
+            {
+              "rir": 0,
+              "reps": "7",
+              "weight": "40"
+            }
+          ]
+        },
+        {
+          "name": "Patada de Glúteo en Polea + Abddución Polea",
+          "sets": [
+            {
+              "rir": 0,
+              "reps": "20",
+              "weight": "20"
+            },
+            {
+              "rir": 0,
+              "reps": "20",
+              "weight": "20"
+            },
+            {
+              "rir": 0,
+              "reps": "20",
+              "weight": "20"
+            }
+          ]
+        },
+        {
+          "name": "Curl Femoral Sentado",
+          "sets": [
+            {
+              "rir": 0,
+              "reps": "8",
+              "weight": "25"
+            },
+            {
+              "rir": 0,
+              "reps": "12",
+              "weight": "20"
+            },
+            {
+              "rir": 0,
+              "reps": "9",
+              "weight": "25"
+            }
+          ]
+        }
+      ],
+      "completed": true,
+      "routineId": "8b58082d-654d-44c8-88ca-4f3e951288cd",
+      "blockId": "51f21397-0da8-429b-8864-d36631e6f133",
+      "weekIndex": 3
+    },
+    {
+      "id": "b839f458-7865-442e-8dd9-11d8e42d96e6",
+      "clientId": "0db0ea7a-c413-44cb-b99e-dfd9790383eb",
+      "date": "2026-05-21T18:45:00+00:00",
+      "weekNumber": null,
+      "dayNumber": 2,
+      "exercises": [
+        {
+          "name": "Jalón al Pecho (Ancho)",
+          "sets": [
+            {
+              "rir": 1,
+              "reps": 8,
+              "weight": 35
+            },
+            {
+              "rir": 1,
+              "reps": 12,
+              "weight": 30
+            },
+            {
+              "rir": 1,
+              "reps": 12,
+              "weight": 30
+            }
+          ]
+        },
+        {
+          "name": "Remo con Barra (90º)",
+          "sets": [
+            {
+              "rir": 1,
+              "reps": 8,
+              "weight": 25
+            },
+            {
+              "rir": 1,
+              "reps": 12,
+              "weight": 20
+            },
+            {
+              "rir": 1,
+              "reps": 12,
+              "weight": 20
+            }
+          ]
+        },
+        {
+          "name": "Pull-over en Polea Alta",
+          "sets": [
+            {
+              "rir": 0,
+              "reps": 12,
+              "weight": 15
+            },
+            {
+              "rir": 0,
+              "reps": 12,
+              "weight": 15
+            },
+            {
+              "rir": 0,
+              "reps": 12,
+              "weight": 15
+            }
+          ]
+        },
+        {
+          "name": "Facepulls + Curl Bíceps",
+          "sets": [
+            {
+              "rir": 1,
+              "reps": 15,
+              "weight": 12
+            },
+            {
+              "rir": 1,
+              "reps": 15,
+              "weight": 12
+            },
+            {
+              "rir": 1,
+              "reps": 15,
+              "weight": 12
+            }
+          ]
+        },
+        {
+          "name": "Crunch + Elevación Piernas",
+          "sets": [
+            {
+              "rir": 0,
+              "reps": 15,
+              "weight": 0
+            },
+            {
+              "rir": 0,
+              "reps": 15,
+              "weight": 0
+            },
+            {
+              "rir": 0,
+              "reps": 15,
+              "weight": 0
+            }
+          ]
+        }
+      ],
+      "completed": true,
+      "routineId": "cf1df2fe-9d5d-42c8-91a9-daa636cbce70",
+      "blockId": "51f21397-0da8-429b-8864-d36631e6f133",
+      "weekIndex": 0
+    },
+    {
+      "id": "13deacba-d1eb-483f-a607-87ef6f5e4797",
+      "clientId": "0db0ea7a-c413-44cb-b99e-dfd9790383eb",
+      "date": "2026-07-01T17:33:29.699+00:00",
+      "weekNumber": null,
+      "dayNumber": 3,
+      "exercises": [
+        {
+          "name": "Abducciones en Máquina + Monster Walks",
+          "sets": [
+            {
+              "rir": 0,
+              "reps": "20",
+              "weight": "120"
+            },
+            {
+              "rir": 0,
+              "reps": "20",
+              "weight": "120"
+            },
+            {
+              "rir": 0,
+              "reps": "20",
+              "weight": "120"
+            }
+          ]
+        },
+        {
+          "name": "RDL con barra",
+          "sets": [
+            {
+              "rir": 0,
+              "reps": "5",
+              "weight": "100"
+            },
+            {
+              "rir": 0,
+              "reps": "12",
+              "weight": "50"
+            },
+            {
+              "rir": 0,
+              "reps": "12",
+              "weight": "50"
+            }
+          ]
+        },
+        {
+          "name": "Sentadilla Sumo Multipower",
+          "sets": [
+            {
+              "rir": 0,
+              "reps": "8",
+              "weight": "80"
+            },
+            {
+              "rir": 0,
+              "reps": "12",
+              "weight": "60"
+            },
+            {
+              "rir": 0,
+              "reps": "12",
+              "weight": "60"
+            }
+          ]
+        },
+        {
+          "name": "Prensa Sumo",
+          "sets": [
+            {
+              "rir": 0,
+              "reps": "12",
+              "weight": "120"
+            },
+            {
+              "rir": 0,
+              "reps": "12",
+              "weight": "120"
+            },
+            {
+              "rir": 0,
+              "reps": "10",
+              "weight": "120"
+            }
+          ]
+        },
+        {
+          "name": "Step Up ",
+          "sets": [
+            {
+              "rir": 0,
+              "reps": "12",
+              "weight": "12.5"
+            },
+            {
+              "rir": 0,
+              "reps": "12",
+              "weight": "12.5"
+            },
+            {
+              "rir": 0,
+              "reps": "10",
+              "weight": "12.5"
+            }
+          ]
+        },
+        {
+          "name": "Curl Femoral Sentado + zancadas",
+          "sets": [
+            {
+              "rir": 0,
+              "reps": "12",
+              "weight": "25"
+            },
+            {
+              "rir": 0,
+              "reps": "10",
+              "weight": "25"
+            },
+            {
+              "rir": 0,
+              "reps": "8",
+              "weight": "25"
+            }
+          ]
+        }
+      ],
+      "completed": true,
+      "routineId": "cf1df2fe-9d5d-42c8-91a9-daa636cbce70",
+      "blockId": "46b3e3c5-870f-4c5f-9ca4-f9f943fab68a",
+      "weekIndex": 0
+    },
+    {
+      "id": "087f6f00-46a4-47c7-8427-74b916ed4eeb",
+      "clientId": "0db0ea7a-c413-44cb-b99e-dfd9790383eb",
+      "date": "2026-05-20T18:30:00+00:00",
+      "weekNumber": null,
+      "dayNumber": 1,
+      "exercises": [
+        {
+          "name": "Sentadilla Hack",
+          "sets": [
+            {
+              "rir": 1,
+              "reps": 8,
+              "weight": 50
+            },
+            {
+              "rir": 1,
+              "reps": 12,
+              "weight": 40
+            },
+            {
+              "rir": 1,
+              "reps": 12,
+              "weight": 40
+            }
+          ]
+        },
+        {
+          "name": "Prensa de Piernas 45º",
+          "sets": [
+            {
+              "rir": 1,
+              "reps": 8,
+              "weight": 80
+            },
+            {
+              "rir": 1,
+              "reps": 12,
+              "weight": 60
+            },
+            {
+              "rir": 1,
+              "reps": 12,
+              "weight": 60
+            }
+          ]
+        },
+        {
+          "name": "Extensiones de Cuádriceps",
+          "sets": [
+            {
+              "rir": 0,
+              "reps": 15,
+              "weight": 25
+            },
+            {
+              "rir": 0,
+              "reps": 12,
+              "weight": 30
+            },
+            {
+              "rir": 0,
+              "reps": 10,
+              "weight": 35
+            },
+            {
+              "rir": 0,
+              "reps": 8,
+              "weight": 40
+            }
+          ]
+        },
+        {
+          "name": "Sentadilla Búlgara (Foco Cuádriceps)",
+          "sets": [
+            {
+              "rir": 1,
+              "reps": 12,
+              "weight": 12
+            },
+            {
+              "rir": 1,
+              "reps": 12,
+              "weight": 12
+            },
+            {
+              "rir": 1,
+              "reps": 12,
+              "weight": 12
+            },
+            {
+              "rir": 1,
+              "reps": 12,
+              "weight": 12
+            }
+          ]
+        },
+        {
+          "name": "Aductor",
+          "sets": [
+            {
+              "rir": 0,
+              "reps": 15,
+              "weight": 30
+            },
+            {
+              "rir": 0,
+              "reps": 15,
+              "weight": 35
+            },
+            {
+              "rir": 0,
+              "reps": 15,
+              "weight": 40
+            }
+          ]
+        }
+      ],
+      "completed": true,
+      "routineId": "cf1df2fe-9d5d-42c8-91a9-daa636cbce70",
+      "blockId": "51f21397-0da8-429b-8864-d36631e6f133",
+      "weekIndex": 0
+    },
+    {
+      "id": "ed1e1334-47e3-4dd5-af5a-e1260226d5bd",
+      "clientId": "0db0ea7a-c413-44cb-b99e-dfd9790383eb",
+      "date": "2026-06-08T08:15:26.378+00:00",
+      "weekNumber": null,
+      "dayNumber": 1,
+      "exercises": [
+        {
+          "name": "Sentadilla Hack",
+          "sets": [
+            {
+              "rir": 0,
+              "reps": "7",
+              "weight": "110"
+            },
+            {
+              "rir": 0,
+              "reps": "10",
+              "weight": "80"
+            },
+            {
+              "rir": 0,
+              "reps": "10",
+              "weight": "80"
+            }
+          ]
+        },
+        {
+          "name": "Prensa de Piernas 45º",
+          "sets": [
+            {
+              "rir": 0,
+              "reps": "8",
+              "weight": "210"
+            },
+            {
+              "rir": 0,
+              "reps": "10",
+              "weight": "160"
+            },
+            {
+              "rir": 0,
+              "reps": "10",
+              "weight": "160"
+            }
+          ]
+        },
+        {
+          "name": "Extensiones de Cuádriceps",
+          "sets": [
+            {
+              "rir": 0,
+              "reps": "15",
+              "weight": "30"
+            },
+            {
+              "rir": 0,
+              "reps": "12",
+              "weight": "35"
+            },
+            {
+              "rir": 0,
+              "reps": "10",
+              "weight": "40"
+            },
+            {
+              "rir": 0,
+              "reps": "8",
+              "weight": "50"
+            }
+          ]
+        },
+        {
+          "name": "Sentadilla Búlgara (Foco Cuádriceps)",
+          "sets": [
+            {
+              "rir": 0,
+              "reps": "8",
+              "weight": "16"
+            },
+            {
+              "rir": 0,
+              "reps": "8",
+              "weight": "16"
+            },
+            {
+              "rir": 0,
+              "reps": "8",
+              "weight": "16"
+            },
+            {
+              "rir": 0,
+              "reps": "8",
+              "weight": "16"
+            }
+          ]
+        },
+        {
+          "name": "Aductor",
+          "sets": [
+            {
+              "rir": 0,
+              "reps": "15",
+              "weight": "45"
+            },
+            {
+              "rir": 0,
+              "reps": "12",
+              "weight": "50"
+            },
+            {
+              "rir": 0,
+              "reps": "12",
+              "weight": "50"
+            }
+          ]
+        }
+      ],
+      "completed": true,
+      "routineId": "2e5eb165-5a8d-40f4-9a3b-1a75557699cc",
+      "blockId": "51f21397-0da8-429b-8864-d36631e6f133",
+      "weekIndex": 2
+    },
+    {
+      "id": "fcac433f-deb2-4e15-a4d1-a989464fae02",
+      "clientId": "0db0ea7a-c413-44cb-b99e-dfd9790383eb",
+      "date": "2026-05-23T18:15:00+00:00",
+      "weekNumber": null,
+      "dayNumber": 4,
+      "exercises": [
+        {
+          "name": "Press Militar (Mancuernas)",
+          "sets": [
+            {
+              "rir": 1,
+              "reps": 15,
+              "weight": 10
+            },
+            {
+              "rir": 1,
+              "reps": 12,
+              "weight": 10
+            },
+            {
+              "rir": 1,
+              "reps": 10,
+              "weight": 12
+            }
+          ]
+        },
+        {
+          "name": "Elevaciones Laterales (Mancuernas)",
+          "sets": [
+            {
+              "rir": 0,
+              "reps": 20,
+              "weight": 6
+            },
+            {
+              "rir": 0,
+              "reps": 18,
+              "weight": 6
+            },
+            {
+              "rir": 0,
+              "reps": 16,
+              "weight": 8
+            },
+            {
+              "rir": 0,
+              "reps": 14,
+              "weight": 8
+            },
+            {
+              "rir": 0,
+              "reps": 12,
+              "weight": 10
+            }
+          ]
+        },
+        {
+          "name": "Elevaciones Laterales (Máquina)",
+          "sets": [
+            {
+              "rir": 0,
+              "reps": 20,
+              "weight": 15
+            },
+            {
+              "rir": 0,
+              "reps": 20,
+              "weight": 15
+            },
+            {
+              "rir": 0,
+              "reps": 20,
+              "weight": 20
+            },
+            {
+              "rir": 0,
+              "reps": 20,
+              "weight": 20
+            }
+          ]
+        },
+        {
+          "name": "Facepulls + Extensión Tríceps Polea",
+          "sets": [
+            {
+              "rir": 1,
+              "reps": 15,
+              "weight": 15
+            },
+            {
+              "rir": 1,
+              "reps": 15,
+              "weight": 15
+            },
+            {
+              "rir": 1,
+              "reps": 15,
+              "weight": 15
+            }
+          ]
+        },
+        {
+          "name": "Crunch + Elevación Piernas",
+          "sets": [
+            {
+              "rir": 0,
+              "reps": 15,
+              "weight": 0
+            },
+            {
+              "rir": 0,
+              "reps": 15,
+              "weight": 0
+            },
+            {
+              "rir": 0,
+              "reps": 15,
+              "weight": 0
+            }
+          ]
+        }
+      ],
+      "completed": true,
+      "routineId": "cf1df2fe-9d5d-42c8-91a9-daa636cbce70",
+      "blockId": "51f21397-0da8-429b-8864-d36631e6f133",
+      "weekIndex": 0
+    },
+    {
+      "id": "2b2fb880-a852-4a95-a19a-d8d2286ac5a7",
+      "clientId": "0db0ea7a-c413-44cb-b99e-dfd9790383eb",
+      "date": "2026-05-28T08:09:23.534+00:00",
+      "weekNumber": null,
+      "dayNumber": 4,
+      "exercises": [
+        {
+          "name": "Press Militar (Mancuernas)",
+          "sets": [
+            {
+              "rir": 0,
+              "reps": "19",
+              "weight": "20"
+            },
+            {
+              "rir": 0,
+              "reps": "12",
+              "weight": "25"
+            },
+            {
+              "rir": 0,
+              "reps": "6",
+              "weight": "30"
+            }
+          ]
+        },
+        {
+          "name": "Elevaciones Laterales (Mancuernas)",
+          "sets": [
+            {
+              "rir": 0,
+              "reps": "20",
+              "weight": "6"
+            },
+            {
+              "rir": 0,
+              "reps": "18",
+              "weight": "6"
+            },
+            {
+              "rir": 0,
+              "reps": "16",
+              "weight": "6"
+            },
+            {
+              "rir": 0,
+              "reps": "12",
+              "weight": "6"
+            },
+            {
+              "rir": 0,
+              "reps": "10",
+              "weight": "8"
+            }
+          ]
+        },
+        {
+          "name": "Elevaciones Laterales (Máquina)",
+          "sets": [
+            {
+              "rir": 0,
+              "reps": "17",
+              "weight": "2.5"
+            },
+            {
+              "rir": 0,
+              "reps": "20",
+              "weight": "2.5"
+            },
+            {
+              "rir": 0,
+              "reps": "20",
+              "weight": "2.5"
+            },
+            {
+              "rir": 0,
+              "reps": "20",
+              "weight": "2.5"
+            }
+          ]
+        },
+        {
+          "name": "Facepulls + Extensión Tríceps Polea",
+          "sets": [
+            {
+              "rir": 0,
+              "reps": "15",
+              "weight": "22.5"
+            },
+            {
+              "rir": 0,
+              "reps": "15",
+              "weight": "22.5"
+            },
+            {
+              "rir": 0,
+              "reps": "15",
+              "weight": "22.5"
+            }
+          ]
+        },
+        {
+          "name": "Crunch + Elevación Piernas",
+          "sets": [
+            {
+              "rir": 0,
+              "reps": "15",
+              "weight": "10"
+            },
+            {
+              "rir": 0,
+              "reps": "15",
+              "weight": "10"
+            },
+            {
+              "rir": 0,
+              "reps": "15",
+              "weight": "10"
+            }
+          ]
+        }
+      ],
+      "completed": true,
+      "routineId": "6de869a7-bd71-4f08-affe-6525d8be70b4",
+      "blockId": "51f21397-0da8-429b-8864-d36631e6f133",
+      "weekIndex": 1
+    },
+    {
+      "id": "c5edaf62-73b4-4f93-a14d-a74a859e9466",
+      "clientId": "0db0ea7a-c413-44cb-b99e-dfd9790383eb",
+      "date": "2026-06-23T19:11:29.638+00:00",
+      "weekNumber": null,
+      "dayNumber": 3,
+      "exercises": [
+        {
+          "name": "Abducciones en Máquina + Monster Walks",
+          "sets": [
+            {
+              "rir": 0,
+              "reps": "20",
+              "weight": "120"
+            },
+            {
+              "rir": 0,
+              "reps": "20",
+              "weight": "120"
+            },
+            {
+              "rir": 0,
+              "reps": "20",
+              "weight": "120"
+            }
+          ]
+        },
+        {
+          "name": "RDL con barra",
+          "sets": [
+            {
+              "rir": 0,
+              "reps": "5",
+              "weight": "100"
+            },
+            {
+              "rir": 0,
+              "reps": "12",
+              "weight": "60"
+            },
+            {
+              "rir": 0,
+              "reps": "12",
+              "weight": "60"
+            }
+          ]
+        },
+        {
+          "name": "Sentadilla Sumo Multipower",
+          "sets": [
+            {
+              "rir": 0,
+              "reps": "6",
+              "weight": "80"
+            },
+            {
+              "rir": 0,
+              "reps": "6",
+              "weight": "80"
+            },
+            {
+              "rir": 0,
+              "reps": "12",
+              "weight": "60"
+            },
+            {
+              "rir": 0,
+              "reps": "12",
+              "weight": "60"
+            }
+          ]
+        },
+        {
+          "name": "Patada de Glúteo en Polea + Abddución Polea",
+          "sets": [
+            {
+              "rir": 0,
+              "reps": "20",
+              "weight": "22.5"
+            },
+            {
+              "rir": 0,
+              "reps": "20",
+              "weight": "22.5"
+            },
+            {
+              "rir": 0,
+              "reps": "20",
+              "weight": "22.5"
+            }
+          ]
+        },
+        {
+          "name": "Curl Femoral Sentado",
+          "sets": [
+            {
+              "rir": 0,
+              "reps": "20",
+              "weight": "10"
+            },
+            {
+              "rir": 0,
+              "reps": "15",
+              "weight": "10"
+            },
+            {
+              "rir": 0,
+              "reps": "12",
+              "weight": "10"
+            },
+            {
+              "rir": 0,
+              "reps": "10",
+              "weight": "20"
+            },
+            {
+              "rir": 0,
+              "reps": "10",
+              "weight": "20"
+            }
+          ]
+        }
+      ],
+      "completed": true,
+      "routineId": "51f21397-0da8-429b-8864-d36631e6f133",
+      "blockId": "51f21397-0da8-429b-8864-d36631e6f133",
+      "weekIndex": null
+    },
+    {
+      "id": "2669995d-39e3-437b-be7a-c94efbf789fa",
+      "clientId": "0db0ea7a-c413-44cb-b99e-dfd9790383eb",
+      "date": "2026-05-24T11:00:00+00:00",
+      "weekNumber": null,
+      "dayNumber": 5,
+      "exercises": [
+        {
+          "name": "Sentadilla con Mancuerna + Monster Walks",
+          "sets": [
+            {
+              "rir": 1,
+              "reps": 15,
+              "weight": 16
+            },
+            {
+              "rir": 1,
+              "reps": 15,
+              "weight": 16
+            },
+            {
+              "rir": 1,
+              "reps": 15,
+              "weight": 16
+            }
+          ]
+        },
+        {
+          "name": "Extensiones de Cuádriceps",
+          "sets": [
+            {
+              "rir": 1,
+              "reps": 20,
+              "weight": 25
+            },
+            {
+              "rir": 1,
+              "reps": 20,
+              "weight": 25
+            },
+            {
+              "rir": 1,
+              "reps": 20,
+              "weight": 25
+            }
+          ]
+        },
+        {
+          "name": "Patada de Glúteo en Polea + Abducción Polea",
+          "sets": [
+            {
+              "rir": 1,
+              "reps": 15,
+              "weight": 10
+            },
+            {
+              "rir": 1,
+              "reps": 15,
+              "weight": 10
+            },
+            {
+              "rir": 1,
+              "reps": 15,
+              "weight": 10
+            }
+          ]
+        },
+        {
+          "name": "Jalón al Pecho (Estrecho)",
+          "sets": [
+            {
+              "rir": 1,
+              "reps": 20,
+              "weight": 30
+            },
+            {
+              "rir": 1,
+              "reps": 18,
+              "weight": 30
+            },
+            {
+              "rir": 1,
+              "reps": 15,
+              "weight": 35
+            }
+          ]
+        },
+        {
+          "name": "Rear Delt",
+          "sets": [
+            {
+              "rir": 1,
+              "reps": 20,
+              "weight": 10
+            },
+            {
+              "rir": 1,
+              "reps": 18,
+              "weight": 10
+            },
+            {
+              "rir": 1,
+              "reps": 15,
+              "weight": 12
+            }
+          ]
+        },
+        {
+          "name": "Curl en Polea Baja + Extensión Tríceps",
+          "sets": [
+            {
+              "rir": 1,
+              "reps": 15,
+              "weight": 12
+            },
+            {
+              "rir": 1,
+              "reps": 15,
+              "weight": 12
+            }
+          ]
+        }
+      ],
+      "completed": true,
+      "routineId": "cf1df2fe-9d5d-42c8-91a9-daa636cbce70",
+      "blockId": "51f21397-0da8-429b-8864-d36631e6f133",
+      "weekIndex": 0
+    },
+    {
+      "id": "4f2bcddc-9214-49d1-b957-9c904d837b49",
+      "clientId": "0db0ea7a-c413-44cb-b99e-dfd9790383eb",
+      "date": "2026-06-18T08:11:25.938+00:00",
+      "weekNumber": null,
+      "dayNumber": 4,
+      "exercises": [
+        {
+          "name": "Press Militar (Mancuernas)",
+          "sets": [
+            {
+              "rir": 0,
+              "reps": "15",
+              "weight": "20"
+            },
+            {
+              "rir": 0,
+              "reps": "12",
+              "weight": "25"
+            },
+            {
+              "rir": 0,
+              "reps": "10",
+              "weight": "30"
+            }
+          ]
+        },
+        {
+          "name": "Elevaciones Laterales (Mancuernas)",
+          "sets": [
+            {
+              "rir": 0,
+              "reps": "6",
+              "weight": "20"
+            },
+            {
+              "rir": 0,
+              "reps": "6",
+              "weight": "16"
+            },
+            {
+              "rir": 0,
+              "reps": "6",
+              "weight": "16"
+            },
+            {
+              "rir": 0,
+              "reps": "6",
+              "weight": "14"
+            },
+            {
+              "rir": 0,
+              "reps": "6",
+              "weight": "12"
+            }
+          ]
+        },
+        {
+          "name": "Elevaciones Laterales (Máquina)",
+          "sets": [
+            {
+              "rir": 0,
+              "reps": "20",
+              "weight": "2.5"
+            },
+            {
+              "rir": 0,
+              "reps": "20",
+              "weight": "2.5"
+            },
+            {
+              "rir": 0,
+              "reps": "20",
+              "weight": "2.5"
+            },
+            {
+              "rir": 0,
+              "reps": "20",
+              "weight": "2.5"
+            }
+          ]
+        },
+        {
+          "name": "Facepulls + Extensión Tríceps Polea",
+          "sets": [
+            {
+              "rir": 0,
+              "reps": "15",
+              "weight": "17.5"
+            },
+            {
+              "rir": 0,
+              "reps": "15",
+              "weight": "17.5"
+            },
+            {
+              "rir": 0,
+              "reps": "15",
+              "weight": "17.5"
+            }
+          ]
+        },
+        {
+          "name": "Crunch + Elevación Piernas",
+          "sets": [
+            {
+              "rir": 0,
+              "reps": "15",
+              "weight": "10"
+            },
+            {
+              "rir": 0,
+              "reps": "15",
+              "weight": "10"
+            },
+            {
+              "rir": 0,
+              "reps": "15",
+              "weight": "10"
+            }
+          ]
+        }
+      ],
+      "completed": true,
+      "routineId": "51f21397-0da8-429b-8864-d36631e6f133",
+      "blockId": "51f21397-0da8-429b-8864-d36631e6f133",
+      "weekIndex": null
+    },
+    {
+      "id": "2e69d448-a286-44d5-9693-1a4c6e1add21",
+      "clientId": "0db0ea7a-c413-44cb-b99e-dfd9790383eb",
+      "date": "2026-06-23T15:56:57.587+00:00",
+      "weekNumber": null,
+      "dayNumber": 2,
+      "exercises": [
+        {
+          "name": "Jalón al Pecho (Ancho)",
+          "sets": [
+            {
+              "rir": 0,
+              "reps": "6",
+              "weight": "80"
+            },
+            {
+              "rir": 0,
+              "reps": "12",
+              "weight": "60"
+            },
+            {
+              "rir": 0,
+              "reps": "12",
+              "weight": "60"
+            }
+          ]
+        },
+        {
+          "name": "Remo con Barra (90º)",
+          "sets": [
+            {
+              "rir": 0,
+              "reps": "6",
+              "weight": "70"
+            },
+            {
+              "rir": 0,
+              "reps": 0,
+              "weight": 0
+            },
+            {
+              "rir": 0,
+              "reps": "12",
+              "weight": "50"
+            },
+            {
+              "rir": 0,
+              "reps": "12",
+              "weight": "50"
+            }
+          ]
+        },
+        {
+          "name": "Pull-over en Polea Alta",
+          "sets": [
+            {
+              "rir": 0,
+              "reps": "12",
+              "weight": "17.5"
+            },
+            {
+              "rir": 0,
+              "reps": "11",
+              "weight": "17.5"
+            },
+            {
+              "rir": 0,
+              "reps": "12",
+              "weight": "17.5"
+            }
+          ]
+        },
+        {
+          "name": "Facepulls + Curl Bíceps",
+          "sets": [
+            {
+              "rir": 0,
+              "reps": "15",
+              "weight": "17.5"
+            },
+            {
+              "rir": 0,
+              "reps": "15",
+              "weight": "17.5"
+            },
+            {
+              "rir": 0,
+              "reps": "15",
+              "weight": "17.5"
+            }
+          ]
+        },
+        {
+          "name": "Crunch + Elevación Piernas",
+          "sets": [
+            {
+              "rir": 0,
+              "reps": 0,
+              "weight": 0
+            },
+            {
+              "rir": 0,
+              "reps": 0,
+              "weight": 0
+            },
+            {
+              "rir": 0,
+              "reps": 0,
+              "weight": 0
+            }
+          ]
+        }
+      ],
+      "completed": true,
+      "routineId": "51f21397-0da8-429b-8864-d36631e6f133",
+      "blockId": "51f21397-0da8-429b-8864-d36631e6f133",
+      "weekIndex": null
     },
     {
       "id": "a0ebd414-916c-4d41-8fd2-67be043f564c",
@@ -9144,139 +10359,6 @@
       "weekIndex": 0
     },
     {
-      "id": "13deacba-d1eb-483f-a607-87ef6f5e4797",
-      "clientId": "0db0ea7a-c413-44cb-b99e-dfd9790383eb",
-      "date": "2026-07-01T17:33:29.699+00:00",
-      "weekNumber": null,
-      "dayNumber": 3,
-      "exercises": [
-        {
-          "name": "Abducciones en Máquina + Monster Walks",
-          "sets": [
-            {
-              "rir": 0,
-              "reps": "20",
-              "weight": "120"
-            },
-            {
-              "rir": 0,
-              "reps": "20",
-              "weight": "120"
-            },
-            {
-              "rir": 0,
-              "reps": "20",
-              "weight": "120"
-            }
-          ]
-        },
-        {
-          "name": "RDL con barra",
-          "sets": [
-            {
-              "rir": 0,
-              "reps": "5",
-              "weight": "100"
-            },
-            {
-              "rir": 0,
-              "reps": "12",
-              "weight": "50"
-            },
-            {
-              "rir": 0,
-              "reps": "12",
-              "weight": "50"
-            }
-          ]
-        },
-        {
-          "name": "Sentadilla Sumo Multipower",
-          "sets": [
-            {
-              "rir": 0,
-              "reps": "8",
-              "weight": "80"
-            },
-            {
-              "rir": 0,
-              "reps": "12",
-              "weight": "60"
-            },
-            {
-              "rir": 0,
-              "reps": "12",
-              "weight": "60"
-            }
-          ]
-        },
-        {
-          "name": "Prensa Sumo",
-          "sets": [
-            {
-              "rir": 0,
-              "reps": "12",
-              "weight": "120"
-            },
-            {
-              "rir": 0,
-              "reps": "12",
-              "weight": "120"
-            },
-            {
-              "rir": 0,
-              "reps": "10",
-              "weight": "120"
-            }
-          ]
-        },
-        {
-          "name": "Step Up ",
-          "sets": [
-            {
-              "rir": 0,
-              "reps": "12",
-              "weight": "12.5"
-            },
-            {
-              "rir": 0,
-              "reps": "12",
-              "weight": "12.5"
-            },
-            {
-              "rir": 0,
-              "reps": "10",
-              "weight": "12.5"
-            }
-          ]
-        },
-        {
-          "name": "Curl Femoral Sentado + zancadas",
-          "sets": [
-            {
-              "rir": 0,
-              "reps": "12",
-              "weight": "25"
-            },
-            {
-              "rir": 0,
-              "reps": "10",
-              "weight": "25"
-            },
-            {
-              "rir": 0,
-              "reps": "8",
-              "weight": "25"
-            }
-          ]
-        }
-      ],
-      "completed": true,
-      "routineId": "cf1df2fe-9d5d-42c8-91a9-daa636cbce70",
-      "blockId": "46b3e3c5-870f-4c5f-9ca4-f9f943fab68a",
-      "weekIndex": 0
-    },
-    {
       "id": "f7d4f67e-19cb-430e-b2da-fa19a3e7e453",
       "clientId": "0db0ea7a-c413-44cb-b99e-dfd9790383eb",
       "date": "2026-06-10T13:29:54.051+00:00",
@@ -9508,355 +10590,6 @@
               "rir": 0,
               "reps": 15,
               "weight": 0
-            }
-          ]
-        }
-      ],
-      "completed": true,
-      "routineId": "cf1df2fe-9d5d-42c8-91a9-daa636cbce70",
-      "blockId": "51f21397-0da8-429b-8864-d36631e6f133",
-      "weekIndex": 0
-    },
-    {
-      "id": "087f6f00-46a4-47c7-8427-74b916ed4eeb",
-      "clientId": "0db0ea7a-c413-44cb-b99e-dfd9790383eb",
-      "date": "2026-05-20T18:30:00+00:00",
-      "weekNumber": null,
-      "dayNumber": 1,
-      "exercises": [
-        {
-          "name": "Sentadilla Hack",
-          "sets": [
-            {
-              "rir": 1,
-              "reps": 8,
-              "weight": 50
-            },
-            {
-              "rir": 1,
-              "reps": 12,
-              "weight": 40
-            },
-            {
-              "rir": 1,
-              "reps": 12,
-              "weight": 40
-            }
-          ]
-        },
-        {
-          "name": "Prensa de Piernas 45º",
-          "sets": [
-            {
-              "rir": 1,
-              "reps": 8,
-              "weight": 80
-            },
-            {
-              "rir": 1,
-              "reps": 12,
-              "weight": 60
-            },
-            {
-              "rir": 1,
-              "reps": 12,
-              "weight": 60
-            }
-          ]
-        },
-        {
-          "name": "Extensiones de Cuádriceps",
-          "sets": [
-            {
-              "rir": 0,
-              "reps": 15,
-              "weight": 25
-            },
-            {
-              "rir": 0,
-              "reps": 12,
-              "weight": 30
-            },
-            {
-              "rir": 0,
-              "reps": 10,
-              "weight": 35
-            },
-            {
-              "rir": 0,
-              "reps": 8,
-              "weight": 40
-            }
-          ]
-        },
-        {
-          "name": "Sentadilla Búlgara (Foco Cuádriceps)",
-          "sets": [
-            {
-              "rir": 1,
-              "reps": 12,
-              "weight": 12
-            },
-            {
-              "rir": 1,
-              "reps": 12,
-              "weight": 12
-            },
-            {
-              "rir": 1,
-              "reps": 12,
-              "weight": 12
-            },
-            {
-              "rir": 1,
-              "reps": 12,
-              "weight": 12
-            }
-          ]
-        },
-        {
-          "name": "Aductor",
-          "sets": [
-            {
-              "rir": 0,
-              "reps": 15,
-              "weight": 30
-            },
-            {
-              "rir": 0,
-              "reps": 15,
-              "weight": 35
-            },
-            {
-              "rir": 0,
-              "reps": 15,
-              "weight": 40
-            }
-          ]
-        }
-      ],
-      "completed": true,
-      "routineId": "cf1df2fe-9d5d-42c8-91a9-daa636cbce70",
-      "blockId": "51f21397-0da8-429b-8864-d36631e6f133",
-      "weekIndex": 0
-    },
-    {
-      "id": "b839f458-7865-442e-8dd9-11d8e42d96e6",
-      "clientId": "0db0ea7a-c413-44cb-b99e-dfd9790383eb",
-      "date": "2026-05-21T18:45:00+00:00",
-      "weekNumber": null,
-      "dayNumber": 2,
-      "exercises": [
-        {
-          "name": "Jalón al Pecho (Ancho)",
-          "sets": [
-            {
-              "rir": 1,
-              "reps": 8,
-              "weight": 35
-            },
-            {
-              "rir": 1,
-              "reps": 12,
-              "weight": 30
-            },
-            {
-              "rir": 1,
-              "reps": 12,
-              "weight": 30
-            }
-          ]
-        },
-        {
-          "name": "Remo con Barra (90º)",
-          "sets": [
-            {
-              "rir": 1,
-              "reps": 8,
-              "weight": 25
-            },
-            {
-              "rir": 1,
-              "reps": 12,
-              "weight": 20
-            },
-            {
-              "rir": 1,
-              "reps": 12,
-              "weight": 20
-            }
-          ]
-        },
-        {
-          "name": "Pull-over en Polea Alta",
-          "sets": [
-            {
-              "rir": 0,
-              "reps": 12,
-              "weight": 15
-            },
-            {
-              "rir": 0,
-              "reps": 12,
-              "weight": 15
-            },
-            {
-              "rir": 0,
-              "reps": 12,
-              "weight": 15
-            }
-          ]
-        },
-        {
-          "name": "Facepulls + Curl Bíceps",
-          "sets": [
-            {
-              "rir": 1,
-              "reps": 15,
-              "weight": 12
-            },
-            {
-              "rir": 1,
-              "reps": 15,
-              "weight": 12
-            },
-            {
-              "rir": 1,
-              "reps": 15,
-              "weight": 12
-            }
-          ]
-        },
-        {
-          "name": "Crunch + Elevación Piernas",
-          "sets": [
-            {
-              "rir": 0,
-              "reps": 15,
-              "weight": 0
-            },
-            {
-              "rir": 0,
-              "reps": 15,
-              "weight": 0
-            },
-            {
-              "rir": 0,
-              "reps": 15,
-              "weight": 0
-            }
-          ]
-        }
-      ],
-      "completed": true,
-      "routineId": "cf1df2fe-9d5d-42c8-91a9-daa636cbce70",
-      "blockId": "51f21397-0da8-429b-8864-d36631e6f133",
-      "weekIndex": 0
-    },
-    {
-      "id": "8b6c8013-e37e-49ef-a8fd-86a9e62bc166",
-      "clientId": "0db0ea7a-c413-44cb-b99e-dfd9790383eb",
-      "date": "2026-05-22T19:00:00+00:00",
-      "weekNumber": null,
-      "dayNumber": 3,
-      "exercises": [
-        {
-          "name": "Abducciones en Máquina + Monster Walks",
-          "sets": [
-            {
-              "rir": 1,
-              "reps": 20,
-              "weight": 45
-            },
-            {
-              "rir": 1,
-              "reps": 20,
-              "weight": 45
-            },
-            {
-              "rir": 1,
-              "reps": 20,
-              "weight": 45
-            }
-          ]
-        },
-        {
-          "name": "RDL con barra",
-          "sets": [
-            {
-              "rir": 1,
-              "reps": 8,
-              "weight": 40
-            },
-            {
-              "rir": 1,
-              "reps": 12,
-              "weight": 35
-            },
-            {
-              "rir": 1,
-              "reps": 12,
-              "weight": 35
-            }
-          ]
-        },
-        {
-          "name": "Sentadilla Sumo con mancuerna",
-          "sets": [
-            {
-              "rir": 1,
-              "reps": 8,
-              "weight": 20
-            },
-            {
-              "rir": 1,
-              "reps": 12,
-              "weight": 16
-            },
-            {
-              "rir": 1,
-              "reps": 12,
-              "weight": 16
-            }
-          ]
-        },
-        {
-          "name": "Patada de Glúteo en Polea + Abddución Polea",
-          "sets": [
-            {
-              "rir": 1,
-              "reps": 20,
-              "weight": 10
-            },
-            {
-              "rir": 1,
-              "reps": 20,
-              "weight": 10
-            },
-            {
-              "rir": 1,
-              "reps": 20,
-              "weight": 10
-            }
-          ]
-        },
-        {
-          "name": "Curl Femoral Sentado",
-          "sets": [
-            {
-              "rir": 0,
-              "reps": 15,
-              "weight": 20
-            },
-            {
-              "rir": 0,
-              "reps": 12,
-              "weight": 25
-            },
-            {
-              "rir": 0,
-              "reps": 10,
-              "weight": 30
             }
           ]
         }
@@ -10103,134 +10836,6 @@
       "weekIndex": 0
     },
     {
-      "id": "2669995d-39e3-437b-be7a-c94efbf789fa",
-      "clientId": "0db0ea7a-c413-44cb-b99e-dfd9790383eb",
-      "date": "2026-05-24T11:00:00+00:00",
-      "weekNumber": null,
-      "dayNumber": 5,
-      "exercises": [
-        {
-          "name": "Sentadilla con Mancuerna + Monster Walks",
-          "sets": [
-            {
-              "rir": 1,
-              "reps": 15,
-              "weight": 16
-            },
-            {
-              "rir": 1,
-              "reps": 15,
-              "weight": 16
-            },
-            {
-              "rir": 1,
-              "reps": 15,
-              "weight": 16
-            }
-          ]
-        },
-        {
-          "name": "Extensiones de Cuádriceps",
-          "sets": [
-            {
-              "rir": 1,
-              "reps": 20,
-              "weight": 25
-            },
-            {
-              "rir": 1,
-              "reps": 20,
-              "weight": 25
-            },
-            {
-              "rir": 1,
-              "reps": 20,
-              "weight": 25
-            }
-          ]
-        },
-        {
-          "name": "Patada de Glúteo en Polea + Abducción Polea",
-          "sets": [
-            {
-              "rir": 1,
-              "reps": 15,
-              "weight": 10
-            },
-            {
-              "rir": 1,
-              "reps": 15,
-              "weight": 10
-            },
-            {
-              "rir": 1,
-              "reps": 15,
-              "weight": 10
-            }
-          ]
-        },
-        {
-          "name": "Jalón al Pecho (Estrecho)",
-          "sets": [
-            {
-              "rir": 1,
-              "reps": 20,
-              "weight": 30
-            },
-            {
-              "rir": 1,
-              "reps": 18,
-              "weight": 30
-            },
-            {
-              "rir": 1,
-              "reps": 15,
-              "weight": 35
-            }
-          ]
-        },
-        {
-          "name": "Rear Delt",
-          "sets": [
-            {
-              "rir": 1,
-              "reps": 20,
-              "weight": 10
-            },
-            {
-              "rir": 1,
-              "reps": 18,
-              "weight": 10
-            },
-            {
-              "rir": 1,
-              "reps": 15,
-              "weight": 12
-            }
-          ]
-        },
-        {
-          "name": "Curl en Polea Baja + Extensión Tríceps",
-          "sets": [
-            {
-              "rir": 1,
-              "reps": 15,
-              "weight": 12
-            },
-            {
-              "rir": 1,
-              "reps": 15,
-              "weight": 12
-            }
-          ]
-        }
-      ],
-      "completed": true,
-      "routineId": "cf1df2fe-9d5d-42c8-91a9-daa636cbce70",
-      "blockId": "51f21397-0da8-429b-8864-d36631e6f133",
-      "weekIndex": 0
-    },
-    {
       "id": "5cd462f8-8c20-4256-945a-730b67a38855",
       "clientId": "0db0ea7a-c413-44cb-b99e-dfd9790383eb",
       "date": "2026-05-23T18:15:00+00:00",
@@ -10357,611 +10962,6 @@
       "routineId": "cf1df2fe-9d5d-42c8-91a9-daa636cbce70",
       "blockId": "51f21397-0da8-429b-8864-d36631e6f133",
       "weekIndex": 0
-    },
-    {
-      "id": "b6a6a0ce-3c12-42fd-8969-e03d449c6108",
-      "clientId": "0db0ea7a-c413-44cb-b99e-dfd9790383eb",
-      "date": "2026-05-28T19:54:18.116+00:00",
-      "weekNumber": null,
-      "dayNumber": 3,
-      "exercises": [
-        {
-          "name": "Abducciones en Máquina + Monster Walks",
-          "sets": [
-            {
-              "rir": 0,
-              "reps": "20",
-              "weight": "100"
-            },
-            {
-              "rir": 0,
-              "reps": "20",
-              "weight": "110"
-            },
-            {
-              "rir": 0,
-              "reps": "20",
-              "weight": "110"
-            }
-          ]
-        },
-        {
-          "name": "RDL con barra",
-          "sets": [
-            {
-              "rir": 0,
-              "reps": "6",
-              "weight": "90"
-            },
-            {
-              "rir": 0,
-              "reps": "10",
-              "weight": "60"
-            },
-            {
-              "rir": 0,
-              "reps": "10",
-              "weight": "60"
-            }
-          ]
-        },
-        {
-          "name": "Sentadilla Sumo con mancuerna",
-          "sets": [
-            {
-              "rir": 0,
-              "reps": "10",
-              "weight": "32"
-            },
-            {
-              "rir": 0,
-              "reps": "10",
-              "weight": "32"
-            },
-            {
-              "rir": 0,
-              "reps": "10",
-              "weight": "32"
-            }
-          ]
-        },
-        {
-          "name": "Patada de Glúteo en Polea + Abddución Polea",
-          "sets": [
-            {
-              "rir": 0,
-              "reps": "16",
-              "weight": "20"
-            },
-            {
-              "rir": 0,
-              "reps": "16",
-              "weight": "20"
-            },
-            {
-              "rir": 0,
-              "reps": "16",
-              "weight": "20"
-            }
-          ]
-        },
-        {
-          "name": "Curl Femoral Sentado",
-          "sets": [
-            {
-              "rir": 0,
-              "reps": "15",
-              "weight": "25"
-            },
-            {
-              "rir": 0,
-              "reps": "12",
-              "weight": "25"
-            },
-            {
-              "rir": 0,
-              "reps": "10",
-              "weight": "25"
-            }
-          ]
-        }
-      ],
-      "completed": true,
-      "routineId": "6de869a7-bd71-4f08-affe-6525d8be70b4",
-      "blockId": "51f21397-0da8-429b-8864-d36631e6f133",
-      "weekIndex": 1
-    },
-    {
-      "id": "ed1e1334-47e3-4dd5-af5a-e1260226d5bd",
-      "clientId": "0db0ea7a-c413-44cb-b99e-dfd9790383eb",
-      "date": "2026-06-08T08:15:26.378+00:00",
-      "weekNumber": null,
-      "dayNumber": 1,
-      "exercises": [
-        {
-          "name": "Sentadilla Hack",
-          "sets": [
-            {
-              "rir": 0,
-              "reps": "7",
-              "weight": "110"
-            },
-            {
-              "rir": 0,
-              "reps": "10",
-              "weight": "80"
-            },
-            {
-              "rir": 0,
-              "reps": "10",
-              "weight": "80"
-            }
-          ]
-        },
-        {
-          "name": "Prensa de Piernas 45º",
-          "sets": [
-            {
-              "rir": 0,
-              "reps": "8",
-              "weight": "210"
-            },
-            {
-              "rir": 0,
-              "reps": "10",
-              "weight": "160"
-            },
-            {
-              "rir": 0,
-              "reps": "10",
-              "weight": "160"
-            }
-          ]
-        },
-        {
-          "name": "Extensiones de Cuádriceps",
-          "sets": [
-            {
-              "rir": 0,
-              "reps": "15",
-              "weight": "30"
-            },
-            {
-              "rir": 0,
-              "reps": "12",
-              "weight": "35"
-            },
-            {
-              "rir": 0,
-              "reps": "10",
-              "weight": "40"
-            },
-            {
-              "rir": 0,
-              "reps": "8",
-              "weight": "50"
-            }
-          ]
-        },
-        {
-          "name": "Sentadilla Búlgara (Foco Cuádriceps)",
-          "sets": [
-            {
-              "rir": 0,
-              "reps": "8",
-              "weight": "16"
-            },
-            {
-              "rir": 0,
-              "reps": "8",
-              "weight": "16"
-            },
-            {
-              "rir": 0,
-              "reps": "8",
-              "weight": "16"
-            },
-            {
-              "rir": 0,
-              "reps": "8",
-              "weight": "16"
-            }
-          ]
-        },
-        {
-          "name": "Aductor",
-          "sets": [
-            {
-              "rir": 0,
-              "reps": "15",
-              "weight": "45"
-            },
-            {
-              "rir": 0,
-              "reps": "12",
-              "weight": "50"
-            },
-            {
-              "rir": 0,
-              "reps": "12",
-              "weight": "50"
-            }
-          ]
-        }
-      ],
-      "completed": true,
-      "routineId": "2e5eb165-5a8d-40f4-9a3b-1a75557699cc",
-      "blockId": "51f21397-0da8-429b-8864-d36631e6f133",
-      "weekIndex": 2
-    },
-    {
-      "id": "dd2f5b1a-1bfb-48d3-a040-abda65e6f6ef",
-      "clientId": "0db0ea7a-c413-44cb-b99e-dfd9790383eb",
-      "date": "2026-06-10T10:00:05.858+00:00",
-      "weekNumber": null,
-      "dayNumber": 3,
-      "exercises": [
-        {
-          "name": "Abducciones en Máquina + Monster Walks",
-          "sets": [
-            {
-              "rir": 0,
-              "reps": "20",
-              "weight": "120"
-            },
-            {
-              "rir": 0,
-              "reps": "20",
-              "weight": "120"
-            },
-            {
-              "rir": 0,
-              "reps": "16",
-              "weight": "120"
-            }
-          ]
-        },
-        {
-          "name": "RDL con barra",
-          "sets": [
-            {
-              "rir": 0,
-              "reps": "3",
-              "weight": "100"
-            },
-            {
-              "rir": 0,
-              "reps": "10",
-              "weight": "70"
-            },
-            {
-              "rir": 0,
-              "reps": "10",
-              "weight": "70"
-            }
-          ]
-        },
-        {
-          "name": "Sentadilla Sumo con mancuerna",
-          "sets": [
-            {
-              "rir": 0,
-              "reps": "8",
-              "weight": "40"
-            },
-            {
-              "rir": 0,
-              "reps": "8",
-              "weight": "40"
-            },
-            {
-              "rir": 0,
-              "reps": "7",
-              "weight": "40"
-            }
-          ]
-        },
-        {
-          "name": "Patada de Glúteo en Polea + Abddución Polea",
-          "sets": [
-            {
-              "rir": 0,
-              "reps": "20",
-              "weight": "20"
-            },
-            {
-              "rir": 0,
-              "reps": "20",
-              "weight": "20"
-            },
-            {
-              "rir": 0,
-              "reps": "20",
-              "weight": "20"
-            }
-          ]
-        },
-        {
-          "name": "Curl Femoral Sentado",
-          "sets": [
-            {
-              "rir": 0,
-              "reps": "8",
-              "weight": "25"
-            },
-            {
-              "rir": 0,
-              "reps": "12",
-              "weight": "20"
-            },
-            {
-              "rir": 0,
-              "reps": "9",
-              "weight": "25"
-            }
-          ]
-        }
-      ],
-      "completed": true,
-      "routineId": "8b58082d-654d-44c8-88ca-4f3e951288cd",
-      "blockId": "51f21397-0da8-429b-8864-d36631e6f133",
-      "weekIndex": 3
-    },
-    {
-      "id": "2b2fb880-a852-4a95-a19a-d8d2286ac5a7",
-      "clientId": "0db0ea7a-c413-44cb-b99e-dfd9790383eb",
-      "date": "2026-05-28T08:09:23.534+00:00",
-      "weekNumber": null,
-      "dayNumber": 4,
-      "exercises": [
-        {
-          "name": "Press Militar (Mancuernas)",
-          "sets": [
-            {
-              "rir": 0,
-              "reps": "19",
-              "weight": "20"
-            },
-            {
-              "rir": 0,
-              "reps": "12",
-              "weight": "25"
-            },
-            {
-              "rir": 0,
-              "reps": "6",
-              "weight": "30"
-            }
-          ]
-        },
-        {
-          "name": "Elevaciones Laterales (Mancuernas)",
-          "sets": [
-            {
-              "rir": 0,
-              "reps": "20",
-              "weight": "6"
-            },
-            {
-              "rir": 0,
-              "reps": "18",
-              "weight": "6"
-            },
-            {
-              "rir": 0,
-              "reps": "16",
-              "weight": "6"
-            },
-            {
-              "rir": 0,
-              "reps": "12",
-              "weight": "6"
-            },
-            {
-              "rir": 0,
-              "reps": "10",
-              "weight": "8"
-            }
-          ]
-        },
-        {
-          "name": "Elevaciones Laterales (Máquina)",
-          "sets": [
-            {
-              "rir": 0,
-              "reps": "17",
-              "weight": "2.5"
-            },
-            {
-              "rir": 0,
-              "reps": "20",
-              "weight": "2.5"
-            },
-            {
-              "rir": 0,
-              "reps": "20",
-              "weight": "2.5"
-            },
-            {
-              "rir": 0,
-              "reps": "20",
-              "weight": "2.5"
-            }
-          ]
-        },
-        {
-          "name": "Facepulls + Extensión Tríceps Polea",
-          "sets": [
-            {
-              "rir": 0,
-              "reps": "15",
-              "weight": "22.5"
-            },
-            {
-              "rir": 0,
-              "reps": "15",
-              "weight": "22.5"
-            },
-            {
-              "rir": 0,
-              "reps": "15",
-              "weight": "22.5"
-            }
-          ]
-        },
-        {
-          "name": "Crunch + Elevación Piernas",
-          "sets": [
-            {
-              "rir": 0,
-              "reps": "15",
-              "weight": "10"
-            },
-            {
-              "rir": 0,
-              "reps": "15",
-              "weight": "10"
-            },
-            {
-              "rir": 0,
-              "reps": "15",
-              "weight": "10"
-            }
-          ]
-        }
-      ],
-      "completed": true,
-      "routineId": "6de869a7-bd71-4f08-affe-6525d8be70b4",
-      "blockId": "51f21397-0da8-429b-8864-d36631e6f133",
-      "weekIndex": 1
-    },
-    {
-      "id": "4f2bcddc-9214-49d1-b957-9c904d837b49",
-      "clientId": "0db0ea7a-c413-44cb-b99e-dfd9790383eb",
-      "date": "2026-06-18T08:11:25.938+00:00",
-      "weekNumber": null,
-      "dayNumber": 4,
-      "exercises": [
-        {
-          "name": "Press Militar (Mancuernas)",
-          "sets": [
-            {
-              "rir": 0,
-              "reps": "15",
-              "weight": "20"
-            },
-            {
-              "rir": 0,
-              "reps": "12",
-              "weight": "25"
-            },
-            {
-              "rir": 0,
-              "reps": "10",
-              "weight": "30"
-            }
-          ]
-        },
-        {
-          "name": "Elevaciones Laterales (Mancuernas)",
-          "sets": [
-            {
-              "rir": 0,
-              "reps": "6",
-              "weight": "20"
-            },
-            {
-              "rir": 0,
-              "reps": "6",
-              "weight": "16"
-            },
-            {
-              "rir": 0,
-              "reps": "6",
-              "weight": "16"
-            },
-            {
-              "rir": 0,
-              "reps": "6",
-              "weight": "14"
-            },
-            {
-              "rir": 0,
-              "reps": "6",
-              "weight": "12"
-            }
-          ]
-        },
-        {
-          "name": "Elevaciones Laterales (Máquina)",
-          "sets": [
-            {
-              "rir": 0,
-              "reps": "20",
-              "weight": "2.5"
-            },
-            {
-              "rir": 0,
-              "reps": "20",
-              "weight": "2.5"
-            },
-            {
-              "rir": 0,
-              "reps": "20",
-              "weight": "2.5"
-            },
-            {
-              "rir": 0,
-              "reps": "20",
-              "weight": "2.5"
-            }
-          ]
-        },
-        {
-          "name": "Facepulls + Extensión Tríceps Polea",
-          "sets": [
-            {
-              "rir": 0,
-              "reps": "15",
-              "weight": "17.5"
-            },
-            {
-              "rir": 0,
-              "reps": "15",
-              "weight": "17.5"
-            },
-            {
-              "rir": 0,
-              "reps": "15",
-              "weight": "17.5"
-            }
-          ]
-        },
-        {
-          "name": "Crunch + Elevación Piernas",
-          "sets": [
-            {
-              "rir": 0,
-              "reps": "15",
-              "weight": "10"
-            },
-            {
-              "rir": 0,
-              "reps": "15",
-              "weight": "10"
-            },
-            {
-              "rir": 0,
-              "reps": "15",
-              "weight": "10"
-            }
-          ]
-        }
-      ],
-      "completed": true,
-      "routineId": "51f21397-0da8-429b-8864-d36631e6f133",
-      "blockId": "51f21397-0da8-429b-8864-d36631e6f133",
-      "weekIndex": null
     },
     {
       "id": "0c812724-bcc9-4609-a229-e5e32241b82f",
@@ -12475,72 +12475,6 @@
   ],
   "feedbacks": [
     {
-      "id": "5d1e18c9-1216-44ca-b674-092802512f90",
-      "clientId": "0db0ea7a-c413-44cb-b99e-dfd9790383eb",
-      "date": "2026-06-05T07:50:52.405+00:00",
-      "weight": 73.7,
-      "sleep": 5,
-      "stress": 3,
-      "energy": 5,
-      "adherence": 4,
-      "satisfaction": 5,
-      "answers": [
-        {
-          "answer": "Me veo mejor en ropa de gym que en ropa normal o en ropa interior 🤣",
-          "question": "¿Qué tal te ves fisicamente?"
-        },
-        {
-          "answer": "Bien.",
-          "question": "Sensaciones sobre la dieta (mucha/poca comida, ansiedad, poco apetito...)"
-        },
-        {
-          "answer": "Ahora mismo ninguno",
-          "question": "Comida/alimento que no te haya gustado y/o quieras cambiar de la dieta actual"
-        },
-        {
-          "answer": "Ahora apetecen helados. 🤣 pero sé que debería ser el día de dieta. He descubierto uno que hacen en una heladería con proteína 🫠",
-          "question": "Comida/alimento que quieras tener en tu próxima dieta a ser posible"
-        },
-        {
-          "answer": "Esta semana ha sido regulera porque el miércoles que estamos en feria nos la saltamos. Los niños están sin cole y nos es más difícil seguir",
-          "question": "¿Has realizado algún salto de dieta para tener en cuenta?"
-        },
-        {
-          "answer": "He entrenado 5 días. Pero el día 5 no hice el entreno que tengo de full body solo hice pierna.",
-          "question": "¿Qué tal han ido los entrenos? Cuéntame tus sensaciones"
-        },
-        {
-          "answer": "Si.",
-          "question": "¿Has podido entrenar los días estipulados?"
-        },
-        {
-          "answer": "Si.",
-          "question": "¿Te recuperas correctamente de los entrenos entre sesiones?"
-        },
-        {
-          "answer": "10",
-          "question": "Del 1 al 10, ¿Cuál ha sido tu implicación en los entrenamientos? (Intensidad, realización de todas las series...)"
-        }
-      ],
-      "perimeters": {
-        "Brazo": 31,
-        "Muslo": 59,
-        "Pecho": 80,
-        "Cadera": 101,
-        "Cintura": 73
-      },
-      "photos": {
-        "back": "https://bieeydhacavxymoosasx.supabase.co/storage/v1/object/public/Media/1780645849920_IMG_5982.jpeg",
-        "side": "https://bieeydhacavxymoosasx.supabase.co/storage/v1/object/public/Media/1780645849920_IMG_5991.jpeg",
-        "extra": "https://bieeydhacavxymoosasx.supabase.co/storage/v1/object/public/Media/1780645849920_IMG_6010.jpeg",
-        "front": "https://bieeydhacavxymoosasx.supabase.co/storage/v1/object/public/Media/1780645849917_IMG_6045.jpeg"
-      },
-      "comments": "Nada; tengo a la mejor entrenadora 😜👊",
-      "trainerResponse": "REVISIÓN REVISADA - OK",
-      "createdAt": "2026-06-05T07:50:52.405+00:00",
-      "updatedAt": "2026-07-20T10:20:01.632+00:00"
-    },
-    {
       "id": "be447fa0-b946-4069-bcaa-4c040d4f1ba5",
       "clientId": "0db0ea7a-c413-44cb-b99e-dfd9790383eb",
       "date": "2026-06-26T11:54:16.688+00:00",
@@ -12604,7 +12538,73 @@
       "comments": "Me tengo que ir ajustando como puedo para tener más tiempo estas semanas/meses",
       "trainerResponse": "REVISIÓN REVISADA - OK",
       "createdAt": "2026-06-26T11:54:16.688+00:00",
-      "updatedAt": "2026-07-20T10:20:01.632+00:00"
+      "updatedAt": "2026-07-20T10:23:02.003+00:00"
+    },
+    {
+      "id": "5d1e18c9-1216-44ca-b674-092802512f90",
+      "clientId": "0db0ea7a-c413-44cb-b99e-dfd9790383eb",
+      "date": "2026-06-05T07:50:52.405+00:00",
+      "weight": 73.7,
+      "sleep": 5,
+      "stress": 3,
+      "energy": 5,
+      "adherence": 4,
+      "satisfaction": 5,
+      "answers": [
+        {
+          "answer": "Me veo mejor en ropa de gym que en ropa normal o en ropa interior 🤣",
+          "question": "¿Qué tal te ves fisicamente?"
+        },
+        {
+          "answer": "Bien.",
+          "question": "Sensaciones sobre la dieta (mucha/poca comida, ansiedad, poco apetito...)"
+        },
+        {
+          "answer": "Ahora mismo ninguno",
+          "question": "Comida/alimento que no te haya gustado y/o quieras cambiar de la dieta actual"
+        },
+        {
+          "answer": "Ahora apetecen helados. 🤣 pero sé que debería ser el día de dieta. He descubierto uno que hacen en una heladería con proteína 🫠",
+          "question": "Comida/alimento que quieras tener en tu próxima dieta a ser posible"
+        },
+        {
+          "answer": "Esta semana ha sido regulera porque el miércoles que estamos en feria nos la saltamos. Los niños están sin cole y nos es más difícil seguir",
+          "question": "¿Has realizado algún salto de dieta para tener en cuenta?"
+        },
+        {
+          "answer": "He entrenado 5 días. Pero el día 5 no hice el entreno que tengo de full body solo hice pierna.",
+          "question": "¿Qué tal han ido los entrenos? Cuéntame tus sensaciones"
+        },
+        {
+          "answer": "Si.",
+          "question": "¿Has podido entrenar los días estipulados?"
+        },
+        {
+          "answer": "Si.",
+          "question": "¿Te recuperas correctamente de los entrenos entre sesiones?"
+        },
+        {
+          "answer": "10",
+          "question": "Del 1 al 10, ¿Cuál ha sido tu implicación en los entrenamientos? (Intensidad, realización de todas las series...)"
+        }
+      ],
+      "perimeters": {
+        "Brazo": 31,
+        "Muslo": 59,
+        "Pecho": 80,
+        "Cadera": 101,
+        "Cintura": 73
+      },
+      "photos": {
+        "back": "https://bieeydhacavxymoosasx.supabase.co/storage/v1/object/public/Media/1780645849920_IMG_5982.jpeg",
+        "side": "https://bieeydhacavxymoosasx.supabase.co/storage/v1/object/public/Media/1780645849920_IMG_5991.jpeg",
+        "extra": "https://bieeydhacavxymoosasx.supabase.co/storage/v1/object/public/Media/1780645849920_IMG_6010.jpeg",
+        "front": "https://bieeydhacavxymoosasx.supabase.co/storage/v1/object/public/Media/1780645849917_IMG_6045.jpeg"
+      },
+      "comments": "Nada; tengo a la mejor entrenadora 😜👊",
+      "trainerResponse": "REVISIÓN REVISADA - OK",
+      "createdAt": "2026-06-05T07:50:52.405+00:00",
+      "updatedAt": "2026-07-20T10:23:02.003+00:00"
     },
     {
       "id": "61428dc6-9fcb-4bb0-8e67-e15711020332",
@@ -12670,67 +12670,7 @@
       "comments": "Eres la mejor 🥰",
       "trainerResponse": "REVISIÓN REVISADA - OK",
       "createdAt": "2026-05-29T07:00:10.023+00:00",
-      "updatedAt": "2026-07-20T10:20:01.632+00:00"
-    },
-    {
-      "id": "19100667-8344-445d-bcee-25c0cf99635d",
-      "clientId": "0db0ea7a-c413-44cb-b99e-dfd9790383eb",
-      "date": "2026-07-17T14:56:37.761+00:00",
-      "weight": 73.9,
-      "sleep": 4,
-      "stress": 4,
-      "energy": 3,
-      "adherence": 3,
-      "satisfaction": 3,
-      "answers": [
-        {
-          "answer": "Como un globo",
-          "question": "¿Qué tal te ves fisicamente?"
-        },
-        {
-          "answer": "No la estoy haciendo bien. Sobre todo los fines de semana.",
-          "question": "Sensaciones sobre la dieta (mucha/poca comida, ansiedad, poco apetito...)"
-        },
-        {
-          "answer": "-",
-          "question": "Comida/alimento que no te haya gustado y/o quieras cambiar de la dieta actual"
-        },
-        {
-          "answer": "-",
-          "question": "Comida/alimento que quieras tener en tu próxima dieta a ser posible"
-        },
-        {
-          "answer": "-",
-          "question": "¿Has realizado algún salto de dieta para tener en cuenta?"
-        },
-        {
-          "answer": "He entrenado 3 días. Me ha faltado el último. Con ganas de meterle más caña, pero tampoco que el entreno sea muy largo porque no tengo tiempo :(",
-          "question": "¿Qué tal han ido los entrenos? Cuéntame tus sensaciones"
-        },
-        {
-          "answer": "-",
-          "question": "¿Has podido entrenar los días estipulados?"
-        },
-        {
-          "answer": "Estas semanas si.",
-          "question": "¿Te recuperas correctamente de los entrenos entre sesiones?"
-        },
-        {
-          "answer": "-",
-          "question": "Del 1 al 10, ¿Cuál ha sido tu implicación en los entrenamientos? (Intensidad, realización de todas las series...)"
-        }
-      ],
-      "perimeters": {},
-      "photos": {
-        "back": "https://bieeydhacavxymoosasx.supabase.co/storage/v1/object/public/Media/1784300192105_IMG_7350.jpeg",
-        "side": "https://bieeydhacavxymoosasx.supabase.co/storage/v1/object/public/Media/1784300192105_IMG_7362.jpeg",
-        "extra": "https://bieeydhacavxymoosasx.supabase.co/storage/v1/object/public/Media/1784300192105_IMG_7371.jpeg",
-        "front": "https://bieeydhacavxymoosasx.supabase.co/storage/v1/object/public/Media/1784300192105_IMG_7385.jpeg"
-      },
-      "comments": "No me ha dado tiempo a medirme. Estaba súper hinchada y a media mañana me ha bajado la regla y se me ha adelantado 6 días 🫠. Me ha faltado completar el 4 día 🥵",
-      "trainerResponse": null,
-      "createdAt": "2026-07-17T14:56:37.761+00:00",
-      "updatedAt": "2026-07-20T10:20:01.632+00:00"
+      "updatedAt": "2026-07-20T10:23:02.003+00:00"
     },
     {
       "id": "bafc9306-f61b-4279-b461-24844f9bcaad",
@@ -12796,7 +12736,67 @@
       "comments": "Nada que eres la mejoooooor!!!🥰🥰🥰💓",
       "trainerResponse": "REVISIÓN REVISADA - OK",
       "createdAt": "2026-05-29T13:27:35.049+00:00",
-      "updatedAt": "2026-07-20T10:20:01.632+00:00"
+      "updatedAt": "2026-07-20T10:23:02.003+00:00"
+    },
+    {
+      "id": "19100667-8344-445d-bcee-25c0cf99635d",
+      "clientId": "0db0ea7a-c413-44cb-b99e-dfd9790383eb",
+      "date": "2026-07-17T14:56:37.761+00:00",
+      "weight": 73.9,
+      "sleep": 4,
+      "stress": 4,
+      "energy": 3,
+      "adherence": 3,
+      "satisfaction": 3,
+      "answers": [
+        {
+          "answer": "Como un globo",
+          "question": "¿Qué tal te ves fisicamente?"
+        },
+        {
+          "answer": "No la estoy haciendo bien. Sobre todo los fines de semana.",
+          "question": "Sensaciones sobre la dieta (mucha/poca comida, ansiedad, poco apetito...)"
+        },
+        {
+          "answer": "-",
+          "question": "Comida/alimento que no te haya gustado y/o quieras cambiar de la dieta actual"
+        },
+        {
+          "answer": "-",
+          "question": "Comida/alimento que quieras tener en tu próxima dieta a ser posible"
+        },
+        {
+          "answer": "-",
+          "question": "¿Has realizado algún salto de dieta para tener en cuenta?"
+        },
+        {
+          "answer": "He entrenado 3 días. Me ha faltado el último. Con ganas de meterle más caña, pero tampoco que el entreno sea muy largo porque no tengo tiempo :(",
+          "question": "¿Qué tal han ido los entrenos? Cuéntame tus sensaciones"
+        },
+        {
+          "answer": "-",
+          "question": "¿Has podido entrenar los días estipulados?"
+        },
+        {
+          "answer": "Estas semanas si.",
+          "question": "¿Te recuperas correctamente de los entrenos entre sesiones?"
+        },
+        {
+          "answer": "-",
+          "question": "Del 1 al 10, ¿Cuál ha sido tu implicación en los entrenamientos? (Intensidad, realización de todas las series...)"
+        }
+      ],
+      "perimeters": {},
+      "photos": {
+        "back": "https://bieeydhacavxymoosasx.supabase.co/storage/v1/object/public/Media/1784300192105_IMG_7350.jpeg",
+        "side": "https://bieeydhacavxymoosasx.supabase.co/storage/v1/object/public/Media/1784300192105_IMG_7362.jpeg",
+        "extra": "https://bieeydhacavxymoosasx.supabase.co/storage/v1/object/public/Media/1784300192105_IMG_7371.jpeg",
+        "front": "https://bieeydhacavxymoosasx.supabase.co/storage/v1/object/public/Media/1784300192105_IMG_7385.jpeg"
+      },
+      "comments": "No me ha dado tiempo a medirme. Estaba súper hinchada y a media mañana me ha bajado la regla y se me ha adelantado 6 días 🫠. Me ha faltado completar el 4 día 🥵",
+      "trainerResponse": null,
+      "createdAt": "2026-07-17T14:56:37.761+00:00",
+      "updatedAt": "2026-07-20T10:23:02.003+00:00"
     },
     {
       "id": "3ba8da2d-fd5d-48f8-9b11-3622e332ae11",
@@ -12856,7 +12856,7 @@
       "comments": "No me ha dado tiempo a medirme. Estaba súper hinchada y a media mañana me ha bajado la regla y se me ha adelantado 6 días 🫠. Me ha faltado completar el 4 día 🥵",
       "trainerResponse": null,
       "createdAt": "2026-07-19T09:03:54.250472+00:00",
-      "updatedAt": "2026-07-20T10:20:01.632+00:00"
+      "updatedAt": "2026-07-20T10:23:02.003+00:00"
     },
     {
       "id": "c3c98fb2-0044-46ee-be61-761e0b166f95",
@@ -12916,7 +12916,7 @@
       "comments": "No me ha dado tiempo a medirme. Estaba súper hinchada y a media mañana me ha bajado la regla y se me ha adelantado 6 días 🫠. Me ha faltado completar el 4 día 🥵",
       "trainerResponse": null,
       "createdAt": "2026-07-17T14:56:20.331+00:00",
-      "updatedAt": "2026-07-20T10:20:01.632+00:00"
+      "updatedAt": "2026-07-20T10:23:02.003+00:00"
     },
     {
       "id": "0f15956a-78f8-4f38-92e8-e7ffd49bfbf0",
@@ -12982,7 +12982,7 @@
       "comments": "No sé si es posible, que en la app haya una opción de apuntar algo. Para poder decir, este entreno es de multi, este es libre. Y sobre todo lo de las súper series. No puedo apuntar los pesos y no sé cómo hacerlo.",
       "trainerResponse": "REVISIÓN REVISADA - OK",
       "createdAt": "2026-06-12T07:46:19.317+00:00",
-      "updatedAt": "2026-07-20T10:20:01.632+00:00"
+      "updatedAt": "2026-07-20T10:23:02.003+00:00"
     },
     {
       "id": "80809f43-e67e-4628-ac16-93f476fae96b",
@@ -13048,7 +13048,7 @@
       "comments": "A ver si ahora está por fin se envía jajajajajjaja",
       "trainerResponse": "ok\n",
       "createdAt": "2026-06-20T07:04:43.906+00:00",
-      "updatedAt": "2026-07-20T10:20:01.632+00:00"
+      "updatedAt": "2026-07-20T10:23:02.003+00:00"
     },
     {
       "id": "174a1869-9595-4cbc-b289-c24391546209",
@@ -13114,8 +13114,8 @@
       "comments": "A ver si esta te llega ya 😜😜😜",
       "trainerResponse": "ok\n",
       "createdAt": "2026-06-20T11:10:21.575+00:00",
-      "updatedAt": "2026-07-20T10:20:01.632+00:00"
+      "updatedAt": "2026-07-20T10:23:02.003+00:00"
     }
   ],
-  "lastModified": "2026-07-20T10:20:23.621Z"
+  "lastModified": "2026-07-20T10:23:46.083Z"
 }

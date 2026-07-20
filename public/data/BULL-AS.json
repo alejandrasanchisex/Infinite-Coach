@@ -4044,7 +4044,7 @@
         }
       ],
       "createdAt": "2026-06-17T15:50:21.373+00:00",
-      "updatedAt": "2026-07-20T10:17:19.814+00:00"
+      "updatedAt": "2026-07-20T10:22:30.209+00:00"
     }
   ],
   "diets": [
@@ -4348,7 +4348,7 @@
         "fat": 0
       },
       "createdAt": "2026-07-18T18:45:11.416072+00:00",
-      "updatedAt": "2026-07-20T10:17:19.815+00:00"
+      "updatedAt": "2026-07-20T10:22:30.209+00:00"
     }
   ],
   "trainingBlocks": [
@@ -4712,17 +4712,17 @@
         }
       ],
       "createdAt": "2026-07-20T10:12:18.788996+00:00",
-      "updatedAt": "2026-07-20T10:17:19.814+00:00"
+      "updatedAt": "2026-07-20T10:22:30.209+00:00"
     },
     {
       "id": "a261973f-ad86-4d6d-b7a4-c290bced50a9",
       "clientId": "968525f6-b4f0-4862-85e2-0380eed6f215",
       "name": "Mesociclo 1 ",
       "title": "Mesociclo 1 ",
-      "status": "active",
+      "status": "completed",
       "published": false,
       "startDate": "2026-06-04T00:00:00+00:00",
-      "endDate": null,
+      "endDate": "2026-07-20T10:23:34.094+00:00",
       "weeks": [
         {
           "id": "3b320d31-a970-4e29-a7de-6389a913d278",
@@ -5770,7 +5770,7 @@
         }
       ],
       "createdAt": "2026-06-17T16:00:41.231+00:00",
-      "updatedAt": "2026-07-20T10:17:19.814+00:00"
+      "updatedAt": "2026-07-20T10:23:34.096+00:00"
     }
   ],
   "trainingLogs": [
@@ -5939,254 +5939,6 @@
         {
           "name": "Elevación de Piernas (Colgado)",
           "sets": [
-            {
-              "rir": 0,
-              "reps": 0,
-              "weight": 0
-            },
-            {
-              "rir": 0,
-              "reps": 0,
-              "weight": 0
-            },
-            {
-              "rir": 0,
-              "reps": 0,
-              "weight": 0
-            },
-            {
-              "rir": 0,
-              "reps": 0,
-              "weight": 0
-            }
-          ]
-        }
-      ],
-      "completed": true,
-      "routineId": "fe5cbebc-ee95-4285-8486-0f3672aa02ff",
-      "blockId": "a261973f-ad86-4d6d-b7a4-c290bced50a9",
-      "weekIndex": 2
-    },
-    {
-      "id": "e4ebb22a-18c5-4828-b1cb-0974db9f1a8e",
-      "clientId": "968525f6-b4f0-4862-85e2-0380eed6f215",
-      "date": "2026-07-16T07:57:53.972+00:00",
-      "weekNumber": 3,
-      "dayNumber": 5,
-      "exercises": [
-        {
-          "name": "Peso Muerto Rumano (Isquios)",
-          "sets": [
-            {
-              "rir": 0,
-              "reps": 0,
-              "weight": "100"
-            },
-            {
-              "rir": 0,
-              "reps": 0,
-              "weight": "100"
-            },
-            {
-              "rir": 0,
-              "reps": 0,
-              "weight": 0
-            }
-          ]
-        },
-        {
-          "name": "Curl Femoral Sentado",
-          "sets": [
-            {
-              "rir": 0,
-              "reps": 0,
-              "weight": 0
-            },
-            {
-              "rir": 0,
-              "reps": 0,
-              "weight": 0
-            },
-            {
-              "rir": 0,
-              "reps": 0,
-              "weight": 0
-            },
-            {
-              "rir": 0,
-              "reps": 0,
-              "weight": 0
-            },
-            {
-              "rir": 0,
-              "reps": 0,
-              "weight": 0
-            },
-            {
-              "rir": 0,
-              "reps": 0,
-              "weight": 0
-            }
-          ]
-        },
-        {
-          "name": "Peso Muerto Rumano Unilateral",
-          "sets": [
-            {
-              "rir": 0,
-              "reps": 0,
-              "weight": 0
-            },
-            {
-              "rir": 0,
-              "reps": 0,
-              "weight": 0
-            },
-            {
-              "rir": 0,
-              "reps": 0,
-              "weight": 0
-            },
-            {
-              "rir": 0,
-              "reps": 0,
-              "weight": 0
-            }
-          ]
-        },
-        {
-          "name": "Curl Femoral de Pie en Máquina",
-          "sets": [
-            {
-              "rir": 0,
-              "reps": 0,
-              "weight": 0
-            },
-            {
-              "rir": 0,
-              "reps": 0,
-              "weight": 0
-            },
-            {
-              "rir": 0,
-              "reps": 0,
-              "weight": 0
-            },
-            {
-              "rir": 0,
-              "reps": 0,
-              "weight": 0
-            }
-          ]
-        },
-        {
-          "name": "Curl Femoral Tumbado",
-          "sets": [
-            {
-              "rir": 0,
-              "reps": 0,
-              "weight": 0
-            },
-            {
-              "rir": 0,
-              "reps": 0,
-              "weight": 0
-            },
-            {
-              "rir": 0,
-              "reps": 0,
-              "weight": 0
-            },
-            {
-              "rir": 0,
-              "reps": 0,
-              "weight": 0
-            }
-          ]
-        },
-        {
-          "name": "Hip Thrust (Barra)",
-          "sets": [
-            {
-              "rir": 0,
-              "reps": 0,
-              "weight": 0
-            },
-            {
-              "rir": 0,
-              "reps": 0,
-              "weight": 0
-            },
-            {
-              "rir": 0,
-              "reps": 0,
-              "weight": 0
-            },
-            {
-              "rir": 0,
-              "reps": 0,
-              "weight": 0
-            }
-          ]
-        },
-        {
-          "name": "Patada de Glúteo en Polea",
-          "sets": [
-            {
-              "rir": 0,
-              "reps": 0,
-              "weight": 0
-            },
-            {
-              "rir": 0,
-              "reps": 0,
-              "weight": 0
-            },
-            {
-              "rir": 0,
-              "reps": 0,
-              "weight": 0
-            }
-          ]
-        },
-        {
-          "name": "Elevación de Gemelos (De pie)",
-          "sets": [
-            {
-              "rir": 0,
-              "reps": 0,
-              "weight": 0
-            },
-            {
-              "rir": 0,
-              "reps": 0,
-              "weight": 0
-            },
-            {
-              "rir": 0,
-              "reps": 0,
-              "weight": 0
-            },
-            {
-              "rir": 0,
-              "reps": 0,
-              "weight": 0
-            },
-            {
-              "rir": 0,
-              "reps": 0,
-              "weight": 0
-            }
-          ]
-        },
-        {
-          "name": "Elevación de Gemelos (Sentado)",
-          "sets": [
-            {
-              "rir": 0,
-              "reps": 0,
-              "weight": 0
-            },
             {
               "rir": 0,
               "reps": 0,
@@ -6930,6 +6682,442 @@
       "weekIndex": 0
     },
     {
+      "id": "e4ebb22a-18c5-4828-b1cb-0974db9f1a8e",
+      "clientId": "968525f6-b4f0-4862-85e2-0380eed6f215",
+      "date": "2026-07-16T07:57:53.972+00:00",
+      "weekNumber": 3,
+      "dayNumber": 5,
+      "exercises": [
+        {
+          "name": "Peso Muerto Rumano (Isquios)",
+          "sets": [
+            {
+              "rir": 0,
+              "reps": 0,
+              "weight": "100"
+            },
+            {
+              "rir": 0,
+              "reps": 0,
+              "weight": "100"
+            },
+            {
+              "rir": 0,
+              "reps": 0,
+              "weight": 0
+            }
+          ]
+        },
+        {
+          "name": "Curl Femoral Sentado",
+          "sets": [
+            {
+              "rir": 0,
+              "reps": 0,
+              "weight": 0
+            },
+            {
+              "rir": 0,
+              "reps": 0,
+              "weight": 0
+            },
+            {
+              "rir": 0,
+              "reps": 0,
+              "weight": 0
+            },
+            {
+              "rir": 0,
+              "reps": 0,
+              "weight": 0
+            },
+            {
+              "rir": 0,
+              "reps": 0,
+              "weight": 0
+            },
+            {
+              "rir": 0,
+              "reps": 0,
+              "weight": 0
+            }
+          ]
+        },
+        {
+          "name": "Peso Muerto Rumano Unilateral",
+          "sets": [
+            {
+              "rir": 0,
+              "reps": 0,
+              "weight": 0
+            },
+            {
+              "rir": 0,
+              "reps": 0,
+              "weight": 0
+            },
+            {
+              "rir": 0,
+              "reps": 0,
+              "weight": 0
+            },
+            {
+              "rir": 0,
+              "reps": 0,
+              "weight": 0
+            }
+          ]
+        },
+        {
+          "name": "Curl Femoral de Pie en Máquina",
+          "sets": [
+            {
+              "rir": 0,
+              "reps": 0,
+              "weight": 0
+            },
+            {
+              "rir": 0,
+              "reps": 0,
+              "weight": 0
+            },
+            {
+              "rir": 0,
+              "reps": 0,
+              "weight": 0
+            },
+            {
+              "rir": 0,
+              "reps": 0,
+              "weight": 0
+            }
+          ]
+        },
+        {
+          "name": "Curl Femoral Tumbado",
+          "sets": [
+            {
+              "rir": 0,
+              "reps": 0,
+              "weight": 0
+            },
+            {
+              "rir": 0,
+              "reps": 0,
+              "weight": 0
+            },
+            {
+              "rir": 0,
+              "reps": 0,
+              "weight": 0
+            },
+            {
+              "rir": 0,
+              "reps": 0,
+              "weight": 0
+            }
+          ]
+        },
+        {
+          "name": "Hip Thrust (Barra)",
+          "sets": [
+            {
+              "rir": 0,
+              "reps": 0,
+              "weight": 0
+            },
+            {
+              "rir": 0,
+              "reps": 0,
+              "weight": 0
+            },
+            {
+              "rir": 0,
+              "reps": 0,
+              "weight": 0
+            },
+            {
+              "rir": 0,
+              "reps": 0,
+              "weight": 0
+            }
+          ]
+        },
+        {
+          "name": "Patada de Glúteo en Polea",
+          "sets": [
+            {
+              "rir": 0,
+              "reps": 0,
+              "weight": 0
+            },
+            {
+              "rir": 0,
+              "reps": 0,
+              "weight": 0
+            },
+            {
+              "rir": 0,
+              "reps": 0,
+              "weight": 0
+            }
+          ]
+        },
+        {
+          "name": "Elevación de Gemelos (De pie)",
+          "sets": [
+            {
+              "rir": 0,
+              "reps": 0,
+              "weight": 0
+            },
+            {
+              "rir": 0,
+              "reps": 0,
+              "weight": 0
+            },
+            {
+              "rir": 0,
+              "reps": 0,
+              "weight": 0
+            },
+            {
+              "rir": 0,
+              "reps": 0,
+              "weight": 0
+            },
+            {
+              "rir": 0,
+              "reps": 0,
+              "weight": 0
+            }
+          ]
+        },
+        {
+          "name": "Elevación de Gemelos (Sentado)",
+          "sets": [
+            {
+              "rir": 0,
+              "reps": 0,
+              "weight": 0
+            },
+            {
+              "rir": 0,
+              "reps": 0,
+              "weight": 0
+            },
+            {
+              "rir": 0,
+              "reps": 0,
+              "weight": 0
+            },
+            {
+              "rir": 0,
+              "reps": 0,
+              "weight": 0
+            },
+            {
+              "rir": 0,
+              "reps": 0,
+              "weight": 0
+            }
+          ]
+        }
+      ],
+      "completed": true,
+      "routineId": "fe5cbebc-ee95-4285-8486-0f3672aa02ff",
+      "blockId": "a261973f-ad86-4d6d-b7a4-c290bced50a9",
+      "weekIndex": 2
+    },
+    {
+      "id": "2e78f5ba-e4fa-4de9-b54d-b40df5636bcc",
+      "clientId": "968525f6-b4f0-4862-85e2-0380eed6f215",
+      "date": "2026-07-15T06:35:12.691+00:00",
+      "weekNumber": 2,
+      "dayNumber": 2,
+      "exercises": [
+        {
+          "name": "Seal Row",
+          "sets": [
+            {
+              "rir": "",
+              "reps": "",
+              "weight": "20"
+            },
+            {
+              "rir": "",
+              "reps": "",
+              "weight": ""
+            },
+            {
+              "rir": "",
+              "reps": "",
+              "weight": ""
+            },
+            {
+              "rir": "",
+              "reps": "",
+              "weight": ""
+            }
+          ]
+        },
+        {
+          "name": "Jalón al Pecho (Ancho)",
+          "sets": [
+            {
+              "rir": "",
+              "reps": "",
+              "weight": ""
+            },
+            {
+              "rir": "",
+              "reps": "",
+              "weight": ""
+            },
+            {
+              "rir": "",
+              "reps": "",
+              "weight": ""
+            }
+          ]
+        },
+        {
+          "name": "Remo en Polea Baja (Gironda)",
+          "sets": [
+            {
+              "rir": "",
+              "reps": "",
+              "weight": ""
+            },
+            {
+              "rir": "",
+              "reps": "",
+              "weight": ""
+            },
+            {
+              "rir": "",
+              "reps": "",
+              "weight": ""
+            }
+          ]
+        },
+        {
+          "name": "Pull-over en Polea Alta",
+          "sets": [
+            {
+              "rir": "",
+              "reps": "",
+              "weight": ""
+            },
+            {
+              "rir": "",
+              "reps": "",
+              "weight": ""
+            },
+            {
+              "rir": "",
+              "reps": "",
+              "weight": ""
+            },
+            {
+              "rir": "",
+              "reps": "",
+              "weight": ""
+            }
+          ]
+        },
+        {
+          "name": "Pájaros en Peck Deck Invertido",
+          "sets": [
+            {
+              "rir": "",
+              "reps": "",
+              "weight": ""
+            },
+            {
+              "rir": "",
+              "reps": "",
+              "weight": ""
+            },
+            {
+              "rir": "",
+              "reps": "",
+              "weight": ""
+            }
+          ]
+        },
+        {
+          "name": "Elevaciones Laterales (Mancuernas)",
+          "sets": [
+            {
+              "rir": "",
+              "reps": "",
+              "weight": ""
+            },
+            {
+              "rir": "",
+              "reps": "",
+              "weight": ""
+            },
+            {
+              "rir": "",
+              "reps": "",
+              "weight": ""
+            }
+          ]
+        },
+        {
+          "name": "Press Militar ",
+          "sets": [
+            {
+              "rir": "",
+              "reps": "",
+              "weight": ""
+            },
+            {
+              "rir": "",
+              "reps": "",
+              "weight": ""
+            },
+            {
+              "rir": "",
+              "reps": "",
+              "weight": ""
+            }
+          ]
+        },
+        {
+          "name": "Elevaciones Laterales Unilaterales en Polea",
+          "sets": [
+            {
+              "rir": "",
+              "reps": "",
+              "weight": ""
+            },
+            {
+              "rir": "",
+              "reps": "",
+              "weight": ""
+            },
+            {
+              "rir": "",
+              "reps": "",
+              "weight": ""
+            },
+            {
+              "rir": "",
+              "reps": "",
+              "weight": ""
+            }
+          ]
+        }
+      ],
+      "completed": true,
+      "routineId": "99eba470-f1fa-4c78-9760-042a25f3108a",
+      "blockId": "a261973f-ad86-4d6d-b7a4-c290bced50a9",
+      "weekIndex": 1
+    },
+    {
       "id": "4d3de3b1-8ba6-444c-aae7-ac5fa971d4b0",
       "clientId": "968525f6-b4f0-4862-85e2-0380eed6f215",
       "date": "2026-07-14T16:36:16.493+00:00",
@@ -7121,194 +7309,6 @@
       "routineId": "3b320d31-a970-4e29-a7de-6389a913d278",
       "blockId": "a261973f-ad86-4d6d-b7a4-c290bced50a9",
       "weekIndex": 0
-    },
-    {
-      "id": "2e78f5ba-e4fa-4de9-b54d-b40df5636bcc",
-      "clientId": "968525f6-b4f0-4862-85e2-0380eed6f215",
-      "date": "2026-07-15T06:35:12.691+00:00",
-      "weekNumber": 2,
-      "dayNumber": 2,
-      "exercises": [
-        {
-          "name": "Seal Row",
-          "sets": [
-            {
-              "rir": "",
-              "reps": "",
-              "weight": "20"
-            },
-            {
-              "rir": "",
-              "reps": "",
-              "weight": ""
-            },
-            {
-              "rir": "",
-              "reps": "",
-              "weight": ""
-            },
-            {
-              "rir": "",
-              "reps": "",
-              "weight": ""
-            }
-          ]
-        },
-        {
-          "name": "Jalón al Pecho (Ancho)",
-          "sets": [
-            {
-              "rir": "",
-              "reps": "",
-              "weight": ""
-            },
-            {
-              "rir": "",
-              "reps": "",
-              "weight": ""
-            },
-            {
-              "rir": "",
-              "reps": "",
-              "weight": ""
-            }
-          ]
-        },
-        {
-          "name": "Remo en Polea Baja (Gironda)",
-          "sets": [
-            {
-              "rir": "",
-              "reps": "",
-              "weight": ""
-            },
-            {
-              "rir": "",
-              "reps": "",
-              "weight": ""
-            },
-            {
-              "rir": "",
-              "reps": "",
-              "weight": ""
-            }
-          ]
-        },
-        {
-          "name": "Pull-over en Polea Alta",
-          "sets": [
-            {
-              "rir": "",
-              "reps": "",
-              "weight": ""
-            },
-            {
-              "rir": "",
-              "reps": "",
-              "weight": ""
-            },
-            {
-              "rir": "",
-              "reps": "",
-              "weight": ""
-            },
-            {
-              "rir": "",
-              "reps": "",
-              "weight": ""
-            }
-          ]
-        },
-        {
-          "name": "Pájaros en Peck Deck Invertido",
-          "sets": [
-            {
-              "rir": "",
-              "reps": "",
-              "weight": ""
-            },
-            {
-              "rir": "",
-              "reps": "",
-              "weight": ""
-            },
-            {
-              "rir": "",
-              "reps": "",
-              "weight": ""
-            }
-          ]
-        },
-        {
-          "name": "Elevaciones Laterales (Mancuernas)",
-          "sets": [
-            {
-              "rir": "",
-              "reps": "",
-              "weight": ""
-            },
-            {
-              "rir": "",
-              "reps": "",
-              "weight": ""
-            },
-            {
-              "rir": "",
-              "reps": "",
-              "weight": ""
-            }
-          ]
-        },
-        {
-          "name": "Press Militar ",
-          "sets": [
-            {
-              "rir": "",
-              "reps": "",
-              "weight": ""
-            },
-            {
-              "rir": "",
-              "reps": "",
-              "weight": ""
-            },
-            {
-              "rir": "",
-              "reps": "",
-              "weight": ""
-            }
-          ]
-        },
-        {
-          "name": "Elevaciones Laterales Unilaterales en Polea",
-          "sets": [
-            {
-              "rir": "",
-              "reps": "",
-              "weight": ""
-            },
-            {
-              "rir": "",
-              "reps": "",
-              "weight": ""
-            },
-            {
-              "rir": "",
-              "reps": "",
-              "weight": ""
-            },
-            {
-              "rir": "",
-              "reps": "",
-              "weight": ""
-            }
-          ]
-        }
-      ],
-      "completed": true,
-      "routineId": "99eba470-f1fa-4c78-9760-042a25f3108a",
-      "blockId": "a261973f-ad86-4d6d-b7a4-c290bced50a9",
-      "weekIndex": 1
     },
     {
       "id": "c62a2ddc-0117-4a4c-9a43-52977f5c8290",
@@ -11921,7 +11921,7 @@
       "comments": "Ok",
       "trainerResponse": "ok",
       "createdAt": "2026-07-14T17:40:42.506+00:00",
-      "updatedAt": "2026-07-20T10:17:19.815+00:00"
+      "updatedAt": "2026-07-20T10:22:30.209+00:00"
     },
     {
       "id": "b4f29d26-575a-40be-a4d7-903eef4e1c90",
@@ -11987,7 +11987,7 @@
       "comments": "ok",
       "trainerResponse": "ok",
       "createdAt": "2026-07-15T16:44:30.955+00:00",
-      "updatedAt": "2026-07-20T10:17:19.815+00:00"
+      "updatedAt": "2026-07-20T10:22:30.209+00:00"
     },
     {
       "id": "8674412c-a2b3-4716-b323-509c91514ed7",
@@ -12053,7 +12053,7 @@
       "comments": "OK",
       "trainerResponse": "REVISIÓN REVISADA - OK",
       "createdAt": "2026-07-16T08:11:43.024+00:00",
-      "updatedAt": "2026-07-20T10:17:19.815+00:00"
+      "updatedAt": "2026-07-20T10:22:30.209+00:00"
     },
     {
       "id": "c2ea4cc4-bb31-479b-aeae-a22991cc4004",
@@ -12119,8 +12119,8 @@
       "comments": "ok",
       "trainerResponse": null,
       "createdAt": "2026-07-18T17:01:06.009+00:00",
-      "updatedAt": "2026-07-20T10:17:19.815+00:00"
+      "updatedAt": "2026-07-20T10:22:30.209+00:00"
     }
   ],
-  "lastModified": "2026-07-20T10:20:24.165Z"
+  "lastModified": "2026-07-20T10:23:46.403Z"
 }
