@@ -633,9 +633,36 @@ const SupabaseService = {
             } else {
                 // MODO ENTRENADOR: Guarda de forma relacional granular e individualizada para evitar fallos de lote completo
                 if (fullData.clients) {
+                    // 🛡️ BLINDAJE DE HÁBITOS: Al guardar desde el entrenador, leemos los hábitos actuales de cada cliente
+                    // desde la DB para fusionarlos con los de fullData.habits. Los hábitos son propiedad del cliente
+                    // y nunca deben ser sobrescritos por una versión posiblemente desactualizada del entrenador.
+                    let currentClientHabitsMap = {};
+                    try {
+                        const { data: dbClients } = await this.client
+                            .from('clients')
+                            .select('id, technical_data')
+                            .eq('trainer_id', trainerId);
+                        if (dbClients) {
+                            dbClients.forEach(dbC => {
+                                const dbHabits = (dbC.technical_data && Array.isArray(dbC.technical_data.habits)) ? dbC.technical_data.habits : [];
+                                currentClientHabitsMap[dbC.id] = dbHabits;
+                            });
+                        }
+                    } catch (e) {
+                        console.warn('[Supabase Save] No se pudieron leer los hábitos actuales de clientes para fusión:', e);
+                    }
+
                     fullData.clients.forEach(c => {
                         if (!c.technicalData) c.technicalData = {};
-                        c.technicalData.habits = fullData.habits ? fullData.habits.filter(h => String(h.clientId) === String(c.id)) : [];
+                        // Hábitos del entrenador en memoria (puede estar desactualizado)
+                        const localHabits = fullData.habits ? fullData.habits.filter(h => String(h.clientId) === String(c.id)) : [];
+                        // Hábitos actuales en DB (los que guardó el cliente directamente)
+                        const dbHabits = currentClientHabitsMap[c.id] || [];
+                        // Fusionar: los de DB tienen prioridad; los de memoria local se añaden si no existen en DB
+                        const mergedHabitsMap = new Map();
+                        dbHabits.forEach(h => { if (h.id) mergedHabitsMap.set(h.id, h); });
+                        localHabits.forEach(h => { if (h.id && !mergedHabitsMap.has(h.id)) mergedHabitsMap.set(h.id, h); });
+                        c.technicalData.habits = Array.from(mergedHabitsMap.values());
                     });
                     const sqlClients = fullData.clients.map(mapClientToSQL);
                     sqlClients.forEach(c => {
@@ -676,10 +703,19 @@ const SupabaseService = {
                 }
 
                 // Guardar la cabecera en trainer_profiles con brand, appointments, habits, invoices
+                // 🛡️ BLINDAJE DE HÁBITOS EN PERFIL: Fusionar los hábitos de fullData con todos los hábitos
+                // actuales de los clientes en DB (ya cargados en currentClientHabitsMap) para no perder datos.
+                const allHabitsForProfile = new Map();
+                // Primero, los hábitos que el entrenador tiene en memoria
+                (fullData.habits || []).forEach(h => { if (h.id) allHabitsForProfile.set(h.id, h); });
+                // Luego, todos los hábitos de DB de los clientes (los más recientes, tienen prioridad)
+                Object.values(currentClientHabitsMap).forEach(clientHabits => {
+                    clientHabits.forEach(h => { if (h.id) allHabitsForProfile.set(h.id, h); });
+                });
                 const profileData = {
                     brand: fullData.brand || {},
                     appointments: fullData.appointments || [],
-                    habits: fullData.habits || [],
+                    habits: Array.from(allHabitsForProfile.values()),
                     invoices: fullData.invoices || [],
                     routines: fullData.routines || [],
                     media: fullData.media || [],
