@@ -17,7 +17,7 @@
         })();
         // Force PWA cache bust / reload
         (function() {
-            const CURRENT_VERSION = '745';
+            const CURRENT_VERSION = '746';
             window.APP_VERSION = CURRENT_VERSION;
             const savedVersion = localStorage.getItem('app_version');
             if (savedVersion && savedVersion !== CURRENT_VERSION) {
@@ -71,8 +71,8 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="styles/theme.css?v=745">
-    <link rel="stylesheet" href="styles/components.css?v=745">
+    <link rel="stylesheet" href="styles/theme.css?v=746">
+    <link rel="stylesheet" href="styles/components.css?v=746">
     <style>
         body {
             background-color: #050510;
@@ -231,8 +231,8 @@
 
     <!-- Scripts -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="js/supabase-service.js?v=745"></script>
-    <script src="js/utils.js?v=745"></script>
+    <script src="js/supabase-service.js?v=746"></script>
+    <script src="js/utils.js?v=746"></script>
 
     <script>
         document.getElementById('adminForm').addEventListener('submit', async (e) => {
@@ -293,5 +293,5 @@
             window.BrandConfig.applyTheme();
         }
     </script>
-    <script src="js/custom-recipes.js?v=745"></script></body>
+    <script src="js/custom-recipes.js?v=746"></script></body>
 </html>
