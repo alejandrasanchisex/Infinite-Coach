@@ -47,10 +47,11 @@ function safeGetSessionStorage(key) {
                     const assignedDietIds = new Set();
                     if (data.clients[0]) {
                         const cli = data.clients[0];
+                        if (cli.assignedRoutine) assignedRoutineIds.add(cli.assignedRoutine);
                         if (cli.routineId) assignedRoutineIds.add(cli.routineId);
-                        if (cli.routineIds) cli.routineIds.forEach(id => assignedRoutineIds.add(id));
+                        if (Array.isArray(cli.routineIds)) cli.routineIds.forEach(id => assignedRoutineIds.add(id));
                         if (cli.assignedDiet) assignedDietIds.add(cli.assignedDiet);
-                        if (cli.assignedDiets) cli.assignedDiets.forEach(id => assignedDietIds.add(id));
+                        if (Array.isArray(cli.assignedDiets)) cli.assignedDiets.forEach(id => assignedDietIds.add(id));
                     }
                     
                     // 3. Filtrar rutinas y dietas
@@ -980,10 +981,11 @@ const stripDatabaseForClient = (data, clientId) => {
         const assignedDietIds = new Set();
         if (optimized.clients && optimized.clients[0]) {
             const cli = optimized.clients[0];
+            if (cli.assignedRoutine) assignedRoutineIds.add(cli.assignedRoutine);
             if (cli.routineId) assignedRoutineIds.add(cli.routineId);
-            if (cli.routineIds) cli.routineIds.forEach(id => assignedRoutineIds.add(id));
+            if (Array.isArray(cli.routineIds)) cli.routineIds.forEach(id => assignedRoutineIds.add(id));
             if (cli.assignedDiet) assignedDietIds.add(cli.assignedDiet);
-            if (cli.assignedDiets) cli.assignedDiets.forEach(id => assignedDietIds.add(id));
+            if (Array.isArray(cli.assignedDiets)) cli.assignedDiets.forEach(id => assignedDietIds.add(id));
         }
         
         // 3. Filtrar rutinas y dietas
@@ -5394,7 +5396,7 @@ const BrandConfig = {
     } else if (isLucy) {
         defaultBrand = {
             name: 'Lucy Tundidor',
-            logo: 'https://bieeydhacavxymoosasx.supabase.co/storage/v1/object/public/Media/lucy_logo_cropped.png?v=725',
+            logo: 'https://bieeydhacavxymoosasx.supabase.co/storage/v1/object/public/Media/lucy_logo_cropped.png?v=697',
             configured: true,
             colors: { 
                 primary: '#816e61', 
@@ -5505,7 +5507,7 @@ const BrandConfig = {
             res.colors = defaultBrand.colors;
             changed = true;
         }
-        if (!res.logo || res.logo === 'img/logo-infinite-coach.png' || res.logo.includes('1779724548154') || res.logo.includes('lucy_logo_v1.png') || !res.logo.includes('lucy_logo_cropped.png?v=725')) {
+        if (!res.logo || res.logo === 'img/logo-infinite-coach.png' || res.logo.includes('1779724548154') || res.logo.includes('lucy_logo_v1.png') || !res.logo.includes('lucy_logo_cropped.png?v=697')) {
             res.logo = defaultBrand.logo;
             changed = true;
         }

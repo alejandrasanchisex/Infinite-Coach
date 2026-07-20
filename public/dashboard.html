@@ -20,7 +20,7 @@
         })();
         // Force PWA cache bust / reload
         (function() {
-            const CURRENT_VERSION = '725';
+            const CURRENT_VERSION = '697';
             window.APP_VERSION = CURRENT_VERSION;
             const savedVersion = localStorage.getItem('app_version');
             if (savedVersion && savedVersion !== CURRENT_VERSION) {
@@ -72,9 +72,9 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="styles/theme.css?v=725">
-    <link rel="stylesheet" href="styles/components.css?v=725">
-    <link rel="stylesheet" href="styles/mobile.css?v=725">
+    <link rel="stylesheet" href="styles/theme.css?v=697">
+    <link rel="stylesheet" href="styles/components.css?v=697">
+    <link rel="stylesheet" href="styles/mobile.css?v=697">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <script>
@@ -152,10 +152,10 @@
                     <span id="brandName">Infinite Coach</span>
                 </div>
                 <ul class="nav-links" id="navLinks">
-                    <li><a href="dashboard.html?v=725" class="nav-link active">Inicio</a></li>
-                    <li><a href="profile.html?v=725" class="nav-link">Ficha Técnica</a></li>
+                    <li><a href="dashboard.html?v=697" class="nav-link active">Inicio</a></li>
+                    <li><a href="profile.html?v=697" class="nav-link">Ficha Técnica</a></li>
 
-                    <li><a href="acceso.html?v=725" class="nav-link">Salir</a></li>
+                    <li><a href="acceso.html?v=697" class="nav-link">Salir</a></li>
                 </ul>
                 <button class="menu-toggle" onclick="toggleMenu()" style="margin-left: auto;">☰</button>
             </nav>
@@ -258,12 +258,12 @@
 
     <!-- Supabase SDK & Service -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="js/supabase-service.js?v=725"></script>
+    <script src="js/supabase-service.js?v=697"></script>
 
-    <script src="js/config.js?v=725"></script>
-    <script src="js/data-models.js?v=725"></script>
-    <script src="js/utils.js?v=725"></script>
-    <script src="js/custom-exercises.js?v=725"></script>
+    <script src="js/config.js?v=697"></script>
+    <script src="js/data-models.js?v=697"></script>
+    <script src="js/utils.js?v=697"></script>
+    <script src="js/custom-exercises.js?v=697"></script>
     <script>
         // CLIENT INITIALIZATION
         try {
@@ -661,54 +661,8 @@
                     } catch(e) { console.warn("Error en búsqueda cruzada de recuperación:", e); }
                 }
             }
-
             if (!client) {
                 const activeId = localStorage.getItem('activeTrainerId') || 'default';
-                const sKey = 'fitnessAppData_' + (window.activeTrainerId || 'default');
-                const localData = localStorage.getItem(sKey);
-                const sessionData = sessionStorage.getItem(sKey);
-                let localClients = [];
-                let sessionClients = [];
-                try { if (localData) localClients = JSON.parse(localData).clients || []; } catch(e) {}
-                try { if (sessionData) sessionClients = JSON.parse(sessionData).clients || []; } catch(e) {}
-
-                // Real-time Supabase query test
-                let fetchResult = "no intentado";
-                try {
-                    if (window.SupabaseService) {
-                        if (!window.SupabaseService.client) window.SupabaseService.init();
-                        if (window.SupabaseService.client) {
-                            const { data, error } = await window.SupabaseService.client
-                                .from('trainer_profiles')
-                                .select('full_data')
-                                .eq('trainer_id', window.activeTrainerId)
-                                .single();
-                            if (error) {
-                                fetchResult = `error: ${error.message} (code: ${error.code})`;
-                            } else {
-                                const clients = (data && data.full_data) ? (data.full_data.clients || []) : [];
-                                fetchResult = `éxito (clientes en db: ${clients.length}, primeros: ${clients.slice(0, 2).map(c => c.name).join(', ')})`;
-                            }
-                        } else {
-                            fetchResult = "Supabase client no inicializado tras init";
-                        }
-                    } else {
-                        fetchResult = "SupabaseService no disponible en window";
-                    }
-                } catch(err) {
-                    fetchResult = `excepción: ${err.message}`;
-                }
-
-                alert(`DIAGNÓSTICO APP:\n` +
-                      `- clientId buscado: ${clientId}\n` +
-                      `- window.activeTrainerId: ${window.activeTrainerId}\n` +
-                      `- localData existe: ${!!localData} (long: ${localData ? localData.length : 0}, inicio: ${localData ? localData.substring(0, 80) : 'vacío'})\n` +
-                      `- sessionData existe: ${!!sessionData} (long: ${sessionData ? sessionData.length : 0}, inicio: ${sessionData ? sessionData.substring(0, 80) : 'vacío'})\n` +
-                      `- activeTrainerId en storage: ${activeId}\n` +
-                      `- Consulta real-time Supabase: ${fetchResult}\n` +
-                      `- URL search: ${window.location.search}`
-                );
-
                 window.location.replace('acceso.html?reauth=true&t=' + activeId);
                 return;
             }
@@ -1258,7 +1212,7 @@
     </style>
 
 
-    <script src="js/custom-recipes.js?v=725"></script>
-    <script src="js/pwa-install.js?v=725"></script>
+    <script src="js/custom-recipes.js?v=697"></script>
+    <script src="js/pwa-install.js?v=697"></script>
 </body>
 </html>
