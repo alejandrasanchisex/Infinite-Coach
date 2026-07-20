@@ -261,7 +261,7 @@ let activeTrainerId = (function() {
     return tParam || storedTrainerId || 'default';
 })();
 
-if (activeTrainerId === 'alejandra_asteam_gmail_com') {
+if (activeTrainerId === 'alejandra_asteam_gmail_com' || activeTrainerId === 't-w0iybl7qb_backup') {
     activeTrainerId = 't-w0iybl7qb';
 }
 if (!activeTrainerId || activeTrainerId === 'default' || activeTrainerId === 'admin') {
@@ -3995,7 +3995,10 @@ const Clients = {
                     if (parsed && parsed.clients) {
                         const found = parsed.clients.find(c => c.id == id);
                         if (found) {
-                            const newTrainerId = key.replace('fitnessAppData_', '');
+                            let newTrainerId = key.replace('fitnessAppData_', '');
+                            if (newTrainerId === 't-w0iybl7qb_backup') {
+                                newTrainerId = 't-w0iybl7qb';
+                            }
                             console.log(`🎉 Client found in database of trainer ${newTrainerId}. Switching active trainer context...`);
                             
                             localStorage.setItem('activeTrainerId', newTrainerId);
@@ -5396,7 +5399,7 @@ const BrandConfig = {
     } else if (isLucy) {
         defaultBrand = {
             name: 'Lucy Tundidor',
-            logo: 'https://bieeydhacavxymoosasx.supabase.co/storage/v1/object/public/Media/lucy_logo_cropped.png?v=740',
+            logo: 'https://bieeydhacavxymoosasx.supabase.co/storage/v1/object/public/Media/lucy_logo_cropped.png?v=741',
             configured: true,
             colors: { 
                 primary: '#816e61', 
@@ -5507,7 +5510,7 @@ const BrandConfig = {
             res.colors = defaultBrand.colors;
             changed = true;
         }
-        if (!res.logo || res.logo === 'img/logo-infinite-coach.png' || res.logo.includes('1779724548154') || res.logo.includes('lucy_logo_v1.png') || !res.logo.includes('lucy_logo_cropped.png?v=740')) {
+        if (!res.logo || res.logo === 'img/logo-infinite-coach.png' || res.logo.includes('1779724548154') || res.logo.includes('lucy_logo_v1.png') || !res.logo.includes('lucy_logo_cropped.png?v=741')) {
             res.logo = defaultBrand.logo;
             changed = true;
         }
