@@ -20,7 +20,7 @@
         })();
         // Force PWA cache bust / reload
         (function() {
-            const CURRENT_VERSION = '753';
+            const CURRENT_VERSION = '754';
             window.APP_VERSION = CURRENT_VERSION;
             const savedVersion = localStorage.getItem('app_version');
             if (savedVersion && savedVersion !== CURRENT_VERSION) {
@@ -72,9 +72,9 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="styles/theme.css?v=753">
-    <link rel="stylesheet" href="styles/components.css?v=753">
-    <link rel="stylesheet" href="styles/mobile.css?v=753">
+    <link rel="stylesheet" href="styles/theme.css?v=754">
+    <link rel="stylesheet" href="styles/components.css?v=754">
+    <link rel="stylesheet" href="styles/mobile.css?v=754">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <script>
@@ -152,10 +152,10 @@
                     <span id="brandName">Infinite Coach</span>
                 </div>
                 <ul class="nav-links" id="navLinks">
-                    <li><a href="dashboard.html?v=753" class="nav-link active">Inicio</a></li>
-                    <li><a href="profile.html?v=753" class="nav-link">Ficha Técnica</a></li>
+                    <li><a href="dashboard.html?v=754" class="nav-link active">Inicio</a></li>
+                    <li><a href="profile.html?v=754" class="nav-link">Ficha Técnica</a></li>
 
-                    <li><a href="acceso.html?v=753" class="nav-link">Salir</a></li>
+                    <li><a href="acceso.html?v=754" class="nav-link">Salir</a></li>
                 </ul>
                 <button class="menu-toggle" onclick="toggleMenu()" style="margin-left: auto;">☰</button>
             </nav>
@@ -258,12 +258,12 @@
 
     <!-- Supabase SDK & Service -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="js/supabase-service.js?v=753"></script>
+    <script src="js/supabase-service.js?v=754"></script>
 
-    <script src="js/config.js?v=753"></script>
-    <script src="js/data-models.js?v=753"></script>
-    <script src="js/utils.js?v=753"></script>
-    <script src="js/custom-exercises.js?v=753"></script>
+    <script src="js/config.js?v=754"></script>
+    <script src="js/data-models.js?v=754"></script>
+    <script src="js/utils.js?v=754"></script>
+    <script src="js/custom-exercises.js?v=754"></script>
     <script>
         // CLIENT INITIALIZATION WITH VISIBLE ERROR CAPTURE
         (function() {
@@ -287,50 +287,6 @@
                 textSpan.innerHTML = '<b>[Promise Rejection]</b> ' + (e.reason ? (e.reason.message || String(e.reason)) : 'Unknown rejection');
             });
 
-            // CONSOLE LOG CAPTURE TO SCREEN
-            var logDiv = document.createElement('div');
-            logDiv.id = 'debugConsoleLogOverlay';
-            logDiv.style.cssText = 'position:fixed;bottom:0;left:0;width:100%;height:180px;background:#1e1e24;color:#00ff00;padding:10px;z-index:999999;font-family:monospace;font-size:11px;overflow-y:auto;box-sizing:border-box;border-top:2px solid #555;';
-            var title = document.createElement('div');
-            title.style.cssText = 'font-weight:bold;color:#ffcc00;margin-bottom:5px;border-bottom:1px solid #444;padding-bottom:3px;';
-            title.innerHTML = '📋 CONSOLA DE DEPURE (v751) <span style="float:right;cursor:pointer;color:#ff4757;" onclick="document.getElementById(\'debugConsoleLogOverlay\').remove();">Cerrar ✕</span>';
-            logDiv.appendChild(title);
-            var logsContainer = document.createElement('div');
-            logDiv.appendChild(logsContainer);
-            document.documentElement.appendChild(logDiv);
-
-            function appendLog(type, args) {
-                var msg = Array.from(args).map(function(arg) {
-                    if (arg && typeof arg === 'object') {
-                        try { return JSON.stringify(arg); } catch(e) { return String(arg); }
-                    }
-                    return String(arg);
-                }).join(' ');
-                var item = document.createElement('div');
-                item.style.marginBottom = '3px';
-                if (type === 'error') item.style.color = '#ff4757';
-                else if (type === 'warn') item.style.color = '#ffa502';
-                item.textContent = '[' + type.toUpperCase() + '] ' + msg;
-                logsContainer.appendChild(item);
-                logDiv.scrollTop = logDiv.scrollHeight;
-            }
-
-            var originalLog = console.log;
-            var originalWarn = console.warn;
-            var originalError = console.error;
-
-            console.log = function() {
-                originalLog.apply(console, arguments);
-                appendLog('log', arguments);
-            };
-            console.warn = function() {
-                originalWarn.apply(console, arguments);
-                appendLog('warn', arguments);
-            };
-            console.error = function() {
-                originalError.apply(console, arguments);
-                appendLog('error', arguments);
-            };
         })();
 
         try {
@@ -1323,7 +1279,7 @@
     </style>
 
 
-    <script src="js/custom-recipes.js?v=753"></script>
-    <script src="js/pwa-install.js?v=753"></script>
+    <script src="js/custom-recipes.js?v=754"></script>
+    <script src="js/pwa-install.js?v=754"></script>
 </body>
 </html>

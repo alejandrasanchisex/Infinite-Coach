@@ -1,6 +1,6 @@
 {
   "brand": {
-    "logo": "https://bieeydhacavxymoosasx.supabase.co/storage/v1/object/public/Media/lucy_logo_cropped.png?v=753",
+    "logo": "https://bieeydhacavxymoosasx.supabase.co/storage/v1/object/public/Media/lucy_logo_cropped.png?v=754",
     "name": "Lucy Tundidor",
     "colors": {
       "accent": "#a79788",
@@ -9292,7 +9292,7 @@
               "reps": "8-10",
               "sets": "3",
               "notes": "Mantener abdomen tenso",
-              "videoUrl": "https://www.youtube.com/watch?v=753yjwxtZ_Vkg",
+              "videoUrl": "https://www.youtube.com/watch?v=754yjwxtZ_Vkg",
               "intensity": "RIR 2"
             }
           ],
@@ -9819,7 +9819,7 @@
     },
     {
       "id": "sys-ex-press-plano-(mancuernas)",
-      "url": "https://www.youtube.com/watch?v=753p9qL-wY",
+      "url": "https://www.youtube.com/watch?v=754p9qL-wY",
       "type": "video",
       "title": "Press Plano (Mancuernas)",
       "category": "exercise",
@@ -9830,7 +9830,7 @@
     },
     {
       "id": "sys-ex-press-inclinado-(mancuernas)",
-      "url": "https://www.youtube.com/watch?v=753iPEnn-ltC8",
+      "url": "https://www.youtube.com/watch?v=754iPEnn-ltC8",
       "type": "video",
       "title": "Press Inclinado (Mancuernas)",
       "category": "exercise",
@@ -9852,7 +9852,7 @@
     },
     {
       "id": "sys-ex-aperturas-en-peck-deck",
-      "url": "https://www.youtube.com/watch?v=753id882M_39E",
+      "url": "https://www.youtube.com/watch?v=754id882M_39E",
       "type": "video",
       "title": "Aperturas en Peck Deck",
       "category": "exercise",
@@ -9896,7 +9896,7 @@
     },
     {
       "id": "sys-ex-fondos-en-paralelas-(pecho)",
-      "url": "https://www.youtube.com/watch?v=753z8JmcrW-As",
+      "url": "https://www.youtube.com/watch?v=754z8JmcrW-As",
       "type": "video",
       "title": "Fondos en Paralelas (Pecho)",
       "category": "exercise",
@@ -9962,7 +9962,7 @@
     },
     {
       "id": "sys-ex-press-de-banca-con-agarre-invertido",
-      "url": "https://www.youtube.com/watch?v=753p9qL-wY",
+      "url": "https://www.youtube.com/watch?v=754p9qL-wY",
       "type": "video",
       "title": "Press de Banca con Agarre Invertido",
       "category": "exercise",
@@ -10017,7 +10017,7 @@
     },
     {
       "id": "sys-ex-press-de-banca-con-mancuernas-con-agarre-neutro",
-      "url": "https://www.youtube.com/watch?v=753iPEnn-ltC8",
+      "url": "https://www.youtube.com/watch?v=754iPEnn-ltC8",
       "type": "video",
       "title": "Press de Banca con Mancuernas con Agarre Neutro",
       "category": "exercise",
@@ -10303,7 +10303,7 @@
     },
     {
       "id": "sys-ex-buenos-días-con-barra",
-      "url": "https://www.youtube.com/watch?v=753S8vR3XUaA",
+      "url": "https://www.youtube.com/watch?v=754S8vR3XUaA",
       "type": "video",
       "title": "Buenos Días con Barra",
       "category": "exercise",
@@ -10347,7 +10347,7 @@
     },
     {
       "id": "sys-ex-bird-dog-(perro-de-caza)",
-      "url": "https://www.youtube.com/watch?v=753XLEnwUr1gk",
+      "url": "https://www.youtube.com/watch?v=754XLEnwUr1gk",
       "type": "video",
       "title": "Bird Dog (Perro de caza)",
       "category": "exercise",
@@ -10402,7 +10402,7 @@
     },
     {
       "id": "sys-ex-press-militar-(barra)",
-      "url": "https://www.youtube.com/watch?v=753yjwxtZ_Vkg",
+      "url": "https://www.youtube.com/watch?v=754yjwxtZ_Vkg",
       "type": "video",
       "title": "Press Militar (Barra)",
       "category": "exercise",
@@ -10424,7 +10424,7 @@
     },
     {
       "id": "sys-ex-press-arnold",
-      "url": "https://www.youtube.com/watch?v=753mcHe6Pvefc",
+      "url": "https://www.youtube.com/watch?v=754mcHe6Pvefc",
       "type": "video",
       "title": "Press Arnold",
       "category": "exercise",
@@ -10435,7 +10435,7 @@
     },
     {
       "id": "sys-ex-elevaciones-laterales-(mancuernas)",
-      "url": "https://www.youtube.com/watch?v=753VcKaXpzqRo",
+      "url": "https://www.youtube.com/watch?v=754VcKaXpzqRo",
       "type": "video",
       "title": "Elevaciones Laterales (Mancuernas)",
       "category": "exercise",
@@ -10468,7 +10468,7 @@
     },
     {
       "id": "sys-ex-pájaros-(mancuernas)",
-      "url": "https://www.youtube.com/watch?v=753yMdhi2DVao",
+      "url": "https://www.youtube.com/watch?v=754yMdhi2DVao",
       "type": "video",
       "title": "Pájaros (Mancuernas)",
       "category": "exercise",
@@ -10523,7 +10523,7 @@
     },
     {
       "id": "sys-ex-pájaros-en-peck-deck-invertido",
-      "url": "https://www.youtube.com/watch?v=753yWTVfXNntc",
+      "url": "https://www.youtube.com/watch?v=754yWTVfXNntc",
       "type": "video",
       "title": "Pájaros en Peck Deck Invertido",
       "category": "exercise",
@@ -10545,7 +10545,7 @@
     },
     {
       "id": "sys-ex-elevaciones-laterales-inclinadas-(mancuerna)",
-      "url": "https://www.youtube.com/watch?v=753VcKaXpzqRo",
+      "url": "https://www.youtube.com/watch?v=754VcKaXpzqRo",
       "type": "video",
       "title": "Elevaciones Laterales Inclinadas (Mancuerna)",
       "category": "exercise",
@@ -10567,7 +10567,7 @@
     },
     {
       "id": "sys-ex-pájaros-sentado",
-      "url": "https://www.youtube.com/watch?v=753yMdhi2DVao",
+      "url": "https://www.youtube.com/watch?v=754yMdhi2DVao",
       "type": "video",
       "title": "Pájaros Sentado",
       "category": "exercise",
@@ -10578,7 +10578,7 @@
     },
     {
       "id": "sys-ex-press-de-hombros-en-máquina-smith",
-      "url": "https://www.youtube.com/watch?v=753yjwxtZ_Vkg",
+      "url": "https://www.youtube.com/watch?v=754yjwxtZ_Vkg",
       "type": "video",
       "title": "Press de Hombros en Máquina Smith",
       "category": "exercise",
@@ -10611,7 +10611,7 @@
     },
     {
       "id": "sys-ex-elevaciones-laterales-en-máquina",
-      "url": "https://www.youtube.com/watch?v=753VcKaXpzqRo",
+      "url": "https://www.youtube.com/watch?v=754VcKaXpzqRo",
       "type": "video",
       "title": "Elevaciones Laterales en Máquina",
       "category": "exercise",
@@ -10688,7 +10688,7 @@
     },
     {
       "id": "sys-ex-sentadilla-búlgara-(foco-cuádriceps)",
-      "url": "https://www.youtube.com/watch?v=753C-uNgKwPLE",
+      "url": "https://www.youtube.com/watch?v=754C-uNgKwPLE",
       "type": "video",
       "title": "Sentadilla Búlgara (Foco Cuádriceps)",
       "category": "exercise",
@@ -10765,7 +10765,7 @@
     },
     {
       "id": "sys-ex-step-ups-con-mancuernas",
-      "url": "https://www.youtube.com/watch?v=753_C8p9pNc6U",
+      "url": "https://www.youtube.com/watch?v=754_C8p9pNc6U",
       "type": "video",
       "title": "Step Ups con Mancuernas",
       "category": "exercise",
@@ -10787,7 +10787,7 @@
     },
     {
       "id": "sys-ex-sentadilla-búlgara-con-mancuernas",
-      "url": "https://www.youtube.com/watch?v=753C-uNgKwPLE",
+      "url": "https://www.youtube.com/watch?v=754C-uNgKwPLE",
       "type": "video",
       "title": "Sentadilla Búlgara con Mancuernas",
       "category": "exercise",
@@ -10831,7 +10831,7 @@
     },
     {
       "id": "sys-ex-curl-femoral-tumbado",
-      "url": "https://www.youtube.com/watch?v=753Tq3QdAUUoI",
+      "url": "https://www.youtube.com/watch?v=754Tq3QdAUUoI",
       "type": "video",
       "title": "Curl Femoral Tumbado",
       "category": "exercise",
@@ -10886,7 +10886,7 @@
     },
     {
       "id": "sys-ex-curl-femoral-con-fitball",
-      "url": "https://www.youtube.com/watch?v=753Tq3QdAUUoI",
+      "url": "https://www.youtube.com/watch?v=754Tq3QdAUUoI",
       "type": "video",
       "title": "Curl Femoral con Fitball",
       "category": "exercise",
@@ -10919,7 +10919,7 @@
     },
     {
       "id": "sys-ex-curl-femoral-con-mancuerna-entre-pies",
-      "url": "https://www.youtube.com/watch?v=753Tq3QdAUUoI",
+      "url": "https://www.youtube.com/watch?v=754Tq3QdAUUoI",
       "type": "video",
       "title": "Curl Femoral con Mancuerna entre pies",
       "category": "exercise",
@@ -10952,7 +10952,7 @@
     },
     {
       "id": "sys-ex-curl-femoral-en-polea",
-      "url": "https://www.youtube.com/watch?v=753Tq3QdAUUoI",
+      "url": "https://www.youtube.com/watch?v=754Tq3QdAUUoI",
       "type": "video",
       "title": "Curl Femoral en Polea",
       "category": "exercise",
@@ -11150,7 +11150,7 @@
     },
     {
       "id": "sys-ex-zancada-búlgara-(foco-glúteo)",
-      "url": "https://www.youtube.com/watch?v=753C-uNgKwPLE",
+      "url": "https://www.youtube.com/watch?v=754C-uNgKwPLE",
       "type": "video",
       "title": "Zancada Búlgara (Foco Glúteo)",
       "category": "exercise",
@@ -11161,7 +11161,7 @@
     },
     {
       "id": "sys-ex-step-up-(cajón-alto)",
-      "url": "https://www.youtube.com/watch?v=753_C8p9pNc6U",
+      "url": "https://www.youtube.com/watch?v=754_C8p9pNc6U",
       "type": "video",
       "title": "Step Up (Cajón Alto)",
       "category": "exercise",
@@ -11227,7 +11227,7 @@
     },
     {
       "id": "sys-ex-zancadas-cruzadas-(curtsy-lunges)",
-      "url": "https://www.youtube.com/watch?v=753C-uNgKwPLE",
+      "url": "https://www.youtube.com/watch?v=754C-uNgKwPLE",
       "type": "video",
       "title": "Zancadas cruzadas (Curtsy Lunges)",
       "category": "exercise",
@@ -11271,7 +11271,7 @@
     },
     {
       "id": "sys-ex-sentadilla-sumo-con-mancuerna",
-      "url": "https://www.youtube.com/watch?v=753_C8p9pNc6U",
+      "url": "https://www.youtube.com/watch?v=754_C8p9pNc6U",
       "type": "video",
       "title": "Sentadilla Sumo con Mancuerna",
       "category": "exercise",
@@ -11469,7 +11469,7 @@
     },
     {
       "id": "sys-ex-press-francés",
-      "url": "https://www.youtube.com/watch?v=753u1_NreL7mU",
+      "url": "https://www.youtube.com/watch?v=754u1_NreL7mU",
       "type": "video",
       "title": "Press Francés",
       "category": "exercise",
@@ -11480,7 +11480,7 @@
     },
     {
       "id": "sys-ex-extensiones-en-polea-alta",
-      "url": "https://www.youtube.com/watch?v=753-LAMcpzHLU",
+      "url": "https://www.youtube.com/watch?v=754-LAMcpzHLU",
       "type": "video",
       "title": "Extensiones en Polea Alta",
       "category": "exercise",
@@ -11491,7 +11491,7 @@
     },
     {
       "id": "sys-ex-patada-de-tríceps-(polea)",
-      "url": "https://www.youtube.com/watch?v=753SS6K3lAwZ8",
+      "url": "https://www.youtube.com/watch?v=754SS6K3lAwZ8",
       "type": "video",
       "title": "Patada de Tríceps (Polea)",
       "category": "exercise",
@@ -11513,7 +11513,7 @@
     },
     {
       "id": "sys-ex-extensiones-tras-nuca",
-      "url": "https://www.youtube.com/watch?v=753XhS6_q1Vtc",
+      "url": "https://www.youtube.com/watch?v=754XhS6_q1Vtc",
       "type": "video",
       "title": "Extensiones tras nuca",
       "category": "exercise",
@@ -11524,7 +11524,7 @@
     },
     {
       "id": "sys-ex-patada-de-tríceps-con-mancuerna",
-      "url": "https://www.youtube.com/watch?v=753SS6K3lAwZ8",
+      "url": "https://www.youtube.com/watch?v=754SS6K3lAwZ8",
       "type": "video",
       "title": "Patada de Tríceps con Mancuerna",
       "category": "exercise",
@@ -11535,7 +11535,7 @@
     },
     {
       "id": "sys-ex-fondos-entre-bancos-(tríceps)",
-      "url": "https://www.youtube.com/watch?v=753z8JmcrW-As",
+      "url": "https://www.youtube.com/watch?v=754z8JmcrW-As",
       "type": "video",
       "title": "Fondos entre Bancos (Tríceps)",
       "category": "exercise",
@@ -11546,7 +11546,7 @@
     },
     {
       "id": "sys-ex-press-francés-con-mancuernas",
-      "url": "https://www.youtube.com/watch?v=753u1_NreL7mU",
+      "url": "https://www.youtube.com/watch?v=754u1_NreL7mU",
       "type": "video",
       "title": "Press Francés con Mancuernas",
       "category": "exercise",
@@ -11557,7 +11557,7 @@
     },
     {
       "id": "sys-ex-extensión-de-tríceps-por-encima-de-la-cabeza-en-polea",
-      "url": "https://www.youtube.com/watch?v=753XhS6_q1Vtc",
+      "url": "https://www.youtube.com/watch?v=754XhS6_q1Vtc",
       "type": "video",
       "title": "Extensión de Tríceps por encima de la cabeza en Polea",
       "category": "exercise",
@@ -11568,7 +11568,7 @@
     },
     {
       "id": "sys-ex-fondos-en-máquina-para-tríceps",
-      "url": "https://www.youtube.com/watch?v=753z8JmcrW-As",
+      "url": "https://www.youtube.com/watch?v=754z8JmcrW-As",
       "type": "video",
       "title": "Fondos en Máquina para Tríceps",
       "category": "exercise",
@@ -11579,7 +11579,7 @@
     },
     {
       "id": "sys-ex-rompecráneos-(skull-crushers)-con-barra-ez",
-      "url": "https://www.youtube.com/watch?v=753u1_NreL7mU",
+      "url": "https://www.youtube.com/watch?v=754u1_NreL7mU",
       "type": "video",
       "title": "Rompecráneos (Skull Crushers) con barra EZ",
       "category": "exercise",
@@ -11590,7 +11590,7 @@
     },
     {
       "id": "sys-ex-extensión-de-tríceps-unilateral-en-polea",
-      "url": "https://www.youtube.com/watch?v=753-LAMcpzHLU",
+      "url": "https://www.youtube.com/watch?v=754-LAMcpzHLU",
       "type": "video",
       "title": "Extensión de Tríceps unilateral en Polea",
       "category": "exercise",
@@ -11612,7 +11612,7 @@
     },
     {
       "id": "sys-ex-extensión-de-tríceps-con-mancuerna-a-dos-manos",
-      "url": "https://www.youtube.com/watch?v=753XhS6_q1Vtc",
+      "url": "https://www.youtube.com/watch?v=754XhS6_q1Vtc",
       "type": "video",
       "title": "Extensión de Tríceps con mancuerna a dos manos",
       "category": "exercise",
@@ -11623,7 +11623,7 @@
     },
     {
       "id": "sys-ex-extensiones-de-tríceps-con-cuerda-invertida",
-      "url": "https://www.youtube.com/watch?v=753-LAMcpzHLU",
+      "url": "https://www.youtube.com/watch?v=754-LAMcpzHLU",
       "type": "video",
       "title": "Extensiones de Tríceps con Cuerda invertida",
       "category": "exercise",
@@ -11788,7 +11788,7 @@
     },
     {
       "id": "sys-ex-dead-bug",
-      "url": "https://www.youtube.com/watch?v=753XLEnwUr1gk",
+      "url": "https://www.youtube.com/watch?v=754XLEnwUr1gk",
       "type": "video",
       "title": "Dead Bug",
       "category": "exercise",
@@ -11821,7 +11821,7 @@
     },
     {
       "id": "sys-ex-giros-rusos-(russian-twists)",
-      "url": "https://www.youtube.com/watch?v=753XLEnwUr1gk",
+      "url": "https://www.youtube.com/watch?v=754XLEnwUr1gk",
       "type": "video",
       "title": "Giros Rusos (Russian Twists)",
       "category": "exercise",
