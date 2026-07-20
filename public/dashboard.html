@@ -20,7 +20,7 @@
         })();
         // Force PWA cache bust / reload
         (function() {
-            const CURRENT_VERSION = '747';
+            const CURRENT_VERSION = '748';
             window.APP_VERSION = CURRENT_VERSION;
             const savedVersion = localStorage.getItem('app_version');
             if (savedVersion && savedVersion !== CURRENT_VERSION) {
@@ -72,9 +72,9 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="styles/theme.css?v=747">
-    <link rel="stylesheet" href="styles/components.css?v=747">
-    <link rel="stylesheet" href="styles/mobile.css?v=747">
+    <link rel="stylesheet" href="styles/theme.css?v=748">
+    <link rel="stylesheet" href="styles/components.css?v=748">
+    <link rel="stylesheet" href="styles/mobile.css?v=748">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <script>
@@ -152,10 +152,10 @@
                     <span id="brandName">Infinite Coach</span>
                 </div>
                 <ul class="nav-links" id="navLinks">
-                    <li><a href="dashboard.html?v=747" class="nav-link active">Inicio</a></li>
-                    <li><a href="profile.html?v=747" class="nav-link">Ficha Técnica</a></li>
+                    <li><a href="dashboard.html?v=748" class="nav-link active">Inicio</a></li>
+                    <li><a href="profile.html?v=748" class="nav-link">Ficha Técnica</a></li>
 
-                    <li><a href="acceso.html?v=747" class="nav-link">Salir</a></li>
+                    <li><a href="acceso.html?v=748" class="nav-link">Salir</a></li>
                 </ul>
                 <button class="menu-toggle" onclick="toggleMenu()" style="margin-left: auto;">☰</button>
             </nav>
@@ -258,14 +258,36 @@
 
     <!-- Supabase SDK & Service -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="js/supabase-service.js?v=747"></script>
+    <script src="js/supabase-service.js?v=748"></script>
 
-    <script src="js/config.js?v=747"></script>
-    <script src="js/data-models.js?v=747"></script>
-    <script src="js/utils.js?v=747"></script>
-    <script src="js/custom-exercises.js?v=747"></script>
+    <script src="js/config.js?v=748"></script>
+    <script src="js/data-models.js?v=748"></script>
+    <script src="js/utils.js?v=748"></script>
+    <script src="js/custom-exercises.js?v=748"></script>
     <script>
-        // CLIENT INITIALIZATION
+        // CLIENT INITIALIZATION WITH VISIBLE ERROR CAPTURE
+        (function() {
+            var errDiv = document.createElement('div');
+            errDiv.style.cssText = 'position:fixed;top:0;left:0;width:100%;background:#ff4757;color:#fff;padding:15px;z-index:999999;font-family:monospace;display:none;box-sizing:border-box;font-size:12px;word-break:break-all;';
+            var closeBtn = document.createElement('span');
+            closeBtn.textContent = '✕';
+            closeBtn.style.cssText = 'float:right;cursor:pointer;font-weight:bold;margin-left:15px;';
+            closeBtn.onclick = function() { errDiv.style.display = 'none'; };
+            errDiv.appendChild(closeBtn);
+            var textSpan = document.createElement('span');
+            errDiv.appendChild(textSpan);
+            document.documentElement.appendChild(errDiv);
+
+            window.addEventListener('error', function(e) {
+                errDiv.style.display = 'block';
+                textSpan.innerHTML = '<b>[JS Error]</b> ' + e.message + ' at ' + e.filename + ':' + e.lineno;
+            });
+            window.addEventListener('unhandledrejection', function(e) {
+                errDiv.style.display = 'block';
+                textSpan.innerHTML = '<b>[Promise Rejection]</b> ' + (e.reason ? (e.reason.message || String(e.reason)) : 'Unknown rejection');
+            });
+        })();
+
         try {
             if (typeof window.APP_VERSION !== 'undefined') {
                 document.querySelectorAll('.app-version-label').forEach(el => el.textContent = window.APP_VERSION);
@@ -677,7 +699,27 @@
             }
             if (!client) {
                 const activeId = localStorage.getItem('activeTrainerId') || 'default';
-                window.location.replace('acceso.html?reauth=true&t=' + activeId);
+                const localDataRaw = localStorage.getItem('fitnessAppData_' + activeId);
+                let clientsList = [];
+                try {
+                    const parsed = JSON.parse(localDataRaw);
+                    clientsList = (parsed && parsed.clients) ? parsed.clients.map(c => c.id + ' (' + c.name + ')') : [];
+                } catch(e) {}
+
+                var dbg = document.createElement('div');
+                dbg.id = 'debugClientOverlay';
+                dbg.style.cssText = 'position:fixed;top:50px;left:0;width:100%;background:#2f3542;color:#fff;padding:20px;z-index:999998;font-family:monospace;box-sizing:border-box;font-size:13px;line-height:1.5;';
+                dbg.innerHTML = '<h3 style="color:#ff7f50;margin-top:0;">⚠️ DIAGNÓSTICO DE ACCESO CLIENTE</h3>' +
+                    '<b>ID Cliente Buscado:</b> ' + clientId + '<br>' +
+                    '<b>ID Entrenador Activo:</b> ' + activeId + '<br>' +
+                    '<b>¿Hay base de datos en local?:</b> ' + (localDataRaw ? ('Sí (' + localDataRaw.length + ' caracteres)') : 'No, vacía') + '<br>' +
+                    '<b>Clientes en local:</b> ' + (clientsList.length > 0 ? clientsList.join(', ') : 'Ninguno') + '<br><br>' +
+                    '<span style="color:#a4b0be;">Redirigiendo a la pantalla de acceso en 30 segundos...</span>';
+                document.body.appendChild(dbg);
+
+                setTimeout(function() {
+                    window.location.replace('acceso.html?reauth=true&t=' + activeId);
+                }, 30000);
                 return;
             }
 
@@ -1226,7 +1268,7 @@
     </style>
 
 
-    <script src="js/custom-recipes.js?v=747"></script>
-    <script src="js/pwa-install.js?v=747"></script>
+    <script src="js/custom-recipes.js?v=748"></script>
+    <script src="js/pwa-install.js?v=748"></script>
 </body>
 </html>
