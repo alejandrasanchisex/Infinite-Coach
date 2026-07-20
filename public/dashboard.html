@@ -615,6 +615,22 @@
             // --- 4. ACCIONES ADICIONALES (STRIPE / NOTIFICACIONES) ---
             let client = Clients.getById(clientId);
             if (!client) {
+                // Sincronización rápida en caliente si el cliente no está en el almacenamiento local
+                try {
+                    console.log("Client not found locally. Running hot sync before failing...");
+                    if (window.SupabaseService) {
+                        window.SupabaseService.init();
+                        const freshData = await window.syncFromCloud();
+                        if (freshData) {
+                            renderLocalData(true);
+                            client = Clients.getById(clientId);
+                        }
+                    }
+                } catch(syncErr) {
+                    console.warn("Hot sync failed:", syncErr);
+                }
+            }
+            if (!client) {
                 // Intento final de búsqueda cruzada en Supabase en tiempo real (si la base de datos de origen cambió o el contexto se desconfiguró)
                 if (window.SupabaseService && window.SupabaseService.client) {
                     try {
