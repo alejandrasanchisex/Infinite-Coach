@@ -19,6 +19,15 @@ function safeGetSessionStorage(key) {
     return null;
 }
 
+const checkIsTrainer = () => {
+    const authed = (safeGetLocalStorage('_trainerAuthed') === '1' || safeGetSessionStorage('_trainerAuthed') === '1');
+    if (!authed) return false;
+    if (typeof window === 'undefined') return true;
+    const path = window.location.pathname.toLowerCase();
+    const isClientPage = !path.includes('trainer-') && !path.includes('admin-') && !path.includes('trainer-login');
+    return !isClientPage;
+};
+
 // ============================================
 // DATA MODELS & STORAGE MANAGEMENT - v311 BLINDAJE TOTAL
 // ============================================
@@ -32,7 +41,7 @@ function safeGetSessionStorage(key) {
     localStorage.setItem = function(key, value) {
         let valueToStoreInLocal = value;
         const clientId = (safeGetLocalStorage('clientId') || safeGetSessionStorage('clientId'));
-        const isTrainer = (safeGetLocalStorage('_trainerAuthed') === '1' || safeGetSessionStorage('_trainerAuthed') === '1');
+        const isTrainer = checkIsTrainer();
 
         // Si es la base de datos de un cliente, optimizar el contenido para localStorage
         if (key && key.indexOf('fitnessAppData_') === 0 && !key.endsWith('_backup') && clientId && !isTrainer) {
@@ -163,7 +172,7 @@ function safeGetSessionStorage(key) {
 
 const DB_VERSION = '1.0.1';
 let activeTrainerId = (function() {
-    const isTrainer = (safeGetLocalStorage('_trainerAuthed') === '1' || safeGetSessionStorage('_trainerAuthed') === '1');
+    const isTrainer = checkIsTrainer();
     const isClientPage = typeof window !== 'undefined' && 
         window.location && 
         window.location.pathname && 
@@ -284,7 +293,7 @@ const safeGetDatabaseRaw = () => {
         const sessionData = JSON.parse(sessionRaw);
         const localData = JSON.parse(localRaw);
         
-        const isTrainer = (safeGetLocalStorage('_trainerAuthed') === '1' || safeGetSessionStorage('_trainerAuthed') === '1');
+        const isTrainer = checkIsTrainer();
         if (isTrainer) {
             const sessionClients = (sessionData.clients || []).length;
             const localClients = (localData.clients || []).length;
@@ -954,7 +963,7 @@ const getData = () => {
 window.getData = getData;
 
 const stripDatabaseForClient = (data, clientId) => {
-    const isTrainer = (safeGetLocalStorage('_trainerAuthed') === '1' || safeGetSessionStorage('_trainerAuthed') === '1');
+    const isTrainer = checkIsTrainer();
     const isClientPage = typeof window !== 'undefined' && 
         window.location && 
         window.location.pathname && 
@@ -1392,7 +1401,7 @@ const saveData = (data) => {
   }
 
   const localPrevModified = prevData ? prevData.lastModified : null;
-  const isTrainer = (safeGetLocalStorage('_trainerAuthed') === '1' || safeGetSessionStorage('_trainerAuthed') === '1');
+  const isTrainer = checkIsTrainer();
   
   // Merge page changes with the current local storage state (to preserve other tabs' edits)
   let mergedWithLocal = data;
@@ -1566,7 +1575,7 @@ const doSyncFromCloud = async () => {
         
         // 🛡️ FILTRO DE SEGURIDAD MULTI-INQUILINO: Impedir cruce de datos de cliente
         const clientId = (safeGetLocalStorage('clientId') || safeGetSessionStorage('clientId'));
-        const isTrainer = (safeGetLocalStorage('_trainerAuthed') === '1' || safeGetSessionStorage('_trainerAuthed') === '1');
+        const isTrainer = checkIsTrainer();
         let localData = null;
         
         try {
@@ -1870,7 +1879,7 @@ const doSyncFromCloud = async () => {
                 const localTime = localData.lastModified ? new Date(localData.lastModified).getTime() : 0;
                 const cloudTime = cloudData.lastModified ? new Date(cloudData.lastModified).getTime() : 0;
                 
-                const isTrainer = (safeGetLocalStorage('_trainerAuthed') === '1' || safeGetSessionStorage('_trainerAuthed') === '1');
+                const isTrainer = checkIsTrainer();
                 
                 // Categorizar colecciones según autoría
                 const trainerCollections = ['routines', 'diets', 'foods', 'media', 'trainingBlocks', 'supplementationTemplates', 'invoices', 'library']; // clients se maneja aparte
@@ -2297,7 +2306,7 @@ const doSyncFromCloud = async () => {
 };
 
 window.syncFromCloud = () => {
-    const isTrainer = (safeGetLocalStorage('_trainerAuthed') === '1' || safeGetSessionStorage('_trainerAuthed') === '1');
+    const isTrainer = checkIsTrainer();
     if (isTrainer && typeof isLocalUploadInProgress !== 'undefined' && isLocalUploadInProgress) {
         console.log("⏳ [Sync Blocked] Cancelando descarga de la nube: hay un entreno subiéndose en segundo plano para evitar sobrescritura.");
         return Promise.resolve(null);
@@ -5407,7 +5416,7 @@ const BrandConfig = {
     } else if (isLucy) {
         defaultBrand = {
             name: 'Lucy Tundidor',
-            logo: 'https://bieeydhacavxymoosasx.supabase.co/storage/v1/object/public/Media/lucy_logo_cropped.png?v=751',
+            logo: 'https://bieeydhacavxymoosasx.supabase.co/storage/v1/object/public/Media/lucy_logo_cropped.png?v=752',
             configured: true,
             colors: { 
                 primary: '#816e61', 
@@ -5518,7 +5527,7 @@ const BrandConfig = {
             res.colors = defaultBrand.colors;
             changed = true;
         }
-        if (!res.logo || res.logo === 'img/logo-infinite-coach.png' || res.logo.includes('1779724548154') || res.logo.includes('lucy_logo_v1.png') || !res.logo.includes('lucy_logo_cropped.png?v=751')) {
+        if (!res.logo || res.logo === 'img/logo-infinite-coach.png' || res.logo.includes('1779724548154') || res.logo.includes('lucy_logo_v1.png') || !res.logo.includes('lucy_logo_cropped.png?v=752')) {
             res.logo = defaultBrand.logo;
             changed = true;
         }

@@ -17,6 +17,15 @@ function safeGetSessionStorage(key) {
     return null;
 }
 
+const checkIsTrainer = () => {
+    const authed = (safeGetLocalStorage('_trainerAuthed') === '1' || safeGetSessionStorage('_trainerAuthed') === '1');
+    if (!authed) return false;
+    if (typeof window === 'undefined') return true;
+    const path = window.location.pathname.toLowerCase();
+    const isClientPage = !path.includes('trainer-') && !path.includes('admin-') && !path.includes('trainer-login');
+    return !isClientPage;
+};
+
 /**
  * SUPABASE SERVICE (Vanilla JS)
  * Gestión de base de datos y almacenamiento en la nube profesional.
@@ -87,7 +96,7 @@ const SupabaseService = {
         }
         if (!this.client) this.init();
         try {
-            const isTrainer = (safeGetLocalStorage('_trainerAuthed') === '1' || safeGetSessionStorage('_trainerAuthed') === '1');
+            const isTrainer = checkIsTrainer();
             const clientId = (safeGetLocalStorage('clientId') || safeGetSessionStorage('clientId'));
 
             console.log(`[Supabase GetData] Cargando datos granulares. isTrainer: ${isTrainer}, clientId: ${clientId}`);
@@ -455,7 +464,7 @@ const SupabaseService = {
         }
         if (!this.client) this.init();
         try {
-            const isTrainer = (safeGetLocalStorage('_trainerAuthed') === '1' || safeGetSessionStorage('_trainerAuthed') === '1');
+            const isTrainer = checkIsTrainer();
             const clientId = (safeGetLocalStorage('clientId') || safeGetSessionStorage('clientId'));
 
             console.log(`[Supabase SaveData] Guardando datos granulares. isTrainer: ${isTrainer}, clientId: ${clientId}`);
