@@ -661,7 +661,7 @@
       "category": "exercise",
       "isSystem": true,
       "createdAt": "2026-06-09T18:52:11.236Z",
-      "updatedAt": "2026-07-20T08:43:26.753Z",
+      "updatedAt": "2026-07-20T10:19:03.735Z",
       "muscleGroup": "Isquiotibiales"
     },
     {
@@ -1563,7 +1563,7 @@
       "category": "exercise",
       "isSystem": true,
       "createdAt": "2026-06-09T18:52:11.236Z",
-      "updatedAt": "2026-07-20T08:43:26.753Z",
+      "updatedAt": "2026-07-20T10:19:03.735Z",
       "muscleGroup": "Isquiotibiales"
     },
     {
@@ -3711,7 +3711,7 @@
       "customPerimeters": [],
       "weightHistory": [],
       "createdAt": "2026-07-18T18:42:40.282624+00:00",
-      "updatedAt": "2026-07-20T10:11:42.808+00:00"
+      "updatedAt": "2026-07-20T10:20:01.632+00:00"
     }
   ],
   "diets": [
@@ -4214,7 +4214,7 @@
         "fat": 0
       },
       "createdAt": "2026-07-18T18:44:06.313985+00:00",
-      "updatedAt": "2026-07-20T10:11:42.809+00:00"
+      "updatedAt": "2026-07-20T10:20:01.632+00:00"
     }
   ],
   "trainingBlocks": [
@@ -4786,10 +4786,10 @@
         }
       ],
       "createdAt": "2026-07-15T17:26:55.468+00:00",
-      "updatedAt": "2026-07-20T10:11:42.809+00:00"
+      "updatedAt": "2026-07-20T10:20:01.632+00:00"
     }
   ],
   "trainingLogs": [],
   "feedbacks": [],
-  "lastModified": "2026-07-20T10:12:33.333Z"
+  "lastModified": "2026-07-20T10:20:23.621Z"
 }

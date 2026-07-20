@@ -218,26 +218,49 @@ const SupabaseService = {
                 const clientObj = mappedClients.find(c => c.id === r.client_id);
                 if (clientObj) {
                     const blocks = mappedBlocks.filter(b => b.clientId === r.client_id) || [];
-                    const activeBlock = blocks.find(b => b.status === 'active') || blocks[0];
                     
-                    if (activeBlock) {
-                        blockId = activeBlock.id;
+                    // 📅 HISTORICAL BLOCK CORRELATION (CHRONOLOGICAL RESOLUTION):
+                    // Find the block that covers the log date instead of defaulting to activeBlock
+                    const logDate = r.date ? new Date(r.date) : null;
+                    let targetBlock = null;
+                    
+                    if (logDate) {
+                        const sortedBlocks = [...blocks].sort((a, b) => new Date(a.startDate) - new Date(b.startDate));
+                        for (let i = 0; i < sortedBlocks.length; i++) {
+                            const b = sortedBlocks[i];
+                            const bStart = new Date(b.startDate);
+                            if (logDate >= bStart) {
+                                const nextBlock = sortedBlocks[i+1];
+                                if (!nextBlock || logDate < new Date(nextBlock.startDate)) {
+                                    targetBlock = b;
+                                    break;
+                                }
+                            }
+                        }
+                    }
+                    
+                    if (!targetBlock) {
+                        targetBlock = blocks.find(b => b.status === 'active') || blocks[0];
+                    }
+                    
+                    if (targetBlock) {
+                        blockId = targetBlock.id;
                         if (r.week_number !== undefined && r.week_number !== null) {
                             const wIdx = parseInt(r.week_number) - 1;
                             weekIndex = wIdx;
-                            if (activeBlock.weeks && activeBlock.weeks[wIdx]) {
-                                routineId = activeBlock.weeks[wIdx].id;
+                            if (targetBlock.weeks && targetBlock.weeks[wIdx]) {
+                                routineId = targetBlock.weeks[wIdx].id;
                             }
-                        } else if (activeBlock.startDate && r.date) {
+                        } else if (targetBlock.startDate && r.date) {
                             // Fallback para entrenamientos con week_number nulo (recalcular por fechas)
                             const logDate = new Date(r.date);
-                            const blockStart = new Date(activeBlock.startDate);
+                            const blockStart = new Date(targetBlock.startDate);
                             const diff = Math.floor((logDate - blockStart) / (1000 * 60 * 60 * 24));
                             if (diff >= 0) {
                                 const wIdx = Math.floor(diff / 7);
-                                if (activeBlock.weeks && activeBlock.weeks[wIdx]) {
+                                if (targetBlock.weeks && targetBlock.weeks[wIdx]) {
                                     weekIndex = wIdx;
-                                    routineId = activeBlock.weeks[wIdx].id;
+                                    routineId = targetBlock.weeks[wIdx].id;
                                 }
                             }
                         }

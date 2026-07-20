@@ -5900,11 +5900,11 @@
         }
       ],
       "completed": true,
-      "routineId": null,
-      "blockId": null,
+      "routineId": "d31b8d47-6e54-4ac3-8a42-3b67675aecb6",
+      "blockId": "f7699552-c117-4849-9033-2ca401702a1a",
       "weekIndex": 0
     }
   ],
   "feedbacks": [],
-  "lastModified": "2026-07-20T10:12:32.731Z"
+  "lastModified": "2026-07-20T10:20:22.016Z"
 }

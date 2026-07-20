@@ -670,7 +670,7 @@
       "category": "exercise",
       "isSystem": true,
       "createdAt": "2026-06-09T18:52:11.236Z",
-      "updatedAt": "2026-07-20T08:43:26.753Z",
+      "updatedAt": "2026-07-20T10:19:03.735Z",
       "muscleGroup": "Isquiotibiales"
     },
     {
@@ -1572,7 +1572,7 @@
       "category": "exercise",
       "isSystem": true,
       "createdAt": "2026-06-09T18:52:11.236Z",
-      "updatedAt": "2026-07-20T08:43:26.753Z",
+      "updatedAt": "2026-07-20T10:19:03.735Z",
       "muscleGroup": "Isquiotibiales"
     },
     {
@@ -3923,7 +3923,7 @@
         }
       ],
       "createdAt": "2026-07-18T18:42:40.282624+00:00",
-      "updatedAt": "2026-07-20T10:11:42.808+00:00"
+      "updatedAt": "2026-07-20T10:20:01.632+00:00"
     }
   ],
   "diets": [],
@@ -3957,7 +3957,65 @@
       "comments": "Me veo mejor en el espejo.",
       "trainerResponse": "Bajada de peso controlada. Excelente.",
       "createdAt": "2026-06-03T12:32:07.538+00:00",
-      "updatedAt": "2026-07-20T10:11:42.809+00:00"
+      "updatedAt": "2026-07-20T10:20:01.632+00:00"
+    },
+    {
+      "id": "fb-3175bb45-2603-4284-92aa-cc748f828d44",
+      "clientId": "953ffd06-bc79-4f8d-a489-95aa1d3531c6",
+      "date": "2026-06-10T12:32:07.538+00:00",
+      "weight": 62.4,
+      "sleep": 4,
+      "stress": 2,
+      "energy": 4,
+      "adherence": 5,
+      "satisfaction": 5,
+      "answers": [
+        {
+          "answer": "Pantalones más sueltos.",
+          "question": "¿Qué tal te ves físicamente?"
+        }
+      ],
+      "perimeters": {
+        "Brazo": 27.8,
+        "Muslo": 53.5,
+        "Pecho": 87.5,
+        "Cadera": 97,
+        "Cintura": 70.8
+      },
+      "photos": {},
+      "comments": "Muy buena adherencia a los platos.",
+      "trainerResponse": "Estupendo progreso de perímetros.",
+      "createdAt": "2026-06-10T12:32:07.538+00:00",
+      "updatedAt": "2026-07-20T10:20:01.632+00:00"
+    },
+    {
+      "id": "fb-e0b6c754-82b2-49fb-b9f4-2d1ac2fd2fa1",
+      "clientId": "953ffd06-bc79-4f8d-a489-95aa1d3531c6",
+      "date": "2026-06-17T12:32:07.538+00:00",
+      "weight": 62,
+      "sleep": 4,
+      "stress": 2,
+      "energy": 5,
+      "adherence": 5,
+      "satisfaction": 5,
+      "answers": [
+        {
+          "answer": "Visualmente más tonificada.",
+          "question": "¿Qué tal te ves físicamente?"
+        }
+      ],
+      "perimeters": {
+        "Brazo": 27.5,
+        "Muslo": 53,
+        "Pecho": 87,
+        "Cadera": 96.5,
+        "Cintura": 70.2
+      },
+      "photos": {},
+      "comments": "Me siento más fuerte entrenando.",
+      "trainerResponse": "Felicidades por la constancia.",
+      "createdAt": "2026-06-17T12:32:07.538+00:00",
+      "updatedAt": "2026-07-20T10:20:01.632+00:00"
     },
     {
       "id": "fb-a0e762f8-cd68-4382-ae33-5ed849fe7ba0",
@@ -4018,65 +4076,7 @@
       "comments": "¡Muchísimas gracias por todo el apoyo! Vamos a tope.",
       "trainerResponse": "REVISIÓN REVISADA - OK",
       "createdAt": "2026-06-21T12:32:07.538+00:00",
-      "updatedAt": "2026-07-20T10:11:42.809+00:00"
-    },
-    {
-      "id": "fb-3175bb45-2603-4284-92aa-cc748f828d44",
-      "clientId": "953ffd06-bc79-4f8d-a489-95aa1d3531c6",
-      "date": "2026-06-10T12:32:07.538+00:00",
-      "weight": 62.4,
-      "sleep": 4,
-      "stress": 2,
-      "energy": 4,
-      "adherence": 5,
-      "satisfaction": 5,
-      "answers": [
-        {
-          "answer": "Pantalones más sueltos.",
-          "question": "¿Qué tal te ves físicamente?"
-        }
-      ],
-      "perimeters": {
-        "Brazo": 27.8,
-        "Muslo": 53.5,
-        "Pecho": 87.5,
-        "Cadera": 97,
-        "Cintura": 70.8
-      },
-      "photos": {},
-      "comments": "Muy buena adherencia a los platos.",
-      "trainerResponse": "Estupendo progreso de perímetros.",
-      "createdAt": "2026-06-10T12:32:07.538+00:00",
-      "updatedAt": "2026-07-20T10:11:42.809+00:00"
-    },
-    {
-      "id": "fb-e0b6c754-82b2-49fb-b9f4-2d1ac2fd2fa1",
-      "clientId": "953ffd06-bc79-4f8d-a489-95aa1d3531c6",
-      "date": "2026-06-17T12:32:07.538+00:00",
-      "weight": 62,
-      "sleep": 4,
-      "stress": 2,
-      "energy": 5,
-      "adherence": 5,
-      "satisfaction": 5,
-      "answers": [
-        {
-          "answer": "Visualmente más tonificada.",
-          "question": "¿Qué tal te ves físicamente?"
-        }
-      ],
-      "perimeters": {
-        "Brazo": 27.5,
-        "Muslo": 53,
-        "Pecho": 87,
-        "Cadera": 96.5,
-        "Cintura": 70.2
-      },
-      "photos": {},
-      "comments": "Me siento más fuerte entrenando.",
-      "trainerResponse": "Felicidades por la constancia.",
-      "createdAt": "2026-06-17T12:32:07.538+00:00",
-      "updatedAt": "2026-07-20T10:11:42.809+00:00"
+      "updatedAt": "2026-07-20T10:20:01.632+00:00"
     },
     {
       "id": "fb-c12d02f0-9bef-47df-bedd-32e18fb1f925",
@@ -4105,8 +4105,8 @@
       "comments": "Comienzo motivada.",
       "trainerResponse": "¡Gran inicio! Sigue así.",
       "createdAt": "2026-05-27T12:32:07.538+00:00",
-      "updatedAt": "2026-07-20T10:11:42.809+00:00"
+      "updatedAt": "2026-07-20T10:20:01.632+00:00"
     }
   ],
-  "lastModified": "2026-07-20T10:12:33.333Z"
+  "lastModified": "2026-07-20T10:20:23.621Z"
 }

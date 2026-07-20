@@ -5363,8 +5363,8 @@
         }
       ],
       "completed": true,
-      "routineId": null,
-      "blockId": null,
+      "routineId": "0a7608b5-b850-4e0a-95e6-921f2cd3eb93",
+      "blockId": "8579a32a-114d-4dfc-9e66-5f1d1e056ff7",
       "weekIndex": 1
     },
     {
@@ -5486,8 +5486,8 @@
         }
       ],
       "completed": true,
-      "routineId": null,
-      "blockId": null,
+      "routineId": "0a7608b5-b850-4e0a-95e6-921f2cd3eb93",
+      "blockId": "8579a32a-114d-4dfc-9e66-5f1d1e056ff7",
       "weekIndex": 1
     },
     {
@@ -5599,8 +5599,8 @@
         }
       ],
       "completed": true,
-      "routineId": null,
-      "blockId": null,
+      "routineId": "5a4f636b-0bf8-4279-bba6-ec5529c97690",
+      "blockId": "8579a32a-114d-4dfc-9e66-5f1d1e056ff7",
       "weekIndex": 0
     },
     {
@@ -5712,8 +5712,8 @@
         }
       ],
       "completed": true,
-      "routineId": null,
-      "blockId": null,
+      "routineId": "0a7608b5-b850-4e0a-95e6-921f2cd3eb93",
+      "blockId": "8579a32a-114d-4dfc-9e66-5f1d1e056ff7",
       "weekIndex": 1
     },
     {
@@ -5840,8 +5840,8 @@
         }
       ],
       "completed": true,
-      "routineId": null,
-      "blockId": null,
+      "routineId": "0a7608b5-b850-4e0a-95e6-921f2cd3eb93",
+      "blockId": "8579a32a-114d-4dfc-9e66-5f1d1e056ff7",
       "weekIndex": 1
     },
     {
@@ -5963,8 +5963,8 @@
         }
       ],
       "completed": true,
-      "routineId": null,
-      "blockId": null,
+      "routineId": "5a4f636b-0bf8-4279-bba6-ec5529c97690",
+      "blockId": "8579a32a-114d-4dfc-9e66-5f1d1e056ff7",
       "weekIndex": 0
     },
     {
@@ -6091,8 +6091,8 @@
         }
       ],
       "completed": true,
-      "routineId": null,
-      "blockId": null,
+      "routineId": "5a4f636b-0bf8-4279-bba6-ec5529c97690",
+      "blockId": "8579a32a-114d-4dfc-9e66-5f1d1e056ff7",
       "weekIndex": 0
     },
     {
@@ -6219,8 +6219,8 @@
         }
       ],
       "completed": true,
-      "routineId": null,
-      "blockId": null,
+      "routineId": "5a4f636b-0bf8-4279-bba6-ec5529c97690",
+      "blockId": "8579a32a-114d-4dfc-9e66-5f1d1e056ff7",
       "weekIndex": 0
     }
   ],
@@ -6406,5 +6406,5 @@
       "updatedAt": "2026-07-20T09:10:17.838+00:00"
     }
   ],
-  "lastModified": "2026-07-20T10:12:32.731Z"
+  "lastModified": "2026-07-20T10:20:22.016Z"
 }

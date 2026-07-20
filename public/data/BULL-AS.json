@@ -3956,7 +3956,7 @@
       "paymentExpiry": null,
       "reviewDay": null,
       "reviewFrequency": "weekly",
-      "activeBlockId": "b0b2e6a9-83c7-49ef-b32c-619f7fb0bda6",
+      "activeBlockId": "a261973f-ad86-4d6d-b7a4-c290bced50a9",
       "dietPublished": true,
       "cardio": "<div style=\"font-family: inherit; line-height: 1.6;\">\n    <div style=\"background: rgba(255, 157, 0, 0.05); padding: 15px; border-radius: 8px; margin-bottom: 15px; border: 1px solid rgba(255, 157, 0, 0.15);\">\n        <h4 style=\"color: #ff9d00; margin-top: 0; margin-bottom: 8px; font-size: 1rem; display: flex; align-items: center; gap: 8px;\">\n            <span>🦵</span> DÍAS DE CUÁDRICEPS\n        </h4>\n        <ul style=\"margin: 0; padding-left: 20px; color: #e0e0e0; font-size: 0.9rem;\">\n            <li style=\"margin-bottom: 6px;\"><strong>1º Cardio:</strong> En ayunas de 45 min a una intensidad de 120-110 pulsaciones.</li>\n            <li><strong>2º Cardio:</strong> 45 min después del entrenamiento.</li>\n        </ul>\n    </div>\n\n    <div style=\"background: rgba(255, 255, 255, 0.03); padding: 15px; border-radius: 8px; border: 1px solid rgba(255, 255, 255, 0.08);\">\n        <h4 style=\"color: #ffd900; margin-top: 0; margin-bottom: 8px; font-size: 1rem; display: flex; align-items: center; gap: 8px;\">\n            <span>🏃</span> RESTO DE DÍAS (Otros días de entreno)\n        </h4>\n        <ul style=\"margin: 0; padding-left: 20px; color: #e0e0e0; font-size: 0.9rem;\">\n            <li style=\"margin-bottom: 6px;\"><strong>1º Cardio:</strong> En ayunas de 50 min a una intensidad de 120-110 pulsaciones.</li>\n            <li><strong>2º Cardio:</strong> 40 min después del entrenamiento + 25 min después de realizar la última comida.</li>\n        </ul>\n    </div>\n</div>",
       "cardioUrl": null,
@@ -4044,7 +4044,7 @@
         }
       ],
       "createdAt": "2026-06-17T15:50:21.373+00:00",
-      "updatedAt": "2026-07-20T10:12:17.03+00:00"
+      "updatedAt": "2026-07-20T10:17:19.814+00:00"
     }
   ],
   "diets": [
@@ -4348,7 +4348,7 @@
         "fat": 0
       },
       "createdAt": "2026-07-18T18:45:11.416072+00:00",
-      "updatedAt": "2026-07-20T10:00:47.49+00:00"
+      "updatedAt": "2026-07-20T10:17:19.815+00:00"
     }
   ],
   "trainingBlocks": [
@@ -4358,22 +4358,371 @@
       "name": "Bloque 2",
       "title": "Bloque 2",
       "status": "active",
-      "published": false,
+      "published": true,
       "startDate": "2026-07-20T00:00:00+00:00",
       "endDate": null,
-      "weeks": [],
+      "weeks": [
+        {
+          "id": "40b10172-62e9-4f2e-ad08-1ed0f028b1ac",
+          "days": [
+            {
+              "name": "Glúteo",
+              "exercises": [
+                {
+                  "name": "Abducciones en Máquina",
+                  "reps": "20-18-16-10+10-10",
+                  "sets": "5",
+                  "notes": "",
+                  "intensity": "1"
+                },
+                {
+                  "name": "Zancada Búlgara (Foco Glúteo)",
+                  "reps": "10",
+                  "sets": "3",
+                  "notes": "",
+                  "intensity": "1"
+                },
+                {
+                  "name": "Prensa Vertical",
+                  "reps": "16-14-12-10",
+                  "sets": "4",
+                  "notes": "",
+                  "intensity": "1"
+                },
+                {
+                  "name": "Patada de Glúteo en Polea",
+                  "reps": "20-15-12-10",
+                  "sets": "4",
+                  "notes": "Lateral",
+                  "intensity": "1"
+                },
+                {
+                  "name": "Frog Pumps (Puente de Glúteo Rana)",
+                  "reps": "12",
+                  "sets": "3",
+                  "notes": "",
+                  "intensity": ""
+                },
+                {
+                  "name": "Hip Thrust con Mancuerna",
+                  "reps": "20-15-12-10",
+                  "sets": "4",
+                  "notes": "Unilateral",
+                  "intensity": "1"
+                },
+                {
+                  "name": "Sentadilla Sumo con Mancuerna",
+                  "reps": "15-12-10",
+                  "sets": "3",
+                  "notes": "",
+                  "intensity": "1"
+                },
+                {
+                  "name": "Patada de Glúteo en Polea",
+                  "reps": "20",
+                  "sets": "5",
+                  "notes": "",
+                  "intensity": ""
+                },
+                {
+                  "name": "Crunch en Polea Alta",
+                  "reps": "50",
+                  "sets": "3",
+                  "notes": "",
+                  "intensity": ""
+                },
+                {
+                  "name": "Plancha Abdominal",
+                  "reps": "fallo",
+                  "sets": "3",
+                  "notes": "",
+                  "intensity": ""
+                }
+              ]
+            },
+            {
+              "name": "Tren superior 1",
+              "exercises": [
+                {
+                  "name": "Seal Row",
+                  "reps": "10-10-10-10+d",
+                  "sets": "4",
+                  "notes": "",
+                  "intensity": ""
+                },
+                {
+                  "name": "Jalón al Pecho (Ancho)",
+                  "reps": "10",
+                  "sets": "3",
+                  "notes": "",
+                  "intensity": ""
+                },
+                {
+                  "name": "Remo en Polea Baja (Gironda)",
+                  "reps": "18-16-12+d+d",
+                  "sets": "3",
+                  "notes": "",
+                  "intensity": ""
+                },
+                {
+                  "name": "Pull-over en Polea Alta",
+                  "reps": "20-18-16-12+d+d",
+                  "sets": "4",
+                  "notes": "",
+                  "intensity": ""
+                },
+                {
+                  "name": "Pájaros en Peck Deck Invertido",
+                  "reps": "10-12",
+                  "sets": "3",
+                  "notes": "",
+                  "intensity": "2"
+                },
+                {
+                  "name": "Elevaciones Laterales (Mancuernas)",
+                  "reps": "15+fallo",
+                  "sets": "3",
+                  "notes": "",
+                  "intensity": ""
+                },
+                {
+                  "name": "Press Militar ",
+                  "reps": "10",
+                  "sets": "3",
+                  "notes": "Arsenal",
+                  "intensity": ""
+                },
+                {
+                  "name": "Elevaciones Laterales Unilaterales en Polea",
+                  "reps": "20",
+                  "sets": "4",
+                  "notes": "",
+                  "intensity": ""
+                }
+              ]
+            },
+            {
+              "name": "Cuádriceps",
+              "exercises": [
+                {
+                  "name": "Sentadilla Libre (Barra)",
+                  "reps": "1xTS (8) - 2xBO (15)",
+                  "sets": "3",
+                  "notes": "Barra baja",
+                  "intensity": ""
+                },
+                {
+                  "name": "Prensa de Piernas 45º",
+                  "reps": "20",
+                  "sets": "3",
+                  "notes": "",
+                  "intensity": ""
+                },
+                {
+                  "name": "Peso Muerto Floating",
+                  "reps": "15+fallo",
+                  "sets": "3",
+                  "notes": "",
+                  "intensity": ""
+                },
+                {
+                  "name": "Sentadilla Pendular",
+                  "reps": "14-12-10+d",
+                  "sets": "3",
+                  "notes": "",
+                  "intensity": ""
+                },
+                {
+                  "name": "Extensiones de Cuádriceps",
+                  "reps": "20-18-16-14-12-10",
+                  "sets": "6",
+                  "notes": "",
+                  "intensity": ""
+                },
+                {
+                  "name": "Aductor",
+                  "reps": "20-18-16-14-12-10",
+                  "sets": "6",
+                  "notes": "",
+                  "intensity": ""
+                },
+                {
+                  "name": "Elevación de Gemelos (De pie)",
+                  "reps": "40-30-25-20-15",
+                  "sets": "5",
+                  "notes": "",
+                  "intensity": ""
+                },
+                {
+                  "name": "Elevación de Gemelos (Sentado)",
+                  "reps": "20-18-15-12-10-8",
+                  "sets": "5",
+                  "notes": "",
+                  "intensity": ""
+                },
+                {
+                  "name": "Crunch en Polea Alta",
+                  "reps": "50",
+                  "sets": "4",
+                  "notes": "",
+                  "intensity": ""
+                },
+                {
+                  "name": "Elevación de Piernas tumbado (Leg Raises)",
+                  "reps": "25",
+                  "sets": "4",
+                  "notes": "",
+                  "intensity": ""
+                }
+              ]
+            },
+            {
+              "name": "Tren superior 2",
+              "exercises": [
+                {
+                  "name": "Snatch",
+                  "reps": "5",
+                  "sets": "4",
+                  "notes": "",
+                  "intensity": ""
+                },
+                {
+                  "name": "Press de Banca Plano (Barra)",
+                  "reps": "10",
+                  "sets": "3",
+                  "notes": "",
+                  "intensity": ""
+                },
+                {
+                  "name": "Press Militar (Barra)",
+                  "reps": "TS (3)- 2xBO(5-8)",
+                  "sets": "3",
+                  "notes": "De pie",
+                  "intensity": ""
+                },
+                {
+                  "name": "Elevaciones Laterales Unilaterales en Polea",
+                  "reps": "15-12-10-10+d",
+                  "sets": "4",
+                  "notes": "",
+                  "intensity": ""
+                },
+                {
+                  "name": "Elevaciones Laterales (Mancuernas)",
+                  "reps": "20",
+                  "sets": "3",
+                  "notes": "",
+                  "intensity": ""
+                },
+                {
+                  "name": "Elevaciones Frontales (Mancuernas)",
+                  "reps": "15-12-10",
+                  "sets": "3",
+                  "notes": "",
+                  "intensity": ""
+                },
+                {
+                  "name": "Crunch en Polea Alta",
+                  "reps": "50",
+                  "sets": "4",
+                  "notes": "",
+                  "intensity": ""
+                },
+                {
+                  "name": "Elevación de Piernas (Colgado)",
+                  "reps": "20",
+                  "sets": "4",
+                  "notes": "",
+                  "intensity": ""
+                }
+              ]
+            },
+            {
+              "name": "Femoral y glúteo",
+              "exercises": [
+                {
+                  "name": "Peso Muerto Rumano (Isquios)",
+                  "reps": "TS (3 a 8) - 2xBO(6-8)",
+                  "sets": "3",
+                  "notes": "",
+                  "intensity": ""
+                },
+                {
+                  "name": "Curl Femoral Sentado",
+                  "reps": "20-18-16-14-12-10+d+d",
+                  "sets": "6",
+                  "notes": "",
+                  "intensity": ""
+                },
+                {
+                  "name": "Peso Muerto Rumano Unilateral",
+                  "reps": "15-12-10-8",
+                  "sets": "4",
+                  "notes": "",
+                  "intensity": ""
+                },
+                {
+                  "name": "Curl Femoral de Pie en Máquina",
+                  "reps": "12-10-10-8",
+                  "sets": "4",
+                  "notes": "",
+                  "intensity": ""
+                },
+                {
+                  "name": "Curl Femoral Tumbado",
+                  "reps": "20-18-16-14",
+                  "sets": "4",
+                  "notes": "",
+                  "intensity": ""
+                },
+                {
+                  "name": "Hip Thrust (Barra)",
+                  "reps": "15",
+                  "sets": "4",
+                  "notes": "",
+                  "intensity": ""
+                },
+                {
+                  "name": "Patada de Glúteo en Polea",
+                  "reps": "30",
+                  "sets": "3",
+                  "notes": "",
+                  "intensity": ""
+                },
+                {
+                  "name": "Elevación de Gemelos (De pie)",
+                  "reps": "40-30-25-20-15",
+                  "sets": "5",
+                  "notes": "",
+                  "intensity": ""
+                },
+                {
+                  "name": "Elevación de Gemelos (Sentado)",
+                  "reps": "20-18-15-12-10+d+d",
+                  "sets": "5",
+                  "notes": "",
+                  "intensity": ""
+                }
+              ]
+            }
+          ],
+          "name": "Semana 1",
+          "number": 1,
+          "description": ""
+        }
+      ],
       "createdAt": "2026-07-20T10:12:18.788996+00:00",
-      "updatedAt": "2026-07-20T10:12:16.821+00:00"
+      "updatedAt": "2026-07-20T10:17:19.814+00:00"
     },
     {
       "id": "a261973f-ad86-4d6d-b7a4-c290bced50a9",
       "clientId": "968525f6-b4f0-4862-85e2-0380eed6f215",
       "name": "Mesociclo 1 ",
       "title": "Mesociclo 1 ",
-      "status": "completed",
+      "status": "active",
       "published": false,
       "startDate": "2026-06-04T00:00:00+00:00",
-      "endDate": "2026-07-20T10:12:16.613+00:00",
+      "endDate": null,
       "weeks": [
         {
           "id": "3b320d31-a970-4e29-a7de-6389a913d278",
@@ -5421,7 +5770,7 @@
         }
       ],
       "createdAt": "2026-06-17T16:00:41.231+00:00",
-      "updatedAt": "2026-07-20T10:12:16.613+00:00"
+      "updatedAt": "2026-07-20T10:17:19.814+00:00"
     }
   ],
   "trainingLogs": [
@@ -5614,202 +5963,9 @@
         }
       ],
       "completed": true,
-      "routineId": null,
-      "blockId": null,
+      "routineId": "fe5cbebc-ee95-4285-8486-0f3672aa02ff",
+      "blockId": "a261973f-ad86-4d6d-b7a4-c290bced50a9",
       "weekIndex": 2
-    },
-    {
-      "id": "4d3de3b1-8ba6-444c-aae7-ac5fa971d4b0",
-      "clientId": "968525f6-b4f0-4862-85e2-0380eed6f215",
-      "date": "2026-07-14T16:36:16.493+00:00",
-      "weekNumber": 1,
-      "dayNumber": 4,
-      "exercises": [
-        {
-          "name": "Snatch",
-          "sets": [
-            {
-              "rir": "",
-              "reps": "",
-              "weight": "20"
-            },
-            {
-              "rir": "",
-              "reps": "",
-              "weight": "20"
-            },
-            {
-              "rir": "",
-              "reps": "",
-              "weight": ""
-            },
-            {
-              "rir": "",
-              "reps": "",
-              "weight": ""
-            }
-          ]
-        },
-        {
-          "name": "Press de Banca Plano (Barra)",
-          "sets": [
-            {
-              "rir": "",
-              "reps": "",
-              "weight": ""
-            },
-            {
-              "rir": "",
-              "reps": "",
-              "weight": ""
-            },
-            {
-              "rir": "",
-              "reps": "",
-              "weight": ""
-            }
-          ]
-        },
-        {
-          "name": "Press Militar (Barra)",
-          "sets": [
-            {
-              "rir": "",
-              "reps": "",
-              "weight": ""
-            },
-            {
-              "rir": "",
-              "reps": "",
-              "weight": ""
-            },
-            {
-              "rir": "",
-              "reps": "",
-              "weight": ""
-            }
-          ]
-        },
-        {
-          "name": "Elevaciones Laterales Unilaterales en Polea",
-          "sets": [
-            {
-              "rir": "",
-              "reps": "",
-              "weight": ""
-            },
-            {
-              "rir": "",
-              "reps": "",
-              "weight": ""
-            },
-            {
-              "rir": "",
-              "reps": "",
-              "weight": ""
-            },
-            {
-              "rir": "",
-              "reps": "",
-              "weight": ""
-            }
-          ]
-        },
-        {
-          "name": "Elevaciones Laterales (Mancuernas)",
-          "sets": [
-            {
-              "rir": "",
-              "reps": "",
-              "weight": ""
-            },
-            {
-              "rir": "",
-              "reps": "",
-              "weight": ""
-            },
-            {
-              "rir": "",
-              "reps": "",
-              "weight": ""
-            }
-          ]
-        },
-        {
-          "name": "Elevaciones Frontales (Mancuernas)",
-          "sets": [
-            {
-              "rir": "",
-              "reps": "",
-              "weight": ""
-            },
-            {
-              "rir": "",
-              "reps": "",
-              "weight": ""
-            },
-            {
-              "rir": "",
-              "reps": "",
-              "weight": ""
-            }
-          ]
-        },
-        {
-          "name": "Crunch en Polea Alta",
-          "sets": [
-            {
-              "rir": "",
-              "reps": "",
-              "weight": ""
-            },
-            {
-              "rir": "",
-              "reps": "",
-              "weight": ""
-            },
-            {
-              "rir": "",
-              "reps": "",
-              "weight": ""
-            },
-            {
-              "rir": "",
-              "reps": "",
-              "weight": ""
-            }
-          ]
-        },
-        {
-          "name": "Elevación de Piernas (Colgado)",
-          "sets": [
-            {
-              "rir": "",
-              "reps": "",
-              "weight": ""
-            },
-            {
-              "rir": "",
-              "reps": "",
-              "weight": ""
-            },
-            {
-              "rir": "",
-              "reps": "",
-              "weight": ""
-            },
-            {
-              "rir": "",
-              "reps": "",
-              "weight": ""
-            }
-          ]
-        }
-      ],
-      "completed": true,
-      "routineId": null,
-      "blockId": null,
-      "weekIndex": 0
     },
     {
       "id": "e4ebb22a-18c5-4828-b1cb-0974db9f1a8e",
@@ -6055,8 +6211,8 @@
         }
       ],
       "completed": true,
-      "routineId": null,
-      "blockId": null,
+      "routineId": "fe5cbebc-ee95-4285-8486-0f3672aa02ff",
+      "blockId": "a261973f-ad86-4d6d-b7a4-c290bced50a9",
       "weekIndex": 2
     },
     {
@@ -6328,8 +6484,8 @@
         }
       ],
       "completed": true,
-      "routineId": null,
-      "blockId": null,
+      "routineId": "3b320d31-a970-4e29-a7de-6389a913d278",
+      "blockId": "a261973f-ad86-4d6d-b7a4-c290bced50a9",
       "weekIndex": 0
     },
     {
@@ -6576,196 +6732,8 @@
         }
       ],
       "completed": true,
-      "routineId": null,
-      "blockId": null,
-      "weekIndex": 1
-    },
-    {
-      "id": "2e78f5ba-e4fa-4de9-b54d-b40df5636bcc",
-      "clientId": "968525f6-b4f0-4862-85e2-0380eed6f215",
-      "date": "2026-07-15T06:35:12.691+00:00",
-      "weekNumber": 2,
-      "dayNumber": 2,
-      "exercises": [
-        {
-          "name": "Seal Row",
-          "sets": [
-            {
-              "rir": "",
-              "reps": "",
-              "weight": "20"
-            },
-            {
-              "rir": "",
-              "reps": "",
-              "weight": ""
-            },
-            {
-              "rir": "",
-              "reps": "",
-              "weight": ""
-            },
-            {
-              "rir": "",
-              "reps": "",
-              "weight": ""
-            }
-          ]
-        },
-        {
-          "name": "Jalón al Pecho (Ancho)",
-          "sets": [
-            {
-              "rir": "",
-              "reps": "",
-              "weight": ""
-            },
-            {
-              "rir": "",
-              "reps": "",
-              "weight": ""
-            },
-            {
-              "rir": "",
-              "reps": "",
-              "weight": ""
-            }
-          ]
-        },
-        {
-          "name": "Remo en Polea Baja (Gironda)",
-          "sets": [
-            {
-              "rir": "",
-              "reps": "",
-              "weight": ""
-            },
-            {
-              "rir": "",
-              "reps": "",
-              "weight": ""
-            },
-            {
-              "rir": "",
-              "reps": "",
-              "weight": ""
-            }
-          ]
-        },
-        {
-          "name": "Pull-over en Polea Alta",
-          "sets": [
-            {
-              "rir": "",
-              "reps": "",
-              "weight": ""
-            },
-            {
-              "rir": "",
-              "reps": "",
-              "weight": ""
-            },
-            {
-              "rir": "",
-              "reps": "",
-              "weight": ""
-            },
-            {
-              "rir": "",
-              "reps": "",
-              "weight": ""
-            }
-          ]
-        },
-        {
-          "name": "Pájaros en Peck Deck Invertido",
-          "sets": [
-            {
-              "rir": "",
-              "reps": "",
-              "weight": ""
-            },
-            {
-              "rir": "",
-              "reps": "",
-              "weight": ""
-            },
-            {
-              "rir": "",
-              "reps": "",
-              "weight": ""
-            }
-          ]
-        },
-        {
-          "name": "Elevaciones Laterales (Mancuernas)",
-          "sets": [
-            {
-              "rir": "",
-              "reps": "",
-              "weight": ""
-            },
-            {
-              "rir": "",
-              "reps": "",
-              "weight": ""
-            },
-            {
-              "rir": "",
-              "reps": "",
-              "weight": ""
-            }
-          ]
-        },
-        {
-          "name": "Press Militar ",
-          "sets": [
-            {
-              "rir": "",
-              "reps": "",
-              "weight": ""
-            },
-            {
-              "rir": "",
-              "reps": "",
-              "weight": ""
-            },
-            {
-              "rir": "",
-              "reps": "",
-              "weight": ""
-            }
-          ]
-        },
-        {
-          "name": "Elevaciones Laterales Unilaterales en Polea",
-          "sets": [
-            {
-              "rir": "",
-              "reps": "",
-              "weight": ""
-            },
-            {
-              "rir": "",
-              "reps": "",
-              "weight": ""
-            },
-            {
-              "rir": "",
-              "reps": "",
-              "weight": ""
-            },
-            {
-              "rir": "",
-              "reps": "",
-              "weight": ""
-            }
-          ]
-        }
-      ],
-      "completed": true,
-      "routineId": null,
-      "blockId": null,
+      "routineId": "99eba470-f1fa-4c78-9760-042a25f3108a",
+      "blockId": "a261973f-ad86-4d6d-b7a4-c290bced50a9",
       "weekIndex": 1
     },
     {
@@ -6957,9 +6925,390 @@
         }
       ],
       "completed": true,
-      "routineId": null,
-      "blockId": null,
+      "routineId": "3b320d31-a970-4e29-a7de-6389a913d278",
+      "blockId": "a261973f-ad86-4d6d-b7a4-c290bced50a9",
       "weekIndex": 0
+    },
+    {
+      "id": "4d3de3b1-8ba6-444c-aae7-ac5fa971d4b0",
+      "clientId": "968525f6-b4f0-4862-85e2-0380eed6f215",
+      "date": "2026-07-14T16:36:16.493+00:00",
+      "weekNumber": 1,
+      "dayNumber": 4,
+      "exercises": [
+        {
+          "name": "Snatch",
+          "sets": [
+            {
+              "rir": "",
+              "reps": "",
+              "weight": "20"
+            },
+            {
+              "rir": "",
+              "reps": "",
+              "weight": "20"
+            },
+            {
+              "rir": "",
+              "reps": "",
+              "weight": ""
+            },
+            {
+              "rir": "",
+              "reps": "",
+              "weight": ""
+            }
+          ]
+        },
+        {
+          "name": "Press de Banca Plano (Barra)",
+          "sets": [
+            {
+              "rir": "",
+              "reps": "",
+              "weight": ""
+            },
+            {
+              "rir": "",
+              "reps": "",
+              "weight": ""
+            },
+            {
+              "rir": "",
+              "reps": "",
+              "weight": ""
+            }
+          ]
+        },
+        {
+          "name": "Press Militar (Barra)",
+          "sets": [
+            {
+              "rir": "",
+              "reps": "",
+              "weight": ""
+            },
+            {
+              "rir": "",
+              "reps": "",
+              "weight": ""
+            },
+            {
+              "rir": "",
+              "reps": "",
+              "weight": ""
+            }
+          ]
+        },
+        {
+          "name": "Elevaciones Laterales Unilaterales en Polea",
+          "sets": [
+            {
+              "rir": "",
+              "reps": "",
+              "weight": ""
+            },
+            {
+              "rir": "",
+              "reps": "",
+              "weight": ""
+            },
+            {
+              "rir": "",
+              "reps": "",
+              "weight": ""
+            },
+            {
+              "rir": "",
+              "reps": "",
+              "weight": ""
+            }
+          ]
+        },
+        {
+          "name": "Elevaciones Laterales (Mancuernas)",
+          "sets": [
+            {
+              "rir": "",
+              "reps": "",
+              "weight": ""
+            },
+            {
+              "rir": "",
+              "reps": "",
+              "weight": ""
+            },
+            {
+              "rir": "",
+              "reps": "",
+              "weight": ""
+            }
+          ]
+        },
+        {
+          "name": "Elevaciones Frontales (Mancuernas)",
+          "sets": [
+            {
+              "rir": "",
+              "reps": "",
+              "weight": ""
+            },
+            {
+              "rir": "",
+              "reps": "",
+              "weight": ""
+            },
+            {
+              "rir": "",
+              "reps": "",
+              "weight": ""
+            }
+          ]
+        },
+        {
+          "name": "Crunch en Polea Alta",
+          "sets": [
+            {
+              "rir": "",
+              "reps": "",
+              "weight": ""
+            },
+            {
+              "rir": "",
+              "reps": "",
+              "weight": ""
+            },
+            {
+              "rir": "",
+              "reps": "",
+              "weight": ""
+            },
+            {
+              "rir": "",
+              "reps": "",
+              "weight": ""
+            }
+          ]
+        },
+        {
+          "name": "Elevación de Piernas (Colgado)",
+          "sets": [
+            {
+              "rir": "",
+              "reps": "",
+              "weight": ""
+            },
+            {
+              "rir": "",
+              "reps": "",
+              "weight": ""
+            },
+            {
+              "rir": "",
+              "reps": "",
+              "weight": ""
+            },
+            {
+              "rir": "",
+              "reps": "",
+              "weight": ""
+            }
+          ]
+        }
+      ],
+      "completed": true,
+      "routineId": "3b320d31-a970-4e29-a7de-6389a913d278",
+      "blockId": "a261973f-ad86-4d6d-b7a4-c290bced50a9",
+      "weekIndex": 0
+    },
+    {
+      "id": "2e78f5ba-e4fa-4de9-b54d-b40df5636bcc",
+      "clientId": "968525f6-b4f0-4862-85e2-0380eed6f215",
+      "date": "2026-07-15T06:35:12.691+00:00",
+      "weekNumber": 2,
+      "dayNumber": 2,
+      "exercises": [
+        {
+          "name": "Seal Row",
+          "sets": [
+            {
+              "rir": "",
+              "reps": "",
+              "weight": "20"
+            },
+            {
+              "rir": "",
+              "reps": "",
+              "weight": ""
+            },
+            {
+              "rir": "",
+              "reps": "",
+              "weight": ""
+            },
+            {
+              "rir": "",
+              "reps": "",
+              "weight": ""
+            }
+          ]
+        },
+        {
+          "name": "Jalón al Pecho (Ancho)",
+          "sets": [
+            {
+              "rir": "",
+              "reps": "",
+              "weight": ""
+            },
+            {
+              "rir": "",
+              "reps": "",
+              "weight": ""
+            },
+            {
+              "rir": "",
+              "reps": "",
+              "weight": ""
+            }
+          ]
+        },
+        {
+          "name": "Remo en Polea Baja (Gironda)",
+          "sets": [
+            {
+              "rir": "",
+              "reps": "",
+              "weight": ""
+            },
+            {
+              "rir": "",
+              "reps": "",
+              "weight": ""
+            },
+            {
+              "rir": "",
+              "reps": "",
+              "weight": ""
+            }
+          ]
+        },
+        {
+          "name": "Pull-over en Polea Alta",
+          "sets": [
+            {
+              "rir": "",
+              "reps": "",
+              "weight": ""
+            },
+            {
+              "rir": "",
+              "reps": "",
+              "weight": ""
+            },
+            {
+              "rir": "",
+              "reps": "",
+              "weight": ""
+            },
+            {
+              "rir": "",
+              "reps": "",
+              "weight": ""
+            }
+          ]
+        },
+        {
+          "name": "Pájaros en Peck Deck Invertido",
+          "sets": [
+            {
+              "rir": "",
+              "reps": "",
+              "weight": ""
+            },
+            {
+              "rir": "",
+              "reps": "",
+              "weight": ""
+            },
+            {
+              "rir": "",
+              "reps": "",
+              "weight": ""
+            }
+          ]
+        },
+        {
+          "name": "Elevaciones Laterales (Mancuernas)",
+          "sets": [
+            {
+              "rir": "",
+              "reps": "",
+              "weight": ""
+            },
+            {
+              "rir": "",
+              "reps": "",
+              "weight": ""
+            },
+            {
+              "rir": "",
+              "reps": "",
+              "weight": ""
+            }
+          ]
+        },
+        {
+          "name": "Press Militar ",
+          "sets": [
+            {
+              "rir": "",
+              "reps": "",
+              "weight": ""
+            },
+            {
+              "rir": "",
+              "reps": "",
+              "weight": ""
+            },
+            {
+              "rir": "",
+              "reps": "",
+              "weight": ""
+            }
+          ]
+        },
+        {
+          "name": "Elevaciones Laterales Unilaterales en Polea",
+          "sets": [
+            {
+              "rir": "",
+              "reps": "",
+              "weight": ""
+            },
+            {
+              "rir": "",
+              "reps": "",
+              "weight": ""
+            },
+            {
+              "rir": "",
+              "reps": "",
+              "weight": ""
+            },
+            {
+              "rir": "",
+              "reps": "",
+              "weight": ""
+            }
+          ]
+        }
+      ],
+      "completed": true,
+      "routineId": "99eba470-f1fa-4c78-9760-042a25f3108a",
+      "blockId": "a261973f-ad86-4d6d-b7a4-c290bced50a9",
+      "weekIndex": 1
     },
     {
       "id": "c62a2ddc-0117-4a4c-9a43-52977f5c8290",
@@ -7145,8 +7494,8 @@
         }
       ],
       "completed": true,
-      "routineId": null,
-      "blockId": null,
+      "routineId": "3b320d31-a970-4e29-a7de-6389a913d278",
+      "blockId": "a261973f-ad86-4d6d-b7a4-c290bced50a9",
       "weekIndex": 0
     },
     {
@@ -7393,8 +7742,8 @@
         }
       ],
       "completed": true,
-      "routineId": null,
-      "blockId": null,
+      "routineId": "99eba470-f1fa-4c78-9760-042a25f3108a",
+      "blockId": "a261973f-ad86-4d6d-b7a4-c290bced50a9",
       "weekIndex": 1
     },
     {
@@ -7581,8 +7930,8 @@
         }
       ],
       "completed": true,
-      "routineId": null,
-      "blockId": null,
+      "routineId": "99eba470-f1fa-4c78-9760-042a25f3108a",
+      "blockId": "a261973f-ad86-4d6d-b7a4-c290bced50a9",
       "weekIndex": 1
     },
     {
@@ -7854,8 +8203,8 @@
         }
       ],
       "completed": true,
-      "routineId": null,
-      "blockId": null,
+      "routineId": "99eba470-f1fa-4c78-9760-042a25f3108a",
+      "blockId": "a261973f-ad86-4d6d-b7a4-c290bced50a9",
       "weekIndex": 1
     },
     {
@@ -8102,8 +8451,8 @@
         }
       ],
       "completed": true,
-      "routineId": null,
-      "blockId": null,
+      "routineId": "99eba470-f1fa-4c78-9760-042a25f3108a",
+      "blockId": "a261973f-ad86-4d6d-b7a4-c290bced50a9",
       "weekIndex": 1
     },
     {
@@ -8350,8 +8699,8 @@
         }
       ],
       "completed": true,
-      "routineId": null,
-      "blockId": null,
+      "routineId": "99eba470-f1fa-4c78-9760-042a25f3108a",
+      "blockId": "a261973f-ad86-4d6d-b7a4-c290bced50a9",
       "weekIndex": 1
     },
     {
@@ -8598,8 +8947,8 @@
         }
       ],
       "completed": true,
-      "routineId": null,
-      "blockId": null,
+      "routineId": "3b320d31-a970-4e29-a7de-6389a913d278",
+      "blockId": "a261973f-ad86-4d6d-b7a4-c290bced50a9",
       "weekIndex": 0
     },
     {
@@ -8846,8 +9195,8 @@
         }
       ],
       "completed": true,
-      "routineId": null,
-      "blockId": null,
+      "routineId": "99eba470-f1fa-4c78-9760-042a25f3108a",
+      "blockId": "a261973f-ad86-4d6d-b7a4-c290bced50a9",
       "weekIndex": 1
     },
     {
@@ -9119,8 +9468,8 @@
         }
       ],
       "completed": true,
-      "routineId": null,
-      "blockId": null,
+      "routineId": "3b320d31-a970-4e29-a7de-6389a913d278",
+      "blockId": "a261973f-ad86-4d6d-b7a4-c290bced50a9",
       "weekIndex": 0
     },
     {
@@ -9312,8 +9661,8 @@
         }
       ],
       "completed": true,
-      "routineId": null,
-      "blockId": null,
+      "routineId": "3b320d31-a970-4e29-a7de-6389a913d278",
+      "blockId": "a261973f-ad86-4d6d-b7a4-c290bced50a9",
       "weekIndex": 0
     },
     {
@@ -9500,8 +9849,8 @@
         }
       ],
       "completed": true,
-      "routineId": null,
-      "blockId": null,
+      "routineId": "3b320d31-a970-4e29-a7de-6389a913d278",
+      "blockId": "a261973f-ad86-4d6d-b7a4-c290bced50a9",
       "weekIndex": 0
     },
     {
@@ -9693,8 +10042,8 @@
         }
       ],
       "completed": true,
-      "routineId": null,
-      "blockId": null,
+      "routineId": "99eba470-f1fa-4c78-9760-042a25f3108a",
+      "blockId": "a261973f-ad86-4d6d-b7a4-c290bced50a9",
       "weekIndex": 1
     },
     {
@@ -9941,8 +10290,8 @@
         }
       ],
       "completed": true,
-      "routineId": null,
-      "blockId": null,
+      "routineId": "3b320d31-a970-4e29-a7de-6389a913d278",
+      "blockId": "a261973f-ad86-4d6d-b7a4-c290bced50a9",
       "weekIndex": 0
     },
     {
@@ -10134,8 +10483,8 @@
         }
       ],
       "completed": true,
-      "routineId": null,
-      "blockId": null,
+      "routineId": "99eba470-f1fa-4c78-9760-042a25f3108a",
+      "blockId": "a261973f-ad86-4d6d-b7a4-c290bced50a9",
       "weekIndex": 1
     },
     {
@@ -10327,8 +10676,8 @@
         }
       ],
       "completed": true,
-      "routineId": null,
-      "blockId": null,
+      "routineId": "3b320d31-a970-4e29-a7de-6389a913d278",
+      "blockId": "a261973f-ad86-4d6d-b7a4-c290bced50a9",
       "weekIndex": 0
     },
     {
@@ -10600,8 +10949,8 @@
         }
       ],
       "completed": true,
-      "routineId": null,
-      "blockId": null,
+      "routineId": "99eba470-f1fa-4c78-9760-042a25f3108a",
+      "blockId": "a261973f-ad86-4d6d-b7a4-c290bced50a9",
       "weekIndex": 1
     },
     {
@@ -10788,8 +11137,8 @@
         }
       ],
       "completed": true,
-      "routineId": null,
-      "blockId": null,
+      "routineId": "99eba470-f1fa-4c78-9760-042a25f3108a",
+      "blockId": "a261973f-ad86-4d6d-b7a4-c290bced50a9",
       "weekIndex": 1
     },
     {
@@ -11061,8 +11410,8 @@
         }
       ],
       "completed": true,
-      "routineId": null,
-      "blockId": null,
+      "routineId": "99eba470-f1fa-4c78-9760-042a25f3108a",
+      "blockId": "a261973f-ad86-4d6d-b7a4-c290bced50a9",
       "weekIndex": 1
     },
     {
@@ -11309,8 +11658,8 @@
         }
       ],
       "completed": true,
-      "routineId": null,
-      "blockId": null,
+      "routineId": "3b320d31-a970-4e29-a7de-6389a913d278",
+      "blockId": "a261973f-ad86-4d6d-b7a4-c290bced50a9",
       "weekIndex": 0
     },
     {
@@ -11502,8 +11851,8 @@
         }
       ],
       "completed": true,
-      "routineId": null,
-      "blockId": null,
+      "routineId": "99eba470-f1fa-4c78-9760-042a25f3108a",
+      "blockId": "a261973f-ad86-4d6d-b7a4-c290bced50a9",
       "weekIndex": 1
     }
   ],
@@ -11572,7 +11921,7 @@
       "comments": "Ok",
       "trainerResponse": "ok",
       "createdAt": "2026-07-14T17:40:42.506+00:00",
-      "updatedAt": "2026-07-20T10:00:47.491+00:00"
+      "updatedAt": "2026-07-20T10:17:19.815+00:00"
     },
     {
       "id": "b4f29d26-575a-40be-a4d7-903eef4e1c90",
@@ -11638,7 +11987,7 @@
       "comments": "ok",
       "trainerResponse": "ok",
       "createdAt": "2026-07-15T16:44:30.955+00:00",
-      "updatedAt": "2026-07-20T10:00:47.491+00:00"
+      "updatedAt": "2026-07-20T10:17:19.815+00:00"
     },
     {
       "id": "8674412c-a2b3-4716-b323-509c91514ed7",
@@ -11704,7 +12053,7 @@
       "comments": "OK",
       "trainerResponse": "REVISIÓN REVISADA - OK",
       "createdAt": "2026-07-16T08:11:43.024+00:00",
-      "updatedAt": "2026-07-20T10:00:47.491+00:00"
+      "updatedAt": "2026-07-20T10:17:19.815+00:00"
     },
     {
       "id": "c2ea4cc4-bb31-479b-aeae-a22991cc4004",
@@ -11770,8 +12119,8 @@
       "comments": "ok",
       "trainerResponse": null,
       "createdAt": "2026-07-18T17:01:06.009+00:00",
-      "updatedAt": "2026-07-20T10:00:47.491+00:00"
+      "updatedAt": "2026-07-20T10:17:19.815+00:00"
     }
   ],
-  "lastModified": "2026-07-20T10:12:33.612Z"
+  "lastModified": "2026-07-20T10:20:24.165Z"
 }

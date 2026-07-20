@@ -4653,8 +4653,8 @@
         }
       ],
       "completed": true,
-      "routineId": null,
-      "blockId": null,
+      "routineId": "2e542b54-b0e9-4bee-b9d2-7b40fa81e2a8",
+      "blockId": "3c301982-4a3d-4256-830e-d9a301d38758",
       "weekIndex": 0
     },
     {
@@ -4761,11 +4761,11 @@
         }
       ],
       "completed": true,
-      "routineId": null,
-      "blockId": null,
+      "routineId": "2e542b54-b0e9-4bee-b9d2-7b40fa81e2a8",
+      "blockId": "3c301982-4a3d-4256-830e-d9a301d38758",
       "weekIndex": 0
     }
   ],
   "feedbacks": [],
-  "lastModified": "2026-07-20T10:12:32.731Z"
+  "lastModified": "2026-07-20T10:20:22.016Z"
 }

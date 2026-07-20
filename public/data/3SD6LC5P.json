@@ -661,7 +661,7 @@
       "category": "exercise",
       "isSystem": true,
       "createdAt": "2026-06-09T18:52:11.236Z",
-      "updatedAt": "2026-07-20T08:43:26.753Z",
+      "updatedAt": "2026-07-20T10:19:03.735Z",
       "muscleGroup": "Isquiotibiales"
     },
     {
@@ -1563,7 +1563,7 @@
       "category": "exercise",
       "isSystem": true,
       "createdAt": "2026-06-09T18:52:11.236Z",
-      "updatedAt": "2026-07-20T08:43:26.753Z",
+      "updatedAt": "2026-07-20T10:19:03.735Z",
       "muscleGroup": "Isquiotibiales"
     },
     {
@@ -3769,7 +3769,7 @@
         }
       ],
       "createdAt": "2026-07-18T18:42:40.282624+00:00",
-      "updatedAt": "2026-07-20T10:11:42.808+00:00"
+      "updatedAt": "2026-07-20T10:20:01.632+00:00"
     }
   ],
   "diets": [
@@ -4254,7 +4254,7 @@
         "fat": 0
       },
       "createdAt": "2026-07-18T18:44:05.774945+00:00",
-      "updatedAt": "2026-07-20T10:11:42.809+00:00"
+      "updatedAt": "2026-07-20T10:20:01.632+00:00"
     }
   ],
   "trainingBlocks": [
@@ -4632,7 +4632,7 @@
         }
       ],
       "createdAt": "2026-07-02T08:44:56.541+00:00",
-      "updatedAt": "2026-07-20T10:11:42.809+00:00"
+      "updatedAt": "2026-07-20T10:20:01.632+00:00"
     }
   ],
   "trainingLogs": [
@@ -4755,8 +4755,131 @@
         }
       ],
       "completed": true,
-      "routineId": null,
-      "blockId": null,
+      "routineId": "3bf9e6b9-c9ec-4083-8099-d32c6239a286",
+      "blockId": "e6504587-c73b-4a26-9e40-9e3e4fdd2c1e",
+      "weekIndex": 0
+    },
+    {
+      "id": "2294c6e4-9d9d-413d-901a-3d0abb4f804f",
+      "clientId": "5f646908-f625-47cd-9713-1db985c9518f",
+      "date": "2026-07-14T17:33:26.72+00:00",
+      "weekNumber": 1,
+      "dayNumber": 1,
+      "exercises": [
+        {
+          "name": "Hacka",
+          "sets": [
+            {
+              "rir": "",
+              "reps": "10",
+              "weight": ""
+            },
+            {
+              "rir": "",
+              "reps": "",
+              "weight": ""
+            },
+            {
+              "rir": "",
+              "reps": "",
+              "weight": ""
+            }
+          ]
+        },
+        {
+          "name": "Prensa",
+          "sets": [
+            {
+              "rir": "",
+              "reps": "",
+              "weight": ""
+            },
+            {
+              "rir": "",
+              "reps": "",
+              "weight": ""
+            },
+            {
+              "rir": "",
+              "reps": "",
+              "weight": ""
+            }
+          ]
+        },
+        {
+          "name": "Extensión de cuadriceps",
+          "sets": [
+            {
+              "rir": "",
+              "reps": "",
+              "weight": ""
+            },
+            {
+              "rir": "",
+              "reps": "",
+              "weight": ""
+            },
+            {
+              "rir": "",
+              "reps": "",
+              "weight": ""
+            },
+            {
+              "rir": "",
+              "reps": "",
+              "weight": ""
+            },
+            {
+              "rir": "",
+              "reps": "",
+              "weight": ""
+            }
+          ]
+        },
+        {
+          "name": "Búlgaras mancuerna o MP",
+          "sets": [
+            {
+              "rir": "",
+              "reps": "",
+              "weight": ""
+            },
+            {
+              "rir": "",
+              "reps": "",
+              "weight": ""
+            },
+            {
+              "rir": "",
+              "reps": "",
+              "weight": ""
+            }
+          ]
+        },
+        {
+          "name": "Aductor en máquina + Abductor en máquina",
+          "sets": [
+            {
+              "rir": "",
+              "reps": "",
+              "weight": ""
+            },
+            {
+              "rir": "",
+              "reps": "",
+              "weight": ""
+            },
+            {
+              "rir": "",
+              "reps": "",
+              "weight": ""
+            }
+          ]
+        }
+      ],
+      "completed": true,
+      "routineId": "3bf9e6b9-c9ec-4083-8099-d32c6239a286",
+      "blockId": "e6504587-c73b-4a26-9e40-9e3e4fdd2c1e",
       "weekIndex": 0
     },
     {
@@ -4888,131 +5011,8 @@
         }
       ],
       "completed": true,
-      "routineId": null,
-      "blockId": null,
-      "weekIndex": 0
-    },
-    {
-      "id": "2294c6e4-9d9d-413d-901a-3d0abb4f804f",
-      "clientId": "5f646908-f625-47cd-9713-1db985c9518f",
-      "date": "2026-07-14T17:33:26.72+00:00",
-      "weekNumber": 1,
-      "dayNumber": 1,
-      "exercises": [
-        {
-          "name": "Hacka",
-          "sets": [
-            {
-              "rir": "",
-              "reps": "10",
-              "weight": ""
-            },
-            {
-              "rir": "",
-              "reps": "",
-              "weight": ""
-            },
-            {
-              "rir": "",
-              "reps": "",
-              "weight": ""
-            }
-          ]
-        },
-        {
-          "name": "Prensa",
-          "sets": [
-            {
-              "rir": "",
-              "reps": "",
-              "weight": ""
-            },
-            {
-              "rir": "",
-              "reps": "",
-              "weight": ""
-            },
-            {
-              "rir": "",
-              "reps": "",
-              "weight": ""
-            }
-          ]
-        },
-        {
-          "name": "Extensión de cuadriceps",
-          "sets": [
-            {
-              "rir": "",
-              "reps": "",
-              "weight": ""
-            },
-            {
-              "rir": "",
-              "reps": "",
-              "weight": ""
-            },
-            {
-              "rir": "",
-              "reps": "",
-              "weight": ""
-            },
-            {
-              "rir": "",
-              "reps": "",
-              "weight": ""
-            },
-            {
-              "rir": "",
-              "reps": "",
-              "weight": ""
-            }
-          ]
-        },
-        {
-          "name": "Búlgaras mancuerna o MP",
-          "sets": [
-            {
-              "rir": "",
-              "reps": "",
-              "weight": ""
-            },
-            {
-              "rir": "",
-              "reps": "",
-              "weight": ""
-            },
-            {
-              "rir": "",
-              "reps": "",
-              "weight": ""
-            }
-          ]
-        },
-        {
-          "name": "Aductor en máquina + Abductor en máquina",
-          "sets": [
-            {
-              "rir": "",
-              "reps": "",
-              "weight": ""
-            },
-            {
-              "rir": "",
-              "reps": "",
-              "weight": ""
-            },
-            {
-              "rir": "",
-              "reps": "",
-              "weight": ""
-            }
-          ]
-        }
-      ],
-      "completed": true,
-      "routineId": null,
-      "blockId": null,
+      "routineId": "3bf9e6b9-c9ec-4083-8099-d32c6239a286",
+      "blockId": "e6504587-c73b-4a26-9e40-9e3e4fdd2c1e",
       "weekIndex": 0
     },
     {
@@ -5134,8 +5134,8 @@
         }
       ],
       "completed": true,
-      "routineId": null,
-      "blockId": null,
+      "routineId": "3bf9e6b9-c9ec-4083-8099-d32c6239a286",
+      "blockId": "e6504587-c73b-4a26-9e40-9e3e4fdd2c1e",
       "weekIndex": 0
     },
     {
@@ -5267,131 +5267,8 @@
         }
       ],
       "completed": true,
-      "routineId": null,
-      "blockId": null,
-      "weekIndex": 0
-    },
-    {
-      "id": "2f981d5f-1630-42c8-ba89-85895efba302",
-      "clientId": "5f646908-f625-47cd-9713-1db985c9518f",
-      "date": "2026-07-14T17:35:55.895+00:00",
-      "weekNumber": 1,
-      "dayNumber": 1,
-      "exercises": [
-        {
-          "name": "Hacka",
-          "sets": [
-            {
-              "rir": "1",
-              "reps": "10",
-              "weight": ""
-            },
-            {
-              "rir": "",
-              "reps": "10",
-              "weight": ""
-            },
-            {
-              "rir": "",
-              "reps": "",
-              "weight": ""
-            }
-          ]
-        },
-        {
-          "name": "Prensa",
-          "sets": [
-            {
-              "rir": "",
-              "reps": "",
-              "weight": ""
-            },
-            {
-              "rir": "",
-              "reps": "",
-              "weight": ""
-            },
-            {
-              "rir": "",
-              "reps": "",
-              "weight": ""
-            }
-          ]
-        },
-        {
-          "name": "Extensión de cuadriceps",
-          "sets": [
-            {
-              "rir": "",
-              "reps": "",
-              "weight": ""
-            },
-            {
-              "rir": "",
-              "reps": "",
-              "weight": ""
-            },
-            {
-              "rir": "",
-              "reps": "",
-              "weight": ""
-            },
-            {
-              "rir": "",
-              "reps": "",
-              "weight": ""
-            },
-            {
-              "rir": "",
-              "reps": "",
-              "weight": ""
-            }
-          ]
-        },
-        {
-          "name": "Búlgaras mancuerna o MP",
-          "sets": [
-            {
-              "rir": "",
-              "reps": "",
-              "weight": ""
-            },
-            {
-              "rir": "",
-              "reps": "",
-              "weight": ""
-            },
-            {
-              "rir": "",
-              "reps": "",
-              "weight": ""
-            }
-          ]
-        },
-        {
-          "name": "Aductor en máquina + Abductor en máquina",
-          "sets": [
-            {
-              "rir": "",
-              "reps": "",
-              "weight": ""
-            },
-            {
-              "rir": "",
-              "reps": "",
-              "weight": ""
-            },
-            {
-              "rir": "",
-              "reps": "",
-              "weight": ""
-            }
-          ]
-        }
-      ],
-      "completed": true,
-      "routineId": null,
-      "blockId": null,
+      "routineId": "3bf9e6b9-c9ec-4083-8099-d32c6239a286",
+      "blockId": "e6504587-c73b-4a26-9e40-9e3e4fdd2c1e",
       "weekIndex": 0
     },
     {
@@ -5513,8 +5390,131 @@
         }
       ],
       "completed": true,
-      "routineId": null,
-      "blockId": null,
+      "routineId": "3bf9e6b9-c9ec-4083-8099-d32c6239a286",
+      "blockId": "e6504587-c73b-4a26-9e40-9e3e4fdd2c1e",
+      "weekIndex": 0
+    },
+    {
+      "id": "2f981d5f-1630-42c8-ba89-85895efba302",
+      "clientId": "5f646908-f625-47cd-9713-1db985c9518f",
+      "date": "2026-07-14T17:35:55.895+00:00",
+      "weekNumber": 1,
+      "dayNumber": 1,
+      "exercises": [
+        {
+          "name": "Hacka",
+          "sets": [
+            {
+              "rir": "1",
+              "reps": "10",
+              "weight": ""
+            },
+            {
+              "rir": "",
+              "reps": "10",
+              "weight": ""
+            },
+            {
+              "rir": "",
+              "reps": "",
+              "weight": ""
+            }
+          ]
+        },
+        {
+          "name": "Prensa",
+          "sets": [
+            {
+              "rir": "",
+              "reps": "",
+              "weight": ""
+            },
+            {
+              "rir": "",
+              "reps": "",
+              "weight": ""
+            },
+            {
+              "rir": "",
+              "reps": "",
+              "weight": ""
+            }
+          ]
+        },
+        {
+          "name": "Extensión de cuadriceps",
+          "sets": [
+            {
+              "rir": "",
+              "reps": "",
+              "weight": ""
+            },
+            {
+              "rir": "",
+              "reps": "",
+              "weight": ""
+            },
+            {
+              "rir": "",
+              "reps": "",
+              "weight": ""
+            },
+            {
+              "rir": "",
+              "reps": "",
+              "weight": ""
+            },
+            {
+              "rir": "",
+              "reps": "",
+              "weight": ""
+            }
+          ]
+        },
+        {
+          "name": "Búlgaras mancuerna o MP",
+          "sets": [
+            {
+              "rir": "",
+              "reps": "",
+              "weight": ""
+            },
+            {
+              "rir": "",
+              "reps": "",
+              "weight": ""
+            },
+            {
+              "rir": "",
+              "reps": "",
+              "weight": ""
+            }
+          ]
+        },
+        {
+          "name": "Aductor en máquina + Abductor en máquina",
+          "sets": [
+            {
+              "rir": "",
+              "reps": "",
+              "weight": ""
+            },
+            {
+              "rir": "",
+              "reps": "",
+              "weight": ""
+            },
+            {
+              "rir": "",
+              "reps": "",
+              "weight": ""
+            }
+          ]
+        }
+      ],
+      "completed": true,
+      "routineId": "3bf9e6b9-c9ec-4083-8099-d32c6239a286",
+      "blockId": "e6504587-c73b-4a26-9e40-9e3e4fdd2c1e",
       "weekIndex": 0
     },
     {
@@ -5636,8 +5636,8 @@
         }
       ],
       "completed": true,
-      "routineId": null,
-      "blockId": null,
+      "routineId": "3bf9e6b9-c9ec-4083-8099-d32c6239a286",
+      "blockId": "e6504587-c73b-4a26-9e40-9e3e4fdd2c1e",
       "weekIndex": 0
     },
     {
@@ -5759,8 +5759,8 @@
         }
       ],
       "completed": true,
-      "routineId": null,
-      "blockId": null,
+      "routineId": "3bf9e6b9-c9ec-4083-8099-d32c6239a286",
+      "blockId": "e6504587-c73b-4a26-9e40-9e3e4fdd2c1e",
       "weekIndex": 0
     },
     {
@@ -5882,8 +5882,8 @@
         }
       ],
       "completed": true,
-      "routineId": null,
-      "blockId": null,
+      "routineId": "3bf9e6b9-c9ec-4083-8099-d32c6239a286",
+      "blockId": "e6504587-c73b-4a26-9e40-9e3e4fdd2c1e",
       "weekIndex": 0
     },
     {
@@ -6005,8 +6005,8 @@
         }
       ],
       "completed": true,
-      "routineId": null,
-      "blockId": null,
+      "routineId": "3bf9e6b9-c9ec-4083-8099-d32c6239a286",
+      "blockId": "e6504587-c73b-4a26-9e40-9e3e4fdd2c1e",
       "weekIndex": 0
     },
     {
@@ -6128,8 +6128,8 @@
         }
       ],
       "completed": true,
-      "routineId": null,
-      "blockId": null,
+      "routineId": "3bf9e6b9-c9ec-4083-8099-d32c6239a286",
+      "blockId": "e6504587-c73b-4a26-9e40-9e3e4fdd2c1e",
       "weekIndex": 0
     },
     {
@@ -6251,8 +6251,8 @@
         }
       ],
       "completed": true,
-      "routineId": null,
-      "blockId": null,
+      "routineId": "3bf9e6b9-c9ec-4083-8099-d32c6239a286",
+      "blockId": "e6504587-c73b-4a26-9e40-9e3e4fdd2c1e",
       "weekIndex": 0
     },
     {
@@ -6374,8 +6374,8 @@
         }
       ],
       "completed": true,
-      "routineId": null,
-      "blockId": null,
+      "routineId": "3bf9e6b9-c9ec-4083-8099-d32c6239a286",
+      "blockId": "e6504587-c73b-4a26-9e40-9e3e4fdd2c1e",
       "weekIndex": 0
     },
     {
@@ -6492,8 +6492,8 @@
         }
       ],
       "completed": true,
-      "routineId": null,
-      "blockId": null,
+      "routineId": "3bf9e6b9-c9ec-4083-8099-d32c6239a286",
+      "blockId": "e6504587-c73b-4a26-9e40-9e3e4fdd2c1e",
       "weekIndex": 0
     },
     {
@@ -6615,8 +6615,8 @@
         }
       ],
       "completed": true,
-      "routineId": null,
-      "blockId": null,
+      "routineId": "3bf9e6b9-c9ec-4083-8099-d32c6239a286",
+      "blockId": "e6504587-c73b-4a26-9e40-9e3e4fdd2c1e",
       "weekIndex": 0
     }
   ],
@@ -6686,7 +6686,7 @@
       "comments": "Me siento mejor volver a entrenar y que mejor acompañada de ti y tu ayudaaa",
       "trainerResponse": "REVISIÓN REVISADA - OK",
       "createdAt": "2026-07-17T04:51:29.282+00:00",
-      "updatedAt": "2026-07-20T10:11:42.809+00:00"
+      "updatedAt": "2026-07-20T10:20:01.632+00:00"
     },
     {
       "id": "7750a472-ffce-430b-8d7d-82d3b8df0068",
@@ -6753,8 +6753,8 @@
       "comments": "Me siento mejor volver a entrenar y que mejor acompañada de ti y tu ayudaaa",
       "trainerResponse": "REVISIÓN REVISADA - OK",
       "createdAt": "2026-07-17T04:51:01.147+00:00",
-      "updatedAt": "2026-07-20T10:11:42.809+00:00"
+      "updatedAt": "2026-07-20T10:20:01.632+00:00"
     }
   ],
-  "lastModified": "2026-07-20T10:12:33.333Z"
+  "lastModified": "2026-07-20T10:20:23.621Z"
 }
