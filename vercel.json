@@ -23,6 +23,13 @@
     { "source": "/client-library", "destination": "/library", "permanent": false },
     { "source": "/client-library.html", "destination": "/library", "permanent": false }
   ],
+  "rewrites": [
+    { "source": "/lucy-tundidor", "destination": "/lucy-tundidor.html" },
+    { "source": "/toledo-the-bull", "destination": "/toledo-the-bull.html" },
+    { "source": "/phoenix-protocol", "destination": "/phoenix-protocol.html" },
+    { "source": "/metodo-jfk", "destination": "/metodo-jfk.html" },
+    { "source": "/asteam", "destination": "/asteam.html" }
+  ],
   "headers": [
     {
       "source": "/sw.js",
