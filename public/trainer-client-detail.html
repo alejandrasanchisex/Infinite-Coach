@@ -18,7 +18,7 @@
         })();
         // Force PWA cache bust / reload
         (function() {
-            const CURRENT_VERSION = '760';
+            const CURRENT_VERSION = '762';
             window.APP_VERSION = CURRENT_VERSION;
             const savedVersion = localStorage.getItem('app_version');
             if (savedVersion && savedVersion !== CURRENT_VERSION) {
@@ -72,8 +72,8 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="styles/theme.css?v=760">
-    <link rel="stylesheet" href="styles/components.css?v=760">
+    <link rel="stylesheet" href="styles/theme.css?v=762">
+    <link rel="stylesheet" href="styles/components.css?v=762">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <style>
         /* Bulletproof sizing override for routine editor and xl modals */
@@ -340,14 +340,14 @@
                     </div>
                     <button class="menu-toggle" onclick="toggleMenu()">☰</button>
                     <ul class="nav-links" id="navLinks">
-                        <li><a href="trainer-dashboard.html?v=760" class="nav-link">Dashboard</a></li>
-                        <li><a href="trainer-clients.html?v=760" class="nav-link active">Clientes</a></li>
-                        <li><a href="trainer-routines.html?v=760" class="nav-link">Rutinas</a></li>
-                        <li><a href="trainer-diets.html?v=760" class="nav-link">Dietas</a></li>
-                        <li><a href="trainer-feedbacks.html?v=760" class="nav-link">Revisiones</a></li>
-                        <li><a href="trainer-media.html?v=760" class="nav-link">Biblioteca</a></li>
-                        <li><a href="trainer-appointments.html?v=760" class="nav-link">Agenda</a></li>
-                        <li><a href="trainer-settings.html?v=760" class="nav-link">Configuración</a></li>
+                        <li><a href="trainer-dashboard.html?v=762" class="nav-link">Dashboard</a></li>
+                        <li><a href="trainer-clients.html?v=762" class="nav-link active">Clientes</a></li>
+                        <li><a href="trainer-routines.html?v=762" class="nav-link">Rutinas</a></li>
+                        <li><a href="trainer-diets.html?v=762" class="nav-link">Dietas</a></li>
+                        <li><a href="trainer-feedbacks.html?v=762" class="nav-link">Revisiones</a></li>
+                        <li><a href="trainer-media.html?v=762" class="nav-link">Biblioteca</a></li>
+                        <li><a href="trainer-appointments.html?v=762" class="nav-link">Agenda</a></li>
+                        <li><a href="trainer-settings.html?v=762" class="nav-link">Configuración</a></li>
                         <li><a href="#" onclick="if(typeof AUTH !== 'undefined') { AUTH.signOut() } else { window.location.reload() }; return false;" class="nav-link" style="color:var(--error-color)">🚪 Salir</a></li>
                     </ul>
                 </nav>
@@ -975,7 +975,7 @@
                                     </div>
                                     <div class="card-body">
                                         <div id="stripeNotConfigured" style="display: none;">
-                                            <p class="text-xs text-muted mb-md">Configura tus claves de Stripe en los <a href="trainer-settings.html?v=760" style="color: var(--primary-color);">Ajustes</a> para habilitar cobros automáticos.</p>
+                                            <p class="text-xs text-muted mb-md">Configura tus claves de Stripe en los <a href="trainer-settings.html?v=762" style="color: var(--primary-color);">Ajustes</a> para habilitar cobros automáticos.</p>
                                         </div>
                                         <div id="stripeActiveConfig">
                                             <p class="text-xs text-muted mb-md">Genera un enlace de pago recurrente para este cliente usando tus planes configurados.</p>
@@ -1026,19 +1026,19 @@
 
     <!-- Supabase SDK & Service -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="js/supabase-service.js?v=760"></script>
+    <script src="js/supabase-service.js?v=762"></script>
 
-    <script src="js/config.js?v=760"></script>
-    <script src="js/auth.js?v=760"></script>
-    <script src="js/sheets.js?v=760"></script>
-    <script src="js/data-models.js?v=760"></script>
-    <script src="js/utils.js?v=760"></script>
-    <script src="js/custom-recipes.js?v=760"></script>
-    <script src="js/custom-exercises.js?v=760"></script>
-    <script src="js/diet-editor-v3.js?v=760"></script>
+    <script src="js/config.js?v=762"></script>
+    <script src="js/auth.js?v=762"></script>
+    <script src="js/sheets.js?v=762"></script>
+    <script src="js/data-models.js?v=762"></script>
+    <script src="js/utils.js?v=762"></script>
+    <script src="js/custom-recipes.js?v=762"></script>
+    <script src="js/custom-exercises.js?v=762"></script>
+    <script src="js/diet-editor-v3.js?v=762"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.29/jspdf.plugin.autotable.min.js"></script>
-    <script src="js/export-utils.js?v=760"></script>
+    <script src="js/export-utils.js?v=762"></script>
     <script>
         const pageUrlParams = new URLSearchParams(window.location.search);
         const clientId = pageUrlParams.get('id');
@@ -3416,16 +3416,23 @@
                                                 `).join('')}
                                             </div>
                                         ` : ''}
-
                                         <!-- Days Grid (Compact Tables) -->
                                         <div class="p-md">
                                             ${days.length > 0 ? `
                                                 <div style="display: grid; gap: 20px;">
                                                     ${days.map((day, dIdx) => `
                                                         <div class="day-table-container">
-                                                            <div style="margin-bottom: 8px; display: flex; align-items: center; gap: 8px;">
-                                                                <span style="color: var(--primary-color); font-weight: 700; font-size: 0.9rem;">Día ${dIdx + 1}</span>
-                                                                ${day.name ? `<span style="color: var(--text-secondary); font-size: 0.9rem;">• ${day.name}</span>` : ''}
+                                                            <div style="margin-bottom: 8px; display: flex; align-items: center; justify-content: space-between; gap: 8px; flex-wrap: wrap;">
+                                                                <div style="display: flex; align-items: center; gap: 8px;">
+                                                                    <span style="color: var(--primary-color); font-weight: 700; font-size: 0.9rem;">Día ${dIdx + 1}</span>
+                                                                    ${day.name ? `<span style="color: var(--text-secondary); font-size: 0.9rem;">• ${day.name}</span>` : ''}
+                                                                </div>
+                                                                <div style="display: flex; align-items: center; gap: 6px;">
+                                                                    <button class="btn btn-xs btn-outline" onclick="editSingleDayInline('${block.id}', ${idx}, ${dIdx})" title="Editar este día" style="padding: 3px 8px; font-size: 0.75rem; border: 1px solid rgba(255,255,255,0.15);">✏️ Editar Día</button>
+                                                                    <button class="btn btn-xs btn-outline" onclick="addExerciseToDayInline('${block.id}', ${idx}, ${dIdx})" title="Añadir ejercicio a este día" style="padding: 3px 8px; font-size: 0.75rem; color: var(--primary-color); border: 1px solid rgba(0,217,255,0.3);">➕ Ejercicio</button>
+                                                                    <button class="btn btn-xs btn-outline" onclick="duplicateDayInline('${block.id}', ${idx}, ${dIdx})" title="Duplicar día" style="padding: 3px 8px; font-size: 0.75rem; border: 1px solid rgba(255,255,255,0.15);">📋 Duplicar</button>
+                                                                    <button class="btn btn-xs btn-outline" onclick="deleteDayInline('${block.id}', ${idx}, ${dIdx})" title="Eliminar este día" style="padding: 3px 8px; font-size: 0.75rem; color: var(--error-color); border: 1px solid rgba(239,68,68,0.25);">🗑️ Eliminar</button>
+                                                                </div>
                                                             </div>
                                                             
                                                             <div style="overflow-x: auto;">
@@ -4069,6 +4076,63 @@
                 editingRoutine.days[dIdx].exercises.splice(exIdx, 1);
                 updateAssignedRoutineView();
                 window.autosaveInlineWeek();
+            }
+        };
+
+        window.editSingleDayInline = function(blockId, weekIdx, dIdx) {
+            editBlockWeek(blockId, weekIdx);
+            setTimeout(() => {
+                const dayContainers = document.querySelectorAll('.day-table-container');
+                if (dayContainers[dIdx]) {
+                    dayContainers[dIdx].scrollIntoView({ behavior: 'smooth', block: 'center' });
+                }
+            }, 100);
+        };
+
+        window.addExerciseToDayInline = function(blockId, weekIdx, dIdx) {
+            editBlockWeek(blockId, weekIdx);
+            setTimeout(() => {
+                addInlineExercise(dIdx);
+                const dayContainers = document.querySelectorAll('.day-table-container');
+                if (dayContainers[dIdx]) {
+                    dayContainers[dIdx].scrollIntoView({ behavior: 'smooth', block: 'center' });
+                }
+            }, 100);
+        };
+
+        window.duplicateDayInline = function(blockId, weekIdx, dIdx) {
+            try {
+                const blocks = TrainingBlocks.getAll();
+                const block = blocks.find(b => b.id === blockId);
+                if (block && block.weeks && block.weeks[weekIdx]) {
+                    const dayToDup = block.weeks[weekIdx].days[dIdx];
+                    if (dayToDup) {
+                        const newDay = JSON.parse(JSON.stringify(dayToDup));
+                        newDay.name = (newDay.name || `Día ${dIdx + 1}`) + ' (Copia)';
+                        block.weeks[weekIdx].days.splice(dIdx + 1, 0, newDay);
+                        TrainingBlocks.update(blockId, { weeks: block.weeks });
+                        updateAssignedRoutineView();
+                        showToast('Día duplicado con éxito', 'success');
+                    }
+                }
+            } catch(e) {
+                console.error("Duplicate day error:", e);
+            }
+        };
+
+        window.deleteDayInline = function(blockId, weekIdx, dIdx) {
+            try {
+                if (!confirm('¿Seguro que deseas eliminar este día de entrenamiento y sus ejercicios?')) return;
+                const blocks = TrainingBlocks.getAll();
+                const block = blocks.find(b => b.id === blockId);
+                if (block && block.weeks && block.weeks[weekIdx]) {
+                    block.weeks[weekIdx].days.splice(dIdx, 1);
+                    TrainingBlocks.update(blockId, { weeks: block.weeks });
+                    updateAssignedRoutineView();
+                    showToast('Día eliminado con éxito', 'success');
+                }
+            } catch(e) {
+                console.error("Delete day error:", e);
             }
         };
 
@@ -5282,7 +5346,7 @@
                         <div style="max-width: 800px; margin: 0 auto; border: 1px solid #eee; padding: 30px; border-radius: 8px;">
                             ${content}
                         </div>
-                        <script src="js/custom-recipes.js?v=760"><\/script></body>
+                        <script src="js/custom-recipes.js?v=762"><\/script></body>
                 </html>
             `);
             printWindow.document.close();
@@ -7060,6 +7124,6 @@
             }
         });
     </script>
-    <script src="js/custom-recipes.js?v=760"></script></body>
+    <script src="js/custom-recipes.js?v=762"></script></body>
 
 </html>

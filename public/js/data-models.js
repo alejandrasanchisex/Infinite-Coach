@@ -4260,8 +4260,8 @@ const Diets = {
       macros: currentMacros,
       mealsCount: dietData.mealsCount || 4,
       meals: dietData.meals || [], // Critical fix: allow meals to be saved
-      weeklyPlan: dietData.weeklyPlan || [],
-      isTemplate: dietData.isTemplate !== undefined ? dietData.isTemplate : true,
+      clientId: dietData.clientId || null,
+      isTemplate: dietData.isTemplate !== undefined ? dietData.isTemplate : (dietData.clientId ? false : true),
       createdAt: new Date().toISOString()
     };
     data.diets.push(newDiet);
@@ -5416,7 +5416,7 @@ const BrandConfig = {
     } else if (isLucy) {
         defaultBrand = {
             name: 'Lucy Tundidor',
-            logo: 'https://bieeydhacavxymoosasx.supabase.co/storage/v1/object/public/Media/lucy_logo_cropped.png?v=760',
+            logo: 'https://bieeydhacavxymoosasx.supabase.co/storage/v1/object/public/Media/lucy_logo_cropped.png?v=762',
             configured: true,
             colors: { 
                 primary: '#816e61', 
@@ -5527,7 +5527,7 @@ const BrandConfig = {
             res.colors = defaultBrand.colors;
             changed = true;
         }
-        if (!res.logo || res.logo === 'img/logo-infinite-coach.png' || res.logo.includes('1779724548154') || res.logo.includes('lucy_logo_v1.png') || !res.logo.includes('lucy_logo_cropped.png?v=760')) {
+        if (!res.logo || res.logo === 'img/logo-infinite-coach.png' || res.logo.includes('1779724548154') || res.logo.includes('lucy_logo_v1.png') || !res.logo.includes('lucy_logo_cropped.png?v=762')) {
             res.logo = defaultBrand.logo;
             changed = true;
         }
