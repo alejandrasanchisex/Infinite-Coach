@@ -24,6 +24,7 @@
     { "source": "/client-library.html", "destination": "/library", "permanent": false }
   ],
   "rewrites": [
+    { "source": "/trainer-login", "destination": "/trainer-login.html" },
     { "source": "/lucy-tundidor", "destination": "/lucy-tundidor.html" },
     { "source": "/toledo-the-bull", "destination": "/toledo-the-bull.html" },
     { "source": "/phoenix-protocol", "destination": "/phoenix-protocol.html" },
