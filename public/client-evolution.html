@@ -19,7 +19,7 @@
         })();
         // Force PWA cache bust / reload
         (function() {
-            const CURRENT_VERSION = '768';
+            const CURRENT_VERSION = '770';
             window.APP_VERSION = CURRENT_VERSION;
             const savedVersion = localStorage.getItem('app_version');
             if (savedVersion && savedVersion !== CURRENT_VERSION) {
@@ -71,9 +71,9 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="styles/theme.css?v=768">
-    <link rel="stylesheet" href="styles/components.css?v=768">
-    <link rel="stylesheet" href="styles/mobile.css?v=768">
+    <link rel="stylesheet" href="styles/theme.css?v=770">
+    <link rel="stylesheet" href="styles/components.css?v=770">
+    <link rel="stylesheet" href="styles/mobile.css?v=770">
     <style>
         .evo-tab { display: none !important; }
         .evo-tab.active { display: block !important; }
@@ -216,10 +216,10 @@
                     <span id="brandName">Infinite Coach</span>
                 </div>
                 <ul class="nav-links">
-                    <li><a href="dashboard.html?v=768" class="nav-link">Inicio</a></li>
-                    <li><a href="profile.html?v=768" class="nav-link">Ficha</a></li>
+                    <li><a href="dashboard.html?v=770" class="nav-link">Inicio</a></li>
+                    <li><a href="profile.html?v=770" class="nav-link">Ficha</a></li>
 
-                    <li><a href="acceso.html?v=768" class="nav-link">Salir</a></li>
+                    <li><a href="acceso.html?v=770" class="nav-link">Salir</a></li>
                 </ul>
                 <button class="menu-toggle" onclick="toggleMenu()" style="margin-left: auto;">☰</button>
             </nav>
@@ -303,12 +303,12 @@
 
     <!-- Supabase SDK & Service -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="js/supabase-service.js?v=768"></script>
+    <script src="js/supabase-service.js?v=770"></script>
 
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script src="js/config.js?v=768"></script>
-    <script src="js/data-models.js?v=768"></script>
-    <script src="js/utils.js?v=768"></script>
+    <script src="js/config.js?v=770"></script>
+    <script src="js/data-models.js?v=770"></script>
+    <script src="js/utils.js?v=770"></script>
     <script>
         const cId = sessionStorage.getItem('clientId') || localStorage.getItem('clientId');
         if (!cId) {
@@ -627,5 +627,5 @@
         }
 
     </script>
-    <script src="js/custom-recipes.js?v=768"></script></body>
+    <script src="js/custom-recipes.js?v=770"></script></body>
 </html>
