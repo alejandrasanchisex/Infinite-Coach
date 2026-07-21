@@ -18,7 +18,7 @@
         })();
         // Force PWA cache bust / reload
         (function() {
-            const CURRENT_VERSION = '770';
+            const CURRENT_VERSION = '772';
             window.APP_VERSION = CURRENT_VERSION;
             const savedVersion = localStorage.getItem('app_version');
             if (savedVersion && savedVersion !== CURRENT_VERSION) {
@@ -72,8 +72,8 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="styles/theme.css?v=770">
-    <link rel="stylesheet" href="styles/components.css?v=770">
+    <link rel="stylesheet" href="styles/theme.css?v=772">
+    <link rel="stylesheet" href="styles/components.css?v=772">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <style>
         /* Bulletproof sizing override for routine editor and xl modals */
@@ -340,14 +340,14 @@
                     </div>
                     <button class="menu-toggle" onclick="toggleMenu()">☰</button>
                     <ul class="nav-links" id="navLinks">
-                        <li><a href="trainer-dashboard.html?v=770" class="nav-link">Dashboard</a></li>
-                        <li><a href="trainer-clients.html?v=770" class="nav-link active">Clientes</a></li>
-                        <li><a href="trainer-routines.html?v=770" class="nav-link">Rutinas</a></li>
-                        <li><a href="trainer-diets.html?v=770" class="nav-link">Dietas</a></li>
-                        <li><a href="trainer-feedbacks.html?v=770" class="nav-link">Revisiones</a></li>
-                        <li><a href="trainer-media.html?v=770" class="nav-link">Biblioteca</a></li>
-                        <li><a href="trainer-appointments.html?v=770" class="nav-link">Agenda</a></li>
-                        <li><a href="trainer-settings.html?v=770" class="nav-link">Configuración</a></li>
+                        <li><a href="trainer-dashboard.html?v=772" class="nav-link">Dashboard</a></li>
+                        <li><a href="trainer-clients.html?v=772" class="nav-link active">Clientes</a></li>
+                        <li><a href="trainer-routines.html?v=772" class="nav-link">Rutinas</a></li>
+                        <li><a href="trainer-diets.html?v=772" class="nav-link">Dietas</a></li>
+                        <li><a href="trainer-feedbacks.html?v=772" class="nav-link">Revisiones</a></li>
+                        <li><a href="trainer-media.html?v=772" class="nav-link">Biblioteca</a></li>
+                        <li><a href="trainer-appointments.html?v=772" class="nav-link">Agenda</a></li>
+                        <li><a href="trainer-settings.html?v=772" class="nav-link">Configuración</a></li>
                         <li><a href="#" onclick="if(typeof AUTH !== 'undefined') { AUTH.signOut() } else { window.location.reload() }; return false;" class="nav-link" style="color:var(--error-color)">🚪 Salir</a></li>
                     </ul>
                 </nav>
@@ -975,7 +975,7 @@
                                     </div>
                                     <div class="card-body">
                                         <div id="stripeNotConfigured" style="display: none;">
-                                            <p class="text-xs text-muted mb-md">Configura tus claves de Stripe en los <a href="trainer-settings.html?v=770" style="color: var(--primary-color);">Ajustes</a> para habilitar cobros automáticos.</p>
+                                            <p class="text-xs text-muted mb-md">Configura tus claves de Stripe en los <a href="trainer-settings.html?v=772" style="color: var(--primary-color);">Ajustes</a> para habilitar cobros automáticos.</p>
                                         </div>
                                         <div id="stripeActiveConfig">
                                             <p class="text-xs text-muted mb-md">Genera un enlace de pago recurrente para este cliente usando tus planes configurados.</p>
@@ -1026,19 +1026,19 @@
 
     <!-- Supabase SDK & Service -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="js/supabase-service.js?v=770"></script>
+    <script src="js/supabase-service.js?v=772"></script>
 
-    <script src="js/config.js?v=770"></script>
-    <script src="js/auth.js?v=770"></script>
-    <script src="js/sheets.js?v=770"></script>
-    <script src="js/data-models.js?v=770"></script>
-    <script src="js/utils.js?v=770"></script>
-    <script src="js/custom-recipes.js?v=770"></script>
-    <script src="js/custom-exercises.js?v=770"></script>
-    <script src="js/diet-editor-v3.js?v=770"></script>
+    <script src="js/config.js?v=772"></script>
+    <script src="js/auth.js?v=772"></script>
+    <script src="js/sheets.js?v=772"></script>
+    <script src="js/data-models.js?v=772"></script>
+    <script src="js/utils.js?v=772"></script>
+    <script src="js/custom-recipes.js?v=772"></script>
+    <script src="js/custom-exercises.js?v=772"></script>
+    <script src="js/diet-editor-v3.js?v=772"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.29/jspdf.plugin.autotable.min.js"></script>
-    <script src="js/export-utils.js?v=770"></script>
+    <script src="js/export-utils.js?v=772"></script>
     <script>
         const pageUrlParams = new URLSearchParams(window.location.search);
         const clientId = pageUrlParams.get('id');
@@ -3435,15 +3435,15 @@
                                                                 </div>
                                                             </div>
                                                             
-                                                            <div style="overflow-x: auto;">
-                                                                <table class="table" style="width: 100%; border-collapse: collapse; font-size: 0.85rem;">
+                                                            <div style="overflow-x: auto; max-width: 100%;">
+                                                                <table class="table" style="width: 100%; border-collapse: collapse; font-size: 0.85rem; table-layout: auto;">
                                                                     <thead>
                                                                         <tr style="border-bottom: 1px solid rgba(255,255,255,0.1);">
-                                                                            <th style="text-align: left; padding: 6px; color: var(--text-muted); font-weight: 600; font-size: 0.75rem; width: ${showVideosConfig ? '35%' : '45%'};">EJERCICIO</th>
+                                                                            <th style="text-align: left; padding: 6px; color: var(--text-muted); font-weight: 600; font-size: 0.75rem; width: ${showVideosConfig ? '30%' : '40%'};">EJERCICIO</th>
                                                                             <th style="text-align: left; padding: 6px; color: var(--text-muted); font-weight: 600; font-size: 0.75rem; width: 15%;">GRUPO</th>
                                                                             ${showVideosConfig ? `<th style="text-align: center; padding: 6px; color: var(--text-muted); font-weight: 600; font-size: 0.75rem; width: 10%;">VIDEO</th>` : ''}
                                                                             <th style="text-align: center; padding: 6px; color: var(--text-muted); font-weight: 600; font-size: 0.75rem; width: 10%;">SERIES</th>
-                                                                            <th style="text-align: center; padding: 6px; color: var(--text-muted); font-weight: 600; font-size: 0.75rem; width: 15%;">REPS</th>
+                                                                            <th style="text-align: center; padding: 6px; color: var(--text-muted); font-weight: 600; font-size: 0.75rem; width: 20%;">REPS</th>
                                                                             <th style="text-align: center; padding: 6px; color: var(--text-muted); font-weight: 600; font-size: 0.75rem; width: 15%;">RIR</th>
                                                                         </tr>
                                                                     </thead>
@@ -3478,7 +3478,7 @@
 
                             return `
                                                                             <tr style="background: ${i % 2 === 0 ? 'rgba(255,255,255,0.01)' : 'transparent'}; border-bottom: 1px solid rgba(255,255,255,0.03);">
-                                                                                <td style="padding: 6px; font-weight: 500;">
+                                                                                <td style="padding: 6px; font-weight: 500; word-break: break-word; overflow-wrap: break-word;">
                                                                                     <div class="flex-col">
                                                                                         <span>${ex.name || 'Ejercicio'}</span>
                                                                                         ${ex.notes ? `<div style="font-size: 0.7rem; color: var(--text-muted);">💬 ${ex.notes}</div>` : ''}
@@ -3495,7 +3495,7 @@
                                                                                     </td>
                                                                                 ` : ''}
                                                                                 <td style="padding: 6px; text-align: center; color: var(--primary-color); font-weight: 600;">${Array.isArray(ex.sets) ? ex.sets.length : (ex.sets || 0)}</td>
-                                                                                <td style="padding: 6px; text-align: center;">${ex.reps || '-'}</td>
+                                                                                <td style="padding: 6px; text-align: center; max-width: 170px; word-break: break-word; overflow-wrap: break-word; white-space: normal;">${ex.reps || '-'}</td>
                                                                                 <td style="padding: 6px; text-align: center;">
                                                                                     <span class="badge badge-info" style="padding: 2px 6px; font-size: 0.7rem;">${ex.intensity || '-'}</span>
                                                                                 </td>
@@ -5346,7 +5346,7 @@
                         <div style="max-width: 800px; margin: 0 auto; border: 1px solid #eee; padding: 30px; border-radius: 8px;">
                             ${content}
                         </div>
-                        <script src="js/custom-recipes.js?v=770"><\/script></body>
+                        <script src="js/custom-recipes.js?v=772"><\/script></body>
                 </html>
             `);
             printWindow.document.close();
@@ -7124,6 +7124,6 @@
             }
         });
     </script>
-    <script src="js/custom-recipes.js?v=770"></script></body>
+    <script src="js/custom-recipes.js?v=772"></script></body>
 
 </html>
