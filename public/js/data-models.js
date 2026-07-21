@@ -1155,7 +1155,7 @@ const mergeLocalEdits = (localNew, cloudMerged, localPrev, isTrainer) => {
                     const mergedClient = { ...cloudClient };
                     mergedClient.updatedAt = new Date().toISOString();
                     if (isTrainer) {
-                        const trainerFields = ['email', 'phone', 'gender', 'status', 'reviewDay', 'monthlyFee', 'assignedDiet', 'assignedDiets', 'publishedDiets', 'dietPublished', 'assignedRoutine', 'activeBlockId', 'cardio', 'cardioUrl', 'cardioPublished', 'supplementation', 'supplementationPublished', 'supplementationUrl', 'supplementationUrlVisible', 'paymentStatus', 'paymentExpiry', 'subscriptionType', 'subscriptionAmount', 'reviewFrequency', 'reviewDaysOfMonth', 'specificReviewDate', 'assignedTrainerId', 'customOnboardingQuestions', 'customFeedbackQuestions', 'customPerimeters', 'weightHistory'];
+                        const trainerFields = ['email', 'phone', 'gender', 'status', 'reviewDay', 'monthlyFee', 'assignedDiet', 'assignedDiets', 'publishedDiets', 'dietPublished', 'dietHistory', 'assignedRoutine', 'activeBlockId', 'cardio', 'cardioUrl', 'cardioPublished', 'supplementation', 'supplementationPublished', 'supplementationUrl', 'supplementationUrlVisible', 'paymentStatus', 'paymentExpiry', 'subscriptionType', 'subscriptionAmount', 'reviewFrequency', 'reviewDaysOfMonth', 'specificReviewDate', 'assignedTrainerId', 'customOnboardingQuestions', 'customFeedbackQuestions', 'customPerimeters', 'weightHistory'];
                         trainerFields.forEach(f => {
                             if (localClient[f] !== undefined) mergedClient[f] = localClient[f];
                         });
@@ -1927,7 +1927,7 @@ const doSyncFromCloud = async () => {
                                     // Campos del cliente controlados por el entrenador
                                     const trainerFields = [
                                         'email', 'phone', 'gender', 'status', 'reviewDay', 'monthlyFee', 
-                                        'assignedDiet', 'assignedDiets', 'publishedDiets', 'dietPublished', 'assignedRoutine', 'cardio', 'cardioUrl', 'cardioPublished', 
+                                        'assignedDiet', 'assignedDiets', 'publishedDiets', 'dietPublished', 'dietHistory', 'assignedRoutine', 'cardio', 'cardioUrl', 'cardioPublished', 
                                         'supplementation', 'supplementationPublished', 'supplementationUrl', 'supplementationUrlVisible', 
                                         'paymentStatus', 'paymentExpiry', 'subscriptionType', 'subscriptionAmount', 
                                         'reviewFrequency', 'reviewDaysOfMonth', 'specificReviewDate'
@@ -5416,7 +5416,7 @@ const BrandConfig = {
     } else if (isLucy) {
         defaultBrand = {
             name: 'Lucy Tundidor',
-            logo: 'https://bieeydhacavxymoosasx.supabase.co/storage/v1/object/public/Media/lucy_logo_cropped.png?v=755',
+            logo: 'https://bieeydhacavxymoosasx.supabase.co/storage/v1/object/public/Media/lucy_logo_cropped.png?v=756',
             configured: true,
             colors: { 
                 primary: '#816e61', 
@@ -5527,7 +5527,7 @@ const BrandConfig = {
             res.colors = defaultBrand.colors;
             changed = true;
         }
-        if (!res.logo || res.logo === 'img/logo-infinite-coach.png' || res.logo.includes('1779724548154') || res.logo.includes('lucy_logo_v1.png') || !res.logo.includes('lucy_logo_cropped.png?v=755')) {
+        if (!res.logo || res.logo === 'img/logo-infinite-coach.png' || res.logo.includes('1779724548154') || res.logo.includes('lucy_logo_v1.png') || !res.logo.includes('lucy_logo_cropped.png?v=756')) {
             res.logo = defaultBrand.logo;
             changed = true;
         }

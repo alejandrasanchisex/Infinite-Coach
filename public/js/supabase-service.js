@@ -143,6 +143,7 @@ const SupabaseService = {
                     customOnboardingQuestions: tech.customOnboardingQuestions || [],
                     customPerimeters: tech.customPerimeters || [],
                     weightHistory: tech.weightHistory || [],
+                    dietHistory: tech.dietHistory || [],
                     
                     createdAt: r.created_at,
                     updatedAt: r.updated_at
@@ -427,13 +428,23 @@ const SupabaseService = {
              // Reconstrucción dinámica de arrays de dietas múltiples (assignedDiets y publishedDiets)
              if (assembled.clients && assembled.diets) {
                  assembled.clients.forEach(c => {
-                     const clientDiets = assembled.diets.filter(d => d.clientId === c.id) || [];
-                     c.assignedDiets = clientDiets.map(d => d.id);
-                     c.publishedDiets = clientDiets.map(d => d.id);
+                     const clientDiets = assembled.diets.filter(d => d.clientId === c.id && d.status !== 'archived') || [];
                      
-                     // Si assignedDiet está vacío pero el cliente tiene dietas, asignar la primera
-                     if (c.assignedDiets.length > 0 && !c.assignedDiet) {
-                         c.assignedDiet = c.assignedDiets[0];
+                     // Si assignedDiet está nulo y no hay dietas activas asignadas, respetar la desvinculación/archivo
+                     if (!c.assignedDiet && (!c.assignedDiets || c.assignedDiets.length === 0)) {
+                         c.assignedDiets = [];
+                         c.publishedDiets = [];
+                         c.assignedDiet = null;
+                     } else {
+                         if (!c.assignedDiets || c.assignedDiets.length === 0) {
+                             c.assignedDiets = clientDiets.map(d => d.id);
+                         }
+                         if (!c.publishedDiets) {
+                             c.publishedDiets = c.dietPublished !== false ? [...c.assignedDiets] : [];
+                         }
+                         if (c.assignedDiets.length > 0 && !c.assignedDiet) {
+                             c.assignedDiet = c.assignedDiets[0];
+                         }
                      }
                  });
              }
@@ -485,6 +496,7 @@ const SupabaseService = {
                 tech.customOnboardingQuestions = c.customOnboardingQuestions || [];
                 tech.customPerimeters = c.customPerimeters || [];
                 tech.weightHistory = c.weightHistory || [];
+                tech.dietHistory = c.dietHistory || tech.dietHistory || [];
                 tech.habits = c.technicalData?.habits || [];
                 
                 return {
@@ -641,11 +653,11 @@ const SupabaseService = {
                 }
             } else {
                 // MODO ENTRENADOR: Guarda de forma relacional granular e individualizada para evitar fallos de lote completo
+                let currentClientHabitsMap = {};
                 if (fullData.clients) {
                     // 🛡️ BLINDAJE DE HÁBITOS: Al guardar desde el entrenador, leemos los hábitos actuales de cada cliente
                     // desde la DB para fusionarlos con los de fullData.habits. Los hábitos son propiedad del cliente
                     // y nunca deben ser sobrescritos por una versión posiblemente desactualizada del entrenador.
-                    let currentClientHabitsMap = {};
                     try {
                         const { data: dbClients } = await this.client
                             .from('clients')
