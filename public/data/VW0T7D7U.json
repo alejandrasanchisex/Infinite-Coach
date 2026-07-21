@@ -1,6 +1,6 @@
 {
   "brand": {
-    "logo": "https://bieeydhacavxymoosasx.supabase.co/storage/v1/object/public/Media/lucy_logo_cropped.png?v=780",
+    "logo": "https://bieeydhacavxymoosasx.supabase.co/storage/v1/object/public/Media/lucy_logo_cropped.png?v=782",
     "name": "Lucy Tundidor",
     "colors": {
       "accent": "#a79788",
@@ -8927,7 +8927,7 @@
         "f75c905a-d57c-434f-b113-b1babc9e0be3"
       ],
       "dietPublished": true,
-      "paymentExpiry": "20/07/2026",
+      "paymentExpiry": "21/10/2026",
       "paymentStatus": "paid",
       "technicalData": {
         "age": 26,
@@ -18460,7 +18460,7 @@
               "reps": "8-10",
               "sets": "3",
               "notes": "Mantener abdomen tenso",
-              "videoUrl": "https://www.youtube.com/watch?v=780yjwxtZ_Vkg",
+              "videoUrl": "https://www.youtube.com/watch?v=782yjwxtZ_Vkg",
               "intensity": "RIR 2"
             }
           ],

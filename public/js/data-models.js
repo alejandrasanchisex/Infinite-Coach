@@ -4106,6 +4106,16 @@ const Clients = {
     const data = getData();
     const index = data.clients.findIndex(c => c.id == id);
     if (index !== -1) {
+      const client = data.clients[index];
+      // 🛡️ Si se marca como 'paid', asegurarse de que paymentExpiry se actualice si estaba expirada o vacía
+      if (updates.paymentStatus === 'paid' && (!updates.paymentExpiry || updates.paymentExpiry === client.paymentExpiry)) {
+        const subType = updates.subscriptionType || client.subscriptionType || 'Mensual';
+        const monthsToAdd = (subType.toLowerCase().includes('trimestral')) ? 3 : ((subType.toLowerCase().includes('anual')) ? 12 : 1);
+        const expDate = new Date();
+        expDate.setMonth(expDate.getMonth() + monthsToAdd);
+        const formattedExp = `${String(expDate.getDate()).padStart(2, '0')}/${String(expDate.getMonth() + 1).padStart(2, '0')}/${expDate.getFullYear()}`;
+        updates.paymentExpiry = formattedExp;
+      }
       data.clients[index] = { ...data.clients[index], ...updates };
       saveData(data);
 
@@ -5417,7 +5427,7 @@ const BrandConfig = {
     } else if (isLucy) {
         defaultBrand = {
             name: 'Lucy Tundidor',
-            logo: 'https://bieeydhacavxymoosasx.supabase.co/storage/v1/object/public/Media/lucy_logo_cropped.png?v=780',
+            logo: 'https://bieeydhacavxymoosasx.supabase.co/storage/v1/object/public/Media/lucy_logo_cropped.png?v=782',
             configured: true,
             colors: { 
                 primary: '#816e61', 
@@ -5528,7 +5538,7 @@ const BrandConfig = {
             res.colors = defaultBrand.colors;
             changed = true;
         }
-        if (!res.logo || res.logo === 'img/logo-infinite-coach.png' || res.logo.includes('1779724548154') || res.logo.includes('lucy_logo_v1.png') || !res.logo.includes('lucy_logo_cropped.png?v=780')) {
+        if (!res.logo || res.logo === 'img/logo-infinite-coach.png' || res.logo.includes('1779724548154') || res.logo.includes('lucy_logo_v1.png') || !res.logo.includes('lucy_logo_cropped.png?v=782')) {
             res.logo = defaultBrand.logo;
             changed = true;
         }
