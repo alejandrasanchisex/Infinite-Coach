@@ -18,7 +18,7 @@
         })();
         // Force PWA cache bust / reload
         (function() {
-            const CURRENT_VERSION = '766';
+            const CURRENT_VERSION = '768';
             window.APP_VERSION = CURRENT_VERSION;
             const savedVersion = localStorage.getItem('app_version');
             if (savedVersion && savedVersion !== CURRENT_VERSION) {
@@ -72,8 +72,8 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="styles/theme.css?v=766">
-    <link rel="stylesheet" href="styles/components.css?v=766">
+    <link rel="stylesheet" href="styles/theme.css?v=768">
+    <link rel="stylesheet" href="styles/components.css?v=768">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <style>
         /* Bulletproof sizing override for routine editor and xl modals */
@@ -340,14 +340,14 @@
                     </div>
                     <button class="menu-toggle" onclick="toggleMenu()">☰</button>
                     <ul class="nav-links" id="navLinks">
-                        <li><a href="trainer-dashboard.html?v=766" class="nav-link">Dashboard</a></li>
-                        <li><a href="trainer-clients.html?v=766" class="nav-link active">Clientes</a></li>
-                        <li><a href="trainer-routines.html?v=766" class="nav-link">Rutinas</a></li>
-                        <li><a href="trainer-diets.html?v=766" class="nav-link">Dietas</a></li>
-                        <li><a href="trainer-feedbacks.html?v=766" class="nav-link">Revisiones</a></li>
-                        <li><a href="trainer-media.html?v=766" class="nav-link">Biblioteca</a></li>
-                        <li><a href="trainer-appointments.html?v=766" class="nav-link">Agenda</a></li>
-                        <li><a href="trainer-settings.html?v=766" class="nav-link">Configuración</a></li>
+                        <li><a href="trainer-dashboard.html?v=768" class="nav-link">Dashboard</a></li>
+                        <li><a href="trainer-clients.html?v=768" class="nav-link active">Clientes</a></li>
+                        <li><a href="trainer-routines.html?v=768" class="nav-link">Rutinas</a></li>
+                        <li><a href="trainer-diets.html?v=768" class="nav-link">Dietas</a></li>
+                        <li><a href="trainer-feedbacks.html?v=768" class="nav-link">Revisiones</a></li>
+                        <li><a href="trainer-media.html?v=768" class="nav-link">Biblioteca</a></li>
+                        <li><a href="trainer-appointments.html?v=768" class="nav-link">Agenda</a></li>
+                        <li><a href="trainer-settings.html?v=768" class="nav-link">Configuración</a></li>
                         <li><a href="#" onclick="if(typeof AUTH !== 'undefined') { AUTH.signOut() } else { window.location.reload() }; return false;" class="nav-link" style="color:var(--error-color)">🚪 Salir</a></li>
                     </ul>
                 </nav>
@@ -975,7 +975,7 @@
                                     </div>
                                     <div class="card-body">
                                         <div id="stripeNotConfigured" style="display: none;">
-                                            <p class="text-xs text-muted mb-md">Configura tus claves de Stripe en los <a href="trainer-settings.html?v=766" style="color: var(--primary-color);">Ajustes</a> para habilitar cobros automáticos.</p>
+                                            <p class="text-xs text-muted mb-md">Configura tus claves de Stripe en los <a href="trainer-settings.html?v=768" style="color: var(--primary-color);">Ajustes</a> para habilitar cobros automáticos.</p>
                                         </div>
                                         <div id="stripeActiveConfig">
                                             <p class="text-xs text-muted mb-md">Genera un enlace de pago recurrente para este cliente usando tus planes configurados.</p>
@@ -1026,19 +1026,19 @@
 
     <!-- Supabase SDK & Service -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="js/supabase-service.js?v=766"></script>
+    <script src="js/supabase-service.js?v=768"></script>
 
-    <script src="js/config.js?v=766"></script>
-    <script src="js/auth.js?v=766"></script>
-    <script src="js/sheets.js?v=766"></script>
-    <script src="js/data-models.js?v=766"></script>
-    <script src="js/utils.js?v=766"></script>
-    <script src="js/custom-recipes.js?v=766"></script>
-    <script src="js/custom-exercises.js?v=766"></script>
-    <script src="js/diet-editor-v3.js?v=766"></script>
+    <script src="js/config.js?v=768"></script>
+    <script src="js/auth.js?v=768"></script>
+    <script src="js/sheets.js?v=768"></script>
+    <script src="js/data-models.js?v=768"></script>
+    <script src="js/utils.js?v=768"></script>
+    <script src="js/custom-recipes.js?v=768"></script>
+    <script src="js/custom-exercises.js?v=768"></script>
+    <script src="js/diet-editor-v3.js?v=768"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.29/jspdf.plugin.autotable.min.js"></script>
-    <script src="js/export-utils.js?v=766"></script>
+    <script src="js/export-utils.js?v=768"></script>
     <script>
         const pageUrlParams = new URLSearchParams(window.location.search);
         const clientId = pageUrlParams.get('id');
@@ -3422,16 +3422,16 @@
                                                 <div style="display: grid; gap: 20px;">
                                                     ${days.map((day, dIdx) => `
                                                         <div class="day-table-container mb-lg">
-                                                            <div style="margin-bottom: 12px; padding: 10px 14px; background: rgba(255,255,255,0.03); border-radius: 8px; border: 1px solid rgba(255,255,255,0.06); display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px;">
-                                                                <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
-                                                                    <span class="badge" style="font-weight: 700; font-size: 0.85rem; padding: 4px 10px; background: rgba(0, 217, 255, 0.12); color: var(--primary-color); border: 1px solid rgba(0, 217, 255, 0.25); border-radius: 6px;">Día ${dIdx + 1}</span>
-                                                                    ${day.name ? `<span style="color: var(--text-primary); font-weight: 600; font-size: 0.95rem;">${day.name}</span>` : ''}
+                                                            <div style="margin-bottom: 12px; padding: 10px 14px; background: rgba(255,255,255,0.03); border-radius: 8px; border: 1px solid rgba(255,255,255,0.06); display: flex; align-items: center; justify-content: space-between; gap: 10px;">
+                                                                <div style="display: flex; align-items: center; gap: 8px; min-width: 0; flex: 1 1 auto; overflow: hidden;">
+                                                                    <span class="badge" style="font-weight: 700; font-size: 0.85rem; padding: 4px 10px; background: rgba(0, 217, 255, 0.12); color: var(--primary-color); border: 1px solid rgba(0, 217, 255, 0.25); border-radius: 6px; flex-shrink: 0;">Día ${dIdx + 1}</span>
+                                                                    ${day.name ? `<span style="color: var(--text-primary); font-weight: 600; font-size: 0.95rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;" title="${day.name}">${day.name}</span>` : ''}
                                                                 </div>
-                                                                <div style="display: flex; align-items: center; gap: 6px; flex-wrap: wrap;">
-                                                                    <button class="btn btn-xs btn-outline" onclick="editSingleDayInline('${block.id}', ${idx}, ${dIdx})" title="Editar este día" style="padding: 4px 10px; font-size: 0.75rem; border: 1px solid rgba(255,255,255,0.15); border-radius: 6px; background: rgba(255,255,255,0.03);">✏️ Editar</button>
-                                                                    <button class="btn btn-xs btn-outline" onclick="addExerciseToDayInline('${block.id}', ${idx}, ${dIdx})" title="Añadir ejercicio a este día" style="padding: 4px 10px; font-size: 0.75rem; color: var(--primary-color); border: 1px solid rgba(0,217,255,0.3); border-radius: 6px; background: rgba(0,217,255,0.05);">➕ Ejercicio</button>
-                                                                    <button class="btn btn-xs btn-outline" onclick="duplicateDayInline('${block.id}', ${idx}, ${dIdx})" title="Duplicar día" style="padding: 4px 10px; font-size: 0.75rem; border: 1px solid rgba(255,255,255,0.15); border-radius: 6px; background: rgba(255,255,255,0.03);">📋 Duplicar</button>
-                                                                    <button class="btn btn-xs btn-outline" onclick="deleteDayInline('${block.id}', ${idx}, ${dIdx})" title="Eliminar este día" style="padding: 4px 10px; font-size: 0.75rem; color: var(--error-color); border: 1px solid rgba(239,68,68,0.25); border-radius: 6px; background: rgba(239,68,68,0.05);">🗑️ Eliminar</button>
+                                                                <div style="display: flex; align-items: center; gap: 5px; flex-shrink: 0;">
+                                                                    <button class="btn btn-xs btn-outline" onclick="editSingleDayInline('${block.id}', ${idx}, ${dIdx})" title="Editar este día" style="padding: 4px 8px; font-size: 0.75rem; border: 1px solid rgba(255,255,255,0.15); border-radius: 6px; background: rgba(255,255,255,0.03);">✏️ Editar</button>
+                                                                    <button class="btn btn-xs btn-outline" onclick="addExerciseToDayInline('${block.id}', ${idx}, ${dIdx})" title="Añadir ejercicio a este día" style="padding: 4px 8px; font-size: 0.75rem; color: var(--primary-color); border: 1px solid rgba(0,217,255,0.3); border-radius: 6px; background: rgba(0,217,255,0.05);">➕ Ejercicio</button>
+                                                                    <button class="btn btn-xs btn-outline" onclick="duplicateDayInline('${block.id}', ${idx}, ${dIdx})" title="Duplicar día" style="padding: 4px 8px; font-size: 0.75rem; border: 1px solid rgba(255,255,255,0.15); border-radius: 6px; background: rgba(255,255,255,0.03);">📋 Duplicar</button>
+                                                                    <button class="btn btn-xs btn-outline" onclick="deleteDayInline('${block.id}', ${idx}, ${dIdx})" title="Eliminar este día" style="padding: 4px 8px; font-size: 0.75rem; color: var(--error-color); border: 1px solid rgba(239,68,68,0.25); border-radius: 6px; background: rgba(239,68,68,0.05);">🗑️</button>
                                                                 </div>
                                                             </div>
                                                             
@@ -5346,7 +5346,7 @@
                         <div style="max-width: 800px; margin: 0 auto; border: 1px solid #eee; padding: 30px; border-radius: 8px;">
                             ${content}
                         </div>
-                        <script src="js/custom-recipes.js?v=766"><\/script></body>
+                        <script src="js/custom-recipes.js?v=768"><\/script></body>
                 </html>
             `);
             printWindow.document.close();
@@ -7124,6 +7124,6 @@
             }
         });
     </script>
-    <script src="js/custom-recipes.js?v=766"></script></body>
+    <script src="js/custom-recipes.js?v=768"></script></body>
 
 </html>
