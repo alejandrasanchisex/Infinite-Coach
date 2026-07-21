@@ -214,7 +214,7 @@ const SupabaseService = {
                         carbs: carbs || 0,
                         fat: fat || 0
                     },
-                    isTemplate: r.client_id ? false : (r.is_template !== undefined ? r.is_template : true),
+                    isTemplate: r.is_template !== undefined ? r.is_template : (!r.client_id && r.status !== 'archived'),
                     createdAt: r.created_at,
                     updatedAt: r.updated_at
                 };
