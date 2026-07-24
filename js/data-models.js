@@ -1473,12 +1473,14 @@ const saveData = (data) => {
                               // Obtenemos los datos recién fusionados en local storage
                               const mergedLocal = JSON.parse(safeGetDatabaseRaw() || '{}');
                               
-                              // Volver a leer local storage para tener los cambios locales concurrentes
+                              // Volver a leer local storage para tener los cambios locales concurrentes (los clientes lo hacen para fusionar; los entrenadores conservan sus ediciones locales)
                               let activeLocal = currentLocalData;
-                              try {
-                                  const rawNow = safeGetDatabaseRaw();
-                                  if (rawNow) activeLocal = JSON.parse(rawNow);
-                              } catch(e){}
+                              if (!isTrainer) {
+                                  try {
+                                      const rawNow = safeGetDatabaseRaw();
+                                      if (rawNow) activeLocal = JSON.parse(rawNow);
+                                  } catch(e){}
+                              }
 
                               // Aplicamos de forma segura los cambios locales sobre los datos fusionados de la nube
                               const finalData = mergeLocalEdits(activeLocal, mergedLocal, prevData, isTrainer);

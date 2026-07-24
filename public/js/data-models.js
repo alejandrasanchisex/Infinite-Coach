@@ -602,13 +602,41 @@ const getData = () => {
         }
     }
 
-    // 🛡️ SHIELD FOR DUPLICATE FEEDBACK (ALEJANDRA SANCHIS)
-    if (data.feedbacks) {
-        const originalLength = data.feedbacks.length;
-        data.feedbacks = data.feedbacks.filter(f => f.id !== '240f5d3a-747d-4faa-8fb8-2592d2413976');
-        if (data.feedbacks.length !== originalLength) {
-            console.log("🛡️ [Shield] Removed duplicate feedback 240f5d3a-747d-4faa-8fb8-2592d2413976 from local storage.");
-            try { localStorage.setItem(sKey, JSON.stringify(data)); } catch(e){}
+    // 🛡️ SHIELD FOR DUPLICATE FEEDBACKS (SELF-HEALING DEDUPLICATION)
+    if (data.feedbacks && data.feedbacks.length > 0) {
+        const uniqueFeedbacksMap = new Map();
+        let changed = false;
+        
+        data.feedbacks.forEach(fb => {
+            if (!fb) return;
+            const key = `${fb.clientId}_${fb.week}`;
+            if (!uniqueFeedbacksMap.has(key)) {
+                uniqueFeedbacksMap.set(key, fb);
+            } else {
+                changed = true;
+                const existing = uniqueFeedbacksMap.get(key);
+                const existingHas = existing.trainerResponse && String(existing.trainerResponse).trim() !== '' && String(existing.trainerResponse) !== 'null';
+                const currentHas = fb.trainerResponse && String(fb.trainerResponse).trim() !== '' && String(fb.trainerResponse) !== 'null';
+                
+                if (currentHas && !existingHas) {
+                    uniqueFeedbacksMap.set(key, fb);
+                } else if (!existingHas && !currentHas) {
+                    const existingDate = new Date(fb.date || fb.createdAt || fb.created_at || 0);
+                    const existingDateObj = new Date(existing.date || existing.createdAt || existing.created_at || 0);
+                    if (existingDate > existingDateObj) {
+                        uniqueFeedbacksMap.set(key, fb);
+                    }
+                }
+            }
+        });
+        
+        if (changed) {
+            data.feedbacks = Array.from(uniqueFeedbacksMap.values());
+            console.log(`🛡️ [Shield] Deduplicated local feedbacks. Length reduced to ${data.feedbacks.length}.`);
+            try { 
+                localStorage.setItem(sKey, JSON.stringify(data));
+                if (typeof sessionStorage !== 'undefined') sessionStorage.setItem(sKey, JSON.stringify(data));
+            } catch(e){}
         }
     }
 
@@ -1512,12 +1540,14 @@ const saveData = (data) => {
                               // Obtenemos los datos recién fusionados en local storage
                               const mergedLocal = JSON.parse(safeGetDatabaseRaw() || '{}');
                               
-                              // Volver a leer local storage para tener los cambios locales concurrentes
+                              // Volver a leer local storage para tener los cambios locales concurrentes (los clientes lo hacen para fusionar; los entrenadores conservan sus ediciones locales)
                               let activeLocal = currentLocalData;
-                              try {
-                                  const rawNow = safeGetDatabaseRaw();
-                                  if (rawNow) activeLocal = JSON.parse(rawNow);
-                              } catch(e){}
+                              if (!isTrainer) {
+                                  try {
+                                      const rawNow = safeGetDatabaseRaw();
+                                      if (rawNow) activeLocal = JSON.parse(rawNow);
+                                  } catch(e){}
+                              }
 
                               // Aplicamos de forma segura los cambios locales sobre los datos fusionados de la nube
                               const finalData = mergeLocalEdits(activeLocal, mergedLocal, prevData, isTrainer);
@@ -5427,7 +5457,7 @@ const BrandConfig = {
     } else if (isLucy) {
         defaultBrand = {
             name: 'Lucy Tundidor',
-            logo: 'https://bieeydhacavxymoosasx.supabase.co/storage/v1/object/public/Media/lucy_logo_cropped.png?v=782',
+            logo: 'https://bieeydhacavxymoosasx.supabase.co/storage/v1/object/public/Media/lucy_logo_cropped.png?v=786',
             configured: true,
             colors: { 
                 primary: '#816e61', 
@@ -5538,7 +5568,7 @@ const BrandConfig = {
             res.colors = defaultBrand.colors;
             changed = true;
         }
-        if (!res.logo || res.logo === 'img/logo-infinite-coach.png' || res.logo.includes('1779724548154') || res.logo.includes('lucy_logo_v1.png') || !res.logo.includes('lucy_logo_cropped.png?v=782')) {
+        if (!res.logo || res.logo === 'img/logo-infinite-coach.png' || res.logo.includes('1779724548154') || res.logo.includes('lucy_logo_v1.png') || !res.logo.includes('lucy_logo_cropped.png?v=786')) {
             res.logo = defaultBrand.logo;
             changed = true;
         }

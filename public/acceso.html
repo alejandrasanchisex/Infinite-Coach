@@ -20,7 +20,7 @@
         })();
         // Force PWA cache bust / reload
         (function() {
-            const CURRENT_VERSION = '782';
+            const CURRENT_VERSION = '786';
             window.APP_VERSION = CURRENT_VERSION;
             const savedVersion = localStorage.getItem('app_version');
             if (savedVersion && savedVersion !== CURRENT_VERSION) {
@@ -351,7 +351,7 @@
 
         <p class="footer">¿No tienes código?<br>Contacta con tu entrenador personal.</p>
         <p class="footer" style="margin-top: 15px; border-top: 1px solid rgba(255,255,255,0.05); padding-top: 15px;">
-            <a href="trainer-login.html?v=782" style="color: var(--gold-light); text-decoration: none; font-size: 0.8rem; font-weight: 600;">Acceso Entrenadores 🔐</a>
+            <a href="trainer-login.html?v=786" style="color: var(--gold-light); text-decoration: none; font-size: 0.8rem; font-weight: 600;">Acceso Entrenadores 🔐</a>
             <input type="file" id="emergencyJsonFile" accept=".json" style="display:none" onchange="handleEmergencyJson(event)">
         </p>
         <p id="app-version-display" style="text-align: center; font-size: 0.65rem; color: var(--muted); margin-top: 10px; opacity: 0.7;"></p>
@@ -362,10 +362,10 @@
 
 <!-- ── Scripts ──────────────────────────────────────────────────── -->
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" defer></script>
-<script src="js/supabase-service.js?v=782" defer></script>
-<script src="js/config.js?v=782" defer></script>
-<script src="js/data-models.js?v=782" defer></script>
-<script src="js/utils.js?v=782" defer></script>
+<script src="js/supabase-service.js?v=786" defer></script>
+<script src="js/config.js?v=786" defer></script>
+<script src="js/data-models.js?v=786" defer></script>
+<script src="js/utils.js?v=786" defer></script>
 <script>
 
 // ── Auto-Redirección (Mantener sesión activa) ─────────────────────
@@ -373,7 +373,7 @@
     var storedClientId = localStorage.getItem('clientId') || sessionStorage.getItem('clientId');
     var params = new URLSearchParams(window.location.search);
     if (storedClientId && params.get('logout') !== 'true' && params.get('reauth') !== 'true') {
-        window.location.replace('dashboard.html?v=782');
+        window.location.replace('dashboard.html?v=786');
     }
 })();
 
@@ -416,7 +416,7 @@ function handleEmergencyJson(event) {
                     
                     showMsg('Copia cargada con éxito. Redirigiendo...', 'ok');
                     setTimeout(() => {
-                        window.location.replace('dashboard.html?v=782');
+                        window.location.replace('dashboard.html?v=786');
                     }, 1000);
                 } else {
                     showMsg('No se encontró ningún cliente con ese código en este archivo JSON.');
@@ -425,7 +425,29 @@ function handleEmergencyJson(event) {
             // Caso 2: JSON de Cliente individual
             else {
                 if (data.id && data.accessCode) {
-                    let trainerId = 't-udve3b1u3';
+                    let trainerId = data.assignedTrainerId || 't-udve3b1u3';
+                    
+                    // 🛡️ BÚSQUEDA DINÁMICA DE ENTRENADOR:
+                    // Intentar recuperar el trainer_id real del cliente en Supabase para evitar asignar todo a Lucy por defecto
+                    if (window.SupabaseService) {
+                        try {
+                            if (!window.SupabaseService.client) window.SupabaseService.init();
+                            if (window.SupabaseService.client) {
+                                const { data: dbClient } = await window.SupabaseService.client
+                                    .from('clients')
+                                    .select('trainer_id')
+                                    .eq('id', data.id)
+                                    .single();
+                                if (dbClient && dbClient.trainer_id) {
+                                    trainerId = dbClient.trainer_id;
+                                    console.log("✅ [Login JSON] Entrenador real detectado desde la base de datos:", trainerId);
+                                }
+                            }
+                        } catch(e) {
+                            console.warn("⚠️ [Login JSON] No se pudo determinar el trainer_id en la base de datos, usando fallback:", e);
+                        }
+                    }
+                    
                     localStorage.setItem('clientId', data.id);
                     localStorage.setItem('activeTrainerId', trainerId);
                     
@@ -442,7 +464,7 @@ function handleEmergencyJson(event) {
                     
                     showMsg('Copia cargada con éxito. Redirigiendo...', 'ok');
                     setTimeout(() => {
-                        window.location.replace('dashboard.html?v=782');
+                        window.location.replace('dashboard.html?v=786');
                     }, 1000);
                 } else {
                     showMsg('Copia de seguridad de cliente no identificada.');
@@ -876,7 +898,7 @@ try {
     document.getElementById('app-version-display').textContent = 'Versión: v' + (window.APP_VERSION || 'desconocida');
 } catch(e) {}
 </script>
-<script src="js/custom-recipes.js?v=782"></script>
-<script src="js/pwa-install.js?v=782"></script>
+<script src="js/custom-recipes.js?v=786"></script>
+<script src="js/pwa-install.js?v=786"></script>
 </body>
 </html>

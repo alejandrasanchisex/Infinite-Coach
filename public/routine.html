@@ -21,7 +21,7 @@
 
   // Force PWA cache bust / reload
         (function() {
-            const CURRENT_VERSION = '782';
+            const CURRENT_VERSION = '786';
             window.APP_VERSION = CURRENT_VERSION;
             const savedVersion = localStorage.getItem('app_version');
             if (savedVersion && savedVersion !== CURRENT_VERSION) {
@@ -73,9 +73,9 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="styles/theme.css?v=782">
-  <link rel="stylesheet" href="styles/components.css?v=782">
-  <link rel="stylesheet" href="styles/mobile.css?v=782">
+  <link rel="stylesheet" href="styles/theme.css?v=786">
+  <link rel="stylesheet" href="styles/components.css?v=786">
+  <link rel="stylesheet" href="styles/mobile.css?v=786">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <script>
@@ -187,10 +187,10 @@
           <span id="brandName">Infinite Coach</span>
         </div>
         <ul class="nav-links" id="navLinks">
-          <li><a href="dashboard.html?v=782" class="nav-link">Inicio</a></li>
-          <li><a href="profile.html?v=782" class="nav-link">Ficha Técnica</a></li>
+          <li><a href="dashboard.html?v=786" class="nav-link">Inicio</a></li>
+          <li><a href="profile.html?v=786" class="nav-link">Ficha Técnica</a></li>
 
-          <li><a href="acceso.html?v=782" class="nav-link">Salir</a></li>
+          <li><a href="acceso.html?v=786" class="nav-link">Salir</a></li>
         </ul>
         <button class="menu-toggle" onclick="toggleMenu()" style="margin-left: auto;">☰</button>
       </nav>
@@ -257,12 +257,12 @@
 
   <!-- Supabase SDK & Service -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script src="js/supabase-service.js?v=782"></script>
+  <script src="js/supabase-service.js?v=786"></script>
 
-  <script src="js/config.js?v=782"></script>
-  <script src="js/data-models.js?v=782"></script>
-  <script src="js/custom-exercises.js?v=782"></script>
-  <script src="js/utils.js?v=782"></script>
+  <script src="js/config.js?v=786"></script>
+  <script src="js/data-models.js?v=786"></script>
+  <script src="js/custom-exercises.js?v=786"></script>
+  <script src="js/utils.js?v=786"></script>
   <script>
     // --- RESOLUCIÓN DE TRAINER ID (FALLBACK SEGURO) ---
     (function() {
@@ -981,7 +981,7 @@
             <label class="form-label" style="font-size: 0.8rem; font-weight: 700; color: var(--primary-color); margin-bottom: 8px; text-transform: uppercase; display: block;">Comentarios / Notas de la sesión</label>
             <textarea id="sessionComment" class="form-input" style="background: rgba(255,255,255,0.05); border: 1.5px solid rgba(255,255,255,0.08); border-radius: 8px; color: #fff; resize: vertical; min-height: 80px; font-size: 0.9rem; padding: 10px; width: 100%; box-sizing: border-box;" placeholder="¿Cómo te has sentido? ¿Pesos, sensaciones, fatiga...?">${draftLog && draftLog.comment ? draftLog.comment : ''}</textarea>
         </div>
-        <button class="btn btn-primary btn-full mt-lg" onclick="saveTrainingSession(${dayNumber})">
+        <button class="btn btn-primary btn-full mt-lg" id="completeWorkoutBtn" onclick="saveTrainingSession(${dayNumber})">
             Sesión completada
         </button>
         ` : ''}
@@ -1047,66 +1047,75 @@
           btn.innerHTML = `<span class="spinner" style="display:inline-block; width:12px; height:12px; border:2px solid #fff; border-top-color:transparent; border-radius:50%; animation:spin 1s infinite linear; margin-right:6px; vertical-align:middle;"></span> Guardando...`;
       }
 
-      const dayExercises = routine.days ?
-        (routine.days[dayNumber - 1]?.exercises || []) :
-        (routine.exercises || []).filter(e => e.day === dayNumber);
+      try {
+        const dayExercises = routine.days ?
+          (routine.days[dayNumber - 1]?.exercises || []) :
+          (routine.exercises || []).filter(e => e.day === dayNumber);
 
-      const currentRoutineId = routine.id || (isBlockBased ? `block_${publishedBlock.id}_week_${currentWeekIdx}` : 'standalone');
-      const commentVal = document.getElementById('sessionComment') ? document.getElementById('sessionComment').value.trim() : '';
+        const currentRoutineId = routine.id || (isBlockBased ? `block_${publishedBlock.id}_week_${currentWeekIdx}` : 'standalone');
+        const commentVal = document.getElementById('sessionComment') ? document.getElementById('sessionComment').value.trim() : '';
 
-      const sessionLog = {
-        clientId: client.id,
-        routineId: currentRoutineId,
-        dayNumber: dayNumber,
-        weekIndex: isBlockBased ? currentWeekIdx : null,
-        comment: commentVal,
-        exercises: dayExercises.map((ex, exIdx) => {
-          const numSets = Array.isArray(ex.sets) ? ex.sets.length : (parseInt(ex.sets) || 1);
-          const setsData = [];
-          for (let s = 0; s < numSets; s++) {
-            setsData.push({
-              weight: document.getElementById(`weight_${exIdx}_${s}`).value || 0,
-              reps: document.getElementById(`reps_${exIdx}_${s}`).value || 0,
-              rir: document.getElementById(`rir_${exIdx}_${s}`) ? (document.getElementById(`rir_${exIdx}_${s}`).value || 0) : 0
-            });
-          }
-          return {
-            name: ex.name,
-            sets: setsData
-          };
-        })
-      };
+        const sessionLog = {
+          clientId: client.id,
+          routineId: currentRoutineId,
+          dayNumber: dayNumber,
+          weekIndex: isBlockBased ? currentWeekIdx : null,
+          comment: commentVal,
+          exercises: dayExercises.map((ex, exIdx) => {
+            const numSets = Array.isArray(ex.sets) ? ex.sets.length : (parseInt(ex.sets) || 1);
+            const setsData = [];
+            for (let s = 0; s < numSets; s++) {
+              const weightEl = document.getElementById(`weight_${exIdx}_${s}`);
+              const repsEl = document.getElementById(`reps_${exIdx}_${s}`);
+              const rirEl = document.getElementById(`rir_${exIdx}_${s}`);
+              setsData.push({
+                weight: weightEl ? (weightEl.value || '') : '',
+                reps: repsEl ? (repsEl.value || '') : '',
+                rir: rirEl ? (rirEl.value || '') : ''
+              });
+            }
+            return {
+              name: ex.name,
+              sets: setsData
+            };
+          })
+        };
 
-      TrainingLogs.create(sessionLog);
+        TrainingLogs.create(sessionLog);
 
-      // Clear autosave draft
-      const draftKey = `draft_training_log_${client.id}_${currentRoutineId}_${dayNumber}`;
-      localStorage.removeItem(draftKey);
-      
-      // PR Detection
-      sessionLog.exercises.forEach(ex => {
-          const bestSet = (ex.sets || []).reduce((best, s) => {
-              const w = parseFloat(s.weight) || 0;
-              const r = parseInt(s.reps) || 0;
-              if (w > best.weight) return { weight: w, reps: r };
-              if (w > 0 && w === best.weight && r > best.reps) return { weight: w, reps: r };
-              return best;
-          }, { weight: 0, reps: 0 });
+        // Clear autosave draft
+        const draftKey = `draft_training_log_${client.id}_${currentRoutineId}_${dayNumber}`;
+        localStorage.removeItem(draftKey);
+        
+        // PR Detection
+        sessionLog.exercises.forEach(ex => {
+            const bestSet = (ex.sets || []).reduce((best, s) => {
+                const w = parseFloat(s.weight) || 0;
+                const r = parseInt(s.reps) || 0;
+                if (w > best.weight) return { weight: w, reps: r };
+                if (w > 0 && w === best.weight && r > best.reps) return { weight: w, reps: r };
+                return best;
+            }, { weight: 0, reps: 0 });
 
-          if (bestSet.weight > 0) {
-              window.checkAndNotifyPR(ex.name, bestSet.weight, bestSet.reps);
-          }
-      });
+            if (bestSet.weight > 0) {
+                window.checkAndNotifyPR(ex.name, bestSet.weight, bestSet.reps);
+            }
+        });
 
-      // ── SINCRONIZACIÓN EN SEGUNDO PLANO (SIN BLOQUEAR LA UI) ──────
-      // (Gestionado automáticamente por el motor de base de datos a través de la cola secuencial en saveData)
+        showToast('¡Entrenamiento completado y guardado!', 'success');
 
-      showToast('¡Entrenamiento completado y guardado!', 'success');
-
-      // Actualizar la interfaz local de inmediato
-      window.localUserLogs = TrainingLogs.getByClientId(client.id);
-      renderWeekTabs();
-      loadRoutine(dayNumber); // Permanecer en el mismo día para mostrar el check verde y el badge
+        // Actualizar la interfaz local de inmediato
+        window.localUserLogs = TrainingLogs.getByClientId(client.id);
+        renderWeekTabs();
+        loadRoutine(dayNumber);
+      } catch (err) {
+        console.error("Error al guardar entrenamiento:", err);
+        showToast('Error al guardar entrenamiento: ' + err.message, 'error');
+        if (btn) {
+            btn.disabled = false;
+            btn.innerHTML = 'Sesión completada';
+        }
+      }
     }
 
     function contactTrainer() {
@@ -1284,6 +1293,6 @@
     // Trigger App Initialization
     initializeApp();
   </script>
-    <script src="js/custom-recipes.js?v=782"></script></body>
+    <script src="js/custom-recipes.js?v=786"></script></body>
 
 </html>

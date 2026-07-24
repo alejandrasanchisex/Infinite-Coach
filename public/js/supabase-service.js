@@ -406,6 +406,40 @@ const SupabaseService = {
                  });
              }
 
+              // Deduplicar feedbacks cargados: un solo feedback por cliente y semana si se enviaron con menos de 3 días de diferencia
+               const rawFeedbacks = feedbackRows.map(mapFeedbackFromSQL);
+               const uniqueFeedbacksMap = new Map();
+               rawFeedbacks.forEach(fb => {
+                   const key = `${fb.clientId}_${fb.week}`;
+                   if (!uniqueFeedbacksMap.has(key)) {
+                       uniqueFeedbacksMap.set(key, [fb]);
+                   } else {
+                       const list = uniqueFeedbacksMap.get(key);
+                       const duplicateIdx = list.findIndex(existing => {
+                           const timeDiff = Math.abs(new Date(existing.date || existing.createdAt || 0) - new Date(fb.date || fb.createdAt || 0));
+                           return timeDiff < 3 * 24 * 60 * 60 * 1000; // Menos de 3 días de diferencia
+                       });
+                       
+                       if (duplicateIdx !== -1) {
+                           const existing = list[duplicateIdx];
+                           const existingHas = existing.trainerResponse && String(existing.trainerResponse).trim() !== '' && String(existing.trainerResponse) !== 'null';
+                           const currentHas = fb.trainerResponse && String(fb.trainerResponse).trim() !== '' && String(fb.trainerResponse) !== 'null';
+                           if (currentHas && !existingHas) {
+                               list[duplicateIdx] = fb;
+                           } else if (!existingHas && !currentHas) {
+                               const currentDate = new Date(fb.date || fb.createdAt || 0);
+                               const existingDateObj = new Date(existing.date || existing.createdAt || 0);
+                               if (currentDate > existingDateObj) {
+                                   list[duplicateIdx] = fb;
+                               }
+                           }
+                       } else {
+                           list.push(fb);
+                       }
+                   }
+               });
+               const cleanedFeedbacks = Array.from(uniqueFeedbacksMap.values()).flat();
+
              const assembled = {
                  brand: profileObj.brand || {},
                  appointments: profileObj.appointments || [],
@@ -422,7 +456,7 @@ const SupabaseService = {
                  trainingBlocks: mappedBlocks,
                  diets: dietRows.map(mapDietFromSQL),
                  trainingLogs: logRows.map(mapLogFromSQL).filter(Boolean),
-                 feedbacks: feedbackRows.map(mapFeedbackFromSQL),
+                 feedbacks: cleanedFeedbacks,
                  lastModified: profileObj.lastModified || new Date().toISOString()
              };
 
@@ -554,13 +588,25 @@ const SupabaseService = {
                     sqlDays = d.meals;
                 }
                 
+                // Determinar dinámicamente si la dieta está publicada al cliente
+                let isPublished = d.published || false;
+                if (fullData.clients) {
+                    const client = fullData.clients.find(c => c.id === d.clientId);
+                    if (client) {
+                        const publishedDiets = client.publishedDiets || [];
+                        if (publishedDiets.includes(d.id) || (client.dietPublished !== false && client.assignedDiet === d.id)) {
+                            isPublished = true;
+                        }
+                    }
+                }
+                
                 return {
                     id: d.id,
                     client_id: d.clientId,
                     trainer_id: trainerId,
                     title: d.title || d.name || 'Dieta',
                     status: d.status || 'active',
-                    published: d.published || false,
+                    published: isPublished,
                     days: sqlDays,
                     updated_at: new Date().toISOString()
                 };
@@ -576,25 +622,30 @@ const SupabaseService = {
                 exercises: l.exercises || []
             });
 
-            const mapFeedbackToSQL = f => ({
-                id: f.id,
-                client_id: f.clientId,
-                trainer_id: trainerId,
-                week: f.week || 0,
-                date: f.date,
-                weight: f.weight ? parseFloat(f.weight) : null,
-                sleep: f.sleep ? parseInt(f.sleep) : null,
-                stress: f.stress ? parseInt(f.stress) : null,
-                energy: f.energy ? parseInt(f.energy) : null,
-                adherence: f.adherence ? parseInt(f.adherence) : null,
-                satisfaction: f.satisfaction ? parseInt(f.satisfaction) : null,
-                answers: f.answers || [],
-                perimeters: f.perimeters || {},
-                photos: f.photos || {},
-                comments: f.comments || null,
-                trainer_response: f.trainerResponse || null,
-                updated_at: new Date().toISOString()
-            });
+            const mapFeedbackToSQL = f => {
+                const obj = {
+                    id: f.id,
+                    client_id: f.clientId,
+                    trainer_id: trainerId,
+                    week: f.week || 0,
+                    date: f.date,
+                    weight: f.weight ? parseFloat(f.weight) : null,
+                    sleep: f.sleep ? parseInt(f.sleep) : null,
+                    stress: f.stress ? parseInt(f.stress) : null,
+                    energy: f.energy ? parseInt(f.energy) : null,
+                    adherence: f.adherence ? parseInt(f.adherence) : null,
+                    satisfaction: f.satisfaction ? parseInt(f.satisfaction) : null,
+                    answers: f.answers || [],
+                    perimeters: f.perimeters || {},
+                    photos: f.photos || {},
+                    comments: f.comments || null,
+                    updated_at: new Date().toISOString()
+                };
+                if (isTrainer) {
+                    obj.trainer_response = f.trainerResponse || null;
+                }
+                return obj;
+            };
 
             // 1. Blindaje contra guardados vacíos accidentalmente
             const dataIsEmpty = (
@@ -619,7 +670,38 @@ const SupabaseService = {
                     });
                 }
                 if (fullData.feedbacks) {
-                    fullData.feedbacks = fullData.feedbacks.filter(f => !String(f.id).startsWith('fb-demo'));
+                    let fbs = fullData.feedbacks.filter(f => !String(f.id).startsWith('fb-demo'));
+                    const uniqueMap = new Map();
+                    fbs.forEach(fb => {
+                        const key = `${fb.clientId}_${fb.week}`;
+                        if (!uniqueMap.has(key)) {
+                            uniqueMap.set(key, [fb]);
+                        } else {
+                            const list = uniqueMap.get(key);
+                            const duplicateIdx = list.findIndex(existing => {
+                                const timeDiff = Math.abs(new Date(existing.date || existing.createdAt || 0) - new Date(fb.date || fb.createdAt || 0));
+                                return timeDiff < 3 * 24 * 60 * 60 * 1000; // Menos de 3 días de diferencia
+                            });
+                            
+                            if (duplicateIdx !== -1) {
+                                const existing = list[duplicateIdx];
+                                const existingHas = existing.trainerResponse && String(existing.trainerResponse).trim() !== '' && String(existing.trainerResponse) !== 'null';
+                                const currentHas = fb.trainerResponse && String(fb.trainerResponse).trim() !== '' && String(fb.trainerResponse) !== 'null';
+                                if (currentHas && !existingHas) {
+                                    list[duplicateIdx] = fb;
+                                } else if (!existingHas && !currentHas) {
+                                    const currentDate = new Date(fb.date || fb.createdAt || 0);
+                                    const existingDateObj = new Date(existing.date || existing.createdAt || 0);
+                                    if (currentDate > existingDateObj) {
+                                        list[duplicateIdx] = fb;
+                                    }
+                                }
+                            } else {
+                                list.push(fb);
+                            }
+                        }
+                    });
+                    fullData.feedbacks = Array.from(uniqueMap.values()).flat();
                 }
             }
 
