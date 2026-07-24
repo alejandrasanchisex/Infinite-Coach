@@ -765,23 +765,24 @@ const SupabaseService = {
             } else {
                 // MODO ENTRENADOR: Guarda de forma relacional granular e individualizada para evitar fallos de lote completo
                 let currentClientHabitsMap = {};
+                let dbClientsMap = {};
                 if (fullData.clients) {
-                    // 🛡️ BLINDAJE DE HÁBITOS: Al guardar desde el entrenador, leemos los hábitos actuales de cada cliente
-                    // desde la DB para fusionarlos con los de fullData.habits. Los hábitos son propiedad del cliente
-                    // y nunca deben ser sobrescritos por una versión posiblemente desactualizada del entrenador.
+                    // 🛡️ BLINDAJE DE INTEGRIDAD ADMINISTRATIVA: Leemos el estado actual de clientes en Supabase
+                    // para evitar desvincular recursos o despublicar pautas por cachés locales antiguas.
                     try {
                         const { data: dbClients } = await this.client
                             .from('clients')
-                            .select('id, technical_data')
+                            .select('id, technical_data, assigned_diet, diet_published, assigned_routine, routine_published, cardio, cardio_url, supplementation, supplementation_url')
                             .eq('trainer_id', trainerId);
                         if (dbClients) {
                             dbClients.forEach(dbC => {
+                                dbClientsMap[dbC.id] = dbC;
                                 const dbHabits = (dbC.technical_data && Array.isArray(dbC.technical_data.habits)) ? dbC.technical_data.habits : [];
                                 currentClientHabitsMap[dbC.id] = dbHabits;
                             });
                         }
                     } catch (e) {
-                        console.warn('[Supabase Save] No se pudieron leer los hábitos actuales de clientes para fusión:', e);
+                        console.warn('[Supabase Save] No se pudieron leer clientes actuales de DB:', e);
                     }
 
                     fullData.clients.forEach(c => {
@@ -796,7 +797,24 @@ const SupabaseService = {
                         localHabits.forEach(h => { if (h.id && !mergedHabitsMap.has(h.id)) mergedHabitsMap.set(h.id, h); });
                         c.technicalData.habits = Array.from(mergedHabitsMap.values());
                     });
-                    const sqlClients = fullData.clients.map(mapClientToSQL);
+
+                    const sqlClients = fullData.clients.map(c => {
+                        const mapped = mapClientToSQL(c);
+                        const dbC = dbClientsMap[c.id];
+                        if (dbC) {
+                            // Fusión defensiva: si el servidor ya tiene datos válidos y en local viene nulo/vacío, preservamos el servidor
+                            if (dbC.assigned_diet && !mapped.assigned_diet) mapped.assigned_diet = dbC.assigned_diet;
+                            if (dbC.diet_published && !mapped.diet_published) mapped.diet_published = dbC.diet_published;
+                            if (dbC.assigned_routine && !mapped.assigned_routine) mapped.assigned_routine = dbC.assigned_routine;
+                            if (dbC.routine_published && !mapped.routine_published) mapped.routine_published = dbC.routine_published;
+                            if (dbC.cardio && !mapped.cardio) mapped.cardio = dbC.cardio;
+                            if (dbC.cardio_url && !mapped.cardio_url) mapped.cardio_url = dbC.cardio_url;
+                            if (dbC.supplementation && !mapped.supplementation) mapped.supplementation = dbC.supplementation;
+                            if (dbC.supplementation_url && !mapped.supplementation_url) mapped.supplementation_url = dbC.supplementation_url;
+                        }
+                        return mapped;
+                    });
+
                     sqlClients.forEach(c => {
                         upsertPromises.push(retryOp(() => this.client.from('clients').upsert(c), 3, 1000).catch(err => {
                             console.warn(`[Supabase Save Client Error] Falló upsert del cliente ${c.id}:`, err);
@@ -804,7 +822,31 @@ const SupabaseService = {
                     });
                 }
                 if (fullData.trainingBlocks) {
-                    const sqlBlocks = fullData.trainingBlocks.map(mapBlockToSQL);
+                    // 🛡️ BLINDAJE DE PUBLICACIÓN DE RUTINAS: Evitar despublicar rutinas activas por cachés antiguas
+                    let dbBlocksMap = {};
+                    try {
+                        const blockIds = fullData.trainingBlocks.map(b => b.id).filter(Boolean);
+                        if (blockIds.length > 0) {
+                            const { data: dbBlocks } = await this.client
+                                .from('training_blocks')
+                                .select('id, published')
+                                .in('id', blockIds);
+                            if (dbBlocks) {
+                                dbBlocks.forEach(b => { dbBlocksMap[b.id] = b.published; });
+                            }
+                        }
+                    } catch (e) {
+                        console.warn('[Supabase Save] No se pudo leer estado de bloques:', e);
+                    }
+
+                    const sqlBlocks = fullData.trainingBlocks.map(b => {
+                        const mapped = mapBlockToSQL(b);
+                        // Si en Supabase ya está publicado, evitar despublicarlo
+                        if (dbBlocksMap[mapped.id] === true && !mapped.published) {
+                            mapped.published = true;
+                        }
+                        return mapped;
+                    });
                     sqlBlocks.forEach(b => {
                         upsertPromises.push(retryOp(() => this.client.from('training_blocks').upsert(b), 3, 1000).catch(err => {
                             console.warn(`[Supabase Save Block Error] Falló upsert del bloque ${b.id}:`, err);
@@ -812,7 +854,31 @@ const SupabaseService = {
                     });
                 }
                 if (fullData.diets) {
-                    const sqlDiets = fullData.diets.map(mapDietToSQL);
+                    // 🛡️ BLINDAJE DE PUBLICACIÓN DE DIETAS: Evitar despublicar dietas por cachés antiguas
+                    let dbDietsMap = {};
+                    try {
+                        const dietIds = fullData.diets.map(d => d.id).filter(Boolean);
+                        if (dietIds.length > 0) {
+                            const { data: dbDiets } = await this.client
+                                .from('client_diets')
+                                .select('id, published')
+                                .in('id', dietIds);
+                            if (dbDiets) {
+                                dbDiets.forEach(d => { dbDietsMap[d.id] = d.published; });
+                            }
+                        }
+                    } catch (e) {
+                        console.warn('[Supabase Save] No se pudo leer estado de dietas:', e);
+                    }
+
+                    const sqlDiets = fullData.diets.map(d => {
+                        const mapped = mapDietToSQL(d);
+                        // Si en Supabase ya está publicada, evitar despublicarla
+                        if (dbDietsMap[mapped.id] === true && !mapped.published) {
+                            mapped.published = true;
+                        }
+                        return mapped;
+                    });
                     sqlDiets.forEach(d => {
                         upsertPromises.push(retryOp(() => this.client.from('client_diets').upsert(d), 3, 1000).catch(err => {
                             console.warn(`[Supabase Save Diet Error] Falló upsert de la dieta ${d.id}:`, err);
