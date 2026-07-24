@@ -725,14 +725,10 @@ const SupabaseService = {
                     upsertPromises.push(retryOp(() => this.client.from('clients').upsert(mapClientToSQL(myClient)), 3, 1000));
                 }
 
-                if (fullData.trainingBlocks) {
-                    const myBlocks = fullData.trainingBlocks.filter(b => b.clientId === clientId).map(mapBlockToSQL);
-                    if (myBlocks.length > 0) upsertPromises.push(retryOp(() => this.client.from('training_blocks').upsert(myBlocks), 3, 1000));
-                }
-                if (fullData.diets) {
-                    const myDiets = fullData.diets.filter(d => d.clientId === clientId).map(mapDietToSQL);
-                    if (myDiets.length > 0) upsertPromises.push(retryOp(() => this.client.from('client_diets').upsert(myDiets), 3, 1000));
-                }
+
+                // NOTA: Se omiten los upserts de trainingBlocks y diets para el cliente.
+                // El cliente nunca modifica rutinas ni dietas (son de solo lectura para él).
+                // Omitirlos aquí impide que la caché vieja del cliente sobrescriba los datos del entrenador.
                 if (fullData.trainingLogs) {
                     const myLogs = fullData.trainingLogs.filter(l => l.clientId === clientId && l.completed === true).map(mapLogToSQL);
                     if (myLogs.length > 0) upsertPromises.push(retryOp(() => this.client.from('training_logs').upsert(myLogs), 3, 1000));
