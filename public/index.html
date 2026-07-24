@@ -24,14 +24,18 @@
             if (savedVersion !== CURRENT_VERSION) {
                 localStorage.setItem('app_version', CURRENT_VERSION);
                 localStorage.setItem('app_version', CURRENT_VERSION);
+                const forceRefresh = () => {
+                    const url = new URL(window.location.href);
+                    url.searchParams.set('v', CURRENT_VERSION);
+                    url.searchParams.set('cb', String(Date.now()));
+                    window.location.replace(url.toString());
+                };
                 if ('serviceWorker' in navigator) {
                     navigator.serviceWorker.getRegistrations().then(function(regs) {
                         for (let r of regs) r.unregister();
-                    }).finally(function() {
-                        window.location.reload(true);
-                    });
+                    }).finally(forceRefresh);
                 } else {
-                    window.location.reload(true);
+                    forceRefresh();
                 }
                 return;
             }
@@ -73,9 +77,19 @@
                                         keys.forEach(k => caches.delete(k));
                                     });
                                 }
-                                const params = new URLSearchParams(window.location.search);
-                                params.set('v', data.version);
-                                window.location.replace(window.location.pathname + '?' + params.toString());
+                                const forceRefresh = () => {
+                                    const url = new URL(window.location.href);
+                                    url.searchParams.set('v', data.version);
+                                    url.searchParams.set('cb', String(Date.now()));
+                                    window.location.replace(url.toString());
+                                };
+                                if ('serviceWorker' in navigator) {
+                                    navigator.serviceWorker.getRegistrations().then(function(regs) {
+                                        for (let r of regs) r.unregister();
+                                    }).finally(forceRefresh);
+                                } else {
+                                    forceRefresh();
+                                }
                             } else {
                                 doRedirect();
                             }
