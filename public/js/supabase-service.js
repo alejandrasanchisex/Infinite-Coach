@@ -509,6 +509,31 @@ const SupabaseService = {
             trainerId = 't-w0iybl7qb';
         }
         if (!this.client) this.init();
+
+        // 🛡️ BLINDAJE DE VERSIÓN OBSOLETA: Evitar guardar datos desde una pestaña desactualizada
+        try {
+            const savedVersion = localStorage.getItem('app_version');
+            if (savedVersion && window.APP_VERSION && savedVersion !== window.APP_VERSION) {
+                console.warn(`🚨 [Supabase SaveData] Guardado bloqueado por versión obsoleta (Local: ${window.APP_VERSION} vs Red: ${savedVersion}). Forzando actualización.`);
+                const forceRefresh = () => {
+                    const url = new URL(window.location.href);
+                    url.searchParams.set('v', savedVersion);
+                    url.searchParams.set('cb', String(Date.now()));
+                    window.location.replace(url.toString());
+                };
+                if ('serviceWorker' in navigator) {
+                    navigator.serviceWorker.getRegistrations().then(regs => {
+                        for (let r of regs) r.unregister();
+                    }).finally(forceRefresh);
+                } else {
+                    forceRefresh();
+                }
+                return false;
+            }
+        } catch (e) {
+            console.error('[Supabase SaveData] Fallo al validar la versión:', e);
+        }
+
         try {
             const isTrainer = checkIsTrainer();
             const clientId = (safeGetLocalStorage('clientId') || safeGetSessionStorage('clientId'));
