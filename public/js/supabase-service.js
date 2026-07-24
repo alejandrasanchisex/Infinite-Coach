@@ -534,37 +534,40 @@ const SupabaseService = {
                 tech.dietHistory = c.dietHistory || tech.dietHistory || [];
                 tech.habits = c.technicalData?.habits || [];
                 
-                return {
+                const obj = {
                     id: c.id,
-                    trainer_id: trainerId,
                     name: c.name || 'Sin Nombre',
                     email: c.email || null,
                     phone: c.phone || null,
                     gender: c.gender || null,
-                    status: c.status || 'active',
-                    monthly_fee: c.monthlyFee ? parseFloat(c.monthlyFee) : 0,
-                    assigned_routine: c.assignedRoutine || null,
-                    assigned_diet: c.assignedDiet || null,
                     technical_data: tech,
-                    onboarding_answers: c.onboardingAnswers || [],
                     initial_setup_done: c.initialSetupDone || false,
                     profile_photo: c.profilePhoto || null,
-                    
-                    access_code: c.accessCode || c.access_code || null,
-                    payment_status: c.paymentStatus || c.payment_status || 'pending',
-                    payment_expiry: c.paymentExpiry || c.payment_expiry || null,
-                    review_day: c.reviewDay || c.review_day || null,
-                    review_frequency: c.reviewFrequency || c.review_frequency || null,
-                    active_block_id: c.activeBlockId || c.active_block_id || null,
-                    diet_published: c.dietPublished !== undefined ? c.dietPublished : (c.diet_published !== undefined ? c.diet_published : true),
-                    cardio: c.cardio || null,
-                    cardio_url: c.cardioUrl || null,
-                    supplementation: c.supplementation || null,
-                    supplementation_url: c.supplementationUrl || null,
-                    start_date: c.startDate || null,
-                    
                     updated_at: new Date().toISOString()
                 };
+
+                if (isTrainer) {
+                    obj.trainer_id = trainerId;
+                    obj.status = c.status || 'active';
+                    obj.monthly_fee = c.monthlyFee ? parseFloat(c.monthlyFee) : 0;
+                    obj.assigned_routine = c.assignedRoutine || null;
+                    obj.assigned_diet = c.assignedDiet || null;
+                    obj.onboarding_answers = c.onboardingAnswers || [];
+                    obj.access_code = c.accessCode || c.access_code || null;
+                    obj.payment_status = c.paymentStatus || c.payment_status || 'pending';
+                    obj.payment_expiry = c.paymentExpiry || c.payment_expiry || null;
+                    obj.review_day = c.reviewDay || c.review_day || null;
+                    obj.review_frequency = c.reviewFrequency || c.review_frequency || null;
+                    obj.active_block_id = c.activeBlockId || c.active_block_id || null;
+                    obj.diet_published = c.dietPublished !== undefined ? c.dietPublished : (c.diet_published !== undefined ? c.diet_published : true);
+                    obj.cardio = c.cardio || null;
+                    obj.cardio_url = c.cardioUrl || null;
+                    obj.supplementation = c.supplementation || null;
+                    obj.supplementation_url = c.supplementationUrl || null;
+                    obj.start_date = c.startDate || null;
+                }
+
+                return obj;
             };
 
             const mapBlockToSQL = b => ({
@@ -588,28 +591,32 @@ const SupabaseService = {
                     sqlDays = d.meals;
                 }
                 
-                // Determinar dinámicamente si la dieta está publicada al cliente
-                let isPublished = d.published || false;
-                if (fullData.clients) {
-                    const client = fullData.clients.find(c => c.id === d.clientId);
-                    if (client) {
-                        const publishedDiets = client.publishedDiets || [];
-                        if (publishedDiets.includes(d.id) || (client.dietPublished !== false && client.assignedDiet === d.id)) {
-                            isPublished = true;
-                        }
-                    }
-                }
-                
-                return {
+                const obj = {
                     id: d.id,
                     client_id: d.clientId,
                     trainer_id: trainerId,
                     title: d.title || d.name || 'Dieta',
                     status: d.status || 'active',
-                    published: isPublished,
                     days: sqlDays,
                     updated_at: new Date().toISOString()
                 };
+
+                if (isTrainer) {
+                    // Determinar dinámicamente si la dieta está publicada al cliente
+                    let isPublished = d.published || false;
+                    if (fullData.clients) {
+                        const client = fullData.clients.find(c => c.id === d.clientId);
+                        if (client) {
+                            const publishedDiets = client.publishedDiets || [];
+                            if (publishedDiets.includes(d.id) || (client.dietPublished !== false && client.assignedDiet === d.id)) {
+                                isPublished = true;
+                            }
+                        }
+                    }
+                    obj.published = isPublished;
+                }
+                
+                return obj;
             };
 
             const mapLogToSQL = l => ({
