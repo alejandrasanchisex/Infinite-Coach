@@ -44,7 +44,9 @@ async function retryOp(operation, maxAttempts = 3, initialDelay = 1000, timeoutM
             const timeoutPromise = new Promise((_, reject) => 
                 setTimeout(() => reject(new Error("Timeout de red (Supabase no responde)")), timeoutMs)
             );
-            return await Promise.race([promiseCall, timeoutPromise]);
+            const result = await Promise.race([promiseCall, timeoutPromise]);
+            if (result && result.error) throw result.error;
+            return result;
         } catch (err) {
             lastError = err;
             console.warn(`[Supabase Retry] Attempt ${attempt}/${maxAttempts} failed:`, err.message || err);
@@ -327,12 +329,11 @@ const SupabaseService = {
                     .from('trainer_profiles')
                     .select('full_data')
                     .eq('trainer_id', trainerId)
-                    .single();
+                    .limit(1);
                 if (error) {
-                    if (error.code === 'PGRST116') return { full_data: null };
                     throw error;
                 }
-                return data;
+                return (data && data.length > 0) ? data[0] : { full_data: null };
             };
             const profileRes = await retryOp(runProfileQuery, 3, 1000);
             const profileObj = (profileRes && profileRes.full_data) ? profileRes.full_data : {};
@@ -954,9 +955,9 @@ const SupabaseService = {
                     .from('saas_config')
                     .select('data')
                     .eq('id', 'config')
-                    .single();
+                    .limit(1);
                 if (error) throw error;
-                return data;
+                return (data && data.length > 0) ? data[0] : null;
             };
             const result = await retryOp(fetchConfig, 3, 1000);
             return result ? result.data : null;

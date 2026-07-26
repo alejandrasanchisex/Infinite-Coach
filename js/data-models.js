@@ -682,13 +682,13 @@ const getData = () => {
     }
 
     // 🔥 MIGRACIÓN: Corregir tipo de alimentos y cantidades en dietas que se guardaron erróneamente como unidades
-    if (!safeGetLocalStorage('v316_fix_food_types_and_diets_v4')) {
+    if (!safeGetLocalStorage('v316_fix_food_types_and_diets_v5')) {
         let modified = false;
         const knownUnitKeywords = [
             'plátano', 'banana', 'manzana', 'pera', 'naranja', 'melocotón', 'durazno',
             'kiwi', 'mandarina', 'limón', 'huevo', 'clara', 'dátil', 'tostada', 'rebanada',
             'pan', 'tortita', 'tortilla', 'quesito', 'yogur', 'lata', 'atún', 'patata',
-            'papa', 'boniato', 'batata', 'aguacate', 'tomate', 'zanahoria'
+            'papa', 'boniato', 'batata', 'aguacate', 'tomate', 'zanahoria', 'torta', 'tortas'
         ];
         const forcedGramKeywords = [
             'verdura', 'ensalada', 'vegetal', 'hortaliza', 'judía', 'judia', 'espinaca', 'acelga',
@@ -701,14 +701,24 @@ const getData = () => {
         // 1. Corregir base de datos de alimentos del entrenador (Foods)
         if (data.foods && Array.isArray(data.foods)) {
             data.foods.forEach(food => {
+                const lowerName = food.name.toLowerCase().trim();
+                const isKnownUnit = knownUnitKeywords.some(keyword => lowerName.includes(keyword));
+                let isForcedGram = forcedGramKeywords.some(keyword => lowerName.includes(keyword));
+                if (lowerName.includes('torta') || lowerName.includes('tortita')) {
+                    isForcedGram = false;
+                }
+                
                 if (food.type === 'unit') {
-                    const lowerName = food.name.toLowerCase().trim();
-                    const isKnownUnit = knownUnitKeywords.some(keyword => lowerName.includes(keyword));
-                    const isForcedGram = forcedGramKeywords.some(keyword => lowerName.includes(keyword));
                     if (!isKnownUnit || isForcedGram) {
                         food.type = 'g';
                         modified = true;
                         console.log(`🔧 Corregido tipo de alimento de base de datos "${food.name}" de 'unit' a 'g'`);
+                    }
+                } else if (food.type === 'g') {
+                    if (isKnownUnit && !isForcedGram) {
+                        food.type = 'unit';
+                        modified = true;
+                        console.log(`🔧 Restaurado tipo de alimento de base de datos "${food.name}" de 'g' a 'unit'`);
                     }
                 }
             });
@@ -723,7 +733,10 @@ const getData = () => {
                         if (food.name) {
                             const name = food.name.toLowerCase().trim();
                             const isKnownUnit = knownUnitKeywords.some(keyword => name.includes(keyword));
-                            const isForcedGram = forcedGramKeywords.some(keyword => name.includes(keyword));
+                            let isForcedGram = forcedGramKeywords.some(keyword => name.includes(keyword));
+                            if (name.includes('torta') || name.includes('tortita')) {
+                                isForcedGram = false;
+                            }
                             
                             if (!isKnownUnit || isForcedGram) {
                                 // Si la cantidad tiene 'ud' o 'uds', o si las calorías son sospechosamente altas (> 1000)
@@ -749,6 +762,19 @@ const getData = () => {
                                         console.log(`🔧 Corregido alimento "${food.name}" en dieta "${diet.name}": cambiado a gramos y corregido macros.`);
                                     }
                                 }
+                            } else {
+                                // 🛡️ RESTAURACIÓN DE UNIDADES: Si es un alimento que debe ser unitario (ej: tortas)
+                                // pero se guardó con 'g' (ej: "2g"), lo restauramos a 'uds'.
+                                const isQtyG = typeof food.quantity === 'string' && food.quantity.endsWith('g');
+                                if (isQtyG) {
+                                    const qtyNum = parseFloat(food.quantity);
+                                    if (!isNaN(qtyNum) && qtyNum < 15) { // Si la cantidad en gramos es muy pequeña
+                                        food.quantity = `${qtyNum} ${qtyNum === 1 ? 'ud' : 'uds'}`;
+                                        dietModified = true;
+                                        modified = true;
+                                        console.log(`🔧 Restauradas unidades para "${food.name}" en dieta "${diet.name}": cambiado a "${food.quantity}"`);
+                                    }
+                                }
                             }
                         }
                     });
@@ -759,7 +785,7 @@ const getData = () => {
         if (modified) {
             try { localStorage.setItem(sKey, JSON.stringify(data)); } catch(e){}
         }
-        try { localStorage.setItem('v316_fix_food_types_and_diets_v4', 'true'); } catch(e) {}
+        try { localStorage.setItem('v316_fix_food_types_and_diets_v5', 'true'); } catch(e) {}
     }
 
     // 🔥 PURGA DE RECETAS NO OFICIALES (Blindaje 145)
@@ -1074,6 +1100,17 @@ const mergeLocalEdits = (localNew, cloudMerged, localPrev, isTrainer) => {
             prevItems.forEach(item => {
                 if (!item.id && item.clientId && item.date) {
                     item.id = item.clientId + '_' + item.date;
+                }
+            });
+        }
+        
+        // 🛡️ PRESERVAR RESPUESTA DEL ENTRENADOR EN EL CLIENTE:
+        // Evitar que el cliente sobrescriba con null la respuesta del entrenador al sincronizar.
+        if (col === 'feedbacks' && !isTrainer) {
+            localItems.forEach(item => {
+                const cloudItem = mergedItems.find(c => c.id === item.id);
+                if (cloudItem && cloudItem.trainerResponse) {
+                    item.trainerResponse = cloudItem.trainerResponse;
                 }
             });
         }
@@ -1607,6 +1644,23 @@ const doSyncFromCloud = async () => {
                     if (!cloudData[col]) cloudData[col] = [];
                 });
 
+                // Obtener datos locales actuales y el prevData (backup) para realizar fusión bidireccional
+                let localData = null;
+                try {
+                    const localRaw = safeGetDatabaseRaw();
+                    if (localRaw) localData = JSON.parse(localRaw);
+                } catch(e) {}
+
+                let prevData = null;
+                try {
+                    const backupRaw = localStorage.getItem(getStorageKey() + '_backup');
+                    if (backupRaw) prevData = JSON.parse(backupRaw);
+                } catch(e) {}
+                if (!prevData) prevData = localData;
+
+                // Fusión bidireccional segura para el entrenador para no machacar sus cambios locales sin subir
+                const finalData = mergeLocalEdits(localData || cloudData, cloudData, prevData || cloudData, isTrainer);
+
                 // Blindaje de reset
                 if (cloudData.__reset_version) {
                     const localResetKey = `_resetVersion_${currentId}`;
@@ -1614,8 +1668,8 @@ const doSyncFromCloud = async () => {
                 }
 
                 // ASTEAM fee fix
-                if (cloudData.clients) {
-                    cloudData.clients.forEach(c => {
+                if (finalData.clients) {
+                    finalData.clients.forEach(c => {
                         if (c && (c.id === '20f2e6c2-2699-4ccc-a982-1e9fb141b9bb' || 
                                   c.id === '0db0ea7a-c413-44cb-b99e-dfd9790383eb' ||
                                   c.id === '94e6e268-245b-4e52-bcee-a0c93396ef1a' ||
@@ -1634,16 +1688,16 @@ const doSyncFromCloud = async () => {
                 localStorage.removeItem('brand_settings');
                 localStorage.removeItem('isNewInstall_' + currentId);
 
-                // ✅ ADOPTAR datos de la nube directamente — sin fusión bidireccional
-                console.log("☁️ [TRAINER SYNC] Adoptando datos de la nube como fuente única de verdad. Sin fusión bidireccional.");
-                cloudData.deletedIds = [];
-                saveDatabaseRaw(JSON.stringify(cloudData));
+                // ✅ ADOPTAR datos de la nube con fusión bidireccional segura
+                console.log("☁️ [TRAINER SYNC] Adoptando datos de la nube con fusión bidireccional segura.");
+                finalData.deletedIds = [];
+                saveDatabaseRaw(JSON.stringify(finalData));
                 setLastSyncTime(currentId);
 
                 // Actualizar backup local con los datos reales de la nube
-                try { localStorage.setItem(getStorageKey() + '_backup', JSON.stringify(cloudData)); } catch(e) {}
+                try { localStorage.setItem(getStorageKey() + '_backup', JSON.stringify(finalData)); } catch(e) {}
 
-                return cloudData;
+                return finalData;
             } else {
                 // La nube está vacía — subir datos locales como migración inicial (solo primera vez)
                 const localRaw = safeGetDatabaseRaw();

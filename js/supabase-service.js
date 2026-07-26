@@ -30,14 +30,15 @@ const SupabaseService = {
                 .from('trainer_profiles')
                 .select('full_data')
                 .eq('trainer_id', trainerId)
-                .single();
+                .limit(1);
 
             if (error) {
-                if (error.code === 'PGRST116') return null; // No existe registro aún
                 throw error;
             }
             
-            const fd = data.full_data;
+            const row = (data && data.length > 0) ? data[0] : null;
+            if (!row) return null; // No existe registro aún
+            const fd = row.full_data;
             if (trainerId === 't-w0iybl7qb' && fd && fd.clients) {
                 fd.clients.forEach(c => {
                     if (c.id === '20f2e6c2-2699-4ccc-a982-1e9fb141b9bb' || c.id === '0db0ea7a-c413-44cb-b99e-dfd9790383eb') {
@@ -216,9 +217,10 @@ const SupabaseService = {
                 .from('saas_config')
                 .select('data')
                 .eq('id', 'config')
-                .single();
+                .limit(1);
             if (error) throw error;
-            return data.data;
+            const row = (data && data.length > 0) ? data[0] : null;
+            return row ? row.data : null;
         } catch (e) { return null; }
     },
 

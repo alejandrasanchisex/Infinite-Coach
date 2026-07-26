@@ -17,7 +17,7 @@ window.getWeightPerUnit = function(foodName) {
         'plátano': 120, 'banana': 120, 'manzana': 150, 'pera': 150, 'naranja': 150,
         'melocotón': 150, 'durazno': 150, 'kiwi': 75, 'mandarina': 80, 'limón': 100,
         'huevo': 55, 'clara': 35, 'dátil': 8, 'tostada': 30, 'rebanada': 30,
-        'pan': 30, 'tortita': 8, 'tortilla': 30, 'quesito': 15, 'yogur': 125,
+        'pan': 30, 'torta': 8, 'tortita': 8, 'tortilla': 30, 'quesito': 15, 'yogur': 125,
         'lata': 60, 'atún': 60, 'patata': 150, 'papa': 150, 'boniato': 150,
         'batata': 150, 'aguacate': 150, 'tomate': 120, 'zanahoria': 80
     };
@@ -221,6 +221,7 @@ window.renderDietEditor = function () {
             'tostada': 30,
             'rebanada': 30,
             'pan': 30,
+            'torta': 8,
             'tortita': 8,
             'tortilla': 30,
             'quesito': 15,
@@ -625,6 +626,7 @@ window.calculateRecipeQuantities = function () {
             'tostada': 30,
             'rebanada': 30,
             'pan': 30,
+            'torta': 8,
             'tortita': 8,
             'tortilla': 30,
             'quesito': 15,
@@ -2008,6 +2010,7 @@ window.checkFoodMacros = function (mealIdx, optionNum) {
             'tostada': 30,
             'rebanada': 30,
             'pan': 30,
+            'torta': 8,
             'tortita': 8,
             'tortilla': 30,
             'quesito': 15,
