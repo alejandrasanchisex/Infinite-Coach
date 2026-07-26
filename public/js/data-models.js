@@ -1330,6 +1330,16 @@ const mergeLocalEdits = (localNew, cloudMerged, localPrev, isTrainer) => {
                 // Role role check: if isTrainer is true, trainer cannot edit client collections (unless specifically responding, e.g. feedbacks, appointments)
                 if (isTrainer && clientCollections.includes(col)) {
                     if (col === 'feedbacks' && localItem && cloudItem) {
+                        const localHasResponse = localItem.trainerResponse && String(localItem.trainerResponse).trim() !== '' && String(localItem.trainerResponse) !== 'null';
+                        const cloudHasResponse = cloudItem.trainerResponse && String(cloudItem.trainerResponse).trim() !== '' && String(cloudItem.trainerResponse) !== 'null';
+                        
+                        if (localHasResponse && !cloudHasResponse) {
+                            console.log(`🛡️ [Trainer Sync] Preservando respuesta local del entrenador para feedback ${localItem.id} ya que en la nube está vacía.`);
+                            const mergedFeedback = { ...cloudItem, trainerResponse: localItem.trainerResponse };
+                            finalItems.push(mergedFeedback);
+                            return;
+                        }
+                        
                         const localChanged = !prevItem || localItem.trainerResponse !== prevItem.trainerResponse;
                         if (localChanged) {
                             const mergedFeedback = { ...cloudItem, trainerResponse: localItem.trainerResponse };
@@ -5505,7 +5515,7 @@ const BrandConfig = {
     } else if (isLucy) {
         defaultBrand = {
             name: 'Lucy Tundidor',
-            logo: 'https://bieeydhacavxymoosasx.supabase.co/storage/v1/object/public/Media/lucy_logo_cropped.png?v=797',
+            logo: 'https://bieeydhacavxymoosasx.supabase.co/storage/v1/object/public/Media/lucy_logo_cropped.png?v=798',
             configured: true,
             colors: { 
                 primary: '#816e61', 
@@ -5616,7 +5626,7 @@ const BrandConfig = {
             res.colors = defaultBrand.colors;
             changed = true;
         }
-        if (!res.logo || res.logo === 'img/logo-infinite-coach.png' || res.logo.includes('1779724548154') || res.logo.includes('lucy_logo_v1.png') || !res.logo.includes('lucy_logo_cropped.png?v=797')) {
+        if (!res.logo || res.logo === 'img/logo-infinite-coach.png' || res.logo.includes('1779724548154') || res.logo.includes('lucy_logo_v1.png') || !res.logo.includes('lucy_logo_cropped.png?v=798')) {
             res.logo = defaultBrand.logo;
             changed = true;
         }

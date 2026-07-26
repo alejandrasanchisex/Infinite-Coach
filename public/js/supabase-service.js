@@ -788,22 +788,48 @@ const SupabaseService = {
 
                     fullData.clients.forEach(c => {
                         if (!c.technicalData) c.technicalData = {};
-                        // Hábitos del entrenador en memoria (puede estar desactualizado)
+                        const dbC = dbClientsMap[c.id];
+                        
+                        // 1. Fusión de Hábitos Diarios
                         const localHabits = fullData.habits ? fullData.habits.filter(h => String(h.clientId) === String(c.id)) : [];
-                        // Hábitos actuales en DB (los que guardó el cliente directamente)
-                        const dbHabits = currentClientHabitsMap[c.id] || [];
-                        // Fusionar: los de DB tienen prioridad; los de memoria local se añaden si no existen en DB
+                        const dbHabits = (dbC && dbC.technical_data && Array.isArray(dbC.technical_data.habits)) ? dbC.technical_data.habits : [];
                         const mergedHabitsMap = new Map();
-                        dbHabits.forEach(h => { if (h.id) mergedHabitsMap.set(h.id, h); });
-                        localHabits.forEach(h => { if (h.id && !mergedHabitsMap.has(h.id)) mergedHabitsMap.set(h.id, h); });
+                        
+                        localHabits.forEach(h => {
+                            const key = h.date || h.id;
+                            if (key) mergedHabitsMap.set(key, h);
+                        });
+                        dbHabits.forEach(h => {
+                            const key = h.date || h.id;
+                            if (key) mergedHabitsMap.set(key, h);
+                        });
                         c.technicalData.habits = Array.from(mergedHabitsMap.values());
+
+                        // 2. Fusión de Historial de Peso y Perímetros
+                        const localWeights = Array.isArray(c.weightHistory) ? c.weightHistory : [];
+                        const dbWeights = (dbC && dbC.technical_data && Array.isArray(dbC.technical_data.weightHistory)) ? dbC.technical_data.weightHistory : [];
+                        const mergedWeightsMap = new Map();
+
+                        localWeights.forEach(w => {
+                            if (w.date) {
+                                const dayKey = w.date.split('T')[0];
+                                mergedWeightsMap.set(dayKey, w);
+                            }
+                        });
+                        dbWeights.forEach(w => {
+                            if (w.date) {
+                                const dayKey = w.date.split('T')[0];
+                                mergedWeightsMap.set(dayKey, w);
+                            }
+                        });
+                        c.weightHistory = Array.from(mergedWeightsMap.values()).sort((a, b) => new Date(a.date) - new Date(b.date));
                     });
 
                     const sqlClients = fullData.clients.map(c => {
                         const mapped = mapClientToSQL(c);
                         const dbC = dbClientsMap[c.id];
                         if (dbC) {
-                            // Fusión defensiva: si el servidor ya tiene datos válidos y en local viene nulo/vacío, preservamos el servidor
+                            // Fusión defensiva de asignación y publicación de pautas
                             if (dbC.assigned_diet && !mapped.assigned_diet) mapped.assigned_diet = dbC.assigned_diet;
                             if (dbC.diet_published && !mapped.diet_published) mapped.diet_published = dbC.diet_published;
                             if (dbC.assigned_routine && !mapped.assigned_routine) mapped.assigned_routine = dbC.assigned_routine;
