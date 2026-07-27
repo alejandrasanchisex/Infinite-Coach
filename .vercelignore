@@ -33,6 +33,7 @@ assets
 # Excepciones para scripts necesarios de build en la raíz
 !/scripts
 !/scripts/validate_html_js.js
+!/postcss.config.mjs
 
 # Ignorar base de datos local y JSONs estáticos gigantescos
 public/data
