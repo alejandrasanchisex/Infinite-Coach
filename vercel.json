@@ -21,7 +21,12 @@
     { "source": "/client-profile", "destination": "/profile", "permanent": false },
     { "source": "/client-profile.html", "destination": "/profile", "permanent": false },
     { "source": "/client-library", "destination": "/library", "permanent": false },
-    { "source": "/client-library.html", "destination": "/library", "permanent": false }
+    { "source": "/client-library.html", "destination": "/library", "permanent": false },
+    { "source": "/asteam.html", "destination": "/asteam", "permanent": true },
+    { "source": "/lucy-tundidor.html", "destination": "/lucy-tundidor", "permanent": true },
+    { "source": "/metodo-jfk.html", "destination": "/metodo-jfk", "permanent": true },
+    { "source": "/phoenix-protocol.html", "destination": "/phoenix-protocol", "permanent": true },
+    { "source": "/toledo-the-bull.html", "destination": "/toledo-the-bull", "permanent": true }
   ],
   "rewrites": [
     { "source": "/trainer-login", "destination": "/trainer-login.html" }
